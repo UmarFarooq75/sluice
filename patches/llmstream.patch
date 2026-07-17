@@ -277,7 +277,7 @@ index 1e2baeb..0a820cf 100644
                  model.layers[il].ffn_gate_inp,
                  model.layers[il].ffn_up_exps,
 diff --git a/src/models/qwen35moe.cpp b/src/models/qwen35moe.cpp
-index 7b0876c..7f364f3 100644
+index 7b0876c..71884b3 100644
 --- a/src/models/qwen35moe.cpp
 +++ b/src/models/qwen35moe.cpp
 @@ -1,6 +1,8 @@
@@ -316,7 +316,15 @@ index 7b0876c..7f364f3 100644
  
          // Shared experts
          layer.ffn_gate_inp_shexp = create_tensor(tn(LLM_TENSOR_FFN_GATE_INP_SHEXP, "weight", il), { n_embd }, flags);
-@@ -497,6 +515,13 @@ ggml_tensor * llama_model_qwen35moe::graph::build_layer_ffn(ggml_tensor * cur, c
+@@ -147,6 +165,7 @@ void llama_model_qwen35moe::load_arch_tensors(llama_model_loader & ml) {
+     for (int i = n_layer; i < n_layer_all; ++i) {
+         load_block_mtp(i);
+     }
++    llmstream_alloc();
+ }
+ 
+ std::unique_ptr<llm_graph_context> llama_model_qwen35moe::build_arch_graph(const llm_graph_params & params) const {
+@@ -497,6 +516,13 @@ ggml_tensor * llama_model_qwen35moe::graph::build_layer_ffn(ggml_tensor * cur, c
      // Check if this is an MoE layer
      GGML_ASSERT(model.layers[il].ffn_gate_inp != nullptr);
  
