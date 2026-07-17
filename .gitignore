@@ -1,13 +1,30 @@
+# secrets — never tracked, even by accident
+.env
+.env.*
+*.pem
+*.key
+
+# local toolchain + caches
 .venv/
+__pycache__/
+.DS_Store
+*.log
+
+# models, weights, traces, stores — GBs of local artifacts
 hf_home/
 models/
 traces/
 traces_ds/
 expert_store/
+*.gguf
+*.npz
+*.safetensors
+
+# vendored llama.cpp clone (our changes live in patches/llmstream.patch)
 vendor/
-__pycache__/
+
+# compiled binaries
 *.o
 csrc/stream_run
 csrc/stream_bench
 csrc/probe_cb_eval
-.DS_Store
