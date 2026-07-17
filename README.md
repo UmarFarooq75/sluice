@@ -43,6 +43,18 @@ Key measured findings (details in [docs/findings-phase0.md](docs/findings-phase0
 7. **Hybrid caching is the right design**: learned pinned base beats LRU 9× at tiny capacities; LRU wins when RAM is comfortable; oracle (Belady) shows a further 15–20-point prize for prediction.
 8. **Honest negatives we caught early**: hard-pinning without a fetch path destroys quality (+129% NLL — the tail must always be reachable); adaptive top-k is dead on flat softmax routers like OLMoE's (per-architecture, not universal); the network tier trims the *last-mile* of ROM (~10–25%), it is not a 4× cut; speculative decoding is a net loss while disk-bound (from colibri's own data).
 
+## The head-to-head (2026-07-18): a model this laptop "cannot run"
+
+**Qwen3.6-35B-A3B** (2026 release, 26.5GB Q5_K_M) on the same 16GB MacBook Air:
+
+| engine | result |
+|---|---|
+| stock llama.cpp mmap — the engine under Ollama/LM Studio | **did not finish**: OOM-killed during load; retry produced no output in 10 minutes |
+| **ours, margin m=0.02, 2.9GB expert cache** | **8.3 tok/s, coherent output** — ~80% of this CPU's physical ceiling for the model's active params |
+| ours, exact routing (m=0), 5.9GB cache | 3.6 tok/s |
+
+The margin router pushes I/O below the compute floor: a 2.9GB cache ties a 5.9GB one. Total RAM used ≈ 6GB for a 26.5GB model. Family adapter for this brand-new architecture (hybrid attention, merged gate_up, shared expert): ~20 lines. Details: `results/qwen36_headtohead.json`, finding 33.
+
 ## Phase 1 milestone M1 — it now runs inside llama.cpp, bit-exact (2026-07-17)
 
 A ~135-line private fork of llama.cpp (`patches/llmstream.patch`) plus an out-of-tree driver (`csrc/stream_run.cpp`) streams experts **straight from the GGUF file's per-expert extents** (no conversion, no repacked store) into per-layer slot caches, rewriting router ids to cache slots mid-graph via the public `cb_eval` hook. The correctness gate hashes every generated position's full logit vector:
