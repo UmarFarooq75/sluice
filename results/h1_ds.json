@@ -1,0 +1,17 @@
+{
+  "model": "mlx-community/DeepSeek-V2-Lite-Chat-4bit-mlx",
+  "tokens_analyzed": 87,
+  "mean_occurrences": 16.6,
+  "mean_determinism_at6": 0.574,
+  "mean_heldout_table_recall": 0.491,
+  "det_first_mid_last": [
+    0.714,
+    0.519,
+    0.605
+  ],
+  "baselines": {
+    "random": 0.094,
+    "olmoe_determinism": 0.671,
+    "olmoe_recall": 0.595
+  }
+}

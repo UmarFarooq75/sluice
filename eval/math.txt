@@ -1,0 +1,23 @@
+Problem 1. A shop sells pencils at 3 for $2. How much do 18 pencils cost?
+Solution. 18 pencils is 6 groups of 3 pencils. Each group costs $2, so the total is 6 x 2 = $12.
+
+Problem 2. Solve for x: 5x - 7 = 2x + 11.
+Solution. Subtract 2x from both sides: 3x - 7 = 11. Add 7 to both sides: 3x = 18. Divide by 3: x = 6.
+
+Problem 3. A rectangle has perimeter 34 cm and width 6 cm. Find its area.
+Solution. Perimeter is 2(l + w), so 2(l + 6) = 34, meaning l + 6 = 17 and l = 11. The area is 11 x 6 = 66 square centimeters.
+
+Problem 4. A train covers 150 km in 2.5 hours. At the same speed, how long does 210 km take?
+Solution. Speed is 150 / 2.5 = 60 km per hour. Time for 210 km is 210 / 60 = 3.5 hours.
+
+Problem 5. What is the sum of the first 40 positive integers?
+Solution. The sum of the first n integers is n(n + 1)/2. For n = 40 this is 40 x 41 / 2 = 820.
+
+Problem 6. A bag holds 4 red and 6 blue marbles. Two marbles are drawn without replacement. What is the probability both are blue?
+Solution. The first draw is blue with probability 6/10. Given that, the second is blue with probability 5/9. The joint probability is (6/10)(5/9) = 30/90 = 1/3.
+
+Problem 7. Compute the derivative of f(x) = 3x^2 + 5x - 4.
+Solution. Differentiating term by term: d/dx of 3x^2 is 6x, d/dx of 5x is 5, and the constant vanishes. So f'(x) = 6x + 5.
+
+Problem 8. If 40 percent of a number is 26, what is the number?
+Solution. Let the number be n. Then 0.4n = 26, so n = 26 / 0.4 = 65.

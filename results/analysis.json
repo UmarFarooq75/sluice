@@ -1,0 +1,2467 @@
+{
+  "note": "OLMoE 8-of-64 routing; random baseline hit rate = 12.5%; decode-only cache sims",
+  "cache_sims": [
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0356,
+      "weighted_hit_rate": 0.0512
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.1164,
+      "weighted_hit_rate": 0.1268
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.0642,
+      "weighted_hit_rate": 0.0594
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.1149,
+      "weighted_hit_rate": 0.1177
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.0414,
+      "weighted_hit_rate": 0.037
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.3027,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.261,
+      "weighted_hit_rate": 0.314
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.227,
+      "weighted_hit_rate": 0.2402
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.1579,
+      "weighted_hit_rate": 0.153
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.2121,
+      "weighted_hit_rate": 0.2155
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.1168,
+      "weighted_hit_rate": 0.1144
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.5168,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.261,
+      "weighted_hit_rate": 0.3148
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.4098,
+      "weighted_hit_rate": 0.4441
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.3254,
+      "weighted_hit_rate": 0.3395
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.2445,
+      "weighted_hit_rate": 0.2428
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.2993,
+      "weighted_hit_rate": 0.3024
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.1971,
+      "weighted_hit_rate": 0.196
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.6338,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3976,
+      "weighted_hit_rate": 0.422
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.4979,
+      "weighted_hit_rate": 0.5274
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.4162,
+      "weighted_hit_rate": 0.4302
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.3275,
+      "weighted_hit_rate": 0.3296
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.3865,
+      "weighted_hit_rate": 0.3904
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.2775,
+      "weighted_hit_rate": 0.2771
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.7168,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.4959,
+      "weighted_hit_rate": 0.5187
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.6409,
+      "weighted_hit_rate": 0.6623
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.5747,
+      "weighted_hit_rate": 0.5889
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.491,
+      "weighted_hit_rate": 0.5
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.5367,
+      "weighted_hit_rate": 0.5417
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.4159,
+      "weighted_hit_rate": 0.419
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8267,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.6368,
+      "weighted_hit_rate": 0.6556
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.7621,
+      "weighted_hit_rate": 0.7772
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.7068,
+      "weighted_hit_rate": 0.7209
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.6355,
+      "weighted_hit_rate": 0.6535
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.6664,
+      "weighted_hit_rate": 0.6734
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.5524,
+      "weighted_hit_rate": 0.5606
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8965,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.7647,
+      "weighted_hit_rate": 0.7784
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.9267,
+      "weighted_hit_rate": 0.9335
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.9095,
+      "weighted_hit_rate": 0.9205
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.8668,
+      "weighted_hit_rate": 0.8784
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.8743,
+      "weighted_hit_rate": 0.8846
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.7826,
+      "weighted_hit_rate": 0.7921
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9719,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.9326,
+      "weighted_hit_rate": 0.9382
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0364,
+      "weighted_hit_rate": 0.0513
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.2673,
+      "weighted_hit_rate": 0.3322
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.2557,
+      "weighted_hit_rate": 0.3002
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.3155,
+      "weighted_hit_rate": 0.3797
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.0579,
+      "weighted_hit_rate": 0.0529
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.3486,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.3301,
+      "weighted_hit_rate": 0.4137
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.4354,
+      "weighted_hit_rate": 0.502
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.3811,
+      "weighted_hit_rate": 0.4303
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.4578,
+      "weighted_hit_rate": 0.5249
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.1233,
+      "weighted_hit_rate": 0.1136
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.5937,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3301,
+      "weighted_hit_rate": 0.4228
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.5181,
+      "weighted_hit_rate": 0.5776
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.5436,
+      "weighted_hit_rate": 0.6028
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.4762,
+      "weighted_hit_rate": 0.5249
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.5545,
+      "weighted_hit_rate": 0.6124
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.1853,
+      "weighted_hit_rate": 0.1739
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.7118,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.5027,
+      "weighted_hit_rate": 0.5661
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.6114,
+      "weighted_hit_rate": 0.6619
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.6282,
+      "weighted_hit_rate": 0.6777
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.5634,
+      "weighted_hit_rate": 0.6098
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.6306,
+      "weighted_hit_rate": 0.6797
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.2646,
+      "weighted_hit_rate": 0.2565
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.7868,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.6083,
+      "weighted_hit_rate": 0.663
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.7506,
+      "weighted_hit_rate": 0.7838
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.7502,
+      "weighted_hit_rate": 0.7865
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.6837,
+      "weighted_hit_rate": 0.7224
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.7402,
+      "weighted_hit_rate": 0.7763
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.4301,
+      "weighted_hit_rate": 0.4339
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8794,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.7526,
+      "weighted_hit_rate": 0.7902
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.8437,
+      "weighted_hit_rate": 0.8645
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.8398,
+      "weighted_hit_rate": 0.8667
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.7707,
+      "weighted_hit_rate": 0.8065
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.8254,
+      "weighted_hit_rate": 0.8534
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.5833,
+      "weighted_hit_rate": 0.5916
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9316,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.8524,
+      "weighted_hit_rate": 0.8735
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.9567,
+      "weighted_hit_rate": 0.9631
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.9551,
+      "weighted_hit_rate": 0.9652
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.9098,
+      "weighted_hit_rate": 0.927
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.9475,
+      "weighted_hit_rate": 0.9605
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.8463,
+      "weighted_hit_rate": 0.863
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9814,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.9637,
+      "weighted_hit_rate": 0.9695
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0348,
+      "weighted_hit_rate": 0.0508
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.122,
+      "weighted_hit_rate": 0.1378
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.0907,
+      "weighted_hit_rate": 0.0887
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.1085,
+      "weighted_hit_rate": 0.1128
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.0823,
+      "weighted_hit_rate": 0.0812
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.3026,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.2467,
+      "weighted_hit_rate": 0.302
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.2335,
+      "weighted_hit_rate": 0.2544
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.1811,
+      "weighted_hit_rate": 0.1786
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.2022,
+      "weighted_hit_rate": 0.2101
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.157,
+      "weighted_hit_rate": 0.1551
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.5174,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.2467,
+      "weighted_hit_rate": 0.302
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.3989,
+      "weighted_hit_rate": 0.4359
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.3311,
+      "weighted_hit_rate": 0.3554
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.2694,
+      "weighted_hit_rate": 0.2692
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.2891,
+      "weighted_hit_rate": 0.3003
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.2238,
+      "weighted_hit_rate": 0.223
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.641,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3844,
+      "weighted_hit_rate": 0.4104
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.4995,
+      "weighted_hit_rate": 0.5298
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.4192,
+      "weighted_hit_rate": 0.4456
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.3424,
+      "weighted_hit_rate": 0.3416
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.3665,
+      "weighted_hit_rate": 0.3787
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.2901,
+      "weighted_hit_rate": 0.288
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.7267,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.4955,
+      "weighted_hit_rate": 0.5178
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.6621,
+      "weighted_hit_rate": 0.6846
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.5724,
+      "weighted_hit_rate": 0.599
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.4893,
+      "weighted_hit_rate": 0.4921
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.5015,
+      "weighted_hit_rate": 0.5166
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.4353,
+      "weighted_hit_rate": 0.4363
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.837,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.6619,
+      "weighted_hit_rate": 0.6813
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.7834,
+      "weighted_hit_rate": 0.8003
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.7044,
+      "weighted_hit_rate": 0.7247
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.6246,
+      "weighted_hit_rate": 0.6372
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.6234,
+      "weighted_hit_rate": 0.6374
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.5762,
+      "weighted_hit_rate": 0.5839
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9039,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.7893,
+      "weighted_hit_rate": 0.8057
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.9344,
+      "weighted_hit_rate": 0.9416
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.902,
+      "weighted_hit_rate": 0.9121
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.8613,
+      "weighted_hit_rate": 0.8737
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.824,
+      "weighted_hit_rate": 0.8325
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.7975,
+      "weighted_hit_rate": 0.8029
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.974,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "knowledge",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.9436,
+      "weighted_hit_rate": 0.9501
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0418,
+      "weighted_hit_rate": 0.0599
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.2234,
+      "weighted_hit_rate": 0.2587
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.2257,
+      "weighted_hit_rate": 0.2463
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.259,
+      "weighted_hit_rate": 0.2926
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.0891,
+      "weighted_hit_rate": 0.0958
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.3435,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.3334,
+      "weighted_hit_rate": 0.4003
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.3878,
+      "weighted_hit_rate": 0.4287
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.3447,
+      "weighted_hit_rate": 0.3651
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.4093,
+      "weighted_hit_rate": 0.4454
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.167,
+      "weighted_hit_rate": 0.175
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.5921,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3334,
+      "weighted_hit_rate": 0.4086
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.5274,
+      "weighted_hit_rate": 0.5712
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.5054,
+      "weighted_hit_rate": 0.5467
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.4391,
+      "weighted_hit_rate": 0.4603
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.5171,
+      "weighted_hit_rate": 0.5551
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.2344,
+      "weighted_hit_rate": 0.2345
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.7069,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.519,
+      "weighted_hit_rate": 0.5632
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.6157,
+      "weighted_hit_rate": 0.6508
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.5998,
+      "weighted_hit_rate": 0.6375
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.5308,
+      "weighted_hit_rate": 0.5547
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.6027,
+      "weighted_hit_rate": 0.6405
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.3093,
+      "weighted_hit_rate": 0.3095
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.777,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.6149,
+      "weighted_hit_rate": 0.6508
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.7302,
+      "weighted_hit_rate": 0.7543
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.7311,
+      "weighted_hit_rate": 0.7566
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.6653,
+      "weighted_hit_rate": 0.6905
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.7182,
+      "weighted_hit_rate": 0.7491
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.4549,
+      "weighted_hit_rate": 0.4627
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8674,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.7328,
+      "weighted_hit_rate": 0.7576
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.8214,
+      "weighted_hit_rate": 0.8382
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.8303,
+      "weighted_hit_rate": 0.8522
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.7551,
+      "weighted_hit_rate": 0.7814
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.8181,
+      "weighted_hit_rate": 0.8449
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.5741,
+      "weighted_hit_rate": 0.5868
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9234,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.8255,
+      "weighted_hit_rate": 0.842
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.9519,
+      "weighted_hit_rate": 0.9585
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.9548,
+      "weighted_hit_rate": 0.9634
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.9127,
+      "weighted_hit_rate": 0.9266
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.9469,
+      "weighted_hit_rate": 0.9595
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.7906,
+      "weighted_hit_rate": 0.8029
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9802,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.9607,
+      "weighted_hit_rate": 0.9674
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0368,
+      "weighted_hit_rate": 0.0535
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.1958,
+      "weighted_hit_rate": 0.263
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.1244,
+      "weighted_hit_rate": 0.1367
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.2068,
+      "weighted_hit_rate": 0.2635
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.0434,
+      "weighted_hit_rate": 0.038
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.325,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.3113,
+      "weighted_hit_rate": 0.4077
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.3443,
+      "weighted_hit_rate": 0.4174
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.2129,
+      "weighted_hit_rate": 0.2371
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.3314,
+      "weighted_hit_rate": 0.4008
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.1047,
+      "weighted_hit_rate": 0.0963
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.5614,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3113,
+      "weighted_hit_rate": 0.4189
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.4658,
+      "weighted_hit_rate": 0.5388
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.4477,
+      "weighted_hit_rate": 0.5153
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.2914,
+      "weighted_hit_rate": 0.3219
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.4199,
+      "weighted_hit_rate": 0.4815
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.1548,
+      "weighted_hit_rate": 0.1429
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.6813,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.4531,
+      "weighted_hit_rate": 0.5241
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.5612,
+      "weighted_hit_rate": 0.6236
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.5303,
+      "weighted_hit_rate": 0.5905
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.3602,
+      "weighted_hit_rate": 0.3898
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.4911,
+      "weighted_hit_rate": 0.5475
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.2138,
+      "weighted_hit_rate": 0.1987
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.7589,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.5543,
+      "weighted_hit_rate": 0.6196
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.7039,
+      "weighted_hit_rate": 0.7494
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.6604,
+      "weighted_hit_rate": 0.709
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.4946,
+      "weighted_hit_rate": 0.5229
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.6149,
+      "weighted_hit_rate": 0.6631
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.3226,
+      "weighted_hit_rate": 0.3034
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8548,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.7074,
+      "weighted_hit_rate": 0.7606
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.802,
+      "weighted_hit_rate": 0.834
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.7662,
+      "weighted_hit_rate": 0.8048
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.6446,
+      "weighted_hit_rate": 0.6849
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.7164,
+      "weighted_hit_rate": 0.7588
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.4339,
+      "weighted_hit_rate": 0.4107
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9131,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.8098,
+      "weighted_hit_rate": 0.8474
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.9369,
+      "weighted_hit_rate": 0.9488
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.9243,
+      "weighted_hit_rate": 0.9419
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.8628,
+      "weighted_hit_rate": 0.8871
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.8965,
+      "weighted_hit_rate": 0.9184
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.7424,
+      "weighted_hit_rate": 0.7357
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9746,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "multilingual",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.9479,
+      "weighted_hit_rate": 0.9603
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0336,
+      "weighted_hit_rate": 0.0476
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.1553,
+      "weighted_hit_rate": 0.1676
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.0347,
+      "weighted_hit_rate": 0.0333
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.1735,
+      "weighted_hit_rate": 0.1819
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.1053,
+      "weighted_hit_rate": 0.1048
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.2922,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.2258,
+      "weighted_hit_rate": 0.2694
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.281,
+      "weighted_hit_rate": 0.2979
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.1098,
+      "weighted_hit_rate": 0.1088
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.2853,
+      "weighted_hit_rate": 0.2981
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.191,
+      "weighted_hit_rate": 0.1936
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.5006,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.2258,
+      "weighted_hit_rate": 0.2654
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.3674,
+      "weighted_hit_rate": 0.396
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.3874,
+      "weighted_hit_rate": 0.4072
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.1821,
+      "weighted_hit_rate": 0.1829
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.3851,
+      "weighted_hit_rate": 0.3996
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.2786,
+      "weighted_hit_rate": 0.2836
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.6247,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3525,
+      "weighted_hit_rate": 0.3643
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.4645,
+      "weighted_hit_rate": 0.4891
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.4842,
+      "weighted_hit_rate": 0.508
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.253,
+      "weighted_hit_rate": 0.2554
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.476,
+      "weighted_hit_rate": 0.4939
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.3644,
+      "weighted_hit_rate": 0.3699
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.7136,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.4632,
+      "weighted_hit_rate": 0.4729
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.6336,
+      "weighted_hit_rate": 0.6519
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.6564,
+      "weighted_hit_rate": 0.6815
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.4166,
+      "weighted_hit_rate": 0.4273
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.642,
+      "weighted_hit_rate": 0.6637
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.5217,
+      "weighted_hit_rate": 0.5276
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8324,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.6317,
+      "weighted_hit_rate": 0.644
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.7721,
+      "weighted_hit_rate": 0.7872
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.7915,
+      "weighted_hit_rate": 0.8116
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.5764,
+      "weighted_hit_rate": 0.5993
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.7735,
+      "weighted_hit_rate": 0.7916
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.6525,
+      "weighted_hit_rate": 0.662
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9053,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.7731,
+      "weighted_hit_rate": 0.7858
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.9392,
+      "weighted_hit_rate": 0.9464
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.9452,
+      "weighted_hit_rate": 0.955
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.8414,
+      "weighted_hit_rate": 0.8596
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.9313,
+      "weighted_hit_rate": 0.9415
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.856,
+      "weighted_hit_rate": 0.8686
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9753,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.9486,
+      "weighted_hit_rate": 0.9544
+    }
+  ],
+  "per_layer_lru_C16": {
+    "chat": [
+      0.3841,
+      0.3681,
+      0.4802,
+      0.4582,
+      0.5677,
+      0.6158,
+      0.617,
+      0.5573,
+      0.508,
+      0.4415,
+      0.4258,
+      0.4877,
+      0.5256,
+      0.5166,
+      0.515,
+      0.4982
+    ],
+    "code": [
+      0.4173,
+      0.4366,
+      0.5263,
+      0.5395,
+      0.6769,
+      0.7125,
+      0.6666,
+      0.6804,
+      0.6556,
+      0.6312,
+      0.5566,
+      0.6697,
+      0.6632,
+      0.7017,
+      0.6563,
+      0.5918
+    ],
+    "knowledge": [
+      0.3934,
+      0.3682,
+      0.4933,
+      0.4726,
+      0.5822,
+      0.6309,
+      0.6054,
+      0.5832,
+      0.5016,
+      0.4377,
+      0.3915,
+      0.4786,
+      0.5321,
+      0.5176,
+      0.5081,
+      0.4958
+    ],
+    "math": [
+      0.4468,
+      0.4665,
+      0.5322,
+      0.546,
+      0.6554,
+      0.7009,
+      0.7274,
+      0.7074,
+      0.6839,
+      0.655,
+      0.5922,
+      0.6735,
+      0.6484,
+      0.6421,
+      0.5895,
+      0.5837
+    ],
+    "multilingual": [
+      0.4117,
+      0.37,
+      0.543,
+      0.567,
+      0.5947,
+      0.6132,
+      0.6567,
+      0.6186,
+      0.5904,
+      0.5331,
+      0.4845,
+      0.5348,
+      0.5472,
+      0.5911,
+      0.5888,
+      0.7337
+    ],
+    "prose": [
+      0.3348,
+      0.3635,
+      0.4685,
+      0.4828,
+      0.5598,
+      0.6027,
+      0.6093,
+      0.5745,
+      0.4609,
+      0.4176,
+      0.358,
+      0.4388,
+      0.4389,
+      0.4339,
+      0.4303,
+      0.458
+    ]
+  },
+  "greedy_allocation_budget256": {
+    "total_budget_experts": 256,
+    "uniform_hit_rate": 0.5423,
+    "greedy_hit_rate": 0.4221,
+    "allocation_per_layer": [
+      0,
+      0,
+      0,
+      0,
+      32,
+      32,
+      32,
+      32,
+      32,
+      0,
+      0,
+      0,
+      32,
+      32,
+      32,
+      0
+    ]
+  },
+  "discovery_curves": {
+    "chat": {
+      "unique_at_25/50/75/100pct_tokens": [
+        1003,
+        1020,
+        1022,
+        1023
+      ],
+      "total_possible": 1024,
+      "new_experts_per_100tok_last_quarter": 0.31,
+      "plateaued": true
+    },
+    "code": {
+      "unique_at_25/50/75/100pct_tokens": [
+        956,
+        986,
+        1002,
+        1012
+      ],
+      "total_possible": 1024,
+      "new_experts_per_100tok_last_quarter": 3.11,
+      "plateaued": false
+    },
+    "knowledge": {
+      "unique_at_25/50/75/100pct_tokens": [
+        990,
+        1013,
+        1023,
+        1023
+      ],
+      "total_possible": 1024,
+      "new_experts_per_100tok_last_quarter": 0.0,
+      "plateaued": true
+    },
+    "math": {
+      "unique_at_25/50/75/100pct_tokens": [
+        963,
+        996,
+        1005,
+        1008
+      ],
+      "total_possible": 1024,
+      "new_experts_per_100tok_last_quarter": 0.93,
+      "plateaued": true
+    },
+    "multilingual": {
+      "unique_at_25/50/75/100pct_tokens": [
+        1008,
+        1022,
+        1022,
+        1023
+      ],
+      "total_possible": 1024,
+      "new_experts_per_100tok_last_quarter": 0.31,
+      "plateaued": true
+    },
+    "prose": {
+      "unique_at_25/50/75/100pct_tokens": [
+        980,
+        1003,
+        1011,
+        1017
+      ],
+      "total_possible": 1024,
+      "new_experts_per_100tok_last_quarter": 1.93,
+      "plateaued": true
+    }
+  },
+  "concentration": {
+    "chat": {
+      "experts_for_50pct": 19.5,
+      "experts_for_90pct": 47.0,
+      "experts_for_99pct": 59.2
+    },
+    "code": {
+      "experts_for_50pct": 10.2,
+      "experts_for_90pct": 38.1,
+      "experts_for_99pct": 55.2
+    },
+    "knowledge": {
+      "experts_for_50pct": 19.4,
+      "experts_for_90pct": 47.6,
+      "experts_for_99pct": 60.2
+    },
+    "math": {
+      "experts_for_50pct": 11.8,
+      "experts_for_90pct": 38.8,
+      "experts_for_99pct": 54.8
+    },
+    "multilingual": {
+      "experts_for_50pct": 14.4,
+      "experts_for_90pct": 43.9,
+      "experts_for_99pct": 59.6
+    },
+    "prose": {
+      "experts_for_50pct": 16.2,
+      "experts_for_90pct": 41.2,
+      "experts_for_99pct": 56.9
+    },
+    "_pooled_all_tasks": {
+      "experts_for_50pct": 22.2,
+      "experts_for_90pct": 50.6,
+      "experts_for_99pct": 61.8
+    }
+  },
+  "cross_task_overlap": [
+    {
+      "pair": "chat~code",
+      "jaccard_top16": 0.238
+    },
+    {
+      "pair": "chat~knowledge",
+      "jaccard_top16": 0.369
+    },
+    {
+      "pair": "chat~math",
+      "jaccard_top16": 0.234
+    },
+    {
+      "pair": "chat~multilingual",
+      "jaccard_top16": 0.173
+    },
+    {
+      "pair": "chat~prose",
+      "jaccard_top16": 0.288
+    },
+    {
+      "pair": "code~knowledge",
+      "jaccard_top16": 0.193
+    },
+    {
+      "pair": "code~math",
+      "jaccard_top16": 0.55
+    },
+    {
+      "pair": "code~multilingual",
+      "jaccard_top16": 0.204
+    },
+    {
+      "pair": "code~prose",
+      "jaccard_top16": 0.079
+    },
+    {
+      "pair": "knowledge~math",
+      "jaccard_top16": 0.178
+    },
+    {
+      "pair": "knowledge~multilingual",
+      "jaccard_top16": 0.171
+    },
+    {
+      "pair": "knowledge~prose",
+      "jaccard_top16": 0.33
+    },
+    {
+      "pair": "math~multilingual",
+      "jaccard_top16": 0.218
+    },
+    {
+      "pair": "math~prose",
+      "jaccard_top16": 0.05
+    },
+    {
+      "pair": "multilingual~prose",
+      "jaccard_top16": 0.137
+    }
+  ],
+  "temporal_locality": {
+    "chat": {
+      "mean_consec_overlap_top8": 0.378,
+      "layer0": 0.279,
+      "deepest_layer": 0.351,
+      "random_baseline": 0.125
+    },
+    "code": {
+      "mean_consec_overlap_top8": 0.467,
+      "layer0": 0.3,
+      "deepest_layer": 0.416,
+      "random_baseline": 0.125
+    },
+    "knowledge": {
+      "mean_consec_overlap_top8": 0.368,
+      "layer0": 0.277,
+      "deepest_layer": 0.34,
+      "random_baseline": 0.125
+    },
+    "math": {
+      "mean_consec_overlap_top8": 0.47,
+      "layer0": 0.313,
+      "deepest_layer": 0.403,
+      "random_baseline": 0.125
+    },
+    "multilingual": {
+      "mean_consec_overlap_top8": 0.426,
+      "layer0": 0.303,
+      "deepest_layer": 0.492,
+      "random_baseline": 0.125
+    },
+    "prose": {
+      "mean_consec_overlap_top8": 0.342,
+      "layer0": 0.233,
+      "deepest_layer": 0.324,
+      "random_baseline": 0.125
+    }
+  },
+  "easy_token_stats": {
+    "chat": {
+      "mean_experts_for_90pct_mass": 6.96,
+      "pct_tokenlayers_top4_covers_90pct": 0.001,
+      "mean_top1_share_of_top8": 0.224
+    },
+    "code": {
+      "mean_experts_for_90pct_mass": 6.95,
+      "pct_tokenlayers_top4_covers_90pct": 0.0,
+      "mean_top1_share_of_top8": 0.229
+    },
+    "knowledge": {
+      "mean_experts_for_90pct_mass": 6.94,
+      "pct_tokenlayers_top4_covers_90pct": 0.0,
+      "mean_top1_share_of_top8": 0.228
+    },
+    "math": {
+      "mean_experts_for_90pct_mass": 6.96,
+      "pct_tokenlayers_top4_covers_90pct": 0.0,
+      "mean_top1_share_of_top8": 0.223
+    },
+    "multilingual": {
+      "mean_experts_for_90pct_mass": 6.82,
+      "pct_tokenlayers_top4_covers_90pct": 0.003,
+      "mean_top1_share_of_top8": 0.248
+    },
+    "prose": {
+      "mean_experts_for_90pct_mass": 6.97,
+      "pct_tokenlayers_top4_covers_90pct": 0.0,
+      "mean_top1_share_of_top8": 0.221
+    }
+  },
+  "prefill_union": [
+    {
+      "workload": "prefill_1024w",
+      "prompt_tokens": 1876,
+      "over_context_4096": false,
+      "mean_unique_experts_per_layer": 63.9,
+      "naive_expert_loads_per_layer": 15008,
+      "io_reduction_x": 235.0
+    },
+    {
+      "workload": "prefill_256w",
+      "prompt_tokens": 435,
+      "over_context_4096": false,
+      "mean_unique_experts_per_layer": 62.9,
+      "naive_expert_loads_per_layer": 3480,
+      "io_reduction_x": 55.3
+    },
+    {
+      "workload": "prefill_3072w",
+      "prompt_tokens": 4789,
+      "over_context_4096": true,
+      "mean_unique_experts_per_layer": 64.0,
+      "naive_expert_loads_per_layer": 38312,
+      "io_reduction_x": 598.6
+    },
+    {
+      "workload": "prefill_64w",
+      "prompt_tokens": 127,
+      "over_context_4096": false,
+      "mean_unique_experts_per_layer": 62.1,
+      "naive_expert_loads_per_layer": 1016,
+      "io_reduction_x": 16.4
+    }
+  ]
+}

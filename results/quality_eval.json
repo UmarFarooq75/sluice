@@ -1,0 +1,146 @@
+{
+  "code": {
+    "baseline": {
+      "nll": 1.876,
+      "delta_pct_vs_baseline": 0.0
+    },
+    "k6": {
+      "nll": 1.9492,
+      "delta_pct_vs_baseline": 3.9
+    },
+    "k4": {
+      "nll": 2.1406,
+      "delta_pct_vs_baseline": 14.1
+    },
+    "pin16": {
+      "nll": 2.4551,
+      "delta_pct_vs_baseline": 30.87
+    },
+    "pin24": {
+      "nll": 2.1406,
+      "delta_pct_vs_baseline": 14.1
+    },
+    "pin32": {
+      "nll": 1.9961,
+      "delta_pct_vs_baseline": 6.4
+    },
+    "pin24_cross": {
+      "nll": 9.4453,
+      "delta_pct_vs_baseline": 403.48
+    },
+    "route24_m02": {
+      "nll": 1.8994,
+      "fetches_per_token": 10.803,
+      "fetch_rate_of_selects": 0.0844,
+      "delta_pct_vs_baseline": 1.25
+    },
+    "route24_m05": {
+      "nll": 1.9482,
+      "fetches_per_token": 2.648,
+      "fetch_rate_of_selects": 0.0207,
+      "delta_pct_vs_baseline": 3.85
+    },
+    "route16_m02": {
+      "nll": 1.8994,
+      "fetches_per_token": 19.465,
+      "fetch_rate_of_selects": 0.1521,
+      "delta_pct_vs_baseline": 1.25
+    }
+  },
+  "math": {
+    "baseline": {
+      "nll": 1.2197,
+      "delta_pct_vs_baseline": 0.0
+    },
+    "k6": {
+      "nll": 1.2852,
+      "delta_pct_vs_baseline": 5.37
+    },
+    "k4": {
+      "nll": 1.5273,
+      "delta_pct_vs_baseline": 25.22
+    },
+    "pin16": {
+      "nll": 3.8262,
+      "delta_pct_vs_baseline": 213.7
+    },
+    "pin24": {
+      "nll": 2.7891,
+      "delta_pct_vs_baseline": 128.67
+    },
+    "pin32": {
+      "nll": 1.9727,
+      "delta_pct_vs_baseline": 61.74
+    },
+    "pin24_cross": {
+      "nll": 8.3672,
+      "delta_pct_vs_baseline": 586.0
+    },
+    "route24_m02": {
+      "nll": 1.2061,
+      "fetches_per_token": 17.304,
+      "fetch_rate_of_selects": 0.1352,
+      "delta_pct_vs_baseline": -1.12
+    },
+    "route24_m05": {
+      "nll": 1.2959,
+      "fetches_per_token": 5.288,
+      "fetch_rate_of_selects": 0.0413,
+      "delta_pct_vs_baseline": 6.25
+    },
+    "route16_m02": {
+      "nll": 1.2168,
+      "fetches_per_token": 29.834,
+      "fetch_rate_of_selects": 0.2331,
+      "delta_pct_vs_baseline": -0.24
+    }
+  },
+  "prose": {
+    "baseline": {
+      "nll": 2.832,
+      "delta_pct_vs_baseline": 0.0
+    },
+    "k6": {
+      "nll": 2.957,
+      "delta_pct_vs_baseline": 4.41
+    },
+    "k4": {
+      "nll": 3.4023,
+      "delta_pct_vs_baseline": 20.14
+    },
+    "pin16": {
+      "nll": 6.7031,
+      "delta_pct_vs_baseline": 136.69
+    },
+    "pin24": {
+      "nll": 5.4141,
+      "delta_pct_vs_baseline": 91.18
+    },
+    "pin32": {
+      "nll": 4.4688,
+      "delta_pct_vs_baseline": 57.8
+    },
+    "pin24_cross": {
+      "nll": 5.8047,
+      "delta_pct_vs_baseline": 104.97
+    },
+    "route24_m02": {
+      "nll": 2.8711,
+      "fetches_per_token": 27.349,
+      "fetch_rate_of_selects": 0.2137,
+      "delta_pct_vs_baseline": 1.38
+    },
+    "route24_m05": {
+      "nll": 3.2695,
+      "fetches_per_token": 9.758,
+      "fetch_rate_of_selects": 0.0762,
+      "delta_pct_vs_baseline": 15.45
+    },
+    "route16_m02": {
+      "nll": 2.9023,
+      "fetches_per_token": 49.694,
+      "fetch_rate_of_selects": 0.3882,
+      "delta_pct_vs_baseline": 2.48
+    }
+  }
+}

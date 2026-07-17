@@ -1,0 +1,14 @@
+llmstream: 16 layers, 32 slots/layer, expert stride 1.18 MB x3
+mode=streamed prompt_toks=17 generated=32
+prefill: 0.96 s (17.80 tok/s)
+decode:  1.24 s (25.73 tok/s)
+io: cb_calls=784 decode_uses=4096 decode_misses=713 (hit 0.826) prefill_uses=2048 prefill_misses=731
+io: total_read=5517.9 MB avg_bw=2510 MB/s (whole run)
+logits_hash=b6869f5b6ef36376
+text: 
+
+Here's a simple Python function that checks if a number is prime:
+
+```python
+def is_prime(n):
+    if n

@@ -1,0 +1,156 @@
+{
+  "H2_coactivation_layout": {
+    "chat": {
+      "mean_read_runs_random_layout": 7.14,
+      "mean_read_runs_coactivation_layout": 5.03,
+      "io_ops_reduction_x": 1.42
+    },
+    "code": {
+      "mean_read_runs_random_layout": 7.12,
+      "mean_read_runs_coactivation_layout": 4.61,
+      "io_ops_reduction_x": 1.55
+    },
+    "knowledge": {
+      "mean_read_runs_random_layout": 7.16,
+      "mean_read_runs_coactivation_layout": 4.97,
+      "io_ops_reduction_x": 1.44
+    },
+    "math": {
+      "mean_read_runs_random_layout": 7.16,
+      "mean_read_runs_coactivation_layout": 4.78,
+      "io_ops_reduction_x": 1.5
+    },
+    "multilingual": {
+      "mean_read_runs_random_layout": 7.13,
+      "mean_read_runs_coactivation_layout": 4.95,
+      "io_ops_reduction_x": 1.44
+    },
+    "prose": {
+      "mean_read_runs_random_layout": 7.11,
+      "mean_read_runs_coactivation_layout": 4.91,
+      "io_ops_reduction_x": 1.45
+    }
+  },
+  "H4_cross_sequence": {
+    "chat": {
+      "agents_2": {
+        "mean_union": 14.71,
+        "naive": 16,
+        "sublinearity": 0.919,
+        "per_agent_cost_x": 0.919
+      },
+      "agents_3": {
+        "mean_union": 20.47,
+        "naive": 24,
+        "sublinearity": 0.853,
+        "per_agent_cost_x": 0.853
+      },
+      "agents_5": {
+        "mean_union": 29.09,
+        "naive": 40,
+        "sublinearity": 0.727,
+        "per_agent_cost_x": 0.727
+      }
+    },
+    "code": {
+      "agents_2": {
+        "mean_union": 12.99,
+        "naive": 16,
+        "sublinearity": 0.812,
+        "per_agent_cost_x": 0.812
+      },
+      "agents_3": {
+        "mean_union": 17.14,
+        "naive": 24,
+        "sublinearity": 0.714,
+        "per_agent_cost_x": 0.714
+      },
+      "agents_5": {
+        "mean_union": 23.86,
+        "naive": 40,
+        "sublinearity": 0.596,
+        "per_agent_cost_x": 0.596
+      }
+    },
+    "knowledge": {
+      "agents_2": {
+        "mean_union": 14.68,
+        "naive": 16,
+        "sublinearity": 0.918,
+        "per_agent_cost_x": 0.918
+      },
+      "agents_3": {
+        "mean_union": 19.85,
+        "naive": 24,
+        "sublinearity": 0.827,
+        "per_agent_cost_x": 0.827
+      },
+      "agents_5": {
+        "mean_union": 29.87,
+        "naive": 40,
+        "sublinearity": 0.747,
+        "per_agent_cost_x": 0.747
+      }
+    },
+    "math": {
+      "agents_2": {
+        "mean_union": 13.77,
+        "naive": 16,
+        "sublinearity": 0.861,
+        "per_agent_cost_x": 0.861
+      },
+      "agents_3": {
+        "mean_union": 17.9,
+        "naive": 24,
+        "sublinearity": 0.746,
+        "per_agent_cost_x": 0.746
+      },
+      "agents_5": {
+        "mean_union": 24.72,
+        "naive": 40,
+        "sublinearity": 0.618,
+        "per_agent_cost_x": 0.618
+      }
+    },
+    "multilingual": {
+      "agents_2": {
+        "mean_union": 14.63,
+        "naive": 16,
+        "sublinearity": 0.914,
+        "per_agent_cost_x": 0.914
+      },
+      "agents_3": {
+        "mean_union": 19.65,
+        "naive": 24,
+        "sublinearity": 0.819,
+        "per_agent_cost_x": 0.819
+      },
+      "agents_5": {
+        "mean_union": 27.05,
+        "naive": 40,
+        "sublinearity": 0.676,
+        "per_agent_cost_x": 0.676
+      }
+    },
+    "prose": {
+      "agents_2": {
+        "mean_union": 13.89,
+        "naive": 16,
+        "sublinearity": 0.868,
+        "per_agent_cost_x": 0.868
+      },
+      "agents_3": {
+        "mean_union": 19.84,
+        "naive": 24,
+        "sublinearity": 0.827,
+        "per_agent_cost_x": 0.827
+      },
+      "agents_5": {
+        "mean_union": 27.61,
+        "naive": 40,
+        "sublinearity": 0.69,
+        "per_agent_cost_x": 0.69
+      }
+    }
+  }
+}

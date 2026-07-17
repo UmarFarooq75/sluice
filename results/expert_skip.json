@@ -1,0 +1,113 @@
+{
+  "code": {
+    "baseline": {
+      "nll": 1.6611,
+      "skipped_frac": 0.0,
+      "delta_pct": 0.0
+    },
+    "skip_gm_030": {
+      "nll": 1.8584,
+      "skipped_frac": 0.345,
+      "delta_pct": 11.88
+    },
+    "skip_gm_045": {
+      "nll": 12.3125,
+      "skipped_frac": 0.91,
+      "delta_pct": 641.23
+    },
+    "skip_gm_060": {
+      "nll": 16.4375,
+      "skipped_frac": 0.998,
+      "delta_pct": 889.56
+    },
+    "keep_gm_045": {
+      "nll": 4.7656,
+      "skipped_frac": 0.119,
+      "delta_pct": 186.89
+    },
+    "k3": {
+      "nll": 1.7217,
+      "skipped_frac": 0.0,
+      "delta_pct": 3.65
+    },
+    "skip_all": {
+      "nll": 16.4375,
+      "skipped_frac": 1.0,
+      "delta_pct": 889.56
+    }
+  },
+  "math": {
+    "baseline": {
+      "nll": 0.8022,
+      "skipped_frac": 0.0,
+      "delta_pct": 0.0
+    },
+    "skip_gm_030": {
+      "nll": 0.8135,
+      "skipped_frac": 0.184,
+      "delta_pct": 1.41
+    },
+    "skip_gm_045": {
+      "nll": 9.8516,
+      "skipped_frac": 0.942,
+      "delta_pct": 1128.07
+    },
+    "skip_gm_060": {
+      "nll": 17.8594,
+      "skipped_frac": 0.998,
+      "delta_pct": 2126.3
+    },
+    "keep_gm_045": {
+      "nll": 2.2676,
+      "skipped_frac": 0.201,
+      "delta_pct": 182.67
+    },
+    "k3": {
+      "nll": 0.8638,
+      "skipped_frac": 0.0,
+      "delta_pct": 7.68
+    },
+    "skip_all": {
+      "nll": 17.8125,
+      "skipped_frac": 1.0,
+      "delta_pct": 2120.46
+    }
+  },
+  "prose": {
+    "baseline": {
+      "nll": 2.6191,
+      "skipped_frac": 0.0,
+      "delta_pct": 0.0
+    },
+    "skip_gm_030": {
+      "nll": 2.6836,
+      "skipped_frac": 0.153,
+      "delta_pct": 2.46
+    },
+    "skip_gm_045": {
+      "nll": 10.1719,
+      "skipped_frac": 0.891,
+      "delta_pct": 288.37
+    },
+    "skip_gm_060": {
+      "nll": 14.0938,
+      "skipped_frac": 0.996,
+      "delta_pct": 438.12
+    },
+    "keep_gm_045": {
+      "nll": 8.8125,
+      "skipped_frac": 0.092,
+      "delta_pct": 236.47
+    },
+    "k3": {
+      "nll": 2.7266,
+      "skipped_frac": 0.0,
+      "delta_pct": 4.1
+    },
+    "skip_all": {
+      "nll": 14.375,
+      "skipped_frac": 1.0,
+      "delta_pct": 448.85
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "draft_agreement": {
+    "pin16": {
+      "per_workload": {
+        "code": 0.395,
+        "math": 0.11,
+        "prose": 0.025,
+        "chat": 0.0
+      },
+      "mean": 0.133
+    },
+    "pin24": {
+      "per_workload": {
+        "code": 0.331,
+        "math": 0.685,
+        "prose": 0.067,
+        "chat": 0.296
+      },
+      "mean": 0.345
+    },
+    "pin32": {
+      "per_workload": {
+        "code": 0.782,
+        "math": 0.756,
+        "prose": 0.429,
+        "chat": 0.552
+      },
+      "mean": 0.63
+    }
+  },
+  "union_growth": {
+    "w2": {
+      "mean_union": 10.48,
+      "naive": 12,
+      "sublinearity": 0.874
+    },
+    "w4": {
+      "mean_union": 17.72,
+      "naive": 24,
+      "sublinearity": 0.738
+    },
+    "w8": {
+      "mean_union": 28.08,
+      "naive": 48,
+      "sublinearity": 0.585
+    }
+  },
+  "estimate_miss50pct": {
+    "pin16|w2": {
+      "expected_accepted": 1.15,
+      "disk_reduction_x": 0.66
+    },
+    "pin16|w4": {
+      "expected_accepted": 1.15,
+      "disk_reduction_x": 0.39
+    },
+    "pin16|w8": {
+      "expected_accepted": 1.15,
+      "disk_reduction_x": 0.25
+    },
+    "pin24|w2": {
+      "expected_accepted": 1.46,
+      "disk_reduction_x": 0.84
+    },
+    "pin24|w4": {
+      "expected_accepted": 1.52,
+      "disk_reduction_x": 0.51
+    },
+    "pin24|w8": {
+      "expected_accepted": 1.53,
+      "disk_reduction_x": 0.33
+    },
+    "pin32|w2": {
+      "expected_accepted": 2.03,
+      "disk_reduction_x": 1.16
+    },
+    "pin32|w4": {
+      "expected_accepted": 2.43,
+      "disk_reduction_x": 0.82
+    },
+    "pin32|w8": {
+      "expected_accepted": 2.66,
+      "disk_reduction_x": 0.57
+    }
+  }
+}

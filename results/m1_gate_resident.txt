@@ -1,0 +1,11 @@
+mode=resident prompt_toks=17 generated=32
+prefill: 0.77 s (22.02 tok/s)
+decode:  0.73 s (44.01 tok/s)
+logits_hash=b6869f5b6ef36376
+text: 
+
+Here's a simple Python function that checks if a number is prime:
+
+```python
+def is_prime(n):
+    if n

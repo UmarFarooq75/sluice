@@ -1,0 +1,104 @@
+{
+  "draft_agreement": {
+    "pin16_draft_agreement": {
+      "per_workload": [
+        0.641,
+        0.578,
+        0.175,
+        0.331
+      ],
+      "mean": 0.431
+    },
+    "pin24_draft_agreement": {
+      "per_workload": [
+        0.733,
+        0.672,
+        0.27,
+        0.423
+      ],
+      "mean": 0.524
+    },
+    "pin32_draft_agreement": {
+      "per_workload": [
+        0.809,
+        0.773,
+        0.421,
+        0.531
+      ],
+      "mean": 0.634
+    }
+  },
+  "union_growth": {
+    "w2": {
+      "mean_union_experts_per_layer": 12.73,
+      "naive_would_be": 16,
+      "sublinearity": 0.795
+    },
+    "w4": {
+      "mean_union_experts_per_layer": 19.89,
+      "naive_would_be": 32,
+      "sublinearity": 0.622
+    },
+    "w8": {
+      "mean_union_experts_per_layer": 29.19,
+      "naive_would_be": 64,
+      "sublinearity": 0.456
+    }
+  },
+  "estimate_miss50pct": {
+    "pin16_draft_agreement|w2": {
+      "expected_accepted_per_window": 1.62,
+      "disk_MB_per_accepted_token": 13.94,
+      "baseline_MB_per_token": 14.16,
+      "disk_reduction_x": 1.02
+    },
+    "pin16_draft_agreement|w4": {
+      "expected_accepted_per_window": 1.73,
+      "disk_MB_per_accepted_token": 20.33,
+      "baseline_MB_per_token": 14.16,
+      "disk_reduction_x": 0.7
+    },
+    "pin16_draft_agreement|w8": {
+      "expected_accepted_per_window": 1.76,
+      "disk_MB_per_accepted_token": 29.41,
+      "baseline_MB_per_token": 14.16,
+      "disk_reduction_x": 0.48
+    },
+    "pin24_draft_agreement|w2": {
+      "expected_accepted_per_window": 1.8,
+      "disk_MB_per_accepted_token": 12.53,
+      "baseline_MB_per_token": 14.16,
+      "disk_reduction_x": 1.13
+    },
+    "pin24_draft_agreement|w4": {
+      "expected_accepted_per_window": 2.02,
+      "disk_MB_per_accepted_token": 17.45,
+      "baseline_MB_per_token": 14.16,
+      "disk_reduction_x": 0.81
+    },
+    "pin24_draft_agreement|w8": {
+      "expected_accepted_per_window": 2.09,
+      "disk_MB_per_accepted_token": 24.67,
+      "baseline_MB_per_token": 14.16,
+      "disk_reduction_x": 0.57
+    },
+    "pin32_draft_agreement|w2": {
+      "expected_accepted_per_window": 2.04,
+      "disk_MB_per_accepted_token": 11.07,
+      "baseline_MB_per_token": 14.16,
+      "disk_reduction_x": 1.28
+    },
+    "pin32_draft_agreement|w4": {
+      "expected_accepted_per_window": 2.45,
+      "disk_MB_per_accepted_token": 14.36,
+      "baseline_MB_per_token": 14.16,
+      "disk_reduction_x": 0.99
+    },
+    "pin32_draft_agreement|w8": {
+      "expected_accepted_per_window": 2.69,
+      "disk_MB_per_accepted_token": 19.23,
+      "baseline_MB_per_token": 14.16,
+      "disk_reduction_x": 0.74
+    }
+  }
+}

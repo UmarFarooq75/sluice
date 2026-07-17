@@ -1,0 +1,38 @@
+{
+  "date": "2026-07-17",
+  "milestone": "M1 - OLMoE end-to-end in llama.cpp fork, experts streamed from GGUF",
+  "model": "allenai/OLMoE-1B-7B-0125-Instruct-GGUF Q4_K_M (4.21 GB, 16 layers x 64 experts, k=8)",
+  "machine": "MacBook Air M2 16GB, CPU backend only, n_ubatch=1 decode",
+  "gate": {
+    "criterion": "FNV-1a hash over every generated position's full logit vector, 33 positions, resident vs slots32 vs slots12, all with weight repacking disabled",
+    "result": "PASS - all three bit-identical (b6869f5b6ef36376), generated text identical",
+    "mechanism_probe": "cb_eval swap test on stock llama.cpp: in-place id mutation propagates, logits checksum unchanged (M1-A pass)",
+    "extents_check": "24/24 per-expert slice hashes match independent gguf-py reader"
+  },
+  "root_cause_note": "initial gate FAIL was llama.cpp ARM weight repacking (use_extra_bufts): repacked resident tensors use interleaved-gemm kernels with different float accumulation order than the plain vec_dot path slot tensors take. Low-order-bit logit differences, zero token-level effect (32/32 greedy tokens identical). Bisection: dup-only == resident (graph change innocent), slots32 == slots12 == identity64 (slot machinery consistent), bytes proven identical.",
+  "speed_n_gen128_prime_prompt": {
+    "resident_repack_ubatch512": {"decode_tok_s": 45.2, "expert_ram_gb": 3.6},
+    "resident_repack_ubatch1":   {"decode_tok_s": 47.6, "expert_ram_gb": 3.6},
+    "resident_norepack_ubatch1": {"decode_tok_s": 44.0, "expert_ram_gb": 3.6},
+    "streamed_slots32_cold_ssd": {"decode_tok_s": 28.3, "expert_ram_gb": 1.8, "hit_rate": 0.891, "misses_per_tok": 13.9, "avg_bw_mb_s": 1759},
+    "streamed_slots12_cold_ssd": {"decode_tok_s": 9.1,  "expert_ram_gb": 0.66, "hit_rate": 0.589, "misses_per_tok": 52.6, "avg_bw_mb_s": 1906}
+  },
+  "comparisons": {
+    "vs_python_poc_same_cache32_no_margin": "28.3 vs 8.26 tok/s = 3.4x (M1 target was >=2x)",
+    "vs_m0_io_only_prediction": "M0 predicted 20.9 tok/s at trace hit 0.826; live decode hit is 0.891, I/O-only ceiling at measured bw = ~36 tok/s; 28.3 measured implies mostly-serial fetch+compute - overlap/prefetch is the M2 prize",
+    "vs_stock_llama_cpp_best": "28.3/45.2 = 63% of fully-resident speed with half the expert RAM; 9.1/45.2 = 20% with 18% of expert RAM; both bit-identical quality"
+  },
+  "methodology_notes": [
+    "cold = fresh F_NOCACHE copy of the GGUF per run (macOS serves F_NOCACHE reads from cache if pages exist; first run after copy showed 39.3 tok/s inflated by write-behind cache, rejected)",
+    "same n_ubatch on both sides of every hash comparison (accumulation order depends on it)",
+    "miss counts identical across repeat runs - cache behavior deterministic"
+  ],
+  "files": {
+    "fork_branch": "vendor/llama.cpp branch llmstream (5 files, ~135 insertions, staged; private fork, never pushed upstream)",
+    "driver": "csrc/stream_run.cpp",
+    "probe": "csrc/probe_cb_eval.cpp",
+    "gate": "scripts/m1_gate.sh",
+    "extent_check": "src/check_extents.py",
+    "nocache_copy": "src/nocache_copy.py"
+  }
+}

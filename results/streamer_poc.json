@@ -1,0 +1,136 @@
+{
+  "ssd_microbench": {
+    "files": 80,
+    "mb": 283.3,
+    "seconds": 0.19,
+    "mb_per_s": 1477.9
+  },
+  "runs": [
+    {
+      "mode": "resident_reference",
+      "tok_s": 76.73,
+      "nll": 3.002
+    },
+    {
+      "mode": "stream_cap0",
+      "prefetched_mb_per_token": null,
+      "tok_s": 3.47,
+      "nll": 3.002,
+      "misses_per_token": 130.7,
+      "hit_rate": 0.0,
+      "mb_read_per_token": 462.7,
+      "load_time_frac": 0.88,
+      "io_ceiling_tok_s": 3.19
+    },
+    {
+      "mode": "stream_cap8",
+      "prefetched_mb_per_token": null,
+      "tok_s": 3.25,
+      "nll": 3.002,
+      "misses_per_token": 102.8,
+      "hit_rate": 0.213,
+      "mb_read_per_token": 364.0,
+      "load_time_frac": 0.883,
+      "io_ceiling_tok_s": 4.06
+    },
+    {
+      "mode": "stream_cap16",
+      "prefetched_mb_per_token": null,
+      "tok_s": 4.04,
+      "nll": 3.002,
+      "misses_per_token": 71.7,
+      "hit_rate": 0.451,
+      "mb_read_per_token": 253.9,
+      "load_time_frac": 0.86,
+      "io_ceiling_tok_s": 5.82
+    },
+    {
+      "mode": "stream_cap32",
+      "prefetched_mb_per_token": null,
+      "tok_s": 8.25,
+      "nll": 3.002,
+      "misses_per_token": 29.1,
+      "hit_rate": 0.778,
+      "mb_read_per_token": 102.9,
+      "load_time_frac": 0.735,
+      "io_ceiling_tok_s": 14.36
+    },
+    {
+      "mode": "stream_cap16_m0.02",
+      "prefetched_mb_per_token": null,
+      "tok_s": 7.54,
+      "nll": 3.002,
+      "misses_per_token": 48.4,
+      "hit_rate": 0.63,
+      "mb_read_per_token": 171.3,
+      "load_time_frac": 0.75,
+      "io_ceiling_tok_s": 8.63
+    },
+    {
+      "mode": "stream_cap32_m0.02",
+      "prefetched_mb_per_token": null,
+      "tok_s": 16.24,
+      "nll": 3.002,
+      "misses_per_token": 11.2,
+      "hit_rate": 0.914,
+      "mb_read_per_token": 39.7,
+      "load_time_frac": 0.486,
+      "io_ceiling_tok_s": 37.23
+    },
+    {
+      "mode": "stream_cap64",
+      "prefetched_mb_per_token": null,
+      "tok_s": 25.93,
+      "nll": 3.002,
+      "misses_per_token": 3.2,
+      "hit_rate": 0.975,
+      "mb_read_per_token": 11.4,
+      "load_time_frac": 0.299,
+      "io_ceiling_tok_s": 130.08
+    },
+    {
+      "mode": "stream_cap16_prefetch",
+      "prefetched_mb_per_token": 229.0,
+      "tok_s": 7.03,
+      "nll": 3.002,
+      "misses_per_token": 29.4,
+      "hit_rate": 0.775,
+      "mb_read_per_token": 104.2,
+      "load_time_frac": 0.726,
+      "io_ceiling_tok_s": 14.19
+    },
+    {
+      "mode": "stream_cap32_prefetch",
+      "prefetched_mb_per_token": 97.0,
+      "tok_s": 8.9,
+      "nll": 3.002,
+      "misses_per_token": 16.1,
+      "hit_rate": 0.877,
+      "mb_read_per_token": 56.9,
+      "load_time_frac": 0.673,
+      "io_ceiling_tok_s": 25.98
+    },
+    {
+      "mode": "stream_cap16_m0.02_prefetch",
+      "prefetched_mb_per_token": 222.7,
+      "tok_s": 8.3,
+      "nll": 3.002,
+      "misses_per_token": 20.6,
+      "hit_rate": 0.842,
+      "mb_read_per_token": 72.9,
+      "load_time_frac": 0.674,
+      "io_ceiling_tok_s": 20.28
+    },
+    {
+      "mode": "stream_cap32_m0.02_prefetch",
+      "prefetched_mb_per_token": 93.3,
+      "tok_s": 11.85,
+      "nll": 3.002,
+      "misses_per_token": 7.8,
+      "hit_rate": 0.94,
+      "mb_read_per_token": 27.6,
+      "load_time_frac": 0.571,
+      "io_ceiling_tok_s": 53.56
+    }
+  ]
+}

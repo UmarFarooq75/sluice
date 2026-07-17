@@ -1,0 +1,26 @@
+{
+  "compression": {
+    "zlib1": {
+      "ratio": 1.0946,
+      "saved_pct": 8.64,
+      "compress_MBps": 44.0,
+      "decompress_MBps": 391.9
+    },
+    "zlib6": {
+      "ratio": 1.0989,
+      "saved_pct": 9.0,
+      "compress_MBps": 24.1,
+      "decompress_MBps": 387.6
+    },
+    "weights_only_zlib6_saved_pct": 6.13,
+    "scales_biases_zlib6_saved_pct": 32.53,
+    "sampled_files": 48,
+    "sampled_mb": 170.0
+  },
+  "dedup": {
+    "block_bytes": 256,
+    "total_blocks": 12582912,
+    "duplicate_fraction": 0.0,
+    "cross_layer_dup_fraction": 0.0
+  }
+}

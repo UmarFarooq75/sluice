@@ -1,0 +1,11 @@
+{
+  "experts_sampled": 160,
+  "mean_gini_neuron_importance": 0.157,
+  "top25pct_set_split_half_stability": 0.475,
+  "rel_output_error_keeping": {
+    "25pct_rows": 0.7712,
+    "50pct_rows": 0.6024,
+    "75pct_rows": 0.4044
+  },
+  "interpretation": "high gini + high stability + low error at 50pct => progressive fetch viable"
+}

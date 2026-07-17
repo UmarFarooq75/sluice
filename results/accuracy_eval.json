@@ -1,0 +1,767 @@
+{
+  "baseline": {
+    "accuracy": 0.625,
+    "correct": 15,
+    "n": 24,
+    "details": [
+      {
+        "q": "What is 17 + 26? Answer with just the number.",
+        "expected": "43",
+        "ok": true
+      },
+      {
+        "q": "What is 9 * 13? Answer with just the number.",
+        "expected": "117",
+        "ok": true
+      },
+      {
+        "q": "What is 144 / 12? Answer with just the number.",
+        "expected": "12",
+        "ok": true
+      },
+      {
+        "q": "What is 203 - 78? Answer with just the number.",
+        "expected": "125",
+        "ok": true
+      },
+      {
+        "q": "A shop sells pens at 4 for $3. How much do 20 pens",
+        "expected": "15",
+        "ok": false
+      },
+      {
+        "q": "Solve for x: 3x + 5 = 26. Answer with just the num",
+        "expected": "7",
+        "ok": false
+      },
+      {
+        "q": "A train travels 180 km in 3 hours. What is its spe",
+        "expected": "60",
+        "ok": true
+      },
+      {
+        "q": "What is 15% of 240? Answer with just the number.",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "A rectangle is 9 cm long and 4 cm wide. What is it",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the sum of the first 10 positive integers?",
+        "expected": "55",
+        "ok": false
+      },
+      {
+        "q": "If 5 workers build a wall in 12 days, how many day",
+        "expected": "6",
+        "ok": false
+      },
+      {
+        "q": "What is 2 to the power of 8? Answer with just the ",
+        "expected": "256",
+        "ok": true
+      },
+      {
+        "q": "A bag has 3 red and 7 blue marbles. What is the pr",
+        "expected": "3/10",
+        "ok": false
+      },
+      {
+        "q": "What is the next number in the sequence 2, 6, 18, ",
+        "expected": "162",
+        "ok": true
+      },
+      {
+        "q": "Sara has 48 apples and gives away a quarter of the",
+        "expected": "36",
+        "ok": false
+      },
+      {
+        "q": "What is 1000 - 637? Answer with just the number.",
+        "expected": "363",
+        "ok": false
+      },
+      {
+        "q": "A car uses 8 liters per 100 km. How many liters fo",
+        "expected": "28",
+        "ok": true
+      },
+      {
+        "q": "What is the perimeter of a square with side 13? An",
+        "expected": "52",
+        "ok": true
+      },
+      {
+        "q": "What is 7 factorial divided by 6 factorial? Answer",
+        "expected": "7",
+        "ok": true
+      },
+      {
+        "q": "Tom is 3 times as old as Ana. Together they are 48",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the average of 12, 18, and 33? Answer with",
+        "expected": "21",
+        "ok": false
+      },
+      {
+        "q": "How many minutes are in 4.5 hours? Answer with jus",
+        "expected": "270",
+        "ok": true
+      },
+      {
+        "q": "What is 25 * 25? Answer with just the number.",
+        "expected": "625",
+        "ok": true
+      },
+      {
+        "q": "A book costs $18 after a 25% discount. What was th",
+        "expected": "24",
+        "ok": false
+      }
+    ]
+  },
+  "route24_m02": {
+    "accuracy": 0.625,
+    "correct": 15,
+    "n": 24,
+    "details": [
+      {
+        "q": "What is 17 + 26? Answer with just the number.",
+        "expected": "43",
+        "ok": true
+      },
+      {
+        "q": "What is 9 * 13? Answer with just the number.",
+        "expected": "117",
+        "ok": true
+      },
+      {
+        "q": "What is 144 / 12? Answer with just the number.",
+        "expected": "12",
+        "ok": true
+      },
+      {
+        "q": "What is 203 - 78? Answer with just the number.",
+        "expected": "125",
+        "ok": false
+      },
+      {
+        "q": "A shop sells pens at 4 for $3. How much do 20 pens",
+        "expected": "15",
+        "ok": false
+      },
+      {
+        "q": "Solve for x: 3x + 5 = 26. Answer with just the num",
+        "expected": "7",
+        "ok": false
+      },
+      {
+        "q": "A train travels 180 km in 3 hours. What is its spe",
+        "expected": "60",
+        "ok": true
+      },
+      {
+        "q": "What is 15% of 240? Answer with just the number.",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "A rectangle is 9 cm long and 4 cm wide. What is it",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the sum of the first 10 positive integers?",
+        "expected": "55",
+        "ok": true
+      },
+      {
+        "q": "If 5 workers build a wall in 12 days, how many day",
+        "expected": "6",
+        "ok": false
+      },
+      {
+        "q": "What is 2 to the power of 8? Answer with just the ",
+        "expected": "256",
+        "ok": true
+      },
+      {
+        "q": "A bag has 3 red and 7 blue marbles. What is the pr",
+        "expected": "3/10",
+        "ok": false
+      },
+      {
+        "q": "What is the next number in the sequence 2, 6, 18, ",
+        "expected": "162",
+        "ok": true
+      },
+      {
+        "q": "Sara has 48 apples and gives away a quarter of the",
+        "expected": "36",
+        "ok": false
+      },
+      {
+        "q": "What is 1000 - 637? Answer with just the number.",
+        "expected": "363",
+        "ok": true
+      },
+      {
+        "q": "A car uses 8 liters per 100 km. How many liters fo",
+        "expected": "28",
+        "ok": true
+      },
+      {
+        "q": "What is the perimeter of a square with side 13? An",
+        "expected": "52",
+        "ok": true
+      },
+      {
+        "q": "What is 7 factorial divided by 6 factorial? Answer",
+        "expected": "7",
+        "ok": true
+      },
+      {
+        "q": "Tom is 3 times as old as Ana. Together they are 48",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the average of 12, 18, and 33? Answer with",
+        "expected": "21",
+        "ok": false
+      },
+      {
+        "q": "How many minutes are in 4.5 hours? Answer with jus",
+        "expected": "270",
+        "ok": false
+      },
+      {
+        "q": "What is 25 * 25? Answer with just the number.",
+        "expected": "625",
+        "ok": true
+      },
+      {
+        "q": "A book costs $18 after a 25% discount. What was th",
+        "expected": "24",
+        "ok": false
+      }
+    ],
+    "fetches_per_gen_token": 35.4
+  },
+  "route24_m05": {
+    "accuracy": 0.542,
+    "correct": 13,
+    "n": 24,
+    "details": [
+      {
+        "q": "What is 17 + 26? Answer with just the number.",
+        "expected": "43",
+        "ok": true
+      },
+      {
+        "q": "What is 9 * 13? Answer with just the number.",
+        "expected": "117",
+        "ok": true
+      },
+      {
+        "q": "What is 144 / 12? Answer with just the number.",
+        "expected": "12",
+        "ok": true
+      },
+      {
+        "q": "What is 203 - 78? Answer with just the number.",
+        "expected": "125",
+        "ok": false
+      },
+      {
+        "q": "A shop sells pens at 4 for $3. How much do 20 pens",
+        "expected": "15",
+        "ok": false
+      },
+      {
+        "q": "Solve for x: 3x + 5 = 26. Answer with just the num",
+        "expected": "7",
+        "ok": false
+      },
+      {
+        "q": "A train travels 180 km in 3 hours. What is its spe",
+        "expected": "60",
+        "ok": true
+      },
+      {
+        "q": "What is 15% of 240? Answer with just the number.",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "A rectangle is 9 cm long and 4 cm wide. What is it",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the sum of the first 10 positive integers?",
+        "expected": "55",
+        "ok": false
+      },
+      {
+        "q": "If 5 workers build a wall in 12 days, how many day",
+        "expected": "6",
+        "ok": false
+      },
+      {
+        "q": "What is 2 to the power of 8? Answer with just the ",
+        "expected": "256",
+        "ok": true
+      },
+      {
+        "q": "A bag has 3 red and 7 blue marbles. What is the pr",
+        "expected": "3/10",
+        "ok": false
+      },
+      {
+        "q": "What is the next number in the sequence 2, 6, 18, ",
+        "expected": "162",
+        "ok": true
+      },
+      {
+        "q": "Sara has 48 apples and gives away a quarter of the",
+        "expected": "36",
+        "ok": false
+      },
+      {
+        "q": "What is 1000 - 637? Answer with just the number.",
+        "expected": "363",
+        "ok": true
+      },
+      {
+        "q": "A car uses 8 liters per 100 km. How many liters fo",
+        "expected": "28",
+        "ok": false
+      },
+      {
+        "q": "What is the perimeter of a square with side 13? An",
+        "expected": "52",
+        "ok": true
+      },
+      {
+        "q": "What is 7 factorial divided by 6 factorial? Answer",
+        "expected": "7",
+        "ok": false
+      },
+      {
+        "q": "Tom is 3 times as old as Ana. Together they are 48",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the average of 12, 18, and 33? Answer with",
+        "expected": "21",
+        "ok": true
+      },
+      {
+        "q": "How many minutes are in 4.5 hours? Answer with jus",
+        "expected": "270",
+        "ok": false
+      },
+      {
+        "q": "What is 25 * 25? Answer with just the number.",
+        "expected": "625",
+        "ok": true
+      },
+      {
+        "q": "A book costs $18 after a 25% discount. What was th",
+        "expected": "24",
+        "ok": false
+      }
+    ],
+    "fetches_per_gen_token": 9.0
+  },
+  "route16_m02": {
+    "accuracy": 0.625,
+    "correct": 15,
+    "n": 24,
+    "details": [
+      {
+        "q": "What is 17 + 26? Answer with just the number.",
+        "expected": "43",
+        "ok": true
+      },
+      {
+        "q": "What is 9 * 13? Answer with just the number.",
+        "expected": "117",
+        "ok": true
+      },
+      {
+        "q": "What is 144 / 12? Answer with just the number.",
+        "expected": "12",
+        "ok": true
+      },
+      {
+        "q": "What is 203 - 78? Answer with just the number.",
+        "expected": "125",
+        "ok": true
+      },
+      {
+        "q": "A shop sells pens at 4 for $3. How much do 20 pens",
+        "expected": "15",
+        "ok": false
+      },
+      {
+        "q": "Solve for x: 3x + 5 = 26. Answer with just the num",
+        "expected": "7",
+        "ok": false
+      },
+      {
+        "q": "A train travels 180 km in 3 hours. What is its spe",
+        "expected": "60",
+        "ok": true
+      },
+      {
+        "q": "What is 15% of 240? Answer with just the number.",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "A rectangle is 9 cm long and 4 cm wide. What is it",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the sum of the first 10 positive integers?",
+        "expected": "55",
+        "ok": false
+      },
+      {
+        "q": "If 5 workers build a wall in 12 days, how many day",
+        "expected": "6",
+        "ok": false
+      },
+      {
+        "q": "What is 2 to the power of 8? Answer with just the ",
+        "expected": "256",
+        "ok": true
+      },
+      {
+        "q": "A bag has 3 red and 7 blue marbles. What is the pr",
+        "expected": "3/10",
+        "ok": false
+      },
+      {
+        "q": "What is the next number in the sequence 2, 6, 18, ",
+        "expected": "162",
+        "ok": true
+      },
+      {
+        "q": "Sara has 48 apples and gives away a quarter of the",
+        "expected": "36",
+        "ok": false
+      },
+      {
+        "q": "What is 1000 - 637? Answer with just the number.",
+        "expected": "363",
+        "ok": true
+      },
+      {
+        "q": "A car uses 8 liters per 100 km. How many liters fo",
+        "expected": "28",
+        "ok": true
+      },
+      {
+        "q": "What is the perimeter of a square with side 13? An",
+        "expected": "52",
+        "ok": true
+      },
+      {
+        "q": "What is 7 factorial divided by 6 factorial? Answer",
+        "expected": "7",
+        "ok": false
+      },
+      {
+        "q": "Tom is 3 times as old as Ana. Together they are 48",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the average of 12, 18, and 33? Answer with",
+        "expected": "21",
+        "ok": false
+      },
+      {
+        "q": "How many minutes are in 4.5 hours? Answer with jus",
+        "expected": "270",
+        "ok": true
+      },
+      {
+        "q": "What is 25 * 25? Answer with just the number.",
+        "expected": "625",
+        "ok": true
+      },
+      {
+        "q": "A book costs $18 after a 25% discount. What was th",
+        "expected": "24",
+        "ok": false
+      }
+    ],
+    "fetches_per_gen_token": 66.25
+  },
+  "pin24": {
+    "accuracy": 0.333,
+    "correct": 8,
+    "n": 24,
+    "details": [
+      {
+        "q": "What is 17 + 26? Answer with just the number.",
+        "expected": "43",
+        "ok": true
+      },
+      {
+        "q": "What is 9 * 13? Answer with just the number.",
+        "expected": "117",
+        "ok": true
+      },
+      {
+        "q": "What is 144 / 12? Answer with just the number.",
+        "expected": "12",
+        "ok": true
+      },
+      {
+        "q": "What is 203 - 78? Answer with just the number.",
+        "expected": "125",
+        "ok": false
+      },
+      {
+        "q": "A shop sells pens at 4 for $3. How much do 20 pens",
+        "expected": "15",
+        "ok": false
+      },
+      {
+        "q": "Solve for x: 3x + 5 = 26. Answer with just the num",
+        "expected": "7",
+        "ok": false
+      },
+      {
+        "q": "A train travels 180 km in 3 hours. What is its spe",
+        "expected": "60",
+        "ok": false
+      },
+      {
+        "q": "What is 15% of 240? Answer with just the number.",
+        "expected": "36",
+        "ok": false
+      },
+      {
+        "q": "A rectangle is 9 cm long and 4 cm wide. What is it",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the sum of the first 10 positive integers?",
+        "expected": "55",
+        "ok": false
+      },
+      {
+        "q": "If 5 workers build a wall in 12 days, how many day",
+        "expected": "6",
+        "ok": false
+      },
+      {
+        "q": "What is 2 to the power of 8? Answer with just the ",
+        "expected": "256",
+        "ok": true
+      },
+      {
+        "q": "A bag has 3 red and 7 blue marbles. What is the pr",
+        "expected": "3/10",
+        "ok": false
+      },
+      {
+        "q": "What is the next number in the sequence 2, 6, 18, ",
+        "expected": "162",
+        "ok": false
+      },
+      {
+        "q": "Sara has 48 apples and gives away a quarter of the",
+        "expected": "36",
+        "ok": false
+      },
+      {
+        "q": "What is 1000 - 637? Answer with just the number.",
+        "expected": "363",
+        "ok": true
+      },
+      {
+        "q": "A car uses 8 liters per 100 km. How many liters fo",
+        "expected": "28",
+        "ok": false
+      },
+      {
+        "q": "What is the perimeter of a square with side 13? An",
+        "expected": "52",
+        "ok": false
+      },
+      {
+        "q": "What is 7 factorial divided by 6 factorial? Answer",
+        "expected": "7",
+        "ok": false
+      },
+      {
+        "q": "Tom is 3 times as old as Ana. Together they are 48",
+        "expected": "36",
+        "ok": false
+      },
+      {
+        "q": "What is the average of 12, 18, and 33? Answer with",
+        "expected": "21",
+        "ok": false
+      },
+      {
+        "q": "How many minutes are in 4.5 hours? Answer with jus",
+        "expected": "270",
+        "ok": false
+      },
+      {
+        "q": "What is 25 * 25? Answer with just the number.",
+        "expected": "625",
+        "ok": true
+      },
+      {
+        "q": "A book costs $18 after a 25% discount. What was th",
+        "expected": "24",
+        "ok": true
+      }
+    ]
+  },
+  "k6": {
+    "accuracy": 0.542,
+    "correct": 13,
+    "n": 24,
+    "details": [
+      {
+        "q": "What is 17 + 26? Answer with just the number.",
+        "expected": "43",
+        "ok": true
+      },
+      {
+        "q": "What is 9 * 13? Answer with just the number.",
+        "expected": "117",
+        "ok": true
+      },
+      {
+        "q": "What is 144 / 12? Answer with just the number.",
+        "expected": "12",
+        "ok": true
+      },
+      {
+        "q": "What is 203 - 78? Answer with just the number.",
+        "expected": "125",
+        "ok": false
+      },
+      {
+        "q": "A shop sells pens at 4 for $3. How much do 20 pens",
+        "expected": "15",
+        "ok": false
+      },
+      {
+        "q": "Solve for x: 3x + 5 = 26. Answer with just the num",
+        "expected": "7",
+        "ok": false
+      },
+      {
+        "q": "A train travels 180 km in 3 hours. What is its spe",
+        "expected": "60",
+        "ok": true
+      },
+      {
+        "q": "What is 15% of 240? Answer with just the number.",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "A rectangle is 9 cm long and 4 cm wide. What is it",
+        "expected": "36",
+        "ok": true
+      },
+      {
+        "q": "What is the sum of the first 10 positive integers?",
+        "expected": "55",
+        "ok": true
+      },
+      {
+        "q": "If 5 workers build a wall in 12 days, how many day",
+        "expected": "6",
+        "ok": false
+      },
+      {
+        "q": "What is 2 to the power of 8? Answer with just the ",
+        "expected": "256",
+        "ok": true
+      },
+      {
+        "q": "A bag has 3 red and 7 blue marbles. What is the pr",
+        "expected": "3/10",
+        "ok": false
+      },
+      {
+        "q": "What is the next number in the sequence 2, 6, 18, ",
+        "expected": "162",
+        "ok": true
+      },
+      {
+        "q": "Sara has 48 apples and gives away a quarter of the",
+        "expected": "36",
+        "ok": false
+      },
+      {
+        "q": "What is 1000 - 637? Answer with just the number.",
+        "expected": "363",
+        "ok": true
+      },
+      {
+        "q": "A car uses 8 liters per 100 km. How many liters fo",
+        "expected": "28",
+        "ok": false
+      },
+      {
+        "q": "What is the perimeter of a square with side 13? An",
+        "expected": "52",
+        "ok": true
+      },
+      {
+        "q": "What is 7 factorial divided by 6 factorial? Answer",
+        "expected": "7",
+        "ok": true
+      },
+      {
+        "q": "Tom is 3 times as old as Ana. Together they are 48",
+        "expected": "36",
+        "ok": false
+      },
+      {
+        "q": "What is the average of 12, 18, and 33? Answer with",
+        "expected": "21",
+        "ok": false
+      },
+      {
+        "q": "How many minutes are in 4.5 hours? Answer with jus",
+        "expected": "270",
+        "ok": false
+      },
+      {
+        "q": "What is 25 * 25? Answer with just the number.",
+        "expected": "625",
+        "ok": true
+      },
+      {
+        "q": "A book costs $18 after a 25% discount. What was th",
+        "expected": "24",
+        "ok": false
+      }
+    ]
+  }
+}

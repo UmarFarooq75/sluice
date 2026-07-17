@@ -1,0 +1,263 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 320784c..62b2d75 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -32,6 +32,7 @@ add_library(llama
+             llama-memory-recurrent.cpp
+             llama-mmap.cpp
+             llama-model-loader.cpp
++            llmstream.cpp
+             llama-model-saver.cpp
+             llama-model.cpp
+             llama-quant.cpp
+diff --git a/src/llama-graph.cpp b/src/llama-graph.cpp
+index c8ecb0a..777795f 100644
+--- a/src/llama-graph.cpp
++++ b/src/llama-graph.cpp
+@@ -1,5 +1,7 @@
+ #include "llama-graph.h"
+ 
++#include "llmstream.h"
++
+ #include "llama-impl.h"
+ #include "llama-model.h"
+ #include "llama-batch.h"
+@@ -1960,6 +1962,17 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+     //call early so that topk-moe can be used
+     ggml_build_forward_expand(gf, weights);
+ 
++    // llmstream: expert-indexed ops consume a copy of the ids; the streaming
++    // driver rewrites it in place (expert id -> cache slot id) via cb_eval
++    // after the copy is computed. the original ids still feed the weight
++    // gather above, which is indexed by expert id.
++    ggml_tensor * ids_mm = selected_experts;
++    if (llmstream_dup_ids()) {
++        ids_mm = ggml_dup(ctx0, selected_experts);
++        cb(ids_mm, "ffn_moe_topk_slots", il);
++        ggml_build_forward_expand(gf, ids_mm);
++    }
++
+     cur = ggml_reshape_3d(ctx0, cur, n_embd, 1, n_tokens);
+ 
+     if (weight_before_ffn) {
+@@ -1974,7 +1987,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+ 
+     if (gate_up_exps) {
+         // merged gate_up path: one mul_mat_id, then split into gate and up views
+-        ggml_tensor * gate_up = build_lora_mm_id(gate_up_exps, cur, selected_experts, up_exps_s); // [n_ff*2, n_expert_used, n_tokens]
++        ggml_tensor * gate_up = build_lora_mm_id(gate_up_exps, cur, ids_mm, up_exps_s); // [n_ff*2, n_expert_used, n_tokens]
+         cb(gate_up, "ffn_moe_gate_up", il);
+ 
+         if (up_exps_s) {
+@@ -1982,7 +1995,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+         }
+ 
+         if (gate_up_exps_b) {
+-            gate_up = ggml_add_id(ctx0, gate_up, gate_up_exps_b, selected_experts);
++            gate_up = ggml_add_id(ctx0, gate_up, gate_up_exps_b, ids_mm);
+             cb(gate_up, "ffn_moe_gate_up_biased", il);
+         }
+ 
+@@ -1993,7 +2006,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+         cb(up, "ffn_moe_up", il);
+     } else {
+         // separate gate and up path
+-        up = build_lora_mm_id(up_exps, cur, selected_experts, up_exps_s); // [n_ff, n_expert_used, n_tokens]
++        up = build_lora_mm_id(up_exps, cur, ids_mm, up_exps_s); // [n_ff, n_expert_used, n_tokens]
+         cb(up, "ffn_moe_up", il);
+ 
+         if (up_exps_s) {
+@@ -2001,12 +2014,12 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+         }
+ 
+         if (up_exps_b) {
+-            up = ggml_add_id(ctx0, up, up_exps_b, selected_experts);
++            up = ggml_add_id(ctx0, up, up_exps_b, ids_mm);
+             cb(up, "ffn_moe_up_biased", il);
+         }
+ 
+         if (gate_exps) {
+-            cur = build_lora_mm_id(gate_exps, cur, selected_experts, gate_exps_s); // [n_ff, n_expert_used, n_tokens]
++            cur = build_lora_mm_id(gate_exps, cur, ids_mm, gate_exps_s); // [n_ff, n_expert_used, n_tokens]
+             cb(cur, "ffn_moe_gate", il);
+         } else {
+             cur = up;
+@@ -2017,7 +2030,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+         }
+ 
+         if (gate_exps_b) {
+-            cur = ggml_add_id(ctx0, cur, gate_exps_b, selected_experts);
++            cur = ggml_add_id(ctx0, cur, gate_exps_b, ids_mm);
+             cb(cur, "ffn_moe_gate_biased", il);
+         }
+     }
+@@ -2095,7 +2108,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+             GGML_ABORT("fatal error");
+     }
+ 
+-    experts = build_lora_mm_id(down_exps, cur, selected_experts, down_exps_s); // [n_embd, n_expert_used, n_tokens]
++    experts = build_lora_mm_id(down_exps, cur, ids_mm, down_exps_s); // [n_embd, n_expert_used, n_tokens]
+     cb(experts, "ffn_moe_down", il);
+ 
+     if (down_exps_s) {
+@@ -2103,7 +2116,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+     }
+ 
+     if (down_exps_b) {
+-        experts = ggml_add_id(ctx0, experts, down_exps_b, selected_experts);
++        experts = ggml_add_id(ctx0, experts, down_exps_b, ids_mm);
+         cb(experts, "ffn_moe_down_biased", il);
+     }
+ 
+diff --git a/src/llmstream.cpp b/src/llmstream.cpp
+new file mode 100644
+index 0000000..7ac093a
+--- /dev/null
++++ b/src/llmstream.cpp
+@@ -0,0 +1,66 @@
++#include "llmstream.h"
++
++#include "llama-impl.h"
++#include "llama-model-loader.h"
++
++#include "ggml-alloc.h"
++#include "ggml-backend.h"
++
++#include <cstdlib>
++#include <map>
++#include <string>
++
++static struct {
++    ggml_context * ctx = nullptr;
++    ggml_backend_buffer_t buf = nullptr;
++    std::map<std::string, ggml_tensor *> tensors;
++} g_llmstream;
++
++int64_t llmstream_slots(void) {
++    static int64_t n = -1;
++    if (n < 0) {
++        const char * s = getenv("LLMSTREAM_SLOTS");
++        n = s ? atoll(s) : 0;
++        if (n < 0) n = 0;
++    }
++    return n;
++}
++
++bool llmstream_dup_ids(void) {
++    static const bool dup_only = getenv("LLMSTREAM_DUP_ONLY") != nullptr;
++    return llmstream_slots() > 0 || dup_only;
++}
++
++ggml_tensor * llmstream_slot_tensor(llama_model_loader & ml, const char * name_full,
++        int64_t ne0, int64_t ne1, int64_t n_slots) {
++    if (!g_llmstream.ctx) {
++        ggml_init_params params = {
++            /*.mem_size   =*/ ggml_tensor_overhead() * 4096,
++            /*.mem_buffer =*/ NULL,
++            /*.no_alloc   =*/ true,
++        };
++        g_llmstream.ctx = ggml_init(params);
++        GGML_ASSERT(g_llmstream.ctx);
++    }
++    ggml_tensor * meta = ml.require_tensor_meta(name_full);
++    ggml_tensor * t = ggml_new_tensor_3d(g_llmstream.ctx, meta->type, ne0, ne1, n_slots);
++    ggml_set_name(t, name_full);
++    g_llmstream.tensors[name_full] = t;
++    return t;
++}
++
++void llmstream_alloc(void) {
++    if (!g_llmstream.ctx || g_llmstream.buf) {
++        return;
++    }
++    g_llmstream.buf = ggml_backend_alloc_ctx_tensors_from_buft(g_llmstream.ctx, ggml_backend_cpu_buffer_type());
++    GGML_ASSERT(g_llmstream.buf);
++    ggml_backend_buffer_clear(g_llmstream.buf, 0);
++    LLAMA_LOG_INFO("llmstream: %zu slot tensors, %.2f MiB expert cache\n",
++            g_llmstream.tensors.size(), ggml_backend_buffer_get_size(g_llmstream.buf) / 1024.0 / 1024.0);
++}
++
++ggml_tensor * llmstream_get_tensor(const char * name_full) {
++    auto it = g_llmstream.tensors.find(name_full);
++    return it == g_llmstream.tensors.end() ? nullptr : it->second;
++}
+diff --git a/src/llmstream.h b/src/llmstream.h
+new file mode 100644
+index 0000000..bc75f66
+--- /dev/null
++++ b/src/llmstream.h
+@@ -0,0 +1,35 @@
++#pragma once
++
++// llmstream: expert-streaming support (private fork, not for upstream).
++// When LLMSTREAM_SLOTS=<n> is set, MoE expert tensors are created with n cache
++// slots per layer instead of n_expert, their GGUF data is not loaded, and the
++// graph exposes a per-layer "ffn_moe_topk_slots" ids tensor that an external
++// driver rewrites from expert ids to slot ids via the cb_eval callback after
++// filling the slots from storage.
++
++#include "llama.h"
++#include "ggml.h"
++
++#include <cstdint>
++
++struct llama_model_loader;
++
++// slots per layer from LLMSTREAM_SLOTS; 0 = streaming disabled
++LLAMA_API int64_t llmstream_slots(void);
++
++// whether build_moe_ffn should emit the ids copy node: streaming enabled, or
++// LLMSTREAM_DUP_ONLY=1 (debug: isolate the copy node's effect on the graph
++// while expert tensors stay fully resident)
++LLAMA_API bool llmstream_dup_ids(void);
++
++// create a slot-backed expert tensor. name_full is the GGUF tensor name (used
++// only to look up the ggml type); the tensor is ne0 x ne1 x n_slots in a
++// dedicated CPU context, allocated by llmstream_alloc().
++ggml_tensor * llmstream_slot_tensor(llama_model_loader & ml, const char * name_full,
++        int64_t ne0, int64_t ne1, int64_t n_slots);
++
++// allocate the slot context's CPU buffer; call once after all slot tensors are created
++void llmstream_alloc(void);
++
++// driver access to the slot tensors registered by llmstream_slot_tensor()
++LLAMA_API ggml_tensor * llmstream_get_tensor(const char * name_full);
+diff --git a/src/models/olmoe.cpp b/src/models/olmoe.cpp
+index 1e2baeb..b7e9637 100644
+--- a/src/models/olmoe.cpp
++++ b/src/models/olmoe.cpp
+@@ -1,5 +1,7 @@
+ #include "models.h"
+ 
++#include "../llmstream.h"
++
+ void llama_model_olmoe::load_arch_hparams(llama_model_loader & ml) {
+     ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
+ 
+@@ -40,10 +42,23 @@ void llama_model_olmoe::load_arch_tensors(llama_model_loader &) {
+         }
+ 
+         // MoE branch
+-        layer.ffn_gate_exps = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {n_embd, n_ff,   n_expert}, 0);
+-        layer.ffn_down_exps = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff,   n_embd, n_expert}, 0);
+-        layer.ffn_up_exps   = create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i), {n_embd, n_ff,   n_expert}, 0);
++        const int64_t n_slots = llmstream_slots();
++        if (n_slots > 0 && n_slots <= n_expert) {
++            // slot-backed expert cache: account for the GGUF tensors without
++            // loading them, create n_slots-deep tensors filled at runtime
++            create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {n_embd, n_ff,   n_expert}, TENSOR_SKIP);
++            create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff,   n_embd, n_expert}, TENSOR_SKIP);
++            create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i), {n_embd, n_ff,   n_expert}, TENSOR_SKIP);
++            layer.ffn_gate_exps = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i).str().c_str(), n_embd, n_ff,   n_slots);
++            layer.ffn_down_exps = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i).str().c_str(), n_ff,   n_embd, n_slots);
++            layer.ffn_up_exps   = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i).str().c_str(), n_embd, n_ff,   n_slots);
++        } else {
++            layer.ffn_gate_exps = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {n_embd, n_ff,   n_expert}, 0);
++            layer.ffn_down_exps = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff,   n_embd, n_expert}, 0);
++            layer.ffn_up_exps   = create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i), {n_embd, n_ff,   n_expert}, 0);
++        }
+     }
++    llmstream_alloc();
+ }
+ 
+ std::unique_ptr<llm_graph_context> llama_model_olmoe::build_arch_graph(const llm_graph_params & params) const {

@@ -1,0 +1,1672 @@
+{
+  "note": "OLMoE 8-of-64 routing; random baseline hit rate = 12.5%; decode-only cache sims",
+  "cache_sims": [
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0606,
+      "weighted_hit_rate": 0.0848
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.0953,
+      "weighted_hit_rate": 0.1119
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.0953,
+      "weighted_hit_rate": 0.0993
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.0586,
+      "weighted_hit_rate": 0.0578
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.0538,
+      "weighted_hit_rate": 0.0492
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.3167,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.2733,
+      "weighted_hit_rate": 0.3208
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.1933,
+      "weighted_hit_rate": 0.2154
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.1787,
+      "weighted_hit_rate": 0.1839
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.1283,
+      "weighted_hit_rate": 0.1272
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.1273,
+      "weighted_hit_rate": 0.1223
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.5046,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.2775,
+      "weighted_hit_rate": 0.3137
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.3758,
+      "weighted_hit_rate": 0.4197
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.2813,
+      "weighted_hit_rate": 0.3062
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.262,
+      "weighted_hit_rate": 0.2731
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.1992,
+      "weighted_hit_rate": 0.2006
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.1958,
+      "weighted_hit_rate": 0.1933
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.6138,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3825,
+      "weighted_hit_rate": 0.4186
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.4561,
+      "weighted_hit_rate": 0.4955
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.362,
+      "weighted_hit_rate": 0.389
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.3379,
+      "weighted_hit_rate": 0.3506
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.27,
+      "weighted_hit_rate": 0.2709
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.2618,
+      "weighted_hit_rate": 0.2618
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.6894,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.4507,
+      "weighted_hit_rate": 0.4846
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.5919,
+      "weighted_hit_rate": 0.6255
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.5098,
+      "weighted_hit_rate": 0.5387
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.4836,
+      "weighted_hit_rate": 0.5038
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.4079,
+      "weighted_hit_rate": 0.4127
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.3968,
+      "weighted_hit_rate": 0.4013
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.7931,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.591,
+      "weighted_hit_rate": 0.6206
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.6991,
+      "weighted_hit_rate": 0.727
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.6416,
+      "weighted_hit_rate": 0.6707
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.6152,
+      "weighted_hit_rate": 0.637
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.5309,
+      "weighted_hit_rate": 0.5414
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.5309,
+      "weighted_hit_rate": 0.5399
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8632,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.7011,
+      "weighted_hit_rate": 0.7267
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.8737,
+      "weighted_hit_rate": 0.8892
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.8565,
+      "weighted_hit_rate": 0.8743
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.8416,
+      "weighted_hit_rate": 0.8558
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.775,
+      "weighted_hit_rate": 0.7783
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.7754,
+      "weighted_hit_rate": 0.7797
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9486,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "chat",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.8802,
+      "weighted_hit_rate": 0.8953
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0531,
+      "weighted_hit_rate": 0.075
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.1235,
+      "weighted_hit_rate": 0.1651
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.0967,
+      "weighted_hit_rate": 0.1048
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.1411,
+      "weighted_hit_rate": 0.1794
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.0799,
+      "weighted_hit_rate": 0.0862
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.2932,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.2205,
+      "weighted_hit_rate": 0.263
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.2259,
+      "weighted_hit_rate": 0.2781
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.1853,
+      "weighted_hit_rate": 0.2118
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.2244,
+      "weighted_hit_rate": 0.273
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.1611,
+      "weighted_hit_rate": 0.1755
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.4733,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.2248,
+      "weighted_hit_rate": 0.2551
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.3248,
+      "weighted_hit_rate": 0.3737
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.3134,
+      "weighted_hit_rate": 0.3692
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.2646,
+      "weighted_hit_rate": 0.295
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.3021,
+      "weighted_hit_rate": 0.3525
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.2362,
+      "weighted_hit_rate": 0.2577
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.5821,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3404,
+      "weighted_hit_rate": 0.3798
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.4015,
+      "weighted_hit_rate": 0.4469
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.3928,
+      "weighted_hit_rate": 0.4497
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.3445,
+      "weighted_hit_rate": 0.3774
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.3757,
+      "weighted_hit_rate": 0.429
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.2996,
+      "weighted_hit_rate": 0.3186
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.6617,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3987,
+      "weighted_hit_rate": 0.4386
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.54,
+      "weighted_hit_rate": 0.5818
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.5353,
+      "weighted_hit_rate": 0.5903
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.4857,
+      "weighted_hit_rate": 0.5252
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.511,
+      "weighted_hit_rate": 0.5653
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.4344,
+      "weighted_hit_rate": 0.4564
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.776,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.5385,
+      "weighted_hit_rate": 0.5769
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.6642,
+      "weighted_hit_rate": 0.7008
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.6615,
+      "weighted_hit_rate": 0.7111
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.6128,
+      "weighted_hit_rate": 0.6564
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.6309,
+      "weighted_hit_rate": 0.6796
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.5671,
+      "weighted_hit_rate": 0.5956
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8534,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.6628,
+      "weighted_hit_rate": 0.6978
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.8687,
+      "weighted_hit_rate": 0.8884
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.8641,
+      "weighted_hit_rate": 0.8901
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.835,
+      "weighted_hit_rate": 0.8616
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.8455,
+      "weighted_hit_rate": 0.8724
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.8084,
+      "weighted_hit_rate": 0.831
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9449,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "code",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.8721,
+      "weighted_hit_rate": 0.8915
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0584,
+      "weighted_hit_rate": 0.0808
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.1255,
+      "weighted_hit_rate": 0.1551
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.1084,
+      "weighted_hit_rate": 0.1202
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.1283,
+      "weighted_hit_rate": 0.151
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.046,
+      "weighted_hit_rate": 0.0432
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.3042,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.2499,
+      "weighted_hit_rate": 0.2937
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.2308,
+      "weighted_hit_rate": 0.2704
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.1977,
+      "weighted_hit_rate": 0.2223
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.2081,
+      "weighted_hit_rate": 0.2373
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.1055,
+      "weighted_hit_rate": 0.1073
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.4882,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.2557,
+      "weighted_hit_rate": 0.2893
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.3436,
+      "weighted_hit_rate": 0.386
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.3205,
+      "weighted_hit_rate": 0.3655
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.2735,
+      "weighted_hit_rate": 0.3032
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.2851,
+      "weighted_hit_rate": 0.3173
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.1638,
+      "weighted_hit_rate": 0.1688
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.5976,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3503,
+      "weighted_hit_rate": 0.385
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.4261,
+      "weighted_hit_rate": 0.4677
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.4033,
+      "weighted_hit_rate": 0.4528
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.3532,
+      "weighted_hit_rate": 0.385
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.3628,
+      "weighted_hit_rate": 0.4005
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.2283,
+      "weighted_hit_rate": 0.2337
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.6765,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.4206,
+      "weighted_hit_rate": 0.4556
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.5781,
+      "weighted_hit_rate": 0.6124
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.5529,
+      "weighted_hit_rate": 0.6038
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.4976,
+      "weighted_hit_rate": 0.5359
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.5053,
+      "weighted_hit_rate": 0.5449
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.346,
+      "weighted_hit_rate": 0.3473
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.7848,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.5773,
+      "weighted_hit_rate": 0.6089
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.6898,
+      "weighted_hit_rate": 0.714
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.6792,
+      "weighted_hit_rate": 0.7226
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.6228,
+      "weighted_hit_rate": 0.6613
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.6337,
+      "weighted_hit_rate": 0.6695
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.464,
+      "weighted_hit_rate": 0.458
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8574,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.6883,
+      "weighted_hit_rate": 0.7098
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.8682,
+      "weighted_hit_rate": 0.8818
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.8743,
+      "weighted_hit_rate": 0.8924
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.8414,
+      "weighted_hit_rate": 0.8648
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.8457,
+      "weighted_hit_rate": 0.8656
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.7103,
+      "weighted_hit_rate": 0.703
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9457,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "math",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.871,
+      "weighted_hit_rate": 0.8848
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "lru",
+      "hit_rate": 0.0545,
+      "weighted_hit_rate": 0.0731
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "lfu",
+      "hit_rate": 0.1432,
+      "weighted_hit_rate": 0.1613
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "static",
+      "hit_rate": 0.122,
+      "weighted_hit_rate": 0.1307
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "taskprofile",
+      "hit_rate": 0.1449,
+      "weighted_hit_rate": 0.1533
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "crossprofile",
+      "hit_rate": 0.1025,
+      "weighted_hit_rate": 0.1048
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "belady_oracle",
+      "hit_rate": 0.3065,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 4,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.0,
+      "weighted_hit_rate": 0.0
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "lru",
+      "hit_rate": 0.2465,
+      "weighted_hit_rate": 0.2803
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "lfu",
+      "hit_rate": 0.2692,
+      "weighted_hit_rate": 0.2979
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "static",
+      "hit_rate": 0.2227,
+      "weighted_hit_rate": 0.2364
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "taskprofile",
+      "hit_rate": 0.246,
+      "weighted_hit_rate": 0.2627
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "crossprofile",
+      "hit_rate": 0.1984,
+      "weighted_hit_rate": 0.2041
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "belady_oracle",
+      "hit_rate": 0.4987,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 8,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.2521,
+      "weighted_hit_rate": 0.2746
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "lru",
+      "hit_rate": 0.3552,
+      "weighted_hit_rate": 0.3875
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "lfu",
+      "hit_rate": 0.3699,
+      "weighted_hit_rate": 0.4068
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "static",
+      "hit_rate": 0.3171,
+      "weighted_hit_rate": 0.3365
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "taskprofile",
+      "hit_rate": 0.3395,
+      "weighted_hit_rate": 0.3637
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "crossprofile",
+      "hit_rate": 0.2906,
+      "weighted_hit_rate": 0.3022
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "belady_oracle",
+      "hit_rate": 0.6136,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 12,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.3626,
+      "weighted_hit_rate": 0.3842
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "lru",
+      "hit_rate": 0.4463,
+      "weighted_hit_rate": 0.4752
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "lfu",
+      "hit_rate": 0.4606,
+      "weighted_hit_rate": 0.5025
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "static",
+      "hit_rate": 0.3923,
+      "weighted_hit_rate": 0.415
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "taskprofile",
+      "hit_rate": 0.421,
+      "weighted_hit_rate": 0.4479
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "crossprofile",
+      "hit_rate": 0.3611,
+      "weighted_hit_rate": 0.3742
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "belady_oracle",
+      "hit_rate": 0.6964,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 16,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.4416,
+      "weighted_hit_rate": 0.4618
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "lru",
+      "hit_rate": 0.6031,
+      "weighted_hit_rate": 0.6299
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "lfu",
+      "hit_rate": 0.6111,
+      "weighted_hit_rate": 0.6522
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "static",
+      "hit_rate": 0.5293,
+      "weighted_hit_rate": 0.5565
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "taskprofile",
+      "hit_rate": 0.5651,
+      "weighted_hit_rate": 0.5952
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "crossprofile",
+      "hit_rate": 0.4975,
+      "weighted_hit_rate": 0.5192
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8077,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 24,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.6026,
+      "weighted_hit_rate": 0.625
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "lru",
+      "hit_rate": 0.7253,
+      "weighted_hit_rate": 0.749
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "lfu",
+      "hit_rate": 0.7331,
+      "weighted_hit_rate": 0.7656
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "static",
+      "hit_rate": 0.6572,
+      "weighted_hit_rate": 0.6845
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "taskprofile",
+      "hit_rate": 0.6802,
+      "weighted_hit_rate": 0.7048
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "crossprofile",
+      "hit_rate": 0.624,
+      "weighted_hit_rate": 0.6487
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "belady_oracle",
+      "hit_rate": 0.8769,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 32,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.7284,
+      "weighted_hit_rate": 0.749
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "lru",
+      "hit_rate": 0.8977,
+      "weighted_hit_rate": 0.9105
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "lfu",
+      "hit_rate": 0.9033,
+      "weighted_hit_rate": 0.9202
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "static",
+      "hit_rate": 0.86,
+      "weighted_hit_rate": 0.8757
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "taskprofile",
+      "hit_rate": 0.8662,
+      "weighted_hit_rate": 0.8768
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "crossprofile",
+      "hit_rate": 0.8389,
+      "weighted_hit_rate": 0.858
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "belady_oracle",
+      "hit_rate": 0.9549,
+      "weighted_hit_rate": null
+    },
+    {
+      "workload": "prose",
+      "capacity": 48,
+      "policy": "global_pool_lru",
+      "hit_rate": 0.9023,
+      "weighted_hit_rate": 0.9141
+    }
+  ],
+  "per_layer_lru_C16": {
+    "chat": [
+      0.268,
+      0.2919,
+      0.3708,
+      0.3895,
+      0.4295,
+      0.4433,
+      0.4727,
+      0.54,
+      0.4914,
+      0.4859,
+      0.4787,
+      0.5098,
+      0.5792,
+      0.5334,
+      0.5009,
+      0.5573,
+      0.4266,
+      0.5029,
+      0.4899,
+      0.5256,
+      0.4491,
+      0.4254,
+      0.4502,
+      0.46,
+      0.4108,
+      0.3751
+    ],
+    "code": [
+      0.2832,
+      0.2936,
+      0.3319,
+      0.3699,
+      0.3952,
+      0.4145,
+      0.4168,
+      0.4856,
+      0.4568,
+      0.4482,
+      0.4847,
+      0.4542,
+      0.481,
+      0.437,
+      0.4352,
+      0.4145,
+      0.3584,
+      0.4289,
+      0.3961,
+      0.4269,
+      0.4079,
+      0.3794,
+      0.3797,
+      0.3788,
+      0.3693,
+      0.3103
+    ],
+    "math": [
+      0.2792,
+      0.3077,
+      0.3739,
+      0.3785,
+      0.4303,
+      0.4453,
+      0.4614,
+      0.5118,
+      0.4965,
+      0.5026,
+      0.5438,
+      0.5285,
+      0.5017,
+      0.4735,
+      0.4614,
+      0.4574,
+      0.4203,
+      0.4358,
+      0.4148,
+      0.4125,
+      0.4096,
+      0.3739,
+      0.4033,
+      0.38,
+      0.3549,
+      0.3195
+    ],
+    "prose": [
+      0.2518,
+      0.2649,
+      0.3494,
+      0.3524,
+      0.4018,
+      0.3985,
+      0.4435,
+      0.5042,
+      0.4735,
+      0.4634,
+      0.5188,
+      0.5295,
+      0.5798,
+      0.5131,
+      0.5113,
+      0.5048,
+      0.4134,
+      0.5247,
+      0.4515,
+      0.5155,
+      0.4917,
+      0.4607,
+      0.4429,
+      0.4482,
+      0.408,
+      0.3863
+    ]
+  },
+  "greedy_allocation_budget256": {
+    "total_budget_experts": 256,
+    "uniform_hit_rate": 0.2725,
+    "greedy_hit_rate": 0.2598,
+    "allocation_per_layer": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      16,
+      24,
+      0,
+      0,
+      24,
+      24,
+      24,
+      24,
+      24,
+      24,
+      0,
+      24,
+      24,
+      24,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "discovery_curves": {
+    "chat": {
+      "unique_at_25/50/75/100pct_tokens": [
+        1635,
+        1658,
+        1663,
+        1664
+      ],
+      "total_possible": 1664,
+      "new_experts_per_100tok_last_quarter": 0.69,
+      "plateaued": true
+    },
+    "code": {
+      "unique_at_25/50/75/100pct_tokens": [
+        1629,
+        1659,
+        1664,
+        1664
+      ],
+      "total_possible": 1664,
+      "new_experts_per_100tok_last_quarter": 0.0,
+      "plateaued": true
+    },
+    "math": {
+      "unique_at_25/50/75/100pct_tokens": [
+        1644,
+        1661,
+        1663,
+        1664
+      ],
+      "total_possible": 1664,
+      "new_experts_per_100tok_last_quarter": 0.69,
+      "plateaued": true
+    },
+    "prose": {
+      "unique_at_25/50/75/100pct_tokens": [
+        1618,
+        1653,
+        1662,
+        1663
+      ],
+      "total_possible": 1664,
+      "new_experts_per_100tok_last_quarter": 0.71,
+      "plateaued": true
+    }
+  },
+  "concentration": {
+    "chat": {
+      "experts_for_50pct": 22.2,
+      "experts_for_90pct": 50.5,
+      "experts_for_99pct": 61.7
+    },
+    "code": {
+      "experts_for_50pct": 20.6,
+      "experts_for_90pct": 49.7,
+      "experts_for_99pct": 61.7
+    },
+    "math": {
+      "experts_for_50pct": 19.8,
+      "experts_for_90pct": 48.5,
+      "experts_for_99pct": 61.3
+    },
+    "prose": {
+      "experts_for_50pct": 16.9,
+      "experts_for_90pct": 45.6,
+      "experts_for_99pct": 59.8
+    },
+    "_pooled_all_tasks": {
+      "experts_for_50pct": 24.6,
+      "experts_for_90pct": 53.3,
+      "experts_for_99pct": 62.9
+    }
+  },
+  "cross_task_overlap": [
+    {
+      "pair": "chat~code",
+      "jaccard_top16": 0.168
+    },
+    {
+      "pair": "chat~math",
+      "jaccard_top16": 0.187
+    },
+    {
+      "pair": "chat~prose",
+      "jaccard_top16": 0.328
+    },
+    {
+      "pair": "code~math",
+      "jaccard_top16": 0.255
+    },
+    {
+      "pair": "code~prose",
+      "jaccard_top16": 0.13
+    },
+    {
+      "pair": "math~prose",
+      "jaccard_top16": 0.125
+    }
+  ],
+  "temporal_locality": {
+    "chat": {
+      "mean_consec_overlap_top8": 0.277,
+      "layer0": 0.136,
+      "deepest_layer": 0.199,
+      "random_baseline": 0.094
+    },
+    "code": {
+      "mean_consec_overlap_top8": 0.225,
+      "layer0": 0.133,
+      "deepest_layer": 0.157,
+      "random_baseline": 0.094
+    },
+    "math": {
+      "mean_consec_overlap_top8": 0.256,
+      "layer0": 0.141,
+      "deepest_layer": 0.17,
+      "random_baseline": 0.094
+    },
+    "prose": {
+      "mean_consec_overlap_top8": 0.252,
+      "layer0": 0.104,
+      "deepest_layer": 0.18,
+      "random_baseline": 0.094
+    }
+  },
+  "easy_token_stats": {
+    "chat": {
+      "mean_experts_for_90pct_mass": 5.28,
+      "pct_tokenlayers_top4_covers_90pct": 0.034,
+      "mean_top1_share_of_top8": 0.319
+    },
+    "code": {
+      "mean_experts_for_90pct_mass": 5.34,
+      "pct_tokenlayers_top4_covers_90pct": 0.041,
+      "mean_top1_share_of_top8": 0.33
+    },
+    "math": {
+      "mean_experts_for_90pct_mass": 5.37,
+      "pct_tokenlayers_top4_covers_90pct": 0.019,
+      "mean_top1_share_of_top8": 0.314
+    },
+    "prose": {
+      "mean_experts_for_90pct_mass": 5.34,
+      "pct_tokenlayers_top4_covers_90pct": 0.018,
+      "mean_top1_share_of_top8": 0.306
+    }
+  },
+  "prefill_union": []
+}

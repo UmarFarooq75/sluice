@@ -1,0 +1,70 @@
+{
+  "session_order": [
+    "code",
+    "chat",
+    "math",
+    "prose",
+    "code",
+    "knowledge",
+    "math",
+    "multilingual"
+  ],
+  "segment_tokens": 180,
+  "detection_overall_accuracy": 0.93,
+  "switch_latencies": [
+    {
+      "boundary_token": 180,
+      "switch_to": "chat",
+      "latency_tokens": 8
+    },
+    {
+      "boundary_token": 360,
+      "switch_to": "math",
+      "latency_tokens": 6
+    },
+    {
+      "boundary_token": 540,
+      "switch_to": "prose",
+      "latency_tokens": 5
+    },
+    {
+      "boundary_token": 720,
+      "switch_to": "code",
+      "latency_tokens": 6
+    },
+    {
+      "boundary_token": 900,
+      "switch_to": "knowledge",
+      "latency_tokens": 6
+    },
+    {
+      "boundary_token": 1080,
+      "switch_to": "math",
+      "latency_tokens": 7
+    },
+    {
+      "boundary_token": 1260,
+      "switch_to": "multilingual",
+      "latency_tokens": 7
+    }
+  ],
+  "median_latency_tokens": 6.0,
+  "lru16_hit_first50_after_switch": [
+    0.491,
+    0.614,
+    0.529,
+    0.553,
+    0.501,
+    0.674,
+    0.576
+  ],
+  "lru16_hit_steady_state": [
+    0.474,
+    0.644,
+    0.537,
+    0.669,
+    0.475,
+    0.574,
+    0.567
+  ]
+}
