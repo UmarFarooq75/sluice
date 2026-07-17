@@ -194,3 +194,17 @@ Cold-SSD speed (fresh F_NOCACHE copy per run; first-run numbers were cache-infla
 | streamed 12 slots | 0.66 GB | **9.1 tok/s** (hit .589, 1.91 GB/s) | 20% |
 
 3.4× the Python PoC at the same cache (target was ≥2×). Fetches are still serial with compute — the measured I/O-only ceiling (~36 tok/s at slots32) says overlap + prefetch (M2) is worth ~+25%. Margin routing (finding 11) is not yet wired in at all.
+
+## Finding 33 — the head-to-head (2026-07-18): a 2026 frontier-family model on hardware that cannot hold it
+
+Qwen3.6-35B-A3B Q5_K_M (26.5GB, 40 layers × 256 experts, released 2026) on the 16GB Air:
+
+| engine | result |
+|---|---|
+| stock llama.cpp mmap (Ollama's engine) | **DNF** — OOM-killed during load; llama-cli >10 min without 4 tokens |
+| ours, exact routing (m=0), 5.9GB expert cache | 3.57 tok/s |
+| ours, margin m=0.02, **2.9GB expert cache** | **8.27 tok/s** — compute-bound |
+
+The margin router (finding 11) pushed I/O below the CPU compute floor: a 2.9GB cache matches a 5.9GB one at ~80% of the machine's physical compute ceiling for 3B active params. More RAM (8.1GB cache) was *slower* — memory pressure beats the extra hits on a 16GB machine. The RAM dial saturates exactly where the formula says it should.
+
+Adapter cost for this brand-new family (hybrid linear-attention trunk, merged-or-split gate_up, shared expert): ~20 lines + one bring-up bug — a missing buffer allocation that put streamed weights in scheduler scratch (deterministic garbage; the driver now fails loudly on unallocated slot tensors). Bit-exactness remains proven on OLMoE where a resident reference exists; for models that cannot fit, m=0 preserves exact routing semantics by construction.

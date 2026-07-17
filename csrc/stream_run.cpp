@@ -297,6 +297,13 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
     // demand path: ffn_moe_topk_slots-<il>
     st->cb_calls++;
     const int64_t k = t->ne[0], n_tokens = t->ne[1];
+    static int print_ids = getenv("LLMSTREAM_PRINT_IDS") ? atoi(getenv("LLMSTREAM_PRINT_IDS")) : 0;
+    if (print_ids > 0) {
+        print_ids--;
+        printf("ids %-24s ne=[%lld,%lld]:", t->name, (long long) k, (long long) n_tokens);
+        for (int64_t i = 0; i < k && i < 8; i++) printf(" %d", ((int32_t *) t->data)[i]);
+        printf("\n");
+    }
     if (st->top_k == 0) st->top_k = (int) k;
     int32_t * ids = (int32_t *) t->data;
     layer_cache & lc = st->cache[il];
@@ -395,6 +402,10 @@ int main(int argc, char ** argv) {
             ex.slot_t   = llmstream_get_tensor(name);
             if (!ex.slot_t) { fprintf(stderr, "no slot tensor %s\n", name); exit(1); }
             if (ex.slot_t->nb[2] != ex.stride) { fprintf(stderr, "stride mismatch %s\n", name); exit(1); }
+            if (!ex.slot_t->data || !ex.slot_t->buffer) {
+                fprintf(stderr, "slot tensor %s has no backing buffer - adapter is missing llmstream_alloc()\n", name);
+                exit(1);
+            }
             return true;
         };
 

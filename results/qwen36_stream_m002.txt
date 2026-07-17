@@ -1,0 +1,18 @@
+llmstream: 40 layers, 64 slots/layer, 3 tensors/expert, 2.30 MB/expert, prefetch=on
+mode=streamed prompt_toks=22 generated=64 n_ubatch=1
+prefill: 4.84 s (4.54 tok/s)
+decode:  7.97 s (8.04 tok/s)
+io: cb_calls=3440 decode_uses=20480 decode_misses=1087 (hit 0.947) prefill_uses=7040 prefill_misses=1186
+io: prefetch_issued=434 prefetch_hits=124 stall=5.40 s total_read=6276.8 MB avg_bw=490 MB/s
+io: margin=0.020 masked=723441
+logits_hash=fae013b23bf6645f
+text: 
+
+To merge two sorted lists in O(n) time, you can use a two-pointer approach. Here’s how it works:
+
+```python
+def merge_sorted_lists(list1, list2):
+    merged_list = []
+    i, j = 0, 0
+    
+    # Iterate through both lists

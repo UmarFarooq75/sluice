@@ -1,0 +1,2 @@
+decode:  5.80 s (8.27 tok/s)
+io: cb_calls=2800 decode_uses=15360 decode_misses=1371 (hit 0.911) prefill_uses=7040 prefill_misses=1193

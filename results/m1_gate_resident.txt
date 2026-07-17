@@ -1,6 +1,6 @@
 mode=resident prompt_toks=17 generated=32 n_ubatch=1
-prefill: 4.63 s (3.67 tok/s)
-decode:  2.76 s (11.58 tok/s)
+prefill: 0.24 s (71.18 tok/s)
+decode:  0.45 s (71.00 tok/s)
 logits_hash=b6869f5b6ef36376
 text: 
 

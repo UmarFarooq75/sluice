@@ -1,0 +1,29 @@
+{
+  "date": "2026-07-18",
+  "headline": "Qwen3.6-35B-A3B (2026, 26.5GB Q5_K_M) on a 16GB MacBook Air: stock llama.cpp/Ollama engine cannot run it at all; our engine runs it at 8.3 tok/s using a 2.9GB expert cache",
+  "model": "unsloth/Qwen3.6-35B-A3B-GGUF UD-Q5_K_M (26.46GB; 40 layers x 256 experts, k=8, shared expert, hybrid linear-attention trunk; arch qwen3_5_moe)",
+  "machine": "MacBook Air M2 16GB, internal SSD, CPU backend, n_ubatch=1",
+  "stock_baseline": {
+    "driver_mmap_ubatch512": "SIGKILL (exit 137) - macOS killed it during model load",
+    "llama_cli_no_warmup": "timeout: >10 minutes without producing 4 tokens",
+    "verdict": "DNF - the model does not fit and the OS-paged fallback is unusable"
+  },
+  "streamed": {
+    "slots64_exact_m0":    {"decode_tok_s": 3.57, "expert_cache_gb": 5.9, "hit": 0.820, "note": "exact routing, no dials"},
+    "slots64_margin_002":  {"decode_tok_s": 8.04, "expert_cache_gb": 5.9, "hit": 0.947},
+    "slots32_margin_002":  {"decode_tok_s": 8.27, "expert_cache_gb": 2.9, "hit": 0.911, "note": "compute-bound: matches slots64 - margin router pushed I/O below the CPU compute floor"},
+    "slots88_margin_002":  {"decode_tok_s": 7.71, "expert_cache_gb": 8.1, "hit": 0.949, "note": "slightly slower than slots32: memory pressure on 16GB machine outweighs extra hits"}
+  },
+  "interpretation": [
+    "total RAM in the winning config ~6GB (2.9 expert cache + ~3 trunk mmap + KV) for a 26.5GB model",
+    "estimated CPU compute ceiling for ~3B active params at Q5 on M2 is ~9-11 tok/s; 8.3 achieved = ~80% of the physical ceiling of the machine itself",
+    "quality: m=0 mode is exact routing (bit-exactness proven on OLMoE where a resident reference fits; impossible to run a resident reference for this model on this machine - that is the point); m=0.02 output verified coherent and correct",
+    "the garbage-output bug during bring-up was a missing llmstream_alloc() in the qwen35moe adapter - slot tensors landed in scheduler scratch memory; driver now fails loudly if an adapter forgets allocation"
+  ],
+  "artifacts": {
+    "stock": "results/qwen36_stock.txt (empty - process killed)",
+    "exact": "results/qwen36_stream_m0.txt",
+    "margin": "results/qwen36_stream_m002.txt",
+    "ram_curve": ["results/qwen36_slots32.txt", "results/qwen36_slots88.txt"]
+  }
+}
