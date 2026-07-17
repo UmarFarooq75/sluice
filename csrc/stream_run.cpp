@@ -102,6 +102,10 @@ struct stream_state {
     bool in_decode = false;
     int top_k = 0;         // learned from first topk node
     double hit_ema = 0.0;  // rolling demand hit rate; prefetch active only while cold
+    float margin = 0.0f;   // LLMSTREAM_MARGIN: mask non-resident experts within
+                           // margin of the weakest resident pick (finding 11);
+                           // 0 = off = bit-exact
+    uint64_t margin_masked = 0;
 };
 
 static void fetch_one(stream_state & st, const io_pool::job & j) {
@@ -190,11 +194,43 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
     stream_state * st = (stream_state *) user_data;
     const bool is_slots = strncmp(t->name, "ffn_moe_topk_slots", 18) == 0;
     const bool is_look  = strncmp(t->name, "llmstream_look", 14) == 0;
+    const bool is_probs = strncmp(t->name, "ffn_moe_probs", 13) == 0 && strchr(t->name, ' ') == nullptr;
     static const bool observe_topk = getenv("LLMSTREAM_OBSERVE") != nullptr;
     static const bool dbg = getenv("LLMSTREAM_DEBUG_HASH") != nullptr;
     if (ask) return is_slots || is_look
+        || (st->margin > 0.0f && is_probs)
         || (observe_topk && strncmp(t->name, "ffn_moe_topk", 12) == 0)
         || (dbg && strncmp(t->name, "ffn_moe_", 8) == 0);
+
+    if (st->margin > 0.0f && is_probs && !st->cache.empty()) {
+        // margin-gated cache-aware routing (finding 11): before top-k, zero out
+        // any non-resident expert that does not beat the k-th best RESIDENT
+        // prob by at least margin. selection, gate weights and normalization
+        // all read these probs downstream, so the substitution stays coherent.
+        const char * dash = strrchr(t->name, '-');
+        const int il = dash ? atoi(dash + 1) : -1;
+        if (il >= 0 && il < st->n_layers && st->top_k > 0) {
+            layer_cache & lc = st->cache[il];
+            const int64_t n_expert = t->ne[0], n_tokens = t->ne[1];
+            float * probs = (float *) t->data;
+            std::vector<float> res;
+            for (int64_t tok = 0; tok < n_tokens; tok++) {
+                float * p = probs + tok * n_expert;
+                res.clear();
+                for (auto & [e, s] : lc.slot_of) res.push_back(p[e]);
+                if ((int) res.size() < st->top_k) continue; // cache too cold to restrict
+                std::nth_element(res.begin(), res.begin() + st->top_k - 1, res.end(), std::greater<float>());
+                const float kth_res = res[st->top_k - 1];
+                for (int64_t e = 0; e < n_expert; e++) {
+                    if (p[e] > 0.0f && !lc.slot_of.count((int) e) && p[e] < kth_res + st->margin) {
+                        p[e] = 0.0f;
+                        st->margin_masked++;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
     if (!is_slots && !is_look) {
         if (dbg) {
@@ -331,6 +367,8 @@ int main(int argc, char ** argv) {
     {
         const char * pf = getenv("LLMSTREAM_PREFETCH");
         st.prefetch_on = !(pf && atoi(pf) == 0);
+        const char * mg = getenv("LLMSTREAM_MARGIN");
+        st.margin = mg ? (float) atof(mg) : 0.0f;
     }
 
     llama_model_params mparams = llama_model_default_params();
@@ -462,6 +500,9 @@ int main(int argc, char ** argv) {
                st.uses_prefill, st.misses_prefill);
         printf("io: prefetch_issued=%" PRIu64 " prefetch_hits=%" PRIu64 " stall=%.2f s total_read=%.1f MB avg_bw=%.0f MB/s\n",
                st.prefetch_issued, st.prefetch_hits, st.stall_s, mb, mb / (dt_prefill + dt_decode));
+        if (st.margin > 0.0f) {
+            printf("io: margin=%.3f masked=%" PRIu64 "\n", st.margin, st.margin_masked);
+        }
     }
     printf("logits_hash=%016" PRIx64 "\n", hash);
     printf("text: %s\n", out.c_str());
