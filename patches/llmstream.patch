@@ -261,3 +261,40 @@ index 1e2baeb..b7e9637 100644
  }
  
  std::unique_ptr<llm_graph_context> llama_model_olmoe::build_arch_graph(const llm_graph_params & params) const {
+diff --git a/src/models/qwen3moe.cpp b/src/models/qwen3moe.cpp
+index 6f6df53..df9395e 100644
+--- a/src/models/qwen3moe.cpp
++++ b/src/models/qwen3moe.cpp
+@@ -1,5 +1,7 @@
+ #include "models.h"
+ 
++#include "../llmstream.h"
++
+ void llama_model_qwen3moe::load_arch_hparams(llama_model_loader & ml) {
+     ml.get_key(LLM_KV_EXPERT_FEED_FORWARD_LENGTH,  hparams.n_ff_exp, false);
+     ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
+@@ -49,10 +51,21 @@ void llama_model_qwen3moe::load_arch_tensors(llama_model_loader &) {
+         // MoE branch
+         const int64_t n_ff_exp = hparams.n_ff_exp ? hparams.n_ff_exp : n_ff / n_expert_used;
+ 
+-        layer.ffn_gate_exps = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {  n_embd, n_ff_exp, n_expert}, 0);
+-        layer.ffn_down_exps = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff_exp,   n_embd, n_expert}, 0);
+-        layer.ffn_up_exps   = create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i), {  n_embd, n_ff_exp, n_expert}, 0);
++        const int64_t n_slots = llmstream_slots();
++        if (n_slots > 0 && n_slots <= n_expert) {
++            create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {  n_embd, n_ff_exp, n_expert}, TENSOR_SKIP);
++            create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff_exp,   n_embd, n_expert}, TENSOR_SKIP);
++            create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i), {  n_embd, n_ff_exp, n_expert}, TENSOR_SKIP);
++            layer.ffn_gate_exps = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i).str().c_str(),   n_embd, n_ff_exp, n_slots);
++            layer.ffn_down_exps = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i).str().c_str(), n_ff_exp,   n_embd, n_slots);
++            layer.ffn_up_exps   = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i).str().c_str(),   n_embd, n_ff_exp, n_slots);
++        } else {
++            layer.ffn_gate_exps = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {  n_embd, n_ff_exp, n_expert}, 0);
++            layer.ffn_down_exps = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff_exp,   n_embd, n_expert}, 0);
++            layer.ffn_up_exps   = create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i), {  n_embd, n_ff_exp, n_expert}, 0);
++        }
+     }
++    llmstream_alloc();
+ }
+ 
+ std::unique_ptr<llm_graph_context> llama_model_qwen3moe::build_arch_graph(const llm_graph_params & params) const {

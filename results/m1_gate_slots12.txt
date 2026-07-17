@@ -1,9 +1,9 @@
 llmstream: 16 layers, 12 slots/layer, expert stride 1.18 MB x3
 mode=streamed prompt_toks=17 generated=32
-prefill: 0.58 s (29.49 tok/s)
-decode:  1.41 s (22.75 tok/s)
+prefill: 1.22 s (13.88 tok/s)
+decode:  1.89 s (16.94 tok/s)
 io: cb_calls=784 decode_uses=4096 decode_misses=1754 (hit 0.572) prefill_uses=2048 prefill_misses=1199
-io: total_read=11250.2 MB avg_bw=5672 MB/s (whole run)
+io: total_read=11250.2 MB avg_bw=3614 MB/s (whole run)
 logits_hash=b6869f5b6ef36376
 text: 
 
