@@ -13,7 +13,9 @@
 // the phase-0 substitution law: only into an idle queue, top-k only.
 //
 // Tensor sets are discovered per layer from GGUF metadata: merged
-// ffn_gate_up_exps (Qwen3.5/3.6 family) or separate gate+up (OLMoE), plus down.
+// ffn_gate_up_exps (Qwen3.5/3.6 family) or separate gate+up (OLMoE), plus down,
+// plus optional per-expert bias vectors (gpt-oss family) which are 2D
+// {n, n_expert} extents striding on nb[1] instead of nb[2].
 //
 // Modes/env:
 //   LLMSTREAM_SLOTS=N     slots per layer (fork reads it too); unset = resident
@@ -42,6 +44,7 @@
 #include <atomic>
 #include <chrono>
 #include <cinttypes>
+#include <cmath>
 #include <condition_variable>
 #include <cstdint>
 #include <cstdio>
@@ -60,8 +63,9 @@
 
 struct tensor_extent {
     ggml_tensor * slot_t = nullptr;
-    size_t file_off = 0; // expert 0
-    size_t stride   = 0; // bytes per expert
+    size_t file_off    = 0; // expert 0
+    size_t stride      = 0; // bytes per expert in the file
+    size_t slot_stride = 0; // bytes per slot in the slot tensor
 };
 
 struct layer_cache {
@@ -114,7 +118,7 @@ static void fetch_one(stream_state & st, const io_pool::job & j) {
         const tensor_extent & ex = lc.ext[t];
         size_t sz  = ex.stride;
         size_t off = ex.file_off + (size_t) j.e * sz;
-        char * dst = (char *) ex.slot_t->data + (size_t) j.slot * ex.slot_t->nb[2];
+        char * dst = (char *) ex.slot_t->data + (size_t) j.slot * ex.slot_stride;
         size_t done = 0;
         while (done < sz) {
             ssize_t r = pread(st.fd, dst + done, sz - done, off + done);
@@ -203,10 +207,13 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
         || (dbg && strncmp(t->name, "ffn_moe_", 8) == 0);
 
     if (st->margin > 0.0f && is_probs && !st->cache.empty()) {
-        // margin-gated cache-aware routing (finding 11): before top-k, zero out
+        // margin-gated cache-aware routing (finding 11): before top-k, mask out
         // any non-resident expert that does not beat the k-th best RESIDENT
-        // prob by at least margin. selection, gate weights and normalization
+        // score by at least margin. selection, gate weights and normalization
         // all read these probs downstream, so the substitution stays coherent.
+        // masking is -inf, not 0: SOFTMAX_WEIGHT models (gpt-oss) select on raw
+        // logits where 0 is not a floor; for softmax/sigmoid probs the masked
+        // experts were unselectable either way, so the outcome is identical.
         const char * dash = strrchr(t->name, '-');
         const int il = dash ? atoi(dash + 1) : -1;
         if (il >= 0 && il < st->n_layers && st->top_k > 0) {
@@ -222,8 +229,8 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
                 std::nth_element(res.begin(), res.begin() + st->top_k - 1, res.end(), std::greater<float>());
                 const float kth_res = res[st->top_k - 1];
                 for (int64_t e = 0; e < n_expert; e++) {
-                    if (p[e] > 0.0f && !lc.slot_of.count((int) e) && p[e] < kth_res + st->margin) {
-                        p[e] = 0.0f;
+                    if (p[e] != -INFINITY && !lc.slot_of.count((int) e) && p[e] < kth_res + st->margin) {
+                        p[e] = -INFINITY;
                         st->margin_masked++;
                     }
                 }
@@ -397,11 +404,14 @@ int main(int argc, char ** argv) {
             int64_t ti = gguf_find_tensor(g, name);
             if (ti < 0) return false;
             ggml_tensor * meta = ggml_get_tensor(meta_ctx, name);
+            // 3D weights stride per expert on nb[2]; 2D biases on nb[1]
+            const bool is_2d = meta->ne[2] == 1;
             ex.file_off = data_off + gguf_get_tensor_offset(g, ti);
-            ex.stride   = meta->nb[2];
+            ex.stride   = is_2d ? meta->nb[1] : meta->nb[2];
             ex.slot_t   = llmstream_get_tensor(name);
             if (!ex.slot_t) { fprintf(stderr, "no slot tensor %s\n", name); exit(1); }
-            if (ex.slot_t->nb[2] != ex.stride) { fprintf(stderr, "stride mismatch %s\n", name); exit(1); }
+            ex.slot_stride = is_2d ? ex.slot_t->nb[1] : ex.slot_t->nb[2];
+            if (ex.slot_stride != ex.stride) { fprintf(stderr, "stride mismatch %s\n", name); exit(1); }
             if (!ex.slot_t->data || !ex.slot_t->buffer) {
                 fprintf(stderr, "slot tensor %s has no backing buffer - adapter is missing llmstream_alloc()\n", name);
                 exit(1);
@@ -426,6 +436,14 @@ int main(int argc, char ** argv) {
                 snprintf(name, sizeof(name), "blk.%d.ffn_up_exps.weight", il);
                 if (!extent_for(name, ex)) { fprintf(stderr, "no up tensor L%d\n", il); return 1; }
                 lc.ext.push_back(ex);
+            }
+            // per-expert bias vectors (gpt-oss family), streamed with the weights
+            static const char * bias_fmt[] = {
+                "blk.%d.ffn_gate_exps.bias", "blk.%d.ffn_up_exps.bias", "blk.%d.ffn_down_exps.bias",
+            };
+            for (const char * fmt : bias_fmt) {
+                snprintf(name, sizeof(name), fmt, il);
+                if (extent_for(name, ex)) lc.ext.push_back(ex);
             }
             lc.n_slots = (int) n_slots;
             st.cache.push_back(std::move(lc));

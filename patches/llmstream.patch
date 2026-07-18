@@ -111,10 +111,10 @@ index c8ecb0a..777795f 100644
  
 diff --git a/src/llmstream.cpp b/src/llmstream.cpp
 new file mode 100644
-index 0000000..7ac093a
+index 0000000..4a86f3e
 --- /dev/null
 +++ b/src/llmstream.cpp
-@@ -0,0 +1,66 @@
+@@ -0,0 +1,79 @@
 +#include "llmstream.h"
 +
 +#include "llama-impl.h"
@@ -148,19 +148,32 @@ index 0000000..7ac093a
 +    return llmstream_slots() > 0 || dup_only;
 +}
 +
-+ggml_tensor * llmstream_slot_tensor(llama_model_loader & ml, const char * name_full,
-+        int64_t ne0, int64_t ne1, int64_t n_slots) {
++static ggml_context * llmstream_ctx(void) {
 +    if (!g_llmstream.ctx) {
 +        ggml_init_params params = {
-+            /*.mem_size   =*/ ggml_tensor_overhead() * 4096,
++            /*.mem_size   =*/ ggml_tensor_overhead() * 8192,
 +            /*.mem_buffer =*/ NULL,
 +            /*.no_alloc   =*/ true,
 +        };
 +        g_llmstream.ctx = ggml_init(params);
 +        GGML_ASSERT(g_llmstream.ctx);
 +    }
++    return g_llmstream.ctx;
++}
++
++ggml_tensor * llmstream_slot_tensor(llama_model_loader & ml, const char * name_full,
++        int64_t ne0, int64_t ne1, int64_t n_slots) {
 +    ggml_tensor * meta = ml.require_tensor_meta(name_full);
-+    ggml_tensor * t = ggml_new_tensor_3d(g_llmstream.ctx, meta->type, ne0, ne1, n_slots);
++    ggml_tensor * t = ggml_new_tensor_3d(llmstream_ctx(), meta->type, ne0, ne1, n_slots);
++    ggml_set_name(t, name_full);
++    g_llmstream.tensors[name_full] = t;
++    return t;
++}
++
++ggml_tensor * llmstream_slot_tensor_2d(llama_model_loader & ml, const char * name_full,
++        int64_t ne0, int64_t n_slots) {
++    ggml_tensor * meta = ml.require_tensor_meta(name_full);
++    ggml_tensor * t = ggml_new_tensor_2d(llmstream_ctx(), meta->type, ne0, n_slots);
 +    ggml_set_name(t, name_full);
 +    g_llmstream.tensors[name_full] = t;
 +    return t;
@@ -183,10 +196,10 @@ index 0000000..7ac093a
 +}
 diff --git a/src/llmstream.h b/src/llmstream.h
 new file mode 100644
-index 0000000..bc75f66
+index 0000000..6b477f5
 --- /dev/null
 +++ b/src/llmstream.h
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,40 @@
 +#pragma once
 +
 +// llmstream: expert-streaming support (private fork, not for upstream).
@@ -216,6 +229,11 @@ index 0000000..bc75f66
 +// dedicated CPU context, allocated by llmstream_alloc().
 +ggml_tensor * llmstream_slot_tensor(llama_model_loader & ml, const char * name_full,
 +        int64_t ne0, int64_t ne1, int64_t n_slots);
++
++// 2D variant for per-expert bias vectors (gpt-oss family): ne0 x n_slots,
++// the slot dimension replacing the expert dimension ggml_add_id indexes
++ggml_tensor * llmstream_slot_tensor_2d(llama_model_loader & ml, const char * name_full,
++        int64_t ne0, int64_t n_slots);
 +
 +// allocate the slot context's CPU buffer; call once after all slot tensors are created
 +void llmstream_alloc(void);
@@ -276,6 +294,78 @@ index 1e2baeb..0a820cf 100644
          cur = build_moe_ffn(cur,
                  model.layers[il].ffn_gate_inp,
                  model.layers[il].ffn_up_exps,
+diff --git a/src/models/openai-moe.cpp b/src/models/openai-moe.cpp
+index 6d74f9c..8758942 100644
+--- a/src/models/openai-moe.cpp
++++ b/src/models/openai-moe.cpp
+@@ -1,5 +1,7 @@
+ #include "models.h"
+ 
++#include "../llmstream.h"
++
+ void llama_model_openai_moe::load_arch_hparams(llama_model_loader & ml) {
+     ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
+     ml.get_key(LLM_KV_EXPERT_FEED_FORWARD_LENGTH,  hparams.n_ff_exp);
+@@ -44,17 +46,37 @@ void llama_model_openai_moe::load_arch_tensors(llama_model_loader &) {
+         layer.attn_sinks = create_tensor(tn(LLM_TENSOR_ATTN_SINKS, "weight", i), {n_head}, 0);
+ 
+         layer.ffn_gate_inp  = create_tensor(tn(LLM_TENSOR_FFN_GATE_INP,  "weight", i), {  n_embd, n_expert}, 0);
+-        layer.ffn_gate_exps = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {  n_embd, n_ff_exp, n_expert}, 0);
+-        layer.ffn_down_exps = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff_exp,   n_embd, n_expert}, 0);
+-        layer.ffn_up_exps   = create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i), {  n_embd, n_ff_exp, n_expert}, 0);
+ 
+         layer.wo_b = create_tensor(tn(LLM_TENSOR_ATTN_OUT, "bias", i), {n_embd}, 0);
+ 
+         layer.ffn_gate_inp_b  = create_tensor(tn(LLM_TENSOR_FFN_GATE_INP,  "bias", i), {n_expert}, 0);
+-        layer.ffn_gate_exps_b = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "bias", i), {n_ff_exp, n_expert}, 0);
+-        layer.ffn_down_exps_b = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "bias", i), {  n_embd, n_expert}, 0);
+-        layer.ffn_up_exps_b   = create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "bias", i), {n_ff_exp, n_expert}, 0);
++
++        const int64_t n_slots = llmstream_slots();
++        if (n_slots > 0 && n_slots <= n_expert) {
++            // slot-backed expert weights AND per-expert biases: all six tensors
++            // are expert-indexed downstream (mul_mat_id / add_id on ids_mm)
++            create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {  n_embd, n_ff_exp, n_expert}, TENSOR_SKIP);
++            create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff_exp,   n_embd, n_expert}, TENSOR_SKIP);
++            create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i), {  n_embd, n_ff_exp, n_expert}, TENSOR_SKIP);
++            create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "bias", i), {n_ff_exp, n_expert}, TENSOR_SKIP);
++            create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "bias", i), {  n_embd, n_expert}, TENSOR_SKIP);
++            create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "bias", i), {n_ff_exp, n_expert}, TENSOR_SKIP);
++            layer.ffn_gate_exps = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i).str().c_str(),   n_embd, n_ff_exp, n_slots);
++            layer.ffn_down_exps = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i).str().c_str(), n_ff_exp,   n_embd, n_slots);
++            layer.ffn_up_exps   = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i).str().c_str(),   n_embd, n_ff_exp, n_slots);
++            layer.ffn_gate_exps_b = llmstream_slot_tensor_2d(*ml, tn(LLM_TENSOR_FFN_GATE_EXPS, "bias", i).str().c_str(), n_ff_exp, n_slots);
++            layer.ffn_down_exps_b = llmstream_slot_tensor_2d(*ml, tn(LLM_TENSOR_FFN_DOWN_EXPS, "bias", i).str().c_str(),   n_embd, n_slots);
++            layer.ffn_up_exps_b   = llmstream_slot_tensor_2d(*ml, tn(LLM_TENSOR_FFN_UP_EXPS,   "bias", i).str().c_str(), n_ff_exp, n_slots);
++        } else {
++            layer.ffn_gate_exps = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {  n_embd, n_ff_exp, n_expert}, 0);
++            layer.ffn_down_exps = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff_exp,   n_embd, n_expert}, 0);
++            layer.ffn_up_exps   = create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i), {  n_embd, n_ff_exp, n_expert}, 0);
++            layer.ffn_gate_exps_b = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "bias", i), {n_ff_exp, n_expert}, 0);
++            layer.ffn_down_exps_b = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "bias", i), {  n_embd, n_expert}, 0);
++            layer.ffn_up_exps_b   = create_tensor(tn(LLM_TENSOR_FFN_UP_EXPS,   "bias", i), {n_ff_exp, n_expert}, 0);
++        }
+     }
++    llmstream_alloc();
+ }
+ 
+ std::unique_ptr<llm_graph_context> llama_model_openai_moe::build_arch_graph(const llm_graph_params & params) const {
+@@ -130,6 +152,15 @@ llama_model_openai_moe::graph::graph(const llama_model & model, const llm_graph_
+                 LLM_NORM_RMS, il);
+         cb(cur, "attn_post_norm", il);
+ 
++        // llmstream lookahead: next layer's router (with its bias) applied to
++        // this layer's pre-MoE state; the driver prefetches from its top-k
++        if (llmstream_dup_ids() && il + 1 < n_layer) {
++            ggml_tensor * look = build_lora_mm(model.layers[il + 1].ffn_gate_inp, cur);
++            look = ggml_add(ctx0, look, model.layers[il + 1].ffn_gate_inp_b);
++            cb(look, "llmstream_look", il);
++            ggml_build_forward_expand(gf, look);
++        }
++
+         // MoE branch
+         cur = build_moe_ffn(cur,
+                 model.layers[il].ffn_gate_inp,  model.layers[il].ffn_gate_inp_b,
 diff --git a/src/models/qwen35moe.cpp b/src/models/qwen35moe.cpp
 index 7b0876c..71884b3 100644
 --- a/src/models/qwen35moe.cpp
