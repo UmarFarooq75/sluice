@@ -1,18 +1,37 @@
 {
   "date": "2026-07-18",
-  "headline": "Qwen3.6-35B-A3B (2026, 26.5GB Q5_K_M) on a 16GB MacBook Air: stock llama.cpp/Ollama engine cannot run it at all; our engine runs it at 8.3 tok/s using a 2.9GB expert cache",
+  "headline": "Qwen3.6-35B-A3B (2026, 26.5GB Q5_K_M) on a 16GB MacBook Air: real Ollama v0.32.1 produced 16 tokens in 10 minutes (~0.03 tok/s, machine in swap collapse); our engine: 8.3 tok/s with a 2.9GB expert cache",
   "model": "unsloth/Qwen3.6-35B-A3B-GGUF UD-Q5_K_M (26.46GB; 40 layers x 256 experts, k=8, shared expert, hybrid linear-attention trunk; arch qwen3_5_moe)",
   "machine": "MacBook Air M2 16GB, internal SSD, CPU backend, n_ubatch=1",
   "stock_baseline": {
     "driver_mmap_ubatch512": "SIGKILL (exit 137) - macOS killed it during model load",
     "llama_cli_no_warmup": "timeout: >10 minutes without producing 4 tokens",
-    "verdict": "DNF - the model does not fit and the OS-paged fallback is unusable"
+    "verdict": "engine-level runs DNF (OOM-kill / >10min silent); the branded Ollama product loads but is ~50-275x slower than our engine and takes the whole machine down with it"
   },
   "streamed": {
-    "slots64_exact_m0":    {"decode_tok_s": 3.57, "expert_cache_gb": 5.9, "hit": 0.820, "note": "exact routing, no dials"},
-    "slots64_margin_002":  {"decode_tok_s": 8.04, "expert_cache_gb": 5.9, "hit": 0.947},
-    "slots32_margin_002":  {"decode_tok_s": 8.27, "expert_cache_gb": 2.9, "hit": 0.911, "note": "compute-bound: matches slots64 - margin router pushed I/O below the CPU compute floor"},
-    "slots88_margin_002":  {"decode_tok_s": 7.71, "expert_cache_gb": 8.1, "hit": 0.949, "note": "slightly slower than slots32: memory pressure on 16GB machine outweighs extra hits"}
+    "slots64_exact_m0": {
+      "decode_tok_s": 3.57,
+      "expert_cache_gb": 5.9,
+      "hit": 0.82,
+      "note": "exact routing, no dials"
+    },
+    "slots64_margin_002": {
+      "decode_tok_s": 8.04,
+      "expert_cache_gb": 5.9,
+      "hit": 0.947
+    },
+    "slots32_margin_002": {
+      "decode_tok_s": 8.27,
+      "expert_cache_gb": 2.9,
+      "hit": 0.911,
+      "note": "compute-bound: matches slots64 - margin router pushed I/O below the CPU compute floor"
+    },
+    "slots88_margin_002": {
+      "decode_tok_s": 7.71,
+      "expert_cache_gb": 8.1,
+      "hit": 0.949,
+      "note": "slightly slower than slots32: memory pressure on 16GB machine outweighs extra hits"
+    }
   },
   "interpretation": [
     "total RAM in the winning config ~6GB (2.9 expert cache + ~3 trunk mmap + KV) for a 26.5GB model",
@@ -24,6 +43,18 @@
     "stock": "results/qwen36_stock.txt (empty - process killed)",
     "exact": "results/qwen36_stream_m0.txt",
     "margin": "results/qwen36_stream_m002.txt",
-    "ram_curve": ["results/qwen36_slots32.txt", "results/qwen36_slots88.txt"]
-  }
+    "ram_curve": [
+      "results/qwen36_slots32.txt",
+      "results/qwen36_slots88.txt"
+    ]
+  },
+  "ollama_product_test": {
+    "method": "standalone Ollama v0.32.1 binary (project-local), our GGUF hardlinked into its blob store (zero-copy), served + `ollama run qwen36 --verbose`",
+    "outcome": "loaded via mmap (llama-server child at 66.9% of system RAM), then collapsed into OS paging",
+    "ollama_own_log": "prompt processing, n_tokens=11, t=70.18s -> 0.16 tokens per second; request produced n_tokens=31 total (15 prompt + 16 generated) before our 10-minute timeout cancelled it (~0.03 tok/s generation)",
+    "system_state": "vm_stat during run: pages free ~3520 (~55MB), swapouts 23.7M pages - deep swap thrash; machine unusable",
+    "caveats": "Ollama defaults: n_ctx 4096 (vs our 1024), temperature sampling - both negligible at this magnitude gap",
+    "evidence": "results/qwen36_ollama_serve.log"
+  },
+  "lm_studio": "not installed on this machine; same llama.cpp engine underneath - install pending Umar's OK (GUI app on his work Mac)"
 }
