@@ -620,10 +620,16 @@ believe a reviewer).
   lose the D7 card definitively (on this trace size).
 - **Gate C - dual-precision miss fetch, device leg**: 3x2.2MB scattered
   (a ~2-bit expert) = **2.68 ms/expert vs 4.22 full (1.57x)** at qd4-ish.
-  SURVIVES. Remaining legs before build: transcode cost (Q2->MXFP4 into
-  typed slots - the hidden cost found in design review) and the NLL battery
-  at low-bit cold experts. Expert-skip A/B (hook-only, env-gated) queued
-  alongside.
+  SURVIVED leg 1 - then **REFUTED at leg 2 (transcode)**: dequant Q2_K
+  3.12ms + quant->MXFP4 **92.26ms = 95.4ms/expert on one core**
+  (csrc/transcode_bench.cpp) vs 1.54ms read saving - 60x over budget; the
+  MXFP4 encoder is a 144MB/s scalar reference path, and even ideal 8-core
+  overlap cannot close 60x. Alternatives questioned before the kill:
+  direct Q2->MXFP4 repack (encode step still dominates), native low-bit
+  compute in mixed-typed slot pools (major fork surgery - parked with this
+  data attached). Steal-list final score: 3 of 4 candidates killed by
+  cheap gates, zero engine code written, one survivor (expert-skip A/B,
+  quality-motivated, hook-only) queued.
 - **Incident logged**: orphaned server (UI restart bypasses atexit) mid
   swap-crawl defeated Stop+idle safeties -> orphan watchdog (parent-death
   self-exit, tested live), LLMSTREAM_REQ_TIMEOUT=900 wall cap, UI orphan

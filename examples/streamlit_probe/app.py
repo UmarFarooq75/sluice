@@ -21,7 +21,7 @@ from pathlib import Path
 import psutil
 import streamlit as st
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[2]
 ENGINE = ROOT / "csrc" / "stream_run"
 IDLE_EXIT_S = 600
 
@@ -141,7 +141,11 @@ def parse_metrics(tail):
 # ---------------- sidebar ----------------
 with st.sidebar:
     st.header("Model")
-    choice = st.selectbox("model", [k for k, v in MODELS.items() if v["path"] and Path(v["path"]).exists()])
+    available = [k for k, v in MODELS.items() if v["path"] and Path(v["path"]).exists()]
+    if not available:
+        st.error(f"no model files found under {ROOT} — check models/ and hf_home/")
+        st.stop()
+    choice = st.selectbox("model", available)
     cfg = dict(MODELS[choice])
     st.caption(cfg["note"])
     sys_prompt = st.text_area(
