@@ -802,6 +802,38 @@ believe a reviewer).
   independent measurement of this cap (colibri data, phase-0 self-spec,
   now this gate) - closed with prejudice for the disk-bound regime.
 
+### E30. The 10GB question + the warm asymptote (Umar's questions, measured) (2026-07-20)
+- **Q1 (Umar): give 120B 10GB instead of 5.7 - max tok/s without slowing
+  the laptop?** Sweep slots {12,16} x margin {0,0.25}, GEN=512 + a
+  712-token teacher-forced exact run (results/e30_*).
+- **The machine itself answered the slots16 question**: pressure lvl=2
+  fired in every slots16 run (avail 3.3-3.8GB) and the guard sheared the
+  cache to 10-14 slots - a 16GB Mac running macOS cannot hold 16
+  slots/layer of 120B AND stay responsive. Practical ceiling: **slots12,
+  7.6GB phys footprint** (peak_rss ~9.5 with pf pool transient). "Without
+  impacting the laptop" is not a promise we make, it is a mechanism we
+  run - the E10 guard enforced it live, three times, unprompted.
+- **Q2 (Umar): does it get faster as it warms? YES - measured.** Default
+  dial (m0.25) hit climbed 0.81 (64-tok runs) -> **0.915 warm** over a
+  full 512-token generation: **2.40 tok/s sustained** including cold
+  start (vs 1.77 short-run). Exact mode warm: hit 0.484 (64-tok) ->
+  **0.756** over 711 teacher-forced tokens. Short benches DO understate
+  the warm engine - README updated. The curve converges (the residual
+  8-24% is the Zipf tail, which time cannot make resident), so warming
+  buys the asymptote, not unbounded growth.
+- **Honesty on today's absolute speeds**: the exact-mode warm run
+  measured 1.11 tok/s where hit-rate physics at this morning's bandwidth
+  predicts ~2.8 - afternoon read bandwidth had sagged to ~1.0-1.4 GB/s
+  (vs 1.7 this morning) after ~10 hours of continuous benching (D10
+  thermal, still unlogged - powermetrics remains the standing gap). The
+  hit-rate findings are robust (internal to each run); cross-run tok/s
+  today carries the D10 band. Three of four GEN=512 rungs also ended at
+  ~57 tokens on greedy EOS - generation-length control matters for warm
+  benches; the teacher-forced run is the clean instrument.
+- **EOS-truncation lesson**: "GEN=512" does not mean 512 tokens get
+  generated; uses/144 tells the truth. Rungs labeled accordingly, only
+  full-length runs quoted for warm claims.
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.

@@ -68,6 +68,8 @@ The margin router pushes I/O below the compute floor: a 2.9GB cache ties a 5.9GB
 
 The honest headline is the *pair*: ~1.6 tok/s with quality pinned, 5+ when you spend the dial. Within one session the n=3 spread is ±5%; across days it is ±20% until thermal logging lands (D10) — so bands above are same-day medians, and cross-day comparisons stay qualitative.
 
+**RAM dial and warm-up** (E30): giving the cache ~10GB (slots 12, 7.6GB footprint) instead of 5.7GB lifts the warm default-dial speed to **2.40 tok/s sustained** over a 512-token generation (routing-cache hit 0.915 warm vs 0.81 in short runs — the engine genuinely speeds up as a session warms, then converges at the Zipf tail). Slots 16 (9.5GB) is refused by the machine itself: macOS memory pressure fires and the guard sheds back to ~12 — measured live, three times. On a 16GB Mac, ~12 slots is the honest ceiling for staying responsive.
+
 **Time-to-first-token** (E27, expert-major prefill): a multi-token ubatch needs each layer's *union* of experts once — not once per token — so prefill now streams through a shared, per-quant-type slot pool sized `n_expert` that every layer refills in turn (`LLMSTREAM_PREFILL_SLOTS=1`). A 712-token prompt prefills in **66 s (10.8 tok/s) vs ~9 min token-by-token — 8.2×** — at exact routing, bit-exact-gated, with no change in resident footprint (the pool is transient). The decode cache is untouched by prefill, so a warm chat session stays warm through the next prompt.
 
 What this chapter added beyond speed:
