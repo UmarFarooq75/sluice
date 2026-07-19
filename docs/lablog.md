@@ -308,6 +308,30 @@ the gpt-oss-120b bring-up.
   ordering in stream_state dtor path) — does not taint measurements; fix
   queued. GPU ladder (m0.25/m1.25/slots16) running.
 
+### E15. Controlled CPU-vs-GPU table; guard's first real-world saves
+- **Puzzle**: GPU ladder showed hit .573 at m125_s8 (CPU: .885) and slots16
+  hitting LESS than slots8 (.320 vs .482). Controls run with identical
+  prompt/binary/configs on CPU.
+- **Resolution (from the GPU runs' stderr)**: the pressure guard fired in
+  BOTH odd runs — six drops walking 16→4 slots (avail 1.3–1.6GB, floor
+  trigger; 278 live evictions incl. MADV_FREE on Metal-shared pages) and one
+  critical-level drop to 4 at m125. First NON-injected activations: real
+  Metal memory pressure (no-mmap full weights + device cache), machine never
+  hung, runs completed. Dual trigger vindicated — memorystatus stayed at
+  lvl=1 while the avail-floor did the work.
+- **Controlled results**: m025_s8 unpressured on both backends — CPU/GPU
+  hit .484/.482, agreement .9535/.9550: **margin path is backend-identical**.
+  At equal conditions GPU streaming is ~20% SLOWER than CPU today
+  (1.37 vs 1.71 tok/s) — per-hooked-node sync cost; OLMoE resident (84 GPU vs
+  74 CPU) shows the ceiling once syncs are batched. "Steering-created
+  locality beats bigger caches" is REFUTED as stated — the slots16 deficit
+  was the guard, not physics.
+- **Artifacts**: `results/gptoss_{cpu,gpu}_m025_s8.txt`, `_m125_s8`,
+  `_m025_s16` + .err files.
+- **Open**: (a) sync batching for GPU streaming; (b) guard/Metal interplay:
+  auto-sizing should subtract the device cache from the budget up front so
+  16-slot GPU configs aren't attempted on 16GB machines; (c) teardown abort.
+
 ### E12. Metal slot buffers — the corruption root cause, found in scheduler source
 - **Investigation**: read `ggml-backend.cpp` sched execution. Two facts:
   (1) cross-backend split inputs are **snapshot-copied before the split runs**
