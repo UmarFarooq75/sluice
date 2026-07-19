@@ -1,0 +1,23 @@
+llmstream: auto slots=5 (avail=8.8 GB resident=2.30 GB 13.3 MB/slot-layer 36 layers)
+..................................................
+llmstream: 36 layers, 5 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=off
+mode=streamed prompt_toks=10 generated=96 n_ubatch=1
+prefill: 5.35 s (1.87 tok/s)
+decode:  31.63 s (3.04 tok/s)
+io: cb_calls=3816 decode_uses=13824 decode_misses=3653 (hit 0.736) prefill_uses=1404 prefill_misses=496
+io: prefetch_issued=0 prefetch_hits=0 stall=27.20 s total_read=54989.9 MB avg_bw=1487 MB/s
+io: read_work=72.53 s preads=24894 per_stream_bw=758 MB/s
+io: margin=1.250 masked=446804
+io: router_agreement=0.5371 swapped_calls=3097 of=3771
+logits_hash=1f02756d02f65c21
+text: 
+
+The sky appears blue because of a phenomenon called Rayleigh scattering. This scattering occurs when sunlight interacts with the Earth's atmosphere, causing the shorter wavelengths of blue light to be scattered more than longer wavelengths, resulting in the blue color we see.
+
+(Note: The answer is not a
+
+I apologize for the confusion. The sky appears blue due to the scattering of sunlight by the Earth's atmosphere.
+
+Apologies for the confusion. The
+
+The sky appears blue because of a phenomenon called

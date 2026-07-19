@@ -203,10 +203,14 @@ static size_t avail_mem_bytes(void) {
            (size_t) sysconf(_SC_PAGESIZE);
 }
 
-// E10: watch the same memorystatus signal jetsam kills on. warning sheds 2
-// slots/layer, critical halves the cap; 30s of calm earns one back. shed
-// slots get MADV_FREE'd so the OS can actually reclaim the pages.
+// E10: dual trigger — the memorystatus signal jetsam kills on, OR available
+// memory under a hard floor (measured: swap grew 1.5GB in stress test 3 while
+// memorystatus never left "normal"; one opaque OS signal is not enough).
+// warning sheds 2 slots/layer, critical/floor halves; 30s of calm earns one
+// back. shed slots get MADV_FREE'd so the OS can actually reclaim the pages.
 static void pressure_monitor(stream_state * st) {
+    static const double floor_gb = getenv("LLMSTREAM_GUARD_FLOOR")
+        ? atof(getenv("LLMSTREAM_GUARD_FLOOR")) : 1.2;
     int calm = 0;
     while (!st->mon_stop.load()) {
         for (int i = 0; i < 20 && !st->mon_stop.load(); i++) {
@@ -214,14 +218,18 @@ static void pressure_monitor(stream_state * st) {
         }
         uint32_t lvl = 0;
         size_t sz = sizeof(lvl);
-        if (sysctlbyname("kern.memorystatus_vm_pressure_level", &lvl, &sz, nullptr, 0) != 0) continue;
+        if (sysctlbyname("kern.memorystatus_vm_pressure_level", &lvl, &sz, nullptr, 0) != 0) lvl = 1;
+        const double avail_gb = avail_mem_bytes() / 1e9;
+        const bool severe = lvl >= 4 || avail_gb < floor_gb;
+        const bool warn   = lvl >= 2 || avail_gb < floor_gb * 1.5;
         const int cap = st->slot_cap.load();
-        if (lvl >= 2) {
-            const int ncap = std::max(4, lvl >= 4 ? cap / 2 : cap - 2);
+        if (severe || warn) {
+            const int ncap = std::max(4, severe ? cap / 2 : cap - 2);
             if (ncap < cap) {
                 st->slot_cap = ncap;
                 st->cap_drops++;
-                fprintf(stderr, "llmstream: memory pressure %u -> slot cap %d\n", lvl, ncap);
+                fprintf(stderr, "llmstream: pressure lvl=%u avail=%.1fGB -> slot cap %d\n",
+                        lvl, avail_gb, ncap);
             }
             calm = 0;
         } else if (cap < st->slot_cap_max && ++calm >= 15) {
@@ -551,6 +559,17 @@ int main(int argc, char ** argv) {
         st.margin = mg ? (float) atof(mg) : 0.0f;
     }
 
+    // E10: the guard must exist BEFORE model load - stress test 3 measured
+    // +1.5GB swap growth entirely inside the load window, when a late-started
+    // monitor could not see it
+    if (n_slots > 0) {
+        st.slot_cap     = (int) n_slots;
+        st.slot_cap_max = (int) n_slots;
+        if (!(getenv("LLMSTREAM_GUARD") && atoi(getenv("LLMSTREAM_GUARD")) == 0)) {
+            st.mon = std::thread(pressure_monitor, &st);
+        }
+    }
+
     llama_model_params mparams = llama_model_default_params();
     mparams.n_gpu_layers = 0;
     // repacked (interleaved) weight layouts use different gemm kernels than the
@@ -630,12 +649,6 @@ int main(int argc, char ** argv) {
 
         st.pool.st = &st;
         for (int w = 0; w < 6; w++) st.pool.workers.emplace_back(pool_worker, &st.pool);
-
-        st.slot_cap     = (int) n_slots;
-        st.slot_cap_max = (int) n_slots;
-        if (!(getenv("LLMSTREAM_GUARD") && atoi(getenv("LLMSTREAM_GUARD")) == 0)) {
-            st.mon = std::thread(pressure_monitor, &st);
-        }
     }
 
     const int n_ubatch = argc > 4 ? atoi(argv[4]) : 1;

@@ -1,0 +1,27 @@
+llmstream: auto slots=6 (avail=9.2 GB resident=2.30 GB 13.3 MB/slot-layer 36 layers)
+..................................................
+llmstream: 36 layers, 6 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=off
+mode=streamed prompt_toks=10 generated=96 n_ubatch=1
+prefill: 5.02 s (1.99 tok/s)
+decode:  22.96 s (4.18 tok/s)
+io: cb_calls=3816 decode_uses=13824 decode_misses=2254 (hit 0.837) prefill_uses=1404 prefill_misses=454
+io: prefetch_issued=0 prefetch_hits=0 stall=18.74 s total_read=35891.2 MB avg_bw=1283 MB/s
+io: read_work=44.69 s preads=16248 per_stream_bw=803 MB/s
+io: margin=1.250 masked=453645
+io: router_agreement=0.4814 swapped_calls=3420 of=3771
+logits_hash=7be5dc7acc3ac687
+text: 
+
+The sky appears blue because of a phenomenon called Rayleigh scattering, which occurs when sunlight interacts with the Earth's atmosphere. The shorter wavelengths of blue light are scattered more than the longer wavelengths of red light, making the sky appear blue.
+
+Sure!
+
+If you have any any more questions or need clarification, feel free to ask!
+
+Sure
+
+If you have any more questions or need clarification, feel free to ask!
+
+Sure
+
+If you have any more questions or need

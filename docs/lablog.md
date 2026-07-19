@@ -126,19 +126,88 @@ the gpt-oss-120b bring-up.
   passage, deterministic quality number per config; (4) `LLMSTREAM_CHAT=1`.
 - **Result**: OLMoE gate PASS unchanged (`b6869f5b6ef36376`) — counters cost
   nothing at m=0. Commit `d45da99`.
-- **Running now**: 9-rung agreement+NLL sweep at slots8/10 under a
-  memory-guarded protocol (refuse rung start under pressure)
-  (`scripts/gptoss_quality_sweep.sh`, artifacts `results/gptoss_agree_*.txt`,
-  `results/gptoss_nll_*.txt`).
+- **Result (agreement, generation runs)**: router agreement at slots8 is
+  **0.57 @ m=1.0, 0.44 @ m=1.25, 0.35 @ m=1.5** (slots10 m1.25: 0.45) — the
+  majority of expert picks differ from true routing at every useful margin,
+  yet generated text reads clean through m=1.25. Coherent text survives
+  massive substitution.
+- **Result (NLL, teacher-forced on fixed Dickens passage, slots8)**:
+  m=0 anchor **avg_nll 2.845 (ppl 17.2)**; m=1.0 **3.534 (ppl 34.3)** — a 2×
+  perplexity hit that generated text completely hid. Remaining margins
+  running.
+- **Interpretation (hypothesis, testable)**: margin routing biases the model
+  toward what its cached experts can do; free-running generation then *steers
+  into its own comfort zone*, so transcripts look clean while the underlying
+  distribution is measurably off. Teacher forcing removes the steering and
+  exposes it. Consequence: NLL (not transcript reading) is the quality gate
+  from now on.
+- **Sweep bug found**: first sweep aborted (SIGABRT) after the m=0 NLL rung —
+  the NLL early-return skipped I/O-pool thread shutdown (std::thread dtor on
+  joinable thread). Fixed with shared cleanup; gate re-PASS.
+- **Protocol gap noted**: NLL scores include the cold-start window (cache
+  empty → masking against an irrelevant resident set for the first tokens).
+  Refinement queued: score only the passage's second half, or prepend warmup
+  text, to separate cold-start damage from steady-state damage.
+- **Full NLL curve (slots8, Dickens passage, cold-start included)**:
+  | margin | avg_nll | ppl | agreement |
+  |---|---|---|---|
+  | 0 | 2.845 | 17.2 | 1.000 |
+  | 1.0 | 3.534 | 34.3 | 0.574 |
+  | 1.25 | 3.663 | 39.0 | 0.488 |
+  | 1.5 | 3.781 | 43.9 | 0.409 |
+  | 2.0 | 4.287 | 72.7 | 0.302 |
+  Conclusions: (a) degradation is SMOOTH — the generation "cliff" at m≥1.5 was
+  a termination artifact, not a knowledge cliff; (b) m=2.0 spikes 4× — the
+  metric catches the known-broken config, validating itself; (c) NLL tracks
+  router agreement ≈linearly → agreement is a free live quality proxy the
+  engine can watch at runtime; (d) margin is a real quality dial, so the
+  no-compromise speed path is Metal + prefetch + I/O engineering at low
+  margin, not bigger margins. 80–100 tok/s physics note: gpt-oss-120b moves
+  ~2.7GB of active weights per token → ~37 tok/s is the M2 Air's 100GB/s bus
+  ceiling even fully resident; 80–100 on this machine is a ~1B-active-model
+  target, and a Max-class bus (300–400GB/s) target for the 120B. The engine's
+  job on any machine: reach that machine's ceiling.
 
-### E10. Engine-level machine protection (in progress, this entry updates)
+### E10. Engine-level machine protection
 - **Change**: `LLMSTREAM_SLOTS=auto` — size the cache from *this machine's
   available memory* read from the OS at startup, not from the caller's guess;
   plus a runtime pressure monitor that sheds cache slots (MADV_FREE's their
   pages) when macOS signals memory pressure, and grows back when calm.
 - **Why**: E4/E5 proved the host must never be collateral damage. Ollama-class
   engines avoid this by refusing to load; we run the model AND stay polite.
-- **Result**: pending build + gate after the quality sweep completes.
+- **Result — build**: OLMoE gate PASS unchanged (`b6869f5b6ef36376`); commit
+  `2184673` (also fixes the E9 NLL-path thread-shutdown abort).
+- **Result — stress test 1** (`results/gptoss_guard_{baseline,stress}.txt`):
+  auto picked slots=7 (9.6GB avail, 2.3GB resident) / slots=6 under load.
+  5GB hog attacking mid-generation: run completed (96 tok, 4.18 tok/s, hit
+  .837), **swap growth 0.1MB**, machine responsive throughout. Per-token speed
+  unchanged vs no-hog baseline. Prevention (headroom by construction) PASSED.
+- **Expected (written before result)**: reactive path — an 8GB hog should
+  push memorystatus to warning/critical; guard should log cap drops within
+  ~2s, shed slots via MADV_FREE, run completes slower but alive, swap bounded.
+- **Result — stress test 2 (8GB hog)**: run survived (96 tok, 3.04 tok/s at
+  auto slots=5, swap flat) but the guard never fired — and the reason is an
+  experiment bug, not a guard bug: the hog allocated zero-filled pages, and
+  the macOS memory compressor absorbs those ~100:1. A compressible attack is
+  a fake attack. Lesson for the protocol: memory-pressure experiments must use
+  incompressible (random) pages, or they measure the compressor, not the
+  pressure path (`results/gptoss_guard_stress8.txt`).
+- **Result — stress test 3 (8GB incompressible hog)**: run survived real
+  pressure (96 tok, 2.31 tok/s at auto slots=4; swap **grew +1.5GB** — attack
+  landed), machine stayed usable. Guard STILL silent. Two root causes found
+  by questioning: (1) **the monitor thread started after model load**, and the
+  hog's whole life fit inside the ~2-min load window — the guard was born
+  after the war; (2) memorystatus stayed at "normal" while swap grew 1.5GB —
+  the jetsam signal is sluggish; one opaque OS signal is not enough
+  (`results/gptoss_guard_stress8r.txt`).
+- **Fix (guard v2)**: monitor starts BEFORE model load; dual trigger — shed
+  on memorystatus ≥ warning OR available memory < floor (1.8GB warn / 1.2GB
+  severe, `LLMSTREAM_GUARD_FLOOR` tunable). Gate re-PASS `b6869f5b6ef36376`.
+- **Result — stress test 4 (hog timed mid-decode, guard v2)**: pending
+  (`results/gptoss_guard_stress4.txt`).
+- **Open question**: auto chose 7 slots where manual best was 8 — the safety
+  factor costs ~10-20% speed. Tune the 0.80/2GB constants only with more
+  cross-model data, never to zero headroom (that's how engines hang laptops).
 
 ---
 
