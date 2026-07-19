@@ -362,6 +362,65 @@ believe a reviewer).
   ~159MB for -3 syscalls/miss), sub-extent read chunking (per-miss QD),
   prefetch gate rework (priority queue already protects demand).
 
+### E19. Domain battery verdict: m0.25 holds across 5 domains; D11 found in the fallout (2026-07-19)
+- **Question**: the m0.25 "no-compromise" claim rested on ONE prose passage
+  (audit finding 1). Does it survive code / reasoning / chat / multilingual /
+  fresh prose? Raw NLL (no template — assistant-loss-trained model is
+  uncalibrated on user-turn text, measured ppl 2166–18k), slots8, warm-split,
+  margins {0, 0.25, 0.5}, one fixed ~140-tok passage per domain. 15 rungs,
+  run detached under `taskpolicy -b` after the machine-slowness report.
+- **Prediction (written before results)**: m0.25 ≤ +2% NLL everywhere,
+  m0.5 visible damage somewhere.
+- **Result — full table (avg_nll / warm_nll / agreement)**:
+
+  | domain | m0 warm_nll | m0.25 warm Δ | m0.5 warm Δ | agree m0.25 | agree m0.5 |
+  |---|---|---|---|---|---|
+  | code   | 1.771 | **+2.2%** | +0.6%* | .947 | .822 |
+  | reason | 2.997 | **−3.0%** | **+9.7%** | .930 | .781 |
+  | chat   | 6.059 | **−1.9%** | −4.6%† | .908 | .780 |
+  | multi  | 2.264 | **+4.1%** | +2.9%† | .929 | .911 |
+  | prose  | 3.890 | **+0.4%** | +2.3%† | .935 | .903 |
+
+  († = guard-contaminated cell, see below. * = clean.)
+- **m0.25 verdict: GREEN.** Warm ΔNLL spans −3.0%…+4.1%, mean **+0.35%**,
+  MIXED SIGN — two domains improve, three degrade, none beyond ±4.1%. Single
+  run per cell, so the honest statement is: at m0.25 the quality change is at
+  or below the resolution of a single-run battery; there is no consistent
+  degradation direction. Agreement ≥ .908 in every domain. Speed in these
+  same runs: +4%…+15% tok/s over m0 (NLL mode); decode mode measured
+  separately at +43% (1.05→1.50 tok/s, CHAT m0.25 s8). Prediction half-right:
+  ≤2% was too tight (multi +4.1%), but no systematic damage.
+- **m0.5 verdict: disqualified.** reason +9.7% warm NLL in a CLEAN cell —
+  real damage on the domain users care most about, at agreement .781. And
+  3 of 5 m0.5 cells are contaminated: REAL memory pressure (lvl 2, user
+  actively working, avail 3.0–3.7GB) fired the E10 guard mid-rung
+  (pressure_drops=2/4/3, cap 8→6→4/5, cap_evictions 144–211, madv_fail=0).
+  Those cells measured "m0.5 at 4–6 slots", not m0.5@s8 — labeled and never
+  quoted. chat m0.5 "improving" −4.6% under a cap of 4 is routing pinned to
+  4 residents acting as a smoother on OOD-ish text; interesting, not usable.
+  Second real-world guard save series, and NLLs stayed sane while capped.
+- **Instrument caveat**: chat's raw ppl ~160–430 (assistant-trained model on
+  user-style text) makes it the weakest of the 5 instruments; its direction
+  agrees with the others, weight it least. Formula re-validated in passing:
+  code m0 read 170,151.8 MB vs 12,838 misses × 13.25 MB = 170.1 GB exact.
+- **D11, found by refusing to trust the contamination story**: chat m0.5 ran
+  at cap **4** but the fix ledger claimed the floor was top_k+1=5 — the fix
+  NEVER LANDED; code said `std::max(4, …)`. For gpt-oss (top-4) cap 4
+  survives by pigeonhole (any token needing an absent expert has ≥1
+  non-needed resident to evict — zero slack but livelock-free). For a top-8
+  family (Qwen/OLMoE) cap 4 can never seat one token's experts:
+  assign_slot → −1 forever → demand path exit(1) — the guard built to save
+  the machine would KILL the inference. Fixed for real: `top_k` atomic
+  (monitor reads it cross-thread), floor = top_k+1 once known, plus post-load
+  re-clamp (a pre-load drop used floor 4 before top_k existed; undo it up to
+  slot_cap_max — an explicit low --slots stays the user's choice). Gate:
+  OLMoE 3-way logit-hash on the rebuilt binary (monitor-only change on the
+  normal path; gate must still PASS bit-exact).
+- **Product decision**: gpt-oss default = **m0.25** (battery-backed), exact
+  m0 one env var away, m≥0.5 opt-in with the reasoning cost documented.
+  Next: decode-ladder control on the fixed binary (speed-regression check on
+  the 9 audit fixes + D11), then POLITE mode + RSS logging.
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.
@@ -460,6 +519,7 @@ believe a reviewer).
 | D8 | Raw prompts to a chat-trained model | See E8. | `LLMSTREAM_CHAT=1` built; use in all future quality runs |
 | D9 | Universality boundary: dense models | A dense 72B touches all weights every token — nothing to stream selectively; that is physics, not engineering (docs/dense-strategy.md). Scope stated honestly: MoE-first. | M3: DeepSeek family next (shared+routed experts) |
 | D10 | Thermal never logged (fanless chassis) | Are late rungs slower because hot? Counter-evidence: fastest rungs ran last. Still unproven either way. | Add powermetrics logging to protocol |
+| D11 | Guard floor hard-coded 4; fix ledger claimed top_k+1 had landed — it hadn't | Why fatal? cap < top_k can never seat one token's experts → assign_slot −1 → exit(1): pressure becomes availability loss on top-8 families. Why unnoticed? gpt-oss is top-4 — cap 4 sits exactly on the pigeonhole boundary and survives. Found because battery m0.5 logs showed cap 4 vs the claimed floor 5. | FIXED (E19): atomic top_k, floor top_k+1, post-load re-clamp. Lesson re-learned: verify the artifact, not the fix ledger |
 
 ## Standing protocol (enforced from 2026-07-19)
 1. One model process at a time; check for strays before launch.

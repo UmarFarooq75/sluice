@@ -1,0 +1,14 @@
+== M1 logit-equivalence gate (n_ubatch=1, n_gen=32) ==
+  [resident] decode:  19.98 s (1.60 tok/s)
+  [resident] logits_hash=b6869f5b6ef36376
+  [slots32] decode:  10.88 s (2.94 tok/s)
+  [slots32] io: cb_calls=784 decode_uses=4096 decode_misses=630 (hit 0.846) prefill_uses=2048 prefill_misses=486
+  [slots32] io: prefetch_issued=351 prefetch_hits=0 stall=3.75 s total_read=5605.8 MB avg_bw=214 MB/s
+  [slots32] io: read_work=26.59 s preads=4401 per_stream_bw=211 MB/s
+  [slots32] logits_hash=b6869f5b6ef36376
+  [slots12] decode:  8.89 s (3.60 tok/s)
+  [slots12] io: cb_calls=784 decode_uses=4096 decode_misses=1008 (hit 0.754) prefill_uses=2048 prefill_misses=685
+  [slots12] io: prefetch_issued=1636 prefetch_hits=13 stall=4.15 s total_read=12687.3 MB avg_bw=840 MB/s
+  [slots12] io: read_work=35.38 s preads=9987 per_stream_bw=359 MB/s
+  [slots12] logits_hash=b6869f5b6ef36376
+GATE PASS: all logit hashes bit-identical (b6869f5b6ef36376)

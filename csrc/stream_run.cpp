@@ -113,7 +113,7 @@ struct stream_state {
     uint64_t uses_prefill = 0, misses_prefill = 0;
     double stall_s = 0.0;
     std::atomic<bool> in_decode{false};
-    int top_k = 0;         // learned from first topk node
+    std::atomic<int> top_k{0}; // learned from first topk node; read by monitor thread
     double hit_ema = 0.0;  // rolling demand hit rate; prefetch active only while cold
     float margin = 0.0f;   // LLMSTREAM_MARGIN: mask non-resident experts within
                            // margin of the weakest resident pick (finding 11);
@@ -258,7 +258,14 @@ static void pressure_monitor(stream_state * st) {
         }
         const int cap = st->slot_cap.load();
         if (severe || warn) {
-            const int ncap = std::max(4, severe ? cap / 2 : cap - 2);
+            // floor is top_k+1 once the router shape is known: a cap of top_k
+            // works only by pigeonhole (zero slack), and a cap BELOW top_k can
+            // never seat one token's experts - assign_slot returns -1 forever
+            // and the demand path exit(1)s, turning pressure into an
+            // availability loss (D11: a top-8 family at the old fixed floor 4)
+            const int tk = st->top_k.load();
+            const int floor_slots = tk > 0 ? tk + 1 : 4;
+            const int ncap = std::max(floor_slots, severe ? cap / 2 : cap - 2);
             if (ncap < cap) {
                 st->slot_cap = ncap;
                 st->cap_drops++;
@@ -463,7 +470,18 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
         for (int64_t i = 0; i < k && i < 8; i++) printf(" %d", ((int32_t *) t->data)[i]);
         printf("\n");
     }
-    if (st->top_k == 0) st->top_k = (int) k;
+    if (st->top_k == 0) {
+        st->top_k = (int) k;
+        // a pressure drop during model load used the generic floor 4; now the
+        // family's real per-token need is known, undo any guard cap below it
+        // (never above slot_cap_max: an explicit low --slots stays the user's)
+        const int viable = std::min((int) k + 1, st->slot_cap_max);
+        if (st->slot_cap.load() < viable) {
+            fprintf(stderr, "llmstream: raising guard cap %d -> %d (top_k=%d learned)\n",
+                    st->slot_cap.load(), viable, (int) k);
+            st->slot_cap = viable;
+        }
+    }
     int32_t * ids = (int32_t *) t->data;
     layer_cache & lc = st->cache[il];
 

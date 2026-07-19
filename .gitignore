@@ -32,3 +32,4 @@ csrc/probe_cb_eval
 # benchmark scaffolding (ollama standalone + zero-copy model store)
 tools/
 ollama_models/
+csrc/stream_run_metal
