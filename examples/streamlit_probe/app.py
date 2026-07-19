@@ -76,6 +76,19 @@ def ensure_server(cfg, sys_prompt, n_gen, status):
     if slot["proc"] is not None and slot["proc"].poll() is None and slot["key"] == key:
         return slot["proc"]
     _terminate(slot["proc"])
+    # one model process on this machine, EVER: a running benchmark (any
+    # stream_run that is not our SERVER_SENTINEL) blocks chat - starting a
+    # second 117B engine took the host to swap once already (2026-07-19)
+    others = subprocess.run(["pgrep", "-f", "stream_run"], capture_output=True, text=True)
+    if others.returncode == 0:
+        for pid in others.stdout.split():
+            cmdline = subprocess.run(["ps", "-p", pid, "-o", "command="],
+                                     capture_output=True, text=True).stdout
+            if "SERVER_SENTINEL" not in cmdline and "stream_run" in cmdline:
+                raise RuntimeError(
+                    "a benchmark/measurement run is using the engine right now - "
+                    "chat is blocked until it finishes (one model at a time, "
+                    "machine-safety rule)")
     # never two engines: also clear any stray from a crashed session
     subprocess.run(["pkill", "-f", "stream_run.*SERVER_SENTINEL"], capture_output=True)
 
