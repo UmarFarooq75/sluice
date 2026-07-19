@@ -152,7 +152,11 @@ with st.sidebar:
     if cfg["margin"] > 0.5:
         st.warning("margin > 0.5 is OUTSIDE the validated quality band — the model can derail. "
                    "0.25 is the battery-validated default.")
-    cfg["slots"] = st.select_slider("slots/layer (expert cache)", [4, 8, 12, 16, 32, 48], value=cfg["slots"])
+    cfg["slots"] = st.select_slider(
+        "slots/layer (expert cache)", ["auto", 4, 8, 12, 16, 32, 48], value=cfg["slots"],
+        help="auto = engine sizes the cache from THIS machine's free memory "
+             "(model metadata + available RAM + guard headroom) — the "
+             "docker-style resource mode")
     cfg["backend"] = st.radio("backend", ["cpu", "gpu"], horizontal=True,
                               help="CPU loads much faster and decodes the same at default settings")
     n_gen = st.slider("max new tokens", 16, 512, 128, 16)
