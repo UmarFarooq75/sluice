@@ -421,6 +421,115 @@ believe a reviewer).
   Next: decode-ladder control on the fixed binary (speed-regression check on
   the 9 audit fixes + D11), then POLITE mode + RSS logging.
 
+### E20. Adaptive margin (fidelity-targeted speed) + control ladder (2026-07-19)
+- **Course correction (user)**: stop spending cycles on host-comfort features;
+  the product answer to "it slowed my machine" is fewer bytes and fewer cycles
+  per token, not politer contention. POLITE stays (10 lines, priced once in
+  the control ladder below) but the main thread of work is speed at pinned
+  quality from here on.
+- **Change A (control)**: post-fix ladder on the exact banked configs.
+  PASS bar: 3/3 logits hashes bit-identical to the pre-audit-fix bank, tok/s
+  not below bank. First rung: m0_slots12 hash MATCH e609b48bba1688a3,
+  0.75 → 1.17 tok/s (+56%, parallel part-fetch landed after the bank),
+  first mem artifact: peak_rss 7.29GB / phys_footprint 7.15GB (COMPUTE
+  pillar now measured per run, not estimated). Note: miss counts differ from
+  bank (4134 vs 3889) at identical hashes — eviction skips in-flight victims,
+  so I/O timing changes the cache trajectory without touching routing. Known
+  nondeterminism, logits unaffected.
+- **Change B (adaptive margin, D3 answer)**: LLMSTREAM_AGREE_TARGET=x sets a
+  routing-fidelity floor in family-agnostic units (fraction of true top-k
+  kept). Controller: every 180 measured router calls (~5 decode tokens),
+  margin ×1.10 if window fidelity has >1% slack above target, ×0.80 if the
+  floor is broken (quality recovers 2× faster than speed is gained), clamped
+  [0.01, 8.0] (never 0: the probs hook stops being requested and the
+  controller would go blind). Multiplicative = scale-free across gating
+  families (logit-scale gpt-oss, prob-scale OLMoE/Qwen).
+- **Prediction (written before the run)**: at target 0.93 on gpt-oss s8 the
+  margin settles in the 0.25–0.6 band (battery: m0.25→agree .91–.95,
+  m0.5→.78–.91) and decode lands between the fixed m0.25 and m0.5 rates;
+  at target 0.95 it settles at or below 0.25. Risk to watch: controller
+  oscillation between the asymmetric steps, visible as range >2× around the
+  settle point.
+- **Result (adaptive rungs 1-2)**: controller WORKS but under-exploits —
+  target .93 and .95 both settled at margin 0.035 with agreement **0.9990**,
+  leaving all the slack unspent. Root cause is arithmetic, confirmed exactly:
+  13 windows × 1.10 growth from seed 0.01 = 0.035; 7%/step needs ~200 tokens
+  to cross the dynamic range and the run had 64. Both runs identical
+  trajectories (misses 4729=4729) — the controller is deterministic in this
+  regime, good. Fix: slow-start (grow ×1.5 while slack >5 points, ×1.10 near
+  target, cut ×0.8 unchanged); rebuilt, OLMoE gate PASS, rerun queued.
+  Prediction for the rerun: settles 0.3-0.8 within ~30 tokens, agreement
+  .92-.94, decode above the fixed-m0.25 rate.
+- **Control ladder final** (4/4): no speed regression anywhere (m0_s12
+  0.75→1.17, m002_s12 0.55→1.13, m125_s8 5.11→5.06 ≈ noise). Exact-mode hash
+  bit-identical; m125 trajectory reproduced exactly (misses 1059=1059=1059
+  across three runs). m002 hash DIVERGED from bank — root-caused, not a bug:
+  at margin>0 the logits depend on the resident set, and eviction skips
+  in-flight victims, so I/O timing races change the cache trajectory in
+  miss-heavy regimes. **Margin mode is not run-reproducible by construction**;
+  exact mode is. Product docs must say so. Control-gate PASS bar fixed to
+  demand hash equality only where physics does.
+- **POLITE priced**: m125_s8 identical misses+hash, 5.06 → 1.05 tok/s
+  (**−79%**). The background I/O band throttles our own miss fetches.
+  Opt-in niche flag only, never a default — the user's course-correction
+  ("efficiency, not politeness") is now a measured fact.
+- **First footprint artifacts**: peak_rss 7.29GB / phys 7.15GB at s12;
+  phys 5.69GB at s8 — a 117B model in under 6GB physical.
+
+### E21. The disk layout question: repack REFUTED, prefetch metric was wrong (2026-07-19)
+- **Question A (layout)**: GGUF is type-major — one expert's 13.25MB = 3
+  weight extents ~1.7GB apart + 3 bias slivers; every miss pays 6 scattered
+  reads. Would an install-time expert-major repack (1 contiguous read/miss)
+  turn misses sequential and win 3-10×? Priced on the real 60GB file,
+  F_NOCACHE, 60 trials/pattern (scripts/ssd_layout_bench.py):
+
+  | pattern | ms/expert | effective |
+  |---|---|---|
+  | scatter6 serial (old engine) | 9.91 | 1341 MB/s |
+  | scatter6 parallel (engine today) | 8.32 | 1598 MB/s |
+  | contig 13.25MB (repacked) | 8.92 | 1490 MB/s |
+  | contig, QD4 (repacked, layer burst) | 7.43 | 1789 MB/s |
+  | scatter6, QD4 (today, layer burst) | 7.54 | 1764 MB/s |
+
+  **REFUTED: 1.5% at realistic queue depth.** This SSD does not punish
+  4.4MB-granularity random reads; the seek penalty is amortized at that size.
+  Kills TWO cards at once: expert-major repack AND sub-extent chunking
+  (nothing to chunk toward — the device is at its ~1.6-1.8GB/s random
+  envelope already). Weeks of `llmstream pull` repack plumbing avoided for
+  one 2-minute measurement. Corollary: the engine miss path (E17's ~11ms,
+  now ~8ms parallel) sits close to the device floor — I/O-pattern
+  engineering has ≤20% left, not multiples.
+- **Question B (prefetch)**: the counter that condemned prefetch measured the
+  wrong thing. prefetch_hits counts arrived-while-in-flight only; new
+  prefetch_used counts predictions actually consumed. OLMoE gate run:
+  issued=1627, used=1494 = **92% true recall** (old counter said 0.8%!).
+  The lookahead predictor was never bad on OLMoE — our metric was. gpt-oss
+  true recall now being measured (E22 rungs); E17's "60% waste" stands as a
+  read-amplification fact but the RECALL conclusion is reopened.
+- **Question C (compression)**: could fewer bytes/miss come from on-disk
+  compression? zstd on a 200MB expert-region slice of the real file:
+  level 1 = 1.041×, level 3 = 1.040×, level **19 = 1.040×**, lz4 = 1.000×.
+  **REFUTED** — MXFP4 is near-max entropy, as theory said. Decompress speed
+  measured ~1GB/s/core (would have been viable had the ratio existed). The
+  bytes-per-miss term is now proven irreducible from three directions
+  (layout 1.5%, chunking, compression 4%).
+- **E22 (prefetch regime law, both signs measured on gpt-oss)**: forced
+  prefetch at m1.25 (miss-light, hit .885): 5.06 → 3.59 tok/s — wrong
+  predictions ADD bytes that exceed the misses they prevent. Forced prefetch
+  at m0.25 (miss-heavy, hit .434): 1.33-1.38 → **1.55 tok/s**, hit .434 →
+  **.811**, stall −21%, total bytes only +5% — with 72% true recall
+  (used=2797 of issued=3892), prefetches SUBSTITUTE future demand misses,
+  moved earlier and overlapped with compute. Law: prefetch is a latency
+  mover, not a bandwidth saver — it pays iff predictions replace demand
+  misses (miss-heavy regime), and the existing hit_ema ≤ 0.80 auto-gate
+  selects the correct side in BOTH measured regimes. Product default
+  (m0.25 + auto prefetch) is therefore ~**1.55 tok/s** at agreement .917.
+- **Decode physics after E21/E22**: time/token ≈ misses × ~8ms(device floor,
+  parallel) + compute. Remaining levers, in order: (1) fewer misses —
+  adaptive margin, eviction policy (Belady headroom sim next), slots↑ with
+  RAM; (2) higher compute ceiling — GPU path; (3) prefill TTFT —
+  expert-major scheduling port.
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.

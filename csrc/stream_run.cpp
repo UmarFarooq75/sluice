@@ -61,6 +61,7 @@
 #include <mutex>
 #include <string>
 #include <sys/mman.h>
+#include <sys/resource.h>
 #include <sys/sysctl.h>
 #include <thread>
 #include <unistd.h>
@@ -82,6 +83,9 @@ struct layer_cache {
     std::unordered_map<int, int> slot_of; // expert -> slot
     std::unordered_set<int> in_flight;    // experts with pending fetches
     std::unordered_map<int, int> parts_left; // in-flight expert -> parts not yet read
+    std::unordered_set<int> pf_filled;    // residents filled by prefetch, not yet used
+                                          // (true recall: prefetch_hits only counts
+                                          // arrived-while-in-flight, wrong question)
     std::vector<int> free_slots;          // slots shed by the pressure guard
     int n_slots = 0;
     int next_free = 0;
@@ -109,7 +113,7 @@ struct stream_state {
     io_pool pool;
     // counters (eval thread except bytes)
     std::atomic<uint64_t> bytes{0};
-    uint64_t uses = 0, misses = 0, prefetch_hits = 0, prefetch_issued = 0, cb_calls = 0;
+    uint64_t uses = 0, misses = 0, prefetch_hits = 0, prefetch_issued = 0, prefetch_used = 0, cb_calls = 0;
     uint64_t uses_prefill = 0, misses_prefill = 0;
     double stall_s = 0.0;
     std::atomic<bool> in_decode{false};
@@ -119,6 +123,14 @@ struct stream_state {
                            // margin of the weakest resident pick (finding 11);
                            // 0 = off = bit-exact
     uint64_t margin_masked = 0;
+    // LLMSTREAM_AGREE_TARGET: adaptive margin (D3 answer). The user states a
+    // routing-fidelity floor in family-agnostic units (fraction of true top-k
+    // picks kept); the controller finds the largest margin that honors it.
+    // Multiplicative steps are scale-free: the same loop lands on logit-scale
+    // margins for gpt-oss and prob-scale margins for OLMoE/Qwen.
+    float agree_target = 0.0f;
+    uint64_t win_hits = 0, win_total = 0, adapt_steps = 0;
+    float margin_lo = 0.0f, margin_hi = 0.0f;
     // routing fidelity: overlap between the true (pre-mask) top-k and the
     // top-k actually selected after masking. exact ground truth, free to read
     // because the hook holds the raw scores before it mutates them.
@@ -191,6 +203,7 @@ static void pool_worker(io_pool * p) {
             if (it != lc.parts_left.end() && --it->second <= 0) {
                 lc.parts_left.erase(it);
                 lc.in_flight.erase(j.e);
+                if (j.prefetch) lc.pf_filled.insert(j.e);
             }
         }
         p->cv_done.notify_all();
@@ -300,6 +313,7 @@ static int assign_slot(layer_cache & lc, int e, const std::unordered_set<int> * 
         if (lc.in_flight.count(victim)) continue;
         int slot = lc.slot_of[victim];
         lc.slot_of.erase(victim);
+        lc.pf_filled.erase(victim);
         lc.lru.erase(lc.lru_pos[victim]);
         lc.lru_pos.erase(victim);
         return slot;
@@ -385,7 +399,32 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
                 for (int i = 0; i < k; i++) overlap += true_topk.count(idx[i]) ? 1 : 0;
                 st->agree_hits  += overlap;
                 st->agree_total += k;
+                st->win_hits    += overlap;
+                st->win_total   += k;
                 if (overlap < k) st->swapped_tokens++;
+            }
+            // adaptive margin: every ~5 decode tokens (180 measured calls on a
+            // 36-layer model) compare window fidelity against the target. Grow
+            // the margin 10% when there is slack, cut 20% when the floor is
+            // broken - quality recovers twice as fast as speed is gained.
+            if (st->agree_target > 0.0f && st->win_total >= 180u * (uint64_t) k) {
+                const float a = (float) st->win_hits / (float) st->win_total;
+                if (a > st->agree_target + 0.01f) {
+                    // slow-start (E20 rung 1: x1.10 alone left agreement .999
+                    // vs target .93 after 64 tok - 7%/step never crossed the
+                    // dynamic range): coarse x1.5 while slack >5 points, then
+                    // fine x1.10 near the target
+                    const float grow = (a > st->agree_target + 0.05f) ? 1.5f : 1.10f;
+                    st->margin = std::min(st->margin * grow, 8.0f);
+                } else if (a < st->agree_target - 0.01f) {
+                    // never 0: the probs hook stops being requested at 0 and
+                    // the controller would go blind, frozen at full mask-off
+                    st->margin = std::max(st->margin * 0.80f, 0.01f);
+                }
+                st->margin_lo = std::min(st->margin_lo, st->margin);
+                st->margin_hi = std::max(st->margin_hi, st->margin);
+                st->adapt_steps++;
+                st->win_hits = st->win_total = 0;
             }
         }
         return true;
@@ -506,6 +545,7 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
                 if (need.count(victim) || lc.in_flight.count(victim)) continue;
                 const int s = lc.slot_of[victim];
                 lc.slot_of.erase(victim);
+                lc.pf_filled.erase(victim);
                 lc.lru.erase(lc.lru_pos[victim]);
                 lc.lru_pos.erase(victim);
                 lc.free_slots.push_back(s);
@@ -522,6 +562,7 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
             st->hit_ema = 0.995 * st->hit_ema + (hit ? 0.005 : 0.0);
             if (lc.slot_of.count(e)) {
                 if (lc.in_flight.count(e)) { st->prefetch_hits++; waited_any = true; }
+                else if (lc.pf_filled.erase(e)) st->prefetch_used++;
                 continue;
             }
             if (st->in_decode) st->misses++; else st->misses_prefill++;
@@ -563,6 +604,23 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
     return true;
 }
 
+// COMPUTE pillar artifact: what this run actually cost in memory. ru_maxrss is
+// the process peak RSS (bytes on macOS); phys_footprint is what the OS bills
+// us for right now (the number Activity Monitor shows) - both printed so no
+// run's footprint is ever an unmeasured claim again.
+static void print_mem_footprint() {
+    struct rusage ru{};
+    getrusage(RUSAGE_SELF, &ru);
+    task_vm_info_data_t vmi{};
+    mach_msg_type_number_t cnt = TASK_VM_INFO_COUNT;
+    if (task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmi, &cnt) == KERN_SUCCESS) {
+        printf("mem: peak_rss=%.2f GB phys_footprint=%.2f GB\n",
+               ru.ru_maxrss / 1e9, vmi.phys_footprint / 1e9);
+    } else {
+        printf("mem: peak_rss=%.2f GB\n", ru.ru_maxrss / 1e9);
+    }
+}
+
 int main(int argc, char ** argv) {
     if (argc < 4) {
         fprintf(stderr, "usage: %s <model.gguf> <n_gen> <prompt> [n_ubatch]\n", argv[0]);
@@ -571,6 +629,19 @@ int main(int argc, char ** argv) {
     const char * model_path = argv[1];
     const int n_gen = atoi(argv[2]);
     const std::string prompt = argv[3];
+
+    // LLMSTREAM_POLITE=1: put the whole process in the Darwin background band
+    // (CPU scheduled behind any foreground app, disk I/O throttled) - the
+    // in-engine equivalent of `taskpolicy -b`, which measurably restored UI
+    // responsiveness during the domain battery. Off by default until the
+    // control ladder prices its speed cost; the default follows the data.
+    if (getenv("LLMSTREAM_POLITE") && atoi(getenv("LLMSTREAM_POLITE")) != 0) {
+        if (setpriority(PRIO_DARWIN_PROCESS, 0, PRIO_DARWIN_BG) != 0) {
+            fprintf(stderr, "llmstream: POLITE requested but setpriority failed: %s\n", strerror(errno));
+        } else {
+            fprintf(stderr, "llmstream: POLITE on - background CPU/IO band\n");
+        }
+    }
 
     // E10: LLMSTREAM_SLOTS=auto sizes the cache to THIS machine's spare
     // memory. Measured motivation: slots16 on the 16GB Air collapsed to
@@ -651,6 +722,14 @@ int main(int argc, char ** argv) {
         st.prefetch_on = !(pf && atoi(pf) == 0);
         const char * mg = getenv("LLMSTREAM_MARGIN");
         st.margin = mg ? (float) atof(mg) : 0.0f;
+        const char * at = getenv("LLMSTREAM_AGREE_TARGET");
+        if (at) {
+            st.agree_target = (float) atof(at);
+            if (st.agree_target > 0.0f && st.margin <= 0.0f) st.margin = 0.01f; // seed: hook must stay live
+            st.margin_lo = st.margin_hi = st.margin;
+            fprintf(stderr, "llmstream: adaptive margin on, fidelity target %.2f (seed margin %.3f)\n",
+                    st.agree_target, st.margin);
+        }
     }
 
     // E10: the guard must exist BEFORE model load - stress test 3 measured
@@ -839,11 +918,16 @@ int main(int argc, char ** argv) {
                 printf("io: margin=%.3f router_agreement=%.4f swapped_calls=%" PRIu64 "\n",
                        st.margin, (double) st.agree_hits / st.agree_total, st.swapped_tokens);
             }
+            if (st.agree_target > 0.0f) {
+                printf("io: adaptive_margin target=%.2f final=%.3f range=[%.3f,%.3f] steps=%" PRIu64 "\n",
+                       st.agree_target, st.margin, st.margin_lo, st.margin_hi, st.adapt_steps);
+            }
             if (st.cap_drops.load() > 0) {
                 printf("io: guard pressure_drops=%" PRIu64 " cap_evictions=%" PRIu64 " final_cap=%d madv_fail=%" PRIu64 "\n",
                        st.cap_drops.load(), st.cap_evictions, st.slot_cap.load(), g_madv_fail);
             }
         }
+        print_mem_footprint();
         st.mon_stop = true;
         if (st.mon.joinable()) st.mon.join();
         if (n_slots > 0) {
@@ -906,8 +990,8 @@ int main(int argc, char ** argv) {
         printf("io: cb_calls=%" PRIu64 " decode_uses=%" PRIu64 " decode_misses=%" PRIu64 " (hit %.3f) prefill_uses=%" PRIu64 " prefill_misses=%" PRIu64 "\n",
                st.cb_calls, st.uses, st.misses, st.uses ? 1.0 - (double) st.misses / st.uses : 0.0,
                st.uses_prefill, st.misses_prefill);
-        printf("io: prefetch_issued=%" PRIu64 " prefetch_hits=%" PRIu64 " stall=%.2f s total_read=%.1f MB avg_bw=%.0f MB/s\n",
-               st.prefetch_issued, st.prefetch_hits, st.stall_s, mb, mb / (dt_prefill + dt_decode));
+        printf("io: prefetch_issued=%" PRIu64 " prefetch_hits=%" PRIu64 " prefetch_used=%" PRIu64 " stall=%.2f s total_read=%.1f MB avg_bw=%.0f MB/s\n",
+               st.prefetch_issued, st.prefetch_hits, st.prefetch_used, st.stall_s, mb, mb / (dt_prefill + dt_decode));
         // read_work is summed across the 6 pool workers (can exceed wall time);
         // per_stream_bw = bytes / that sum, i.e. what one queue depth delivers
         printf("io: read_work=%.2f s preads=%" PRIu64 " per_stream_bw=%.0f MB/s\n",
@@ -919,12 +1003,17 @@ int main(int argc, char ** argv) {
                 printf("io: router_agreement=%.4f swapped_calls=%" PRIu64 " of=%" PRIu64 "\n",
                        (double) st.agree_hits / st.agree_total, st.swapped_tokens, st.agree_total / (uint64_t) st.top_k);
             }
+            if (st.agree_target > 0.0f) {
+                printf("io: adaptive_margin target=%.2f final=%.3f range=[%.3f,%.3f] steps=%" PRIu64 "\n",
+                       st.agree_target, st.margin, st.margin_lo, st.margin_hi, st.adapt_steps);
+            }
         }
         if (st.cap_drops.load() > 0) {
             printf("io: guard pressure_drops=%" PRIu64 " cap_evictions=%" PRIu64 " final_cap=%d\n",
                    st.cap_drops.load(), st.cap_evictions, st.slot_cap.load());
         }
     }
+    print_mem_footprint();
     printf("logits_hash=%016" PRIx64 "\n", hash);
     printf("text: %s\n", out.c_str());
 
