@@ -903,9 +903,16 @@ int main(int argc, char ** argv) {
     if (getenv("LLMSTREAM_CHAT")) {
         const char * tmpl = llama_model_chat_template(model, nullptr);
         if (tmpl) {
-            llama_chat_message msg = { "user", prompt.c_str() };
-            std::vector<char> buf(prompt.size() * 2 + 4096);
-            int32_t r = llama_chat_apply_template(tmpl, &msg, 1, true, buf.data(), (int32_t) buf.size());
+            // optional system message first (LLMSTREAM_SYSTEM); grounds chat
+            // behavior - especially at high margins, where a contentless
+            // prompt plus swapped routing invites confabulated tasks
+            const char * sys = getenv("LLMSTREAM_SYSTEM");
+            std::vector<llama_chat_message> msgs;
+            if (sys && sys[0]) msgs.push_back({ "system", sys });
+            msgs.push_back({ "user", prompt.c_str() });
+            std::vector<char> buf(prompt.size() * 2 + (sys ? strlen(sys) * 2 : 0) + 4096);
+            int32_t r = llama_chat_apply_template(tmpl, msgs.data(), msgs.size(), true,
+                                                  buf.data(), (int32_t) buf.size());
             if (r > 0 && r <= (int32_t) buf.size()) { ptext.assign(buf.data(), r); chat = true; }
         }
         if (!chat) fprintf(stderr, "warn: LLMSTREAM_CHAT set but no usable template; raw prompt\n");

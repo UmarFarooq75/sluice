@@ -52,13 +52,15 @@ def engine_running():
     return subprocess.run(["pgrep", "-f", "stream_run"], capture_output=True).returncode == 0
 
 
-def build_cmd(cfg, prompt, n_gen):
+def build_cmd(cfg, prompt, n_gen, system=""):
     env = os.environ.copy()
     env.update({
         "LLMSTREAM_SLOTS": str(cfg["slots"]),
         "LLMSTREAM_MARGIN": str(cfg["margin"]),
         "LLMSTREAM_STREAM_OUT": "1",
     })
+    if system.strip():
+        env["LLMSTREAM_SYSTEM"] = system.strip()
     if cfg["chat"]:
         env["LLMSTREAM_CHAT"] = "1"
     if cfg["backend"] == "gpu":
@@ -91,7 +93,14 @@ with st.sidebar:
     choice = st.selectbox("model", [k for k, v in MODELS.items() if v["path"] and Path(v["path"]).exists()])
     cfg = dict(MODELS[choice])
     st.caption(cfg["note"])
+    sys_prompt = st.text_area("system prompt", value="You are a helpful, concise assistant. Answer the user's message directly.",
+                              help="grounds the model; sent as the harmony/system message each turn")
     cfg["margin"] = st.slider("margin (speed↔quality dial; 0 = bit-exact)", 0.0, 2.0, float(cfg["margin"]), 0.05)
+    if cfg["margin"] > 0.5:
+        st.warning("margin > 0.5 is OUTSIDE the validated quality band — "
+                   "routing fidelity drops toward ~50% and the model can derail "
+                   "(measured: reasoning +9.7% NLL at 0.5; worse beyond). "
+                   "0.25 is the battery-validated default.")
     cfg["slots"] = st.select_slider("slots/layer (expert cache)", [4, 8, 12, 16, 32, 48], value=cfg["slots"])
     cfg["backend"] = st.radio("backend", ["cpu", "gpu"], horizontal=True,
                               help="GPU only pays above ~0.9 hit rate (measured); CPU is the default")
@@ -154,7 +163,7 @@ if prompt:
             st.error("another engine process is already running — one model at a time (machine-safety rule)")
             st.stop()
 
-        cmd, env = build_cmd(cfg, prompt, n_gen)
+        cmd, env = build_cmd(cfg, prompt, n_gen, system=sys_prompt)
         t0 = time.time()
         proc = subprocess.Popen(cmd, env=env, cwd=ROOT,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -193,21 +202,25 @@ if prompt:
                             ttft = time.time() - t0
                         end = buf.find(b"<<<END>>>")
                         raw = (buf[:end] if end >= 0 else buf).decode(errors="replace")
-                        # harmony split: analysis channel = thinking, final = reply
-                        final = raw
-                        thinking = ""
+                        # harmony split: analysis streams as thinking; the
+                        # answer pane opens only when the final channel does.
+                        # models without channel markers stream straight in.
+                        harmony = "<|" in raw or "analysis" == raw.lstrip()[:8]
                         m = re.search(r"<\|channel\|>final<\|message\|>(.*)", raw, re.S)
                         if m:
-                            final = m.group(1)
-                            a = re.search(r"<\|channel\|>analysis<\|message\|>(.*?)<\|end\|>", raw, re.S)
-                            if a:
-                                thinking = a.group(1)
-                        final = re.sub(r"<\|[^|]*\|>", "", final)
-                        if thinking:
+                            final = re.sub(r"<\|[^|]*\|>", "", m.group(1))
+                            thinking = re.sub(r"<\|[^|]*\|>", " ", raw[:m.start()])
+                        elif "<|" in raw:
+                            final = ""
+                            thinking = re.sub(r"<\|[^|]*\|>", " ", raw)
+                        else:
+                            final = raw
+                            thinking = ""
+                        if thinking.strip():
                             with think_ph.container():
-                                with st.expander("thinking (analysis channel)", expanded=False):
+                                with st.expander("thinking (analysis channel)", expanded=(not final)):
                                     st.text(thinking)
-                        answer_ph.markdown(final + ("▌" if end < 0 else ""))
+                        answer_ph.markdown(final + ("▌" if end < 0 else "") if (final or not thinking) else "")
                         if end >= 0 and proc.poll() is not None:
                             break
                 if time.time() - last_stat > 0.5:
