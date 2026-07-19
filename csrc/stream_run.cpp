@@ -88,6 +88,10 @@ struct layer_cache {
                                           // (true recall: prefetch_hits only counts
                                           // arrived-while-in-flight, wrong question)
     std::vector<int> free_slots;          // slots shed by the pressure guard
+    // E27: this layer's pf-pool targets, one per ext kind, resolved by the
+    // layer tensor's own quant type (mixed-quant files: pool per type, D14)
+    std::vector<ggml_tensor *> pf_t;
+    std::vector<size_t> pf_stride;
     int n_slots = 0;
     int next_free = 0;
     // E23: routing is Zipf-heavy per layer (measured: 8 of 128 experts cover
@@ -101,7 +105,7 @@ struct layer_cache {
 struct stream_state;
 
 struct io_pool {
-    struct job { int il, e, slot, part; bool prefetch; };
+    struct job { int il, e, slot, part; bool prefetch; bool pf = false; };
     std::deque<job> q;
     std::mutex m;
     std::condition_variable cv_work;   // workers wait for jobs
@@ -146,6 +150,17 @@ struct stream_state {
     // I/O worker accounting: summed pread wall time across workers vs the eval
     // thread's stall tells queueing from raw device latency apart
     std::atomic<uint64_t> read_us{0}, read_calls{0};
+    // E27 prefill pool: one shared slot set (P slots, P = n_expert by default)
+    // that every layer refills during multi-token ubatches. Decode caches are
+    // never touched by prefill, so the warm decode cache survives a prompt.
+    bool pf_on = false;
+    int pf_slots = 0;
+    std::vector<ggml_tensor *> pf_t;   // distinct pool tensors (release/footprint)
+    std::atomic<int> pf_outstanding{0};
+    bool pf_dirty = false;             // pool pages held; MADV_FREE on next 1-token call
+    uint64_t pf_calls = 0, pf_experts = 0;
+    int pf_union_min = INT_MAX, pf_union_max = 0;
+    double pf_fill_s = 0.0;
     // E10 pressure guard: the host machine is never collateral damage. cap is
     // the live per-layer occupancy limit the monitor thread lowers under
     // memory pressure and raises back when calm.
@@ -168,7 +183,11 @@ static void fetch_one(stream_state & st, const io_pool::job & j) {
         const tensor_extent & ex = lc.ext[t];
         size_t sz  = ex.stride;
         size_t off = ex.file_off + (size_t) j.e * sz;
-        char * dst = (char *) ex.slot_t->data + (size_t) j.slot * ex.slot_stride;
+        // pf jobs land in this layer's typed pool variant; sources (file
+        // extents) are the same per-layer offsets either way
+        char * dst = j.pf
+            ? (char *) lc.pf_t[t]->data + (size_t) j.slot * lc.pf_stride[t]
+            : (char *) ex.slot_t->data + (size_t) j.slot * ex.slot_stride;
         size_t done = 0;
         auto r0 = std::chrono::steady_clock::now();
         while (done < sz) {
@@ -206,12 +225,18 @@ static void pool_worker(io_pool * p) {
         fetch_one(*p->st, j);
         {
             std::lock_guard<std::mutex> l(p->m);
-            layer_cache & lc = p->st->cache[j.il];
-            auto it = lc.parts_left.find(j.e);
-            if (it != lc.parts_left.end() && --it->second <= 0) {
-                lc.parts_left.erase(it);
-                lc.in_flight.erase(j.e);
-                if (j.prefetch) lc.pf_filled.insert(j.e);
+            if (j.pf) {
+                // prefill-pool job: no decode-cache maps involved, just the
+                // per-call outstanding count the eval thread waits on
+                p->st->pf_outstanding--;
+            } else {
+                layer_cache & lc = p->st->cache[j.il];
+                auto it = lc.parts_left.find(j.e);
+                if (it != lc.parts_left.end() && --it->second <= 0) {
+                    lc.parts_left.erase(it);
+                    lc.in_flight.erase(j.e);
+                    if (j.prefetch) lc.pf_filled.insert(j.e);
+                }
             }
         }
         p->cv_done.notify_all();
@@ -231,6 +256,19 @@ static void madv_free_slot(layer_cache & lc, int slot) {
         // count it so "shed" never silently means "paid speed, freed nothing"
         if (pb > pa && madvise((void *) pa, pb - pa, MADV_FREE) != 0) g_madv_fail++;
     }
+}
+
+// E27: after a prefill finishes, hand the shared pool's pages back to the OS.
+// Contents are dead (each layer overwrote the last); the next prefill refills
+// from scratch, so this only trades page faults for a smaller idle footprint.
+static void pf_release(stream_state & st) {
+    const uintptr_t ps = (uintptr_t) sysconf(_SC_PAGESIZE);
+    for (ggml_tensor * t : st.pf_t) {
+        const uintptr_t lo = ((uintptr_t) t->data + ps - 1) & ~(ps - 1);
+        const uintptr_t hi = ((uintptr_t) t->data + ggml_nbytes(t)) & ~(ps - 1);
+        if (hi > lo && madvise((void *) lo, hi - lo, MADV_FREE) != 0) g_madv_fail++;
+    }
+    st.pf_dirty = false;
 }
 
 static size_t avail_mem_bytes(void) {
@@ -403,6 +441,11 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
         || (st->margin > 0.0f && is_probs)
         || (observe_topk && strncmp(t->name, "ffn_moe_topk", 12) == 0)
         || (dbg && strncmp(t->name, "ffn_moe_", 8) == 0);
+
+    // E27: with the prefill pool active, multi-token graphs fetch their whole
+    // expert union - masking by decode-cache residency there would degrade
+    // routing for zero I/O benefit. Margin/skip/agreement are decode-time dials.
+    if (st->pf_on && t->ne[1] > 1 && !is_slots) return true;
 
     if (st->margin > 0.0f && is_probs && !st->cache.empty()) {
         // margin-gated cache-aware routing (finding 11): before top-k, mask out
@@ -605,6 +648,53 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
 
     std::unordered_set<int> need;
     for (int64_t i = 0; i < k * n_tokens; i++) need.insert(ids[i]);
+
+    // E27 expert-major prefill: this graph's expert ops read the shared pool
+    // (build_moe_ffn swapped tensors for n_tokens > 1), so fill the pool with
+    // this layer's batch union - each expert fetched once for the whole batch
+    // instead of once per token miss - and rewrite ids to pool slots. Decode
+    // caches, LRU, guard and margin state are untouched.
+    if (st->pf_on && n_tokens > 1) {
+        if ((int) need.size() > st->pf_slots) {
+            fprintf(stderr, "prefill union %zu > pool %d at layer %d - raise LLMSTREAM_PREFILL_SLOTS\n",
+                    need.size(), st->pf_slots, il);
+            exit(1);
+        }
+        auto pt0 = std::chrono::steady_clock::now();
+        std::unordered_map<int, int> pf_slot_of;
+        pf_slot_of.reserve(need.size());
+        {
+            std::lock_guard<std::mutex> l(st->pool.m);
+            int s = 0;
+            for (int e : need) {
+                pf_slot_of[e] = s;
+                for (int part = (int) lc.ext.size() - 1; part >= 0; part--) {
+                    st->pf_outstanding++;
+                    st->pool.q.push_front({il, e, s, part, false, true});
+                }
+                s++;
+            }
+            st->pool.cv_work.notify_all();
+        }
+        {
+            std::unique_lock<std::mutex> l(st->pool.m);
+            st->pool.cv_done.wait(l, [&] { return st->pf_outstanding.load() == 0; });
+        }
+        st->pf_fill_s += std::chrono::duration<double>(std::chrono::steady_clock::now() - pt0).count();
+        st->pf_calls++;
+        st->pf_experts += need.size();
+        st->pf_union_min = std::min(st->pf_union_min, (int) need.size());
+        st->pf_union_max = std::max(st->pf_union_max, (int) need.size());
+        st->uses_prefill += (uint64_t) (k * n_tokens);
+        st->misses_prefill += need.size();
+        st->pf_dirty = true;
+        for (int64_t i = 0; i < k * n_tokens; i++) ids[i] = pf_slot_of[ids[i]];
+        return true;
+    }
+    // first single-token call after a prefill: the pool's contents are dead
+    // (each layer overwrote the last) - hand its pages back to the OS
+    if (st->pf_dirty) pf_release(*st);
+
     if ((int) need.size() > lc.n_slots) {
         fprintf(stderr, "ubatch expert union %zu > n_slots %d at layer %d - lower n_ubatch\n",
                 need.size(), lc.n_slots, il);
@@ -858,6 +948,12 @@ int main(int argc, char ** argv) {
                         "measured garbage output). Set LLMSTREAM_SLOT_DEV=gpu or NGL=0.\n");
         return 1;
     }
+    // E27 v1: the prefill pool is CPU-only (device-resident pool untested;
+    // same cross-backend fill hazards as E12). Refuse rather than risk it.
+    if (getenv("LLMSTREAM_PREFILL_SLOTS") && getenv("LLMSTREAM_SLOT_DEV")) {
+        fprintf(stderr, "llmstream: LLMSTREAM_PREFILL_SLOTS with LLMSTREAM_SLOT_DEV is untested (v1 is CPU-only) - unset one.\n");
+        return 1;
+    }
     // repacked (interleaved) weight layouts use different gemm kernels than the
     // plain vec_dot path slot tensors take; disable for bit-exact comparisons
     if (getenv("LLMSTREAM_NO_REPACK")) mparams.use_extra_bufts = false;
@@ -890,6 +986,7 @@ int main(int argc, char ** argv) {
             return true;
         };
 
+        std::vector<std::string> kind0; // layer-0 kind names, in ext order (pf lookup)
         for (int il = 0; ; il++) {
             char name[128];
             layer_cache lc;
@@ -897,16 +994,20 @@ int main(int argc, char ** argv) {
             snprintf(name, sizeof(name), "blk.%d.ffn_down_exps.weight", il);
             if (!extent_for(name, ex)) { st.n_layers = il; break; }
             lc.ext.push_back(ex);
+            if (il == 0) kind0.push_back(name + 6);
             snprintf(name, sizeof(name), "blk.%d.ffn_gate_up_exps.weight", il);
             if (extent_for(name, ex)) {
                 lc.ext.push_back(ex);
+                if (il == 0) kind0.push_back(name + 6);
             } else {
                 snprintf(name, sizeof(name), "blk.%d.ffn_gate_exps.weight", il);
                 if (!extent_for(name, ex)) { fprintf(stderr, "no gate tensors L%d\n", il); return 1; }
                 lc.ext.push_back(ex);
+                if (il == 0) kind0.push_back(name + 6);
                 snprintf(name, sizeof(name), "blk.%d.ffn_up_exps.weight", il);
                 if (!extent_for(name, ex)) { fprintf(stderr, "no up tensor L%d\n", il); return 1; }
                 lc.ext.push_back(ex);
+                if (il == 0) kind0.push_back(name + 6);
             }
             // per-expert bias vectors (gpt-oss family), streamed with the weights
             static const char * bias_fmt[] = {
@@ -914,7 +1015,10 @@ int main(int argc, char ** argv) {
             };
             for (const char * fmt : bias_fmt) {
                 snprintf(name, sizeof(name), fmt, il);
-                if (extent_for(name, ex)) lc.ext.push_back(ex);
+                if (extent_for(name, ex)) {
+                    lc.ext.push_back(ex);
+                    if (il == 0) kind0.push_back(name + 6);
+                }
             }
             lc.n_slots = (int) n_slots;
             st.cache.push_back(std::move(lc));
@@ -933,6 +1037,49 @@ int main(int argc, char ** argv) {
                st.n_layers, n_slots, st.cache[0].ext.size(), per_exp / 1e6,
                st.prefetch_on ? "on" : "off");
 
+        // E27: discover the prefill pool - per layer, per kind, resolved by
+        // the layer tensor's own quant type (mixed-quant files have one pool
+        // variant per type, D14). All-or-nothing, mirroring build_moe_ffn's
+        // swap: every layer's every kind must resolve with an equal stride or
+        // the pool stays dormant (families the fork hasn't wired yet).
+        if (getenv("LLMSTREAM_PREFILL_SLOTS") && atoll(getenv("LLMSTREAM_PREFILL_SLOTS")) > 0) {
+            st.pf_on = true;
+            std::unordered_set<ggml_tensor *> pools;
+            for (auto & lc : st.cache) {
+                if (lc.ext.size() != kind0.size()) { st.pf_on = false; break; }
+                for (size_t ti = 0; ti < lc.ext.size() && st.pf_on; ti++) {
+                    std::string pfn = "llmstream_pf." + kind0[ti] + "." +
+                                      ggml_type_name(lc.ext[ti].slot_t->type);
+                    ggml_tensor * pt = llmstream_get_tensor(pfn.c_str());
+                    if (!pt || !pt->data) { st.pf_on = false; break; }
+                    const size_t stride = pt->ne[2] == 1 ? pt->nb[1] : pt->nb[2];
+                    if (stride != lc.ext[ti].stride) {
+                        fprintf(stderr, "pf stride mismatch %s\n", pfn.c_str());
+                        return 1;
+                    }
+                    lc.pf_t.push_back(pt);
+                    lc.pf_stride.push_back(stride);
+                    pools.insert(pt);
+                }
+                if (!st.pf_on) break;
+            }
+            if (st.pf_on) {
+                size_t pool_bytes = 0;
+                for (ggml_tensor * pt : pools) {
+                    st.pf_t.push_back(pt);
+                    pool_bytes += ggml_nbytes(pt);
+                }
+                ggml_tensor * w0 = st.cache[0].pf_t[0];
+                st.pf_slots = (int) (w0->ne[2] == 1 ? w0->ne[1] : w0->ne[2]);
+                printf("llmstream: prefill pool %d slots x %zu type-variants (%.0f MB), shared across layers\n",
+                       st.pf_slots, pools.size(), pool_bytes / 1e6);
+            } else {
+                for (auto & lc : st.cache) { lc.pf_t.clear(); lc.pf_stride.clear(); }
+                st.pf_t.clear();
+                fprintf(stderr, "llmstream: LLMSTREAM_PREFILL_SLOTS set but this family has no pf tensors - dormant\n");
+            }
+        }
+
         st.pool.st = &st;
         int n_workers = getenv("LLMSTREAM_IO_WORKERS") ? atoi(getenv("LLMSTREAM_IO_WORKERS")) : 10;
         if (n_workers < 1) n_workers = 1;
@@ -943,7 +1090,10 @@ int main(int argc, char ** argv) {
     const int n_ubatch = argc > 4 ? atoi(argv[4]) : 1;
     llama_context_params cparams = llama_context_default_params();
     cparams.n_ctx    = 1024;
-    cparams.n_batch  = 512;
+    // the driver passes a whole prompt as one llama_decode batch, so n_batch
+    // must cover anything the context can hold (llama.cpp splits internally
+    // into n_ubatch pieces); found by GGML_ASSERT on a 712-token prompt
+    cparams.n_batch  = 1024;
     cparams.n_ubatch = n_ubatch;
     cparams.cb_eval  = cb_eval;
     cparams.cb_eval_user_data = &st;
@@ -979,6 +1129,8 @@ int main(int argc, char ** argv) {
         st.cb_calls = st.prefetch_issued = st.prefetch_hits = st.prefetch_used = 0;
         st.agree_hits = st.agree_total = st.swapped_tokens = st.margin_masked = st.skip_fills = 0;
         st.stall_s = 0.0; st.bytes = 0; st.read_us = 0; st.read_calls = 0;
+        st.pf_calls = st.pf_experts = 0; st.pf_fill_s = 0.0;
+        st.pf_union_min = INT_MAX; st.pf_union_max = 0;
         st.in_decode = false;
     }
     // LLMSTREAM_CHAT=1: wrap the prompt in the model's own chat template
@@ -1172,6 +1324,11 @@ int main(int argc, char ** argv) {
         printf("io: cb_calls=%" PRIu64 " decode_uses=%" PRIu64 " decode_misses=%" PRIu64 " (hit %.3f) prefill_uses=%" PRIu64 " prefill_misses=%" PRIu64 "\n",
                st.cb_calls, st.uses, st.misses, st.uses ? 1.0 - (double) st.misses / st.uses : 0.0,
                st.uses_prefill, st.misses_prefill);
+        if (st.pf_calls > 0) {
+            printf("io: pf_calls=%" PRIu64 " pf_experts=%" PRIu64 " union avg=%.1f min=%d max=%d fill=%.2f s (pool %d slots)\n",
+                   st.pf_calls, st.pf_experts, (double) st.pf_experts / st.pf_calls,
+                   st.pf_union_min, st.pf_union_max, st.pf_fill_s, st.pf_slots);
+        }
         printf("io: prefetch_issued=%" PRIu64 " prefetch_hits=%" PRIu64 " prefetch_used=%" PRIu64 " stall=%.2f s total_read=%.1f MB avg_bw=%.0f MB/s\n",
                st.prefetch_issued, st.prefetch_hits, st.prefetch_used, st.stall_s, mb, mb / (dt_prefill + dt_decode));
         // read_work is summed across the 6 pool workers (can exceed wall time);

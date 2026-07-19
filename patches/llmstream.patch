@@ -11,7 +11,7 @@ index 320784c..62b2d75 100644
              llama-model.cpp
              llama-quant.cpp
 diff --git a/src/llama-graph.cpp b/src/llama-graph.cpp
-index c8ecb0a..777795f 100644
+index c8ecb0a..02d63ba 100644
 --- a/src/llama-graph.cpp
 +++ b/src/llama-graph.cpp
 @@ -1,5 +1,7 @@
@@ -22,7 +22,63 @@ index c8ecb0a..777795f 100644
  #include "llama-impl.h"
  #include "llama-model.h"
  #include "llama-batch.h"
-@@ -1960,6 +1962,17 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+@@ -1825,6 +1827,55 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+     const int64_t n_tokens = cur->ne[1];
+     const bool weight_before_ffn = arch == LLM_ARCH_LLAMA4; // for llama4, we apply the sigmoid-ed weights before the FFN
+ 
++    // llmstream prefill pool (E27): multi-token ubatches read experts from one
++    // shared slot set that every layer reuses (the driver refills it per layer
++    // via cb_eval), so a batch's expert union can never overflow the per-layer
++    // decode caches. All-or-nothing: swap only if every non-null expert tensor
++    // has a pf twin, never mixing pools within one layer's ops. Families whose
++    // load path creates no pf tensors are unchanged.
++    if (llmstream_slots() > 0 && n_tokens > 1 && llmstream_prefill_slots(n_expert) > 0) {
++        // pick the pool variant matching each layer tensor's own quant type -
++        // mixed-quant files have one pool per (kind, type) (D14)
++        auto pf_twin = [](const ggml_tensor * s, const char * kind) -> ggml_tensor * {
++            if (!s) return nullptr;
++            char pfn[128];
++            snprintf(pfn, sizeof(pfn), "llmstream_pf.%s.%s", kind, ggml_type_name(s->type));
++            return llmstream_get_tensor(pfn);
++        };
++        ggml_tensor * pf_up      = pf_twin(up_exps,      "ffn_up_exps.weight");
++        ggml_tensor * pf_gate    = pf_twin(gate_exps,    "ffn_gate_exps.weight");
++        ggml_tensor * pf_down    = pf_twin(down_exps,    "ffn_down_exps.weight");
++        ggml_tensor * pf_gate_up = pf_twin(gate_up_exps, "ffn_gate_up_exps.weight");
++        ggml_tensor * pf_up_b    = pf_twin(up_exps_b,    "ffn_up_exps.bias");
++        ggml_tensor * pf_gate_b  = pf_twin(gate_exps_b,  "ffn_gate_exps.bias");
++        ggml_tensor * pf_down_b  = pf_twin(down_exps_b,  "ffn_down_exps.bias");
++        const bool complete =
++            (!up_exps        || pf_up)      &&
++            (!gate_exps      || pf_gate)    &&
++            (!down_exps      || pf_down)    &&
++            (!gate_up_exps   || pf_gate_up) &&
++            (!up_exps_b      || pf_up_b)    &&
++            (!gate_exps_b    || pf_gate_b)  &&
++            (!down_exps_b    || pf_down_b)  &&
++            // expert-indexed tensors v1 ships no pf twins for: refuse the swap
++            // rather than mix pools (merged-gate_up biases, per-expert scales)
++            !gate_up_exps_b && !up_exps_s && !gate_exps_s && !down_exps_s;
++        static const bool pf_dbg = getenv("LLMSTREAM_PF_DEBUG") != nullptr;
++        if (pf_dbg) {
++            fprintf(stderr, "llmstream: pf swap L%d n_tokens=%lld complete=%d\n",
++                    il, (long long) n_tokens, complete ? 1 : 0);
++        }
++        if (complete) {
++            if (up_exps)      up_exps      = pf_up;
++            if (gate_exps)    gate_exps    = pf_gate;
++            if (down_exps)    down_exps    = pf_down;
++            if (gate_up_exps) gate_up_exps = pf_gate_up;
++            if (up_exps_b)    up_exps_b    = pf_up_b;
++            if (gate_exps_b)  gate_exps_b  = pf_gate_b;
++            if (down_exps_b)  down_exps_b  = pf_down_b;
++        }
++    }
++
+     ggml_tensor * logits = nullptr;
+ 
+     if (probs_in == nullptr) {
+@@ -1960,6 +2011,17 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
      //call early so that topk-moe can be used
      ggml_build_forward_expand(gf, weights);
  
@@ -40,7 +96,7 @@ index c8ecb0a..777795f 100644
      cur = ggml_reshape_3d(ctx0, cur, n_embd, 1, n_tokens);
  
      if (weight_before_ffn) {
-@@ -1974,7 +1987,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+@@ -1974,7 +2036,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
  
      if (gate_up_exps) {
          // merged gate_up path: one mul_mat_id, then split into gate and up views
@@ -49,7 +105,7 @@ index c8ecb0a..777795f 100644
          cb(gate_up, "ffn_moe_gate_up", il);
  
          if (up_exps_s) {
-@@ -1982,7 +1995,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+@@ -1982,7 +2044,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
          }
  
          if (gate_up_exps_b) {
@@ -58,7 +114,7 @@ index c8ecb0a..777795f 100644
              cb(gate_up, "ffn_moe_gate_up_biased", il);
          }
  
-@@ -1993,7 +2006,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+@@ -1993,7 +2055,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
          cb(up, "ffn_moe_up", il);
      } else {
          // separate gate and up path
@@ -67,7 +123,7 @@ index c8ecb0a..777795f 100644
          cb(up, "ffn_moe_up", il);
  
          if (up_exps_s) {
-@@ -2001,12 +2014,12 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+@@ -2001,12 +2063,12 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
          }
  
          if (up_exps_b) {
@@ -82,7 +138,7 @@ index c8ecb0a..777795f 100644
              cb(cur, "ffn_moe_gate", il);
          } else {
              cur = up;
-@@ -2017,7 +2030,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+@@ -2017,7 +2079,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
          }
  
          if (gate_exps_b) {
@@ -91,7 +147,7 @@ index c8ecb0a..777795f 100644
              cb(cur, "ffn_moe_gate_biased", il);
          }
      }
-@@ -2095,7 +2108,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+@@ -2095,7 +2157,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
              GGML_ABORT("fatal error");
      }
  
@@ -100,7 +156,7 @@ index c8ecb0a..777795f 100644
      cb(experts, "ffn_moe_down", il);
  
      if (down_exps_s) {
-@@ -2103,7 +2116,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
+@@ -2103,7 +2165,7 @@ ggml_tensor * llm_graph_context::build_moe_ffn(
      }
  
      if (down_exps_b) {
@@ -111,10 +167,10 @@ index c8ecb0a..777795f 100644
  
 diff --git a/src/llmstream.cpp b/src/llmstream.cpp
 new file mode 100644
-index 0000000..fb425bd
+index 0000000..bdb472a
 --- /dev/null
 +++ b/src/llmstream.cpp
-@@ -0,0 +1,111 @@
+@@ -0,0 +1,152 @@
 +#include "llmstream.h"
 +
 +#include "llama-impl.h"
@@ -123,6 +179,7 @@ index 0000000..fb425bd
 +#include "ggml-alloc.h"
 +#include "ggml-backend.h"
 +
++#include <cstdio>
 +#include <cstdlib>
 +#include <map>
 +#include <string>
@@ -146,6 +203,18 @@ index 0000000..fb425bd
 +bool llmstream_dup_ids(void) {
 +    static const bool dup_only = getenv("LLMSTREAM_DUP_ONLY") != nullptr;
 +    return llmstream_slots() > 0 || dup_only;
++}
++
++int64_t llmstream_prefill_slots(int64_t n_expert) {
++    static int64_t env_n = -1;
++    if (env_n < 0) {
++        const char * s = getenv("LLMSTREAM_PREFILL_SLOTS");
++        env_n = s ? atoll(s) : 0;
++        if (env_n < 0) env_n = 0;
++    }
++    if (env_n == 0) return 0;
++    if (env_n == 1 || env_n >= n_expert) return n_expert; // auto / clamp
++    return env_n;
 +}
 +
 +static ggml_context * llmstream_ctx(void) {
@@ -177,6 +246,34 @@ index 0000000..fb425bd
 +    ggml_set_name(t, name_full);
 +    g_llmstream.tensors[name_full] = t;
 +    return t;
++}
++
++ggml_tensor * llmstream_pf_tensor_typed(ggml_type type, const char * pf_name,
++        int64_t ne0, int64_t ne1, int64_t n_slots) {
++    if (g_llmstream.tensors.count(pf_name)) return g_llmstream.tensors[pf_name];
++    ggml_tensor * t = ggml_new_tensor_3d(llmstream_ctx(), type, ne0, ne1, n_slots);
++    ggml_set_name(t, pf_name);
++    g_llmstream.tensors[pf_name] = t;
++    return t;
++}
++
++ggml_tensor * llmstream_pf_tensor_typed_2d(ggml_type type, const char * pf_name,
++        int64_t ne0, int64_t n_slots) {
++    if (g_llmstream.tensors.count(pf_name)) return g_llmstream.tensors[pf_name];
++    ggml_tensor * t = ggml_new_tensor_2d(llmstream_ctx(), type, ne0, n_slots);
++    ggml_set_name(t, pf_name);
++    g_llmstream.tensors[pf_name] = t;
++    return t;
++}
++
++void llmstream_pf_twin(const ggml_tensor * slot_t, const char * kind, int64_t n_pf) {
++    char pfn[128];
++    snprintf(pfn, sizeof(pfn), "llmstream_pf.%s.%s", kind, ggml_type_name(slot_t->type));
++    if (slot_t->ne[2] == 1) {
++        llmstream_pf_tensor_typed_2d(slot_t->type, pfn, slot_t->ne[0], n_pf);
++    } else {
++        llmstream_pf_tensor_typed(slot_t->type, pfn, slot_t->ne[0], slot_t->ne[1], n_pf);
++    }
 +}
 +
 +void llmstream_alloc(void) {
@@ -228,10 +325,10 @@ index 0000000..fb425bd
 +}
 diff --git a/src/llmstream.h b/src/llmstream.h
 new file mode 100644
-index 0000000..7b75c3f
+index 0000000..c84df80
 --- /dev/null
 +++ b/src/llmstream.h
-@@ -0,0 +1,45 @@
+@@ -0,0 +1,67 @@
 +#pragma once
 +
 +// llmstream: expert-streaming support (private fork, not for upstream).
@@ -267,6 +364,28 @@ index 0000000..7b75c3f
 +ggml_tensor * llmstream_slot_tensor_2d(llama_model_loader & ml, const char * name_full,
 +        int64_t ne0, int64_t n_slots);
 +
++// prefill pool (E27): slots in ONE shared expert-tensor set that every layer
++// reuses during multi-token ubatches, so a batch's expert union can never
++// overflow per-layer slot caches (closes D12). LLMSTREAM_PREFILL_SLOTS:
++// 0/unset = off; 1 = auto (n_expert); other values clamp to <= n_expert.
++LLAMA_API int64_t llmstream_prefill_slots(int64_t n_expert);
++
++// pf-pool tensors, one per (kind, ggml type) variant: mixed-quant GGUFs
++// (e.g. Q4_K_M puts Q6_K on some layers' ffn_down and Q4_K on others) need a
++// correctly-typed pool per variant - a single layer-0-typed pool dequantizes
++// other layers' bytes as the wrong format (found by the E27 gate, D14).
++// Registered as "llmstream_pf.<kind>.<type_name>"; build_moe_ffn picks the
++// variant matching the layer tensor's own type.
++ggml_tensor * llmstream_pf_tensor_typed(ggml_type type, const char * pf_name,
++        int64_t ne0, int64_t ne1, int64_t n_slots);
++ggml_tensor * llmstream_pf_tensor_typed_2d(ggml_type type, const char * pf_name,
++        int64_t ne0, int64_t n_slots);
++
++// create (idempotently) the pf twin for one layer's slot tensor: model load
++// calls this per layer per kind, and each distinct type variant materializes
++// on first sight - no pre-scan of layer types needed
++void llmstream_pf_twin(const ggml_tensor * slot_t, const char * kind, int64_t n_pf);
++
 +// allocate the slot context's CPU buffer; call once after all slot tensors are created
 +void llmstream_alloc(void);
 +
@@ -278,7 +397,7 @@ index 0000000..7b75c3f
 +// driver access to the slot tensors registered by llmstream_slot_tensor()
 +LLAMA_API ggml_tensor * llmstream_get_tensor(const char * name_full);
 diff --git a/src/models/olmoe.cpp b/src/models/olmoe.cpp
-index 1e2baeb..0a820cf 100644
+index 1e2baeb..fd08dd9 100644
 --- a/src/models/olmoe.cpp
 +++ b/src/models/olmoe.cpp
 @@ -1,5 +1,7 @@
@@ -289,7 +408,7 @@ index 1e2baeb..0a820cf 100644
  void llama_model_olmoe::load_arch_hparams(llama_model_loader & ml) {
      ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
  
-@@ -40,10 +42,23 @@ void llama_model_olmoe::load_arch_tensors(llama_model_loader &) {
+@@ -40,10 +42,31 @@ void llama_model_olmoe::load_arch_tensors(llama_model_loader &) {
          }
  
          // MoE branch
@@ -306,6 +425,14 @@ index 1e2baeb..0a820cf 100644
 +            layer.ffn_gate_exps = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i).str().c_str(), n_embd, n_ff,   n_slots);
 +            layer.ffn_down_exps = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i).str().c_str(), n_ff,   n_embd, n_slots);
 +            layer.ffn_up_exps   = llmstream_slot_tensor(*ml, tn(LLM_TENSOR_FFN_UP_EXPS,   "weight", i).str().c_str(), n_embd, n_ff,   n_slots);
++            // E27 prefill pool: per-(kind, type) shared slot sets for
++            // multi-token ubatches, one variant per quant type seen (D14)
++            const int64_t n_pf = llmstream_prefill_slots(n_expert);
++            if (n_pf > 0) {
++                llmstream_pf_twin(layer.ffn_gate_exps, "ffn_gate_exps.weight", n_pf);
++                llmstream_pf_twin(layer.ffn_down_exps, "ffn_down_exps.weight", n_pf);
++                llmstream_pf_twin(layer.ffn_up_exps,   "ffn_up_exps.weight",   n_pf);
++            }
 +        } else {
 +            layer.ffn_gate_exps = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {n_embd, n_ff,   n_expert}, 0);
 +            layer.ffn_down_exps = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff,   n_embd, n_expert}, 0);
@@ -316,7 +443,7 @@ index 1e2baeb..0a820cf 100644
  }
  
  std::unique_ptr<llm_graph_context> llama_model_olmoe::build_arch_graph(const llm_graph_params & params) const {
-@@ -134,6 +149,14 @@ llama_model_olmoe::graph::graph(const llama_model & model, const llm_graph_param
+@@ -134,6 +157,14 @@ llama_model_olmoe::graph::graph(const llama_model & model, const llm_graph_param
                  LLM_NORM_RMS, il);
          cb(cur, "ffn_norm", il);
  
@@ -332,7 +459,7 @@ index 1e2baeb..0a820cf 100644
                  model.layers[il].ffn_gate_inp,
                  model.layers[il].ffn_up_exps,
 diff --git a/src/models/openai-moe.cpp b/src/models/openai-moe.cpp
-index 6d74f9c..8758942 100644
+index 6d74f9c..3c5bc17 100644
 --- a/src/models/openai-moe.cpp
 +++ b/src/models/openai-moe.cpp
 @@ -1,5 +1,7 @@
@@ -343,7 +470,7 @@ index 6d74f9c..8758942 100644
  void llama_model_openai_moe::load_arch_hparams(llama_model_loader & ml) {
      ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
      ml.get_key(LLM_KV_EXPERT_FEED_FORWARD_LENGTH,  hparams.n_ff_exp);
-@@ -44,17 +46,37 @@ void llama_model_openai_moe::load_arch_tensors(llama_model_loader &) {
+@@ -44,17 +46,50 @@ void llama_model_openai_moe::load_arch_tensors(llama_model_loader &) {
          layer.attn_sinks = create_tensor(tn(LLM_TENSOR_ATTN_SINKS, "weight", i), {n_head}, 0);
  
          layer.ffn_gate_inp  = create_tensor(tn(LLM_TENSOR_FFN_GATE_INP,  "weight", i), {  n_embd, n_expert}, 0);
@@ -374,6 +501,19 @@ index 6d74f9c..8758942 100644
 +            layer.ffn_gate_exps_b = llmstream_slot_tensor_2d(*ml, tn(LLM_TENSOR_FFN_GATE_EXPS, "bias", i).str().c_str(), n_ff_exp, n_slots);
 +            layer.ffn_down_exps_b = llmstream_slot_tensor_2d(*ml, tn(LLM_TENSOR_FFN_DOWN_EXPS, "bias", i).str().c_str(),   n_embd, n_slots);
 +            layer.ffn_up_exps_b   = llmstream_slot_tensor_2d(*ml, tn(LLM_TENSOR_FFN_UP_EXPS,   "bias", i).str().c_str(), n_ff_exp, n_slots);
++            // E27 prefill pool: per-(kind, type) shared slot sets reused by
++            // every layer during multi-token ubatches; build_moe_ffn swaps to
++            // the layer's type variant, the driver refills per layer. Called
++            // per layer so mixed-quant files get one pool per type (D14).
++            const int64_t n_pf = llmstream_prefill_slots(n_expert);
++            if (n_pf > 0) {
++                llmstream_pf_twin(layer.ffn_gate_exps,   "ffn_gate_exps.weight", n_pf);
++                llmstream_pf_twin(layer.ffn_down_exps,   "ffn_down_exps.weight", n_pf);
++                llmstream_pf_twin(layer.ffn_up_exps,     "ffn_up_exps.weight",   n_pf);
++                llmstream_pf_twin(layer.ffn_gate_exps_b, "ffn_gate_exps.bias",   n_pf);
++                llmstream_pf_twin(layer.ffn_down_exps_b, "ffn_down_exps.bias",   n_pf);
++                llmstream_pf_twin(layer.ffn_up_exps_b,   "ffn_up_exps.bias",     n_pf);
++            }
 +        } else {
 +            layer.ffn_gate_exps = create_tensor(tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i), {  n_embd, n_ff_exp, n_expert}, 0);
 +            layer.ffn_down_exps = create_tensor(tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i), {n_ff_exp,   n_embd, n_expert}, 0);
@@ -387,7 +527,7 @@ index 6d74f9c..8758942 100644
  }
  
  std::unique_ptr<llm_graph_context> llama_model_openai_moe::build_arch_graph(const llm_graph_params & params) const {
-@@ -130,6 +152,15 @@ llama_model_openai_moe::graph::graph(const llama_model & model, const llm_graph_
+@@ -130,6 +165,15 @@ llama_model_openai_moe::graph::graph(const llama_model & model, const llm_graph_
                  LLM_NORM_RMS, il);
          cb(cur, "attn_post_norm", il);
  

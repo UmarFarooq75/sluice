@@ -1,0 +1,18 @@
+llmstream: 16 layers, 12 slots/layer, 3 tensors/expert, 4.08 MB/expert, prefetch=on
+llmstream: prefill pool 64 slots x 4 type-variants (337 MB), shared across layers
+mode=streamed prompt_toks=17 reused=0 generated=32 n_ubatch=32
+prefill: 0.29 s (59.27 tok/s)
+decode:  0.96 s (33.42 tok/s)
+io: cb_calls=528 decode_uses=4096 decode_misses=1068 (hit 0.739) prefill_uses=2048 prefill_misses=662
+io: pf_calls=15 pf_experts=654 union avg=43.6 min=36 max=51 fill=0.12 s (pool 64 slots)
+io: prefetch_issued=1000 prefetch_hits=0 prefetch_used=935 stall=0.24 s total_read=10403.1 MB avg_bw=8360 MB/s
+io: read_work=3.56 s preads=8190 per_stream_bw=2921 MB/s
+mem: peak_rss=5.37 GB phys_footprint=1.23 GB
+logits_hash=b6869f5b6ef36376
+text: 
+
+Here's a simple Python function that checks if a number is prime:
+
+```python
+def is_prime(n):
+    if n

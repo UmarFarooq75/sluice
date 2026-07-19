@@ -700,6 +700,59 @@ believe a reviewer).
   completed). Lesson repeated from D11: the logging you demand must be
   wired into the path you actually run.
 
+### E27. Expert-major prefill lands: the D2 answer, and D14 caught by the gate (2026-07-20)
+- **Design** (docs/prefill-design.md, predictions pre-registered before code):
+  with a multi-token ubatch, llama.cpp's mul_mat_id is already expert-major -
+  only our per-layer 8-slot caches couldn't hold a batch's expert union
+  (D12's exit). Chosen approach after weighing five: a SHARED PREFILL POOL -
+  one extra slot-tensor set, P = n_expert by default, that every layer
+  refills in turn as the graph descends (sequential layer execution makes
+  reuse safe on CPU). Union overflow becomes impossible by construction
+  (closes D12); decode caches are never touched, so the warm chat cache now
+  SURVIVES prefill instead of being thrashed by it. Env-gated
+  LLMSTREAM_PREFILL_SLOTS (0=off, 1=auto n_expert); margin/skip/lookahead
+  hooks early-return on multi-token graphs (residency masking is
+  meaningless when the whole union is fetched - prefill under the pool is
+  EXACT routing).
+- **D14, found by the bit-exact gate before any number was quoted**: first
+  build passed OLMoE layers 0-2 then produced degenerate routing (ids
+  0,1,2,... from L3 on). Root cause: pool tensors typed from layer 0's
+  meta, but Q4_K_M mixes quant types per layer (ffn_down: Q6_K on L0/L1/L4,
+  Q4_K on L2/L3) - L2's bytes dequantized as the wrong format corrupted the
+  hidden state, compounding into degenerate top-k by L3. Decode slots never
+  hit this because they are per-layer typed. Fix: one pool per (kind,
+  quant-type) variant; build_moe_ffn picks by the layer tensor's own type,
+  the driver resolves identically and verifies stride per layer. Mixed-type
+  files are the mainstream (every K-quant), so this fix IS the
+  universality story, not an edge case.
+- **Gates**: streamed+pool vs resident at identical ubatch=32 on OLMoE -
+  logits bit-identical (b6869f5b6ef36376, same across 4 type-variant
+  pools); negative control (no pool, ubatch 32) exits on union overflow as
+  designed; ubatch=1 regression gate reproduces the banked hash with pf
+  code present but dormant.
+- **gpt-oss-120b TTFT, slots8 exact routing (results/pf_ttft_*)**:
+  178-token prompt: baseline ubatch=1 prefill 134.9 s (1.32 tok/s) -> pool
+  ubatch=128 prefill 39.4 s (4.52 tok/s), **3.4x faster TTFT**, fill 31.9 s
+  of 39.4 (I/O-bound as predicted), unions avg 57 max 87, peak_rss 9.5 GB
+  (pool 1.7 GB, 6 type variants: 3 MXFP4 weights + 3 F32 biases),
+  phys_footprint unchanged at 5.7 GB. 712-token prompt at ubatch=512:
+  first attempt hit GGML_ASSERT(n_tokens_all <= n_batch) - the driver
+  passes a whole prompt as one llama_decode batch, so n_batch must be
+  n_ctx, not max(512, ubatch); fixed, re-run below.
+- **Boundary honesty**: prediction said prefill >= 8 tok/s; ubatch=128 gave
+  4.52 (unions don't saturate at 128-token chunks - 212 MB/token vs the
+  ~112 MB/token a 512-chunk should reach). The 512 rung is the prediction's
+  real test.
+- **512 rung (after the n_batch fix): PREDICTION CONFIRMED.** 712-token
+  prompt, ubatch=512: prefill **10.81 tok/s**, TTFT **65.9 s** vs ~539 s
+  extrapolated baseline - **8.2x** - both pre-registered bars cleared
+  (>=8 tok/s, <75 s). Unions avg 71.6 max 103 (128-slot pool never
+  pressured), fill 39.7 s of 65.9 (still I/O-bound: remaining headroom is
+  overlap of next-layer fill with current-layer compute, not capacity),
+  peak_rss 8.5 GB, phys_footprint 5.79 GB - the pool is transient and
+  MADV_FREE'd after prefill. D2 is closed: chat TTFT on real prompts drops
+  from minutes to about a minute, at exact routing.
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.
@@ -801,6 +854,7 @@ believe a reviewer).
 | D11 | Guard floor hard-coded 4; fix ledger claimed top_k+1 had landed — it hadn't | Why fatal? cap < top_k can never seat one token's experts → assign_slot −1 → exit(1): pressure becomes availability loss on top-8 families. Why unnoticed? gpt-oss is top-4 — cap 4 sits exactly on the pigeonhole boundary and survives. Found because battery m0.5 logs showed cap 4 vs the claimed floor 5. | FIXED (E19): atomic top_k, floor top_k+1, post-load re-clamp. Lesson re-learned: verify the artifact, not the fix ledger |
 | D12 | Prefill with n_ubatch>1 + per-layer union > slots has no path (assign_slot exhausts victims → exit(1)) | Why latent? All current runs use ubatch=1. Boundary documented while scoping expert-major prefill (E24), before it bit anyone. | Any ubatch>1 config must clamp or split; owned by the prefill-port arc |
 | D13 | E26's pre-registered check "skip_fills > 0 every skip rung" was unverifiable — counter printed only in the generation path, NLL path silent | Why? Two separate metrics print sites; the new counter was wired into one. Same failure class as D11: the check you demand must be emitted by the path you run. | FIXED (E26): skip_fills added to the NLL print block; visibility-only, rebuilt + gated after all same-binary runs finished |
+| D14 | First prefill-pool build read garbage on OLMoE: layers 0–2 sane, layer 3+ degenerate routing (ids 0,1,2,…) | Why garbage? Pool tensors were typed from layer 0's meta, but Q4_K_M files mix types per layer (ffn_down: Q6_K on L0/L1/L4, Q4_K on L2/L3) — L2's Q4_K bytes dequantized as Q6_K corrupted the hidden state, compounding into degenerate top-k by L3. Why did decode never hit this? Decode slots are per-layer typed. Caught by the E27 bit-exact gate before any artifact was quoted. | FIXED (E27): one pool per (kind, quant-type) variant; graph picks by the layer tensor's own type, driver resolves identically and verifies stride per layer. Gate PASS b6869f5b6ef36376 |
 
 ## Standing protocol (enforced from 2026-07-19)
 1. One model process at a time; check for strays before launch.
