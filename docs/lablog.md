@@ -753,6 +753,55 @@ believe a reviewer).
   MADV_FREE'd after prefill. D2 is closed: chat TTFT on real prompts drops
   from minutes to about a minute, at exact routing.
 
+### E28. Speed-per-GB curve, leg 1: the 60-70 tok/s bar is MET on the 7B tier (2026-07-20)
+- **Question (from Umar)**: >= 60-70 tok/s, zero quality loss, <= 10-12 GB
+  RAM, this M2 Air. Answered by measuring the model-size ladder at exact
+  routing, same day, same driver (results/e28_olmoe_*):
+
+  | config | tok/s | RAM |
+  |---|---|---|
+  | OLMoE-7B resident, Metal | **72.9** | ~4.3 GB |
+  | OLMoE-7B resident, CPU | **69.4** | ~4.3 GB |
+  | OLMoE-7B streamed s48, CPU | 48.1 (hit .928) | ~3.5 GB experts |
+  | OLMoE-7B streamed s32, CPU / Metal | 42.3 / 41.3 (hit .820) | ~1.8 GB |
+
+  The bar is met with 6-8 GB to spare - on the tier whose ACTIVE bytes fit
+  the memory-bus budget (65 tok/s x ~0.7 GB/token active ~ 45 GB/s < the
+  M2's ~100 GB/s). Metal streamed == CPU streamed at hit .82, re-confirming
+  the backend law (GPU pays only above ~0.9 hit). Note: today's CPU
+  resident 69.4 vs the banked 45.2 "stock llama.cpp" - different
+  measurement path (our driver vs stock cli) and day; the lattice above is
+  internally consistent same-day data. gpt-oss-20b leg: NOT run - Umar
+  said no downloads (disk at 16 GB free).
+- **Why 120B stays where it is on this device**, re-derived component by
+  component at Umar's push: active bytes/token 2.7 GB (can't shrink at 0
+  quality - internally-dense experts, phase-0), DRAM 100 GB/s -> 37 tok/s
+  absolute ceiling with ALL 63 GB resident (impossible here), SSD 1.5-3.4
+  GB/s serves misses, LRU is within 14 pts of the Belady oracle (E23), and
+  cross-token amortization is now dead too (E29). The remaining real lever
+  is the Metal MXFP4 kernel gap (13.7 measured hot vs 37 bus bound) - a
+  0-quality 2.7x that still lands at ~37, not 60.
+
+### E29. Batched-verify decode: REFUTED by feasibility gate, upper bound 1.37x (2026-07-20)
+- **Idea worth re-testing after E27**: speculative verification reproduces
+  the exact model output (0 quality by construction) and verifies w drafted
+  tokens in ONE batched pass; E27 made batch passes ~7x cheaper per token,
+  so the old "capped 1.2-1.7x" verdict (pre-pool, cache-restricted
+  self-speculation) deserved a fresh gate.
+- **Gate** (scripts/spec_verify_gate.py, offline, real slots8 trace of 58
+  tokens x 36 layers): sequential LRU-8 misses vs per-window union fetches,
+  priced pessimistic (cold pool) and optimistic (verify checks the decode
+  cache first), at PERFECT acceptance - the physically unattainable upper
+  bound. Result: w=4 1.18x, w=8 1.37x, w=16 1.65x, w=32 1.82x (opt).
+  Real speculative windows are 4-8 and real acceptance ~0.6-0.8, which
+  puts the practical ratio at or below 1.0 - a LOSS.
+- **Mechanism, and why refutations keep landing on this spot**: LRU-8
+  already harvests consecutive-token expert overlap - the SAME overlap the
+  batch union amortizes. The two optimizations compete for one resource
+  (temporal expert locality), so their gains do not compose. Third
+  independent measurement of this cap (colibri data, phase-0 self-spec,
+  now this gate) - closed with prejudice for the disk-bound regime.
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.

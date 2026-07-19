@@ -1,0 +1,62 @@
+load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+model has unused tensor blk.0.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.0.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.0.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.1.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.1.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.1.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.2.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.2.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.2.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.3.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.3.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.3.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.4.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.4.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.4.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.5.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.5.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.5.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.6.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.6.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.6.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.7.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.7.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.7.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.8.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.8.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.8.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.9.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.9.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.9.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.10.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.10.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.10.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.11.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.11.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.11.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.12.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.12.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.12.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.13.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.13.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.13.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.14.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.14.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.14.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.15.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.15.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.15.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+........................................................
+llmstream: 16 layers, 32 slots/layer, 3 tensors/expert, 4.08 MB/expert, prefetch=on
+mode=streamed prompt_toks=11 reused=0 generated=47 n_ubatch=1
+prefill: 0.30 s (37.26 tok/s)
+decode:  1.11 s (42.29 tok/s)
+io: cb_calls=928 decode_uses=6016 decode_misses=1084 (hit 0.820) prefill_uses=1328 prefill_misses=414
+io: prefetch_issued=724 prefetch_hits=0 prefetch_used=687 stall=0.32 s total_read=8481.5 MB avg_bw=6030 MB/s
+io: read_work=2.26 s preads=6666 per_stream_bw=3755 MB/s
+mem: peak_rss=6.43 GB phys_footprint=2.36 GB
+logits_hash=2dc8144ad70b0016
+text: 
+
+The sky appears blue due to Rayleigh scattering in the Earth's atmosphere. This scattering process preferentially scatters shorter wavelengths of light, such as blue and violet, more than other wavelengths, giving the sky its characteristic color.

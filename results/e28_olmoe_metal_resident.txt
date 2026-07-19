@@ -1,0 +1,10 @@
+load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+...................................................
+mode=resident prompt_toks=11 reused=0 generated=47 n_ubatch=1
+prefill: 0.14 s (76.70 tok/s)
+decode:  0.64 s (72.91 tok/s)
+mem: peak_rss=8.38 GB phys_footprint=4.31 GB
+logits_hash=25ff0fb1d502a252
+text: 
+
+The sky appears blue due to Rayleigh scattering in the Earth's atmosphere. This scattering process preferentially scatters shorter wavelengths of light, such as blue and violet, more than other colors, giving the sky its characteristic hue.
