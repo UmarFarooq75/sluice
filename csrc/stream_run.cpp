@@ -999,12 +999,18 @@ int main(int argc, char ** argv) {
         for (int i = 0; i < n_vocab; i++) if (logits[i] > best) { best = logits[i]; cur = i; }
     }
     static const bool print_toks = getenv("LLMSTREAM_PRINT_TOKS") != nullptr;
+    // LLMSTREAM_STREAM_OUT: emit pieces to stdout as they decode, bracketed by
+    // sentinels, so a UI can render live. Special tokens render too (harmony
+    // channel markers let the UI split thinking from the final answer).
+    static const bool stream_out = getenv("LLMSTREAM_STREAM_OUT") != nullptr;
+    if (stream_out) { printf("<<<STREAM>>>\n"); fflush(stdout); }
     int generated = 0;
     for (int s = 0; s < n_gen; s++) {
         if (llama_vocab_is_eog(vocab, cur)) break;
         char piece[128];
-        int pn = llama_token_to_piece(vocab, cur, piece, sizeof(piece), 0, print_toks);
+        int pn = llama_token_to_piece(vocab, cur, piece, sizeof(piece), 0, print_toks || stream_out);
         if (print_toks) printf("tok %6d |%.*s|\n", cur, pn > 0 ? pn : 0, piece);
+        if (stream_out && pn > 0) { fwrite(piece, 1, (size_t) pn, stdout); fflush(stdout); }
         if (pn > 0) out.append(piece, pn);
         llama_batch b = llama_batch_get_one(&cur, 1);
         if (llama_decode(ctx, b) != 0) { fprintf(stderr, "decode failed\n"); return 1; }
@@ -1014,6 +1020,7 @@ int main(int argc, char ** argv) {
         float best = -1e30f;
         for (int i = 0; i < n_vocab; i++) if (logits[i] > best) { best = logits[i]; cur = i; }
     }
+    if (stream_out) { printf("\n<<<END>>>\n"); fflush(stdout); }
     auto t2 = std::chrono::steady_clock::now();
 
     const double dt_prefill = std::chrono::duration<double>(t1 - t0).count();
