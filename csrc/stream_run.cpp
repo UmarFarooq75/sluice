@@ -130,6 +130,7 @@ struct stream_state {
                            // margin of the weakest resident pick (finding 11);
                            // 0 = off = bit-exact
     uint64_t margin_masked = 0;
+    uint64_t skip_fills = 0; // near-zero-weight fillers placed (skip mode)
     // LLMSTREAM_AGREE_TARGET: adaptive margin (D3 answer). The user states a
     // routing-fidelity floor in family-agnostic units (fraction of true top-k
     // picks kept); the controller finds the largest margin that honors it.
@@ -430,12 +431,43 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
                 std::partial_sort(idx.begin(), idx.begin() + k, idx.end(),
                                   [p](int a, int b) { return p[a] > p[b]; });
                 std::unordered_set<int> true_topk(idx.begin(), idx.begin() + k);
+                // LLMSTREAM_SKIP_W (E25 survivor): when a true top-k expert
+                // is absent AND its true softmax weight is below this, run
+                // with effectively k-1 instead of substituting a resident -
+                // a substitute injects a wrong expert's signal at real
+                // weight; a skip injects nothing. 0 = off (substitute mode).
+                static const float skip_w = getenv("LLMSTREAM_SKIP_W")
+                    ? (float) atof(getenv("LLMSTREAM_SKIP_W")) : 0.0f;
+                int n_skip = 0;
+                if (skip_w > 0.0f) {
+                    float mx = p[idx[0]], se = 0.0f;
+                    for (int i = 0; i < k; i++) se += expf(p[idx[i]] - mx);
+                    for (int i = 0; i < k && n_skip < k - 1; i++) {
+                        const bool absent = !lc.slot_of.count(idx[i]);
+                        if (absent && expf(p[idx[i]] - mx) / se < skip_w) n_skip++;
+                    }
+                }
                 std::nth_element(res.begin(), res.begin() + k - 1, res.end(), std::greater<float>());
                 const float kth_res = res[k - 1];
                 for (int64_t e = 0; e < n_expert; e++) {
                     if (p[e] != -INFINITY && !lc.slot_of.count((int) e) && p[e] < kth_res + st->margin) {
                         p[e] = -INFINITY;
                         st->margin_masked++;
+                    }
+                }
+                if (n_skip > 0) {
+                    // intended selection = top-k residents; the bottom n_skip
+                    // of them become near-zero-weight fillers (score - 80 ->
+                    // softmax ~0), every other resident is masked so top-k
+                    // cannot promote a full-weight replacement instead
+                    std::vector<std::pair<float, int>> rr;
+                    for (auto & [e2, s2] : lc.slot_of) if (p[e2] != -INFINITY) rr.push_back({p[e2], e2});
+                    if ((int) rr.size() >= k) {
+                        std::partial_sort(rr.begin(), rr.begin() + k, rr.end(),
+                                          [](auto & a, auto & b) { return a.first > b.first; });
+                        for (int i2 = k - n_skip; i2 < k; i2++) p[rr[i2].second] = rr[0].first - 80.0f;
+                        for (size_t i2 = k; i2 < rr.size(); i2++) p[rr[i2].second] = -INFINITY;
+                        st->skip_fills += n_skip;
                     }
                 }
                 // top-k after masking; overlap with truth = agreement
@@ -945,7 +977,7 @@ int main(int argc, char ** argv) {
         // per-request counters: each reply reports its own physics
         st.uses = st.misses = st.uses_prefill = st.misses_prefill = 0;
         st.cb_calls = st.prefetch_issued = st.prefetch_hits = st.prefetch_used = 0;
-        st.agree_hits = st.agree_total = st.swapped_tokens = st.margin_masked = 0;
+        st.agree_hits = st.agree_total = st.swapped_tokens = st.margin_masked = st.skip_fills = 0;
         st.stall_s = 0.0; st.bytes = 0; st.read_us = 0; st.read_calls = 0;
         st.in_decode = false;
     }
@@ -1142,7 +1174,7 @@ int main(int argc, char ** argv) {
                st.read_us / 1e6, st.read_calls.load(),
                st.read_us ? mb / (st.read_us / 1e6) : 0.0);
         if (st.margin > 0.0f) {
-            printf("io: margin=%.3f masked=%" PRIu64 "\n", st.margin, st.margin_masked);
+            printf("io: margin=%.3f masked=%" PRIu64 " skip_fills=%" PRIu64 "\n", st.margin, st.margin_masked, st.skip_fills);
             if (st.agree_total > 0) {
                 printf("io: router_agreement=%.4f swapped_calls=%" PRIu64 " of=%" PRIu64 "\n",
                        (double) st.agree_hits / st.agree_total, st.swapped_tokens, st.agree_total / (uint64_t) st.top_k);
