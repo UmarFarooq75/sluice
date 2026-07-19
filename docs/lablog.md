@@ -577,6 +577,34 @@ believe a reviewer).
   hashes — run-to-run drift up to ±20%, D10 (thermal logging, n≥3 repeats
   for headlines) now blocking honest headline claims.
 
+### E24. GPU ceiling run + expert-major prefill scoped honestly (2026-07-19)
+- **Provenance correction (against my own repeated claim)**: "expert-major
+  prefill 16-599× on OLMoE" is a **phase-0 trace-simulator load-count
+  result** (findings-phase0.md), NOT an engine measurement. The engine has
+  never run expert-major prefill on any family. D2 reworded accordingly;
+  end-to-end speedup remains unmeasured until built.
+- **Design reality check**: llama.cpp computes a ubatch layer-by-layer, so
+  the per-layer expert UNION of the ubatch must be simultaneously resident.
+  Sim says 64-token unions run ~40-90 experts/layer — far above slots8-16 —
+  and slot tensors are per-layer preallocated, so true expert-major needs a
+  prefill-mode dynamic slot pool (all slot RAM lent to the current layer):
+  a real fork feature, multi-session work, queued as M-next.
+- **D12 (boundary found while scoping)**: prefill with n_ubatch>1 and a
+  union larger than slots has no path — assign_slot exhausts victims (all
+  needed), wait-loop drains, driver exit(1)s. Today all runs use ubatch=1 so
+  it never fires; any future ubatch>1 config must clamp or split. Documented
+  before it bit anyone.
+- **GPU ceiling rung**: m2 s12 on Metal (SLOT_DEV=gpu, NGL=99):
+  **13.68 tok/s** at hit .998 vs CPU ceiling 11.12 (**+23%**). Remaining gap
+  to the ~37 tok/s bus bound is Metal MXFP4 kernel efficiency (llama.cpp
+  territory, not streaming). phys_footprint 8.85GB (device buffers cost).
+- **GPU at product default (m0.25+pf s8)**: **1.56 tok/s** ≈ CPU 1.55-1.62,
+  prediction confirmed — miss-bound regime is backend-indifferent. Product
+  backend policy: CPU default (5.7GB phys vs 6.9-8.9GB), GPU only above
+  ~0.9 hit where its +23% ceiling matters. Session speed menu for
+  gpt-oss-120b on 16GB M2 Air, all measured today: exact 1.2-1.4 /
+  default ~1.6 (agreement .92) / m1.25 5.1-5.5 / ceiling 13.7 (GPU, m2 s12).
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.
