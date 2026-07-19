@@ -927,6 +927,7 @@ int main(int argc, char ** argv) {
     const int idle_exit_s = getenv("LLMSTREAM_IDLE_EXIT") ? atoi(getenv("LLMSTREAM_IDLE_EXIT")) : 600;
     std::string req_prompt = prompt;
     bool have_req = true;
+    std::vector<llama_token> ctx_toks; // what the KV currently holds (server mode)
     if (server_mode) {
         printf("<<<READY>>>\n"); fflush(stdout);
         have_req = server_next_request(req_prompt, idle_exit_s);
@@ -954,8 +955,28 @@ int main(int argc, char ** argv) {
             const char * sys = getenv("LLMSTREAM_SYSTEM");
             std::vector<llama_chat_message> msgs;
             if (sys && sys[0]) msgs.push_back({ "system", sys });
-            msgs.push_back({ "user", req_prompt.c_str() });
-            std::vector<char> buf(req_prompt.size() * 2 + (sys ? strlen(sys) * 2 : 0) + 4096);
+            // history grammar: turns split on \x1e, each "role\x1f content".
+            // a plain line (no separators) is a single user turn.
+            std::vector<std::string> parts;
+            if (req_prompt.find('\x1f') != std::string::npos) {
+                size_t start = 0;
+                while (start <= req_prompt.size()) {
+                    size_t e = req_prompt.find('\x1e', start);
+                    if (e == std::string::npos) e = req_prompt.size();
+                    parts.push_back(req_prompt.substr(start, e - start));
+                    start = e + 1;
+                }
+                for (auto & t : parts) {
+                    size_t d = t.find('\x1f');
+                    if (d == std::string::npos) continue;
+                    // llama_chat_message keeps pointers: parts outlives msgs below
+                    t[d] = '\0';
+                    msgs.push_back({ t.c_str(), t.c_str() + d + 1 });
+                }
+            } else {
+                msgs.push_back({ "user", req_prompt.c_str() });
+            }
+            std::vector<char> buf(req_prompt.size() * 2 + (sys ? strlen(sys) * 2 : 0) + 8192);
             int32_t r = llama_chat_apply_template(tmpl, msgs.data(), msgs.size(), true,
                                                   buf.data(), (int32_t) buf.size());
             if (r > 0 && r <= (int32_t) buf.size()) { ptext.assign(buf.data(), r); chat = true; }
@@ -1036,8 +1057,18 @@ int main(int argc, char ** argv) {
     }
 
     auto t0 = std::chrono::steady_clock::now();
-    llama_batch batch = llama_batch_get_one(toks.data(), (int32_t) toks.size());
+    int reused = 0;
+    if (server_mode) {
+        // multi-turn: reuse the KV prefix shared with the previous request.
+        // history re-renders can diverge (harmony keeps only final channels),
+        // so match tokens, drop the divergent tail, prefill only the suffix.
+        while (reused < (int) ctx_toks.size() && reused < n - 1 && ctx_toks[reused] == toks[reused]) reused++;
+        llama_memory_seq_rm(llama_get_memory(ctx), 0, reused, -1);
+        ctx_toks.assign(toks.begin(), toks.begin() + reused);
+    }
+    llama_batch batch = llama_batch_get_one(toks.data() + reused, (int32_t) (n - reused));
     if (llama_decode(ctx, batch) != 0) { fprintf(stderr, "prefill decode failed\n"); return 1; }
+    if (server_mode) ctx_toks.assign(toks.begin(), toks.end());
     auto t1 = std::chrono::steady_clock::now();
 
     st.in_decode = true;
@@ -1064,6 +1095,7 @@ int main(int argc, char ** argv) {
         if (print_toks) printf("tok %6d |%.*s|\n", cur, pn > 0 ? pn : 0, piece);
         if (stream_out && pn > 0) { fwrite(piece, 1, (size_t) pn, stdout); fflush(stdout); }
         if (pn > 0) out.append(piece, pn);
+        if (server_mode) ctx_toks.push_back(cur);
         llama_batch b = llama_batch_get_one(&cur, 1);
         if (llama_decode(ctx, b) != 0) { fprintf(stderr, "decode failed\n"); return 1; }
         generated++;
@@ -1078,8 +1110,8 @@ int main(int argc, char ** argv) {
     const double dt_prefill = std::chrono::duration<double>(t1 - t0).count();
     const double dt_decode  = std::chrono::duration<double>(t2 - t1).count();
 
-    printf("mode=%s prompt_toks=%d generated=%d n_ubatch=%d\n",
-           n_slots > 0 ? "streamed" : "resident", n, generated, n_ubatch);
+    printf("mode=%s prompt_toks=%d reused=%d generated=%d n_ubatch=%d\n",
+           n_slots > 0 ? "streamed" : "resident", n, reused, generated, n_ubatch);
     printf("prefill: %.2f s (%.2f tok/s)\n", dt_prefill, n / dt_prefill);
     printf("decode:  %.2f s (%.2f tok/s)\n", dt_decode, generated / dt_decode);
     if (n_slots > 0) {
@@ -1115,7 +1147,6 @@ int main(int argc, char ** argv) {
     printf("text: %s\n", out.c_str());
 
     if (!server_mode) break;
-    llama_memory_clear(llama_get_memory(ctx), true);
     printf("<<<READY>>>\n"); fflush(stdout);
     have_req = server_next_request(req_prompt, idle_exit_s);
     }

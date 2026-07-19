@@ -8,8 +8,9 @@
 #   - the server kills ITSELF after 10 minutes idle (driver-side, works even
 #     if this UI dies)
 #   - config changes restart it cleanly (old one terminated first)
-# Turns are stateless (KV cleared between requests, verified bit-identical
-# repeat hashes); history rendering is UI-side only.
+# Multi-turn: the UI sends the whole conversation each turn; the engine
+# reuses the KV prefix shared with the previous request (reused=N in the
+# metrics) so old turns are not re-prefilled.
 import atexit
 import os
 import re
@@ -30,7 +31,7 @@ MODELS = {
     "gpt-oss-120b (117B, MXFP4)": {
         "path": ROOT / "models" / "gpt-oss-120b-MXFP4.gguf",
         "slots": 8, "margin": 0.25, "chat": True,
-        "note": "validated default ~1.6 tok/s; first message pays the one-time load (~1-2 min), later ones only prefill",
+        "note": "validated default ~1.6 tok/s; first message pays the one-time load (~1-2 min), later turns reuse context",
     },
     "OLMoE-1B-7B (fast)": {
         "path": next((ROOT / "hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots").glob("*/*.gguf"), None)
@@ -124,6 +125,7 @@ METRIC_PATTERNS = {
     "agreement": r"router_agreement=([\d.]+)",
     "mem": r"peak_rss=([\d.]+) GB phys_footprint=([\d.]+) GB",
     "generated": r"generated=(\d+)",
+    "reused": r"reused=(\d+)",
 }
 
 
@@ -237,7 +239,13 @@ if prompt:
             eng_ps = psutil.Process(proc.pid)
 
             t0 = time.time()
-            proc.stdin.write(prompt.replace("\n", "\\n").encode() + b"\n")
+
+            def clean(t):
+                return t.replace("\x1e", " ").replace("\x1f", " ").replace("\n", "\\n")
+
+            turns = ["%s\x1f%s" % (t["role"], clean(t["text"]))
+                     for t in st.session_state.chat_log]
+            proc.stdin.write("\x1e".join(turns).encode() + b"\n")
             proc.stdin.flush()
             status.update(label="prefilling prompt…", state="running")
 
@@ -309,6 +317,8 @@ if prompt:
             time_ph.caption(timing)
 
             rows = []
+            if "reused" in met and int(met["reused"][0]) > 0:
+                rows.append(f"context reused {met['reused'][0]} tokens (multi-turn KV)")
             if "prefill" in met:
                 rows.append(f"prefill {met['prefill'][1]} tok/s")
             if "decode" in met:
