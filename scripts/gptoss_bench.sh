@@ -20,14 +20,30 @@ PROMPT="Explain why the sky is blue in two sentences."
 GEN=${GEN:-64}
 
 run() { # label slots margin
+    [ -n "$2" ] && [ -n "$3" ] || { echo "ABORT: empty slots/margin for $1"; exit 1; }
     echo "== $1 (SLOTS=$2 MARGIN=$3) =="
     LLMSTREAM_SLOTS=$2 LLMSTREAM_MARGIN=$3 LLMSTREAM_PREFETCH=${PF:-0} \
-        ./csrc/stream_run "$MODEL" "$GEN" "$PROMPT" 1 2>&1 | tee "results/gptoss_$1.txt" | grep -E 'llmstream:|mode=|prefill:|decode:|io:|logits_hash|text:'
+        ./csrc/stream_run "$MODEL" "$GEN" "$PROMPT" 1 > "results/gptoss_$1.txt" 2>&1
+    echo "rung $1 exit: $?"
+    grep -E 'prefill:|decode:|hit|logits_hash' "results/gptoss_$1.txt"
     echo
 }
 
-# ladder: exact first (quality anchor), then margin, then RAM curve
-run m0_slots12     12 0
-run m002_slots12   12 0.02
-run m002_slots8     8 0.02
-run m002_slots16   16 0.02
+# ladder: margin sweep in LOGIT units (gpt-oss routes on raw biased logits,
+# so probability-scale margins like 0.02 are near-no-ops), then RAM curve.
+# m0_slots12 (exact anchor) already measured: 0.75 tok/s, hit 0.526.
+if [ "${LADDER2:-0}" != "1" ]; then
+  run m002_slots12   12 0.02
+  run m05_slots12    12 0.5
+  run m1_slots12     12 1.0
+  run m2_slots12     12 2.0
+  run m1_slots16    16 1.0
+  run m1_slots8      8 1.0
+fi
+# cliff hunt (added after first ladder): fine margins at the slots8 sweet spot
+if [ "${LADDER2:-0}" = "1" ]; then
+  run m125_slots8    8 1.25
+  run m15_slots8     8 1.5
+  run m1_slots10    10 1.0
+  run m125_slots10  10 1.25
+fi

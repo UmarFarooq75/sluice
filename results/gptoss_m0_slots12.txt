@@ -1,0 +1,13 @@
+..................................................
+llmstream: 36 layers, 12 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=off
+mode=streamed prompt_toks=10 generated=57 n_ubatch=1
+prefill: 13.76 s (0.73 tok/s)
+decode:  76.00 s (0.75 tok/s)
+io: cb_calls=2412 decode_uses=8208 decode_misses=3889 (hit 0.526) prefill_uses=1404 prefill_misses=940
+io: prefetch_issued=0 prefetch_hits=0 stall=50.49 s total_read=64002.4 MB avg_bw=713 MB/s
+logits_hash=e609b48bba1688a3
+text: 
+
+The sky appears blue because molecules in the Earth's atmosphere scatter sunlight in all directions, and blue light is scattered more than other colors because it travels as shorter, smaller waves. This scattering causes the direct sunlight to appear white while the sky itself takes on a blue hue.
+
+The 

@@ -110,6 +110,13 @@ struct stream_state {
                            // margin of the weakest resident pick (finding 11);
                            // 0 = off = bit-exact
     uint64_t margin_masked = 0;
+    // routing fidelity: overlap between the true (pre-mask) top-k and the
+    // top-k actually selected after masking. exact ground truth, free to read
+    // because the hook holds the raw scores before it mutates them.
+    uint64_t agree_hits = 0, agree_total = 0, swapped_tokens = 0;
+    // I/O worker accounting: summed pread wall time across workers vs the eval
+    // thread's stall tells queueing from raw device latency apart
+    std::atomic<uint64_t> read_us{0}, read_calls{0};
 };
 
 static void fetch_one(stream_state & st, const io_pool::job & j) {
@@ -120,11 +127,15 @@ static void fetch_one(stream_state & st, const io_pool::job & j) {
         size_t off = ex.file_off + (size_t) j.e * sz;
         char * dst = (char *) ex.slot_t->data + (size_t) j.slot * ex.slot_stride;
         size_t done = 0;
+        auto r0 = std::chrono::steady_clock::now();
         while (done < sz) {
             ssize_t r = pread(st.fd, dst + done, sz - done, off + done);
             if (r <= 0) { fprintf(stderr, "pread failed L%d E%d t%zu\n", j.il, j.e, t); exit(1); }
             done += r;
         }
+        st.read_us += (uint64_t) std::chrono::duration_cast<std::chrono::microseconds>(
+                          std::chrono::steady_clock::now() - r0).count();
+        st.read_calls++;
         st.bytes += sz;
         static const bool hash_fetch = getenv("LLMSTREAM_HASH_FETCH") != nullptr;
         if (hash_fetch) {
@@ -221,19 +232,35 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
             const int64_t n_expert = t->ne[0], n_tokens = t->ne[1];
             float * probs = (float *) t->data;
             std::vector<float> res;
+            std::vector<int> idx((size_t) n_expert);
+            const int k = st->top_k;
             for (int64_t tok = 0; tok < n_tokens; tok++) {
                 float * p = probs + tok * n_expert;
                 res.clear();
                 for (auto & [e, s] : lc.slot_of) res.push_back(p[e]);
-                if ((int) res.size() < st->top_k) continue; // cache too cold to restrict
-                std::nth_element(res.begin(), res.begin() + st->top_k - 1, res.end(), std::greater<float>());
-                const float kth_res = res[st->top_k - 1];
+                if ((int) res.size() < k) continue; // cache too cold to restrict
+                // true top-k before masking = the routing ground truth
+                for (int64_t i = 0; i < n_expert; i++) idx[i] = (int) i;
+                std::partial_sort(idx.begin(), idx.begin() + k, idx.end(),
+                                  [p](int a, int b) { return p[a] > p[b]; });
+                std::unordered_set<int> true_topk(idx.begin(), idx.begin() + k);
+                std::nth_element(res.begin(), res.begin() + k - 1, res.end(), std::greater<float>());
+                const float kth_res = res[k - 1];
                 for (int64_t e = 0; e < n_expert; e++) {
                     if (p[e] != -INFINITY && !lc.slot_of.count((int) e) && p[e] < kth_res + st->margin) {
                         p[e] = -INFINITY;
                         st->margin_masked++;
                     }
                 }
+                // top-k after masking; overlap with truth = agreement
+                for (int64_t i = 0; i < n_expert; i++) idx[i] = (int) i;
+                std::partial_sort(idx.begin(), idx.begin() + k, idx.end(),
+                                  [p](int a, int b) { return p[a] > p[b]; });
+                int overlap = 0;
+                for (int i = 0; i < k; i++) overlap += true_topk.count(idx[i]) ? 1 : 0;
+                st->agree_hits  += overlap;
+                st->agree_total += k;
+                if (overlap < k) st->swapped_tokens++;
             }
         }
         return true;
@@ -477,12 +504,65 @@ int main(int argc, char ** argv) {
     if (!ctx) { fprintf(stderr, "ctx init failed\n"); return 1; }
 
     const llama_vocab * vocab = llama_model_get_vocab(model);
-    std::vector<llama_token> toks(prompt.size() + 8);
-    int n = llama_tokenize(vocab, prompt.c_str(), (int32_t) prompt.size(),
-                           toks.data(), (int32_t) toks.size(), true, false);
+    // LLMSTREAM_CHAT=1: wrap the prompt in the model's own chat template
+    // (gpt-oss is harmony-format trained; raw text prompts confound quality
+    // reads with template mismatch). parse_special so template tokens survive.
+    std::string ptext = prompt;
+    bool chat = false;
+    if (getenv("LLMSTREAM_CHAT")) {
+        const char * tmpl = llama_model_chat_template(model, nullptr);
+        if (tmpl) {
+            llama_chat_message msg = { "user", prompt.c_str() };
+            std::vector<char> buf(prompt.size() * 2 + 4096);
+            int32_t r = llama_chat_apply_template(tmpl, &msg, 1, true, buf.data(), (int32_t) buf.size());
+            if (r > 0 && r <= (int32_t) buf.size()) { ptext.assign(buf.data(), r); chat = true; }
+        }
+        if (!chat) fprintf(stderr, "warn: LLMSTREAM_CHAT set but no usable template; raw prompt\n");
+    }
+    std::vector<llama_token> toks(ptext.size() + 64);
+    int n = llama_tokenize(vocab, ptext.c_str(), (int32_t) ptext.size(),
+                           toks.data(), (int32_t) toks.size(), true, chat);
     if (n < 0) { fprintf(stderr, "tokenize failed\n"); return 1; }
     toks.resize(n);
     const int n_vocab = llama_vocab_n_tokens(vocab);
+
+    // LLMSTREAM_NLL=1: teacher-forced scoring of the prompt instead of
+    // generation. deterministic, sampling-free quality number: mean -log p of
+    // each prompt token given its prefix, directly comparable across margins.
+    if (getenv("LLMSTREAM_NLL")) {
+        if (n < 8) { fprintf(stderr, "NLL mode needs a longer prompt\n"); return 1; }
+        auto tt0 = std::chrono::steady_clock::now();
+        double nll = 0.0; int scored = 0;
+        llama_token first = toks[0];
+        llama_batch b0 = llama_batch_get_one(&first, 1);
+        if (llama_decode(ctx, b0) != 0) { fprintf(stderr, "decode failed\n"); return 1; }
+        for (int i = 1; i < n; i++) {
+            const float * lg = llama_get_logits_ith(ctx, -1);
+            float mx = -1e30f;
+            for (int v = 0; v < n_vocab; v++) if (lg[v] > mx) mx = lg[v];
+            double se = 0.0;
+            for (int v = 0; v < n_vocab; v++) se += exp((double) lg[v] - mx);
+            nll += -((double) lg[toks[i]] - mx - log(se));
+            scored++;
+            llama_batch b = llama_batch_get_one(&toks[i], 1);
+            if (llama_decode(ctx, b) != 0) { fprintf(stderr, "decode failed\n"); return 1; }
+        }
+        const double dt = std::chrono::duration<double>(std::chrono::steady_clock::now() - tt0).count();
+        printf("mode=%s nll_tokens=%d avg_nll=%.5f ppl=%.4f (%.2f tok/s)\n",
+               n_slots > 0 ? "streamed" : "resident", scored, nll / scored, exp(nll / scored), (n - 1) / dt);
+        if (n_slots > 0) {
+            printf("io: uses=%" PRIu64 " misses=%" PRIu64 " (hit %.3f) stall=%.2f s read=%.1f MB read_work=%.2f s preads=%" PRIu64 "\n",
+                   st.uses + st.uses_prefill, st.misses + st.misses_prefill,
+                   1.0 - (double) (st.misses + st.misses_prefill) / (st.uses + st.uses_prefill),
+                   st.stall_s, st.bytes / 1e6, st.read_us / 1e6, st.read_calls.load());
+            if (st.margin > 0.0f && st.agree_total > 0) {
+                printf("io: margin=%.3f router_agreement=%.4f swapped_calls=%" PRIu64 "\n",
+                       st.margin, (double) st.agree_hits / st.agree_total, st.swapped_tokens);
+            }
+        }
+        llama_free(ctx); llama_model_free(model);
+        return 0;
+    }
 
     auto t0 = std::chrono::steady_clock::now();
     llama_batch batch = llama_batch_get_one(toks.data(), (int32_t) toks.size());
@@ -499,11 +579,13 @@ int main(int argc, char ** argv) {
         float best = -1e30f;
         for (int i = 0; i < n_vocab; i++) if (logits[i] > best) { best = logits[i]; cur = i; }
     }
+    static const bool print_toks = getenv("LLMSTREAM_PRINT_TOKS") != nullptr;
     int generated = 0;
     for (int s = 0; s < n_gen; s++) {
         if (llama_vocab_is_eog(vocab, cur)) break;
         char piece[128];
-        int pn = llama_token_to_piece(vocab, cur, piece, sizeof(piece), 0, false);
+        int pn = llama_token_to_piece(vocab, cur, piece, sizeof(piece), 0, print_toks);
+        if (print_toks) printf("tok %6d |%.*s|\n", cur, pn > 0 ? pn : 0, piece);
         if (pn > 0) out.append(piece, pn);
         llama_batch b = llama_batch_get_one(&cur, 1);
         if (llama_decode(ctx, b) != 0) { fprintf(stderr, "decode failed\n"); return 1; }
@@ -529,8 +611,17 @@ int main(int argc, char ** argv) {
                st.uses_prefill, st.misses_prefill);
         printf("io: prefetch_issued=%" PRIu64 " prefetch_hits=%" PRIu64 " stall=%.2f s total_read=%.1f MB avg_bw=%.0f MB/s\n",
                st.prefetch_issued, st.prefetch_hits, st.stall_s, mb, mb / (dt_prefill + dt_decode));
+        // read_work is summed across the 6 pool workers (can exceed wall time);
+        // per_stream_bw = bytes / that sum, i.e. what one queue depth delivers
+        printf("io: read_work=%.2f s preads=%" PRIu64 " per_stream_bw=%.0f MB/s\n",
+               st.read_us / 1e6, st.read_calls.load(),
+               st.read_us ? mb / (st.read_us / 1e6) : 0.0);
         if (st.margin > 0.0f) {
             printf("io: margin=%.3f masked=%" PRIu64 "\n", st.margin, st.margin_masked);
+            if (st.agree_total > 0) {
+                printf("io: router_agreement=%.4f swapped_calls=%" PRIu64 " of=%" PRIu64 "\n",
+                       (double) st.agree_hits / st.agree_total, st.swapped_tokens, st.agree_total / (uint64_t) st.top_k);
+            }
         }
     }
     printf("logits_hash=%016" PRIx64 "\n", hash);
