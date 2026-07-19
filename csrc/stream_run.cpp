@@ -211,6 +211,13 @@ static size_t avail_mem_bytes(void) {
 static void pressure_monitor(stream_state * st) {
     static const double floor_gb = getenv("LLMSTREAM_GUARD_FLOOR")
         ? atof(getenv("LLMSTREAM_GUARD_FLOOR")) : 1.2;
+    // fault injection for the shed path: force one severe event N seconds
+    // after DECODE begins (a warm cache must exist to prove eviction+MADV_FREE
+    // actually runs; process-relative timers lose the race with load variance)
+    static const int test_at = getenv("LLMSTREAM_GUARD_TEST_AT")
+        ? atoi(getenv("LLMSTREAM_GUARD_TEST_AT")) : 0;
+    std::chrono::steady_clock::time_point t_decode{};
+    bool injected = false;
     int calm = 0;
     while (!st->mon_stop.load()) {
         for (int i = 0; i < 20 && !st->mon_stop.load(); i++) {
@@ -220,8 +227,16 @@ static void pressure_monitor(stream_state * st) {
         size_t sz = sizeof(lvl);
         if (sysctlbyname("kern.memorystatus_vm_pressure_level", &lvl, &sz, nullptr, 0) != 0) lvl = 1;
         const double avail_gb = avail_mem_bytes() / 1e9;
-        const bool severe = lvl >= 4 || avail_gb < floor_gb;
-        const bool warn   = lvl >= 2 || avail_gb < floor_gb * 1.5;
+        bool severe = lvl >= 4 || avail_gb < floor_gb;
+        bool warn   = lvl >= 2 || avail_gb < floor_gb * 1.5;
+        if (test_at > 0 && !injected && st->in_decode) {
+            if (t_decode == std::chrono::steady_clock::time_point{}) {
+                t_decode = std::chrono::steady_clock::now();
+            } else if (std::chrono::duration<double>(std::chrono::steady_clock::now() - t_decode).count() >= test_at) {
+                injected = severe = warn = true;
+                fprintf(stderr, "llmstream: guard TEST injection at decode+%ds\n", test_at);
+            }
+        }
         const int cap = st->slot_cap.load();
         if (severe || warn) {
             const int ncap = std::max(4, severe ? cap / 2 : cap - 2);

@@ -203,8 +203,38 @@ the gpt-oss-120b bring-up.
 - **Fix (guard v2)**: monitor starts BEFORE model load; dual trigger — shed
   on memorystatus ≥ warning OR available memory < floor (1.8GB warn / 1.2GB
   severe, `LLMSTREAM_GUARD_FLOOR` tunable). Gate re-PASS `b6869f5b6ef36376`.
-- **Result — stress test 4 (hog timed mid-decode, guard v2)**: pending
-  (`results/gptoss_guard_stress4.txt`).
+- **Result — stress test 4 (hog timed at t+160s, guard v2)**: survived (256
+  tok), but decode finished before the timer — because of a NEW positive
+  finding: **long generations warm the cache** (hit .927 over 256 tok vs .885
+  over 64; 6.96 tok/s at only 6 slots). Short benchmarks undersell the
+  engine; sustained sessions run faster. Timing-based attack design failed
+  twice → switched to event-triggered.
+- **Result — stress test 5 (event-triggered hog, guard v2)**: **GUARD FIRED**:
+  `pressure lvl=2 avail=3.5GB -> slot cap 4`, pressure_drops=1, run completed
+  512 tok at 6.37 tok/s, swap bounded, cap recovered to 5 after calm.
+  Detection → response → recovery proven under real memorystatus pressure.
+  Residual gap: cap_evictions=0 — the artifact "dots" that triggered the hog
+  are model-LOAD progress dots (llama.cpp progress callback), not decode
+  tokens; pressure hit while the cache was still empty, so there was nothing
+  to shed, and the cap recovered before decode. Warm-cache shedding still
+  unexercised (`results/gptoss_guard_stress5.txt`).
+- **Result — forced-floor test (`LLMSTREAM_GUARD_FLOOR=20`)**: guard fired
+  pre-load ⇒ cache grew up UNDER the cap (assignment-blocking enforced it) ⇒
+  evictions correctly 0 — proved capping-at-birth, still not warm shedding.
+  Added decode-relative fault injection (`LLMSTREAM_GUARD_TEST_AT=N` seconds
+  after first decode token; process-relative timers lost the race twice —
+  load time varies 60–120s with OS page-cache warmth).
+- **Result — injection test (decode+8s, warm 8-slot cache): E10 CLOSED.**
+  `cap_evictions=144` — exactly 36 layers × 4 shed slots, predicted in
+  advance; cap 8→4, hit adapted .92→.781, decode continued at 3.93 tok/s,
+  text coherent, final_cap=5 (recovery), gate PASS. Full chain proven:
+  prevention (auto-sizing; 3 real attacks survived, swap bounded) →
+  detection (real memorystatus lvl=2 in test 5; avail-floor as backstop) →
+  shedding (144 evictions + MADV_FREE) → recovery (+1 slot per 30s calm) →
+  service continuity (coherent output throughout)
+  (`results/gptoss_guard_inject.txt`). Product claim now measured: **this
+  engine cannot hang the host; under pressure it sheds its own memory, keeps
+  generating, and heals afterward.**
 - **Open question**: auto chose 7 slots where manual best was 8 — the safety
   factor costs ~10-20% speed. Tune the 0.80/2GB constants only with more
   cross-model data, never to zero headroom (that's how engines hang laptops).

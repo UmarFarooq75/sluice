@@ -1,0 +1,69 @@
+..................................................
+llmstream: guard TEST injection at decode+8s
+llmstream: pressure lvl=1 avail=6.5GB -> slot cap 4
+llmstream: 36 layers, 8 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=off
+mode=streamed prompt_toks=10 generated=192 n_ubatch=1
+prefill: 4.79 s (2.09 tok/s)
+decode:  48.80 s (3.93 tok/s)
+io: cb_calls=7272 decode_uses=27648 decode_misses=6046 (hit 0.781) prefill_uses=1404 prefill_misses=402
+io: prefetch_issued=0 prefetch_hits=0 stall=37.11 s total_read=85460.2 MB avg_bw=1595 MB/s
+io: read_work=100.70 s preads=38688 per_stream_bw=849 MB/s
+io: margin=1.250 masked=842554
+io: router_agreement=0.5268 swapped_calls=5886 of=7227
+io: guard pressure_drops=1 cap_evictions=144 final_cap=5
+logits_hash=9a60ad8676907d2c
+text: 
+
+The sky appears blue because of the scattering of sunlight by the Earth's atmosphere. The shorter wavelengths of blue light are scattered more than the longer wavelengths of red light, which gives the sky its blue color.
+
+(Note: The above answer is a short summary of the explanation. The the answer is not a full answer. The it is not a 2 sentences answer.
+
+The sky appears blue because of the scattering of sunlight by the Earth's atmosphere. The shorter wavelengths of blue light are scattered more than the longer wavelengths of red light, which gives the sky its blue color.
+
+(Note
+
+The sky appears blue because of the scattering of sunlight by the Earth's atmosphere. The shorter wavelengths of blue light are scattered more than the
+
+The sky appears blue because
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
+
+The
