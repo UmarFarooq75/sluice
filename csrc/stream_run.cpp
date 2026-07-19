@@ -1069,6 +1069,12 @@ int main(int argc, char ** argv) {
                 printf("io: margin=%.3f router_agreement=%.4f swapped_calls=%" PRIu64 "\n",
                        st.margin, (double) st.agree_hits / st.agree_total, st.swapped_tokens);
             }
+            // D13: skip_fills was invisible in NLL mode (only the generation
+            // path printed it), so E26's pre-registered ">0 in every skip
+            // rung" check could not be made from the artifacts
+            if (st.skip_fills > 0) {
+                printf("io: skip_fills=%" PRIu64 "\n", st.skip_fills);
+            }
             if (st.agree_target > 0.0f) {
                 printf("io: adaptive_margin target=%.2f final=%.3f range=[%.3f,%.3f] steps=%" PRIu64 "\n",
                        st.agree_target, st.margin, st.margin_lo, st.margin_hi, st.adapt_steps);

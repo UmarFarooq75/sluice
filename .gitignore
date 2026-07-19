@@ -28,6 +28,7 @@ vendor/
 csrc/stream_run
 csrc/stream_bench
 csrc/probe_cb_eval
+csrc/transcode_bench
 
 # benchmark scaffolding (ollama standalone + zero-copy model store)
 tools/

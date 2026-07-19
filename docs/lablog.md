@@ -635,6 +635,71 @@ believe a reviewer).
   self-exit, tested live), LLMSTREAM_REQ_TIMEOUT=900 wall cap, UI orphan
   sweep. Engine can no longer outlive its user.
 
+### E26. Expert-skip A/B: the E25 survivor is REFUTED — omission is worse than substitution (2026-07-19)
+- **Change**: LLMSTREAM_SKIP_W=w — an absent true-top-k expert whose true
+  softmax weight < w gets a near-zero-weight resident filler (softmax≈0)
+  instead of a full-weight resident substitute; other residents masked so
+  top-k can't promote a replacement. Env-gated, default off, OLMoE gate PASS.
+- **Prediction (pre-registered in scripts/gptoss_skip_ab.sh)**: skip reduces
+  the m0.5 reasoning damage (substitute was +9.7% warm NLL) because a skip
+  injects nothing where a substitute injects a wrong expert's signal at
+  real weight.
+- **Result: prediction REFUTED, decisively.** Δ warm NLL vs the m0 exact
+  anchor, substitute (banked battery) vs skip w0.25, same margin m0.5,
+  slots8, prefetch off:
+
+  | domain | substitute | skip |
+  |---|---|---|
+  | code | +0.6% | +2.2% |
+  | reasoning | **+9.7%** | **+31.6%** |
+  | chat | −4.6% (noise, n=90) | +1.4% (noise) |
+  | multilingual | +2.9% | +3.1% |
+  | prose | +2.3% | +9.8% |
+
+  Mean damage: substitute +2.2%, skip +9.6% — skip is ~4.4x worse. At
+  m0.25 skip is a tie on code (+1.6% vs +2.2%) but still +11.6% on
+  reasoning (substitute: −3.0%). Skip IS faster (~2 tok/s vs ~1.6 at m0.5
+  — it deletes the fetch entirely), but it's a strictly worse
+  speed-for-quality trade than simply raising the margin.
+- **Mechanism, and why the phase-0 result did not transfer**: DeepSeek-V2's
+  expert-skip worked because that architecture has SHARED experts that
+  carry the token when routed experts are dropped. gpt-oss has none — a
+  skip leaves a hole, while a substitute injects a resident expert the
+  router itself ranked next-best, which evidently carries correlated
+  signal. Third confirmation of the per-architecture doctrine (after
+  adaptive top-k flipping between OLMoE and DeepSeek). Substitution is the
+  fidelity-preserving degradation on shared-expert-free MoE; omission is not.
+- **Contamination handled per protocol**: rung 1 (code m0.5) overlapped the
+  dual-engine incident (guard fired 3x, slots crushed to 4, hit 0.375);
+  artifact preserved as *.CONTAMINATED.txt, rung re-run clean on the same
+  binary before any number above was quoted.
+- **Repeat bench (D10 gap-2, n=3, same binary, back-to-back)**: medians
+  m0 exact 1.56 tok/s [1.48–1.62], m0.25-noprefetch 1.74 [1.72–1.76],
+  m1.25 5.58 [5.33–5.62], product default m0.25+auto-prefetch 1.77
+  [1.61–1.82]. Within-day spread ±5% — far tighter than the ±20% cross-day
+  band; D10's drift is between sessions, not within one.
+- **Reproducibility, sharpened by accident**: with PREFETCH=0 the logits
+  hashes were identical 3/3 in every config including margin modes; with
+  auto-prefetch on, all 3 rounds hashed DIFFERENT. So margin-mode
+  nondeterminism is specifically prefetch/I/O-timing-injected cache state;
+  without speculative fills the eviction races didn't fire at GEN=64. The
+  by-construction analysis stands; gates still demand hash equality only
+  for exact mode.
+- **Prefetch regime law, same-day check**: hit 0.432 -> 0.812 with
+  auto-prefetch (reproducing E21's .434 -> .811 exactly) but only
+  1.74 -> 1.77 tok/s today — total bytes read are nearly identical
+  (75.0 vs 72.7 GB): prefetch converts demand misses into speculative
+  reads, it does not remove reads. After ~2h of runs the OS page cache is
+  warm (avg_bw ~1.65 GB/s), misses are cheap, and hiding their latency is
+  worth little. The law's mechanism holds; its payoff scales with how
+  expensive a miss actually is (cold-cache mornings, not warm afternoons).
+- **D13 found**: the pre-registered check "skip_fills > 0 in every skip
+  rung" was unverifiable from the artifacts — the counter only printed in
+  the generation path, not the NLL path. Print added to the NLL block
+  (visibility-only change, rebuilt + gated after all same-binary runs
+  completed). Lesson repeated from D11: the logging you demand must be
+  wired into the path you actually run.
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.
@@ -734,6 +799,8 @@ believe a reviewer).
 | D9 | Universality boundary: dense models | A dense 72B touches all weights every token — nothing to stream selectively; that is physics, not engineering (docs/dense-strategy.md). Scope stated honestly: MoE-first. | M3: DeepSeek family next (shared+routed experts) |
 | D10 | Thermal never logged (fanless chassis) | Are late rungs slower because hot? Counter-evidence: fastest rungs ran last. Still unproven either way. | Add powermetrics logging to protocol |
 | D11 | Guard floor hard-coded 4; fix ledger claimed top_k+1 had landed — it hadn't | Why fatal? cap < top_k can never seat one token's experts → assign_slot −1 → exit(1): pressure becomes availability loss on top-8 families. Why unnoticed? gpt-oss is top-4 — cap 4 sits exactly on the pigeonhole boundary and survives. Found because battery m0.5 logs showed cap 4 vs the claimed floor 5. | FIXED (E19): atomic top_k, floor top_k+1, post-load re-clamp. Lesson re-learned: verify the artifact, not the fix ledger |
+| D12 | Prefill with n_ubatch>1 + per-layer union > slots has no path (assign_slot exhausts victims → exit(1)) | Why latent? All current runs use ubatch=1. Boundary documented while scoping expert-major prefill (E24), before it bit anyone. | Any ubatch>1 config must clamp or split; owned by the prefill-port arc |
+| D13 | E26's pre-registered check "skip_fills > 0 every skip rung" was unverifiable — counter printed only in the generation path, NLL path silent | Why? Two separate metrics print sites; the new counter was wired into one. Same failure class as D11: the check you demand must be emitted by the path you run. | FIXED (E26): skip_fills added to the NLL print block; visibility-only, rebuilt + gated after all same-binary runs finished |
 
 ## Standing protocol (enforced from 2026-07-19)
 1. One model process at a time; check for strays before launch.

@@ -57,16 +57,16 @@ The margin router pushes I/O below the compute floor: a 2.9GB cache ties a 5.9GB
 
 ## The 120B stress test (2026-07-19): 117B params on 16 GB, quality-gated
 
-**gpt-oss-120b** (117B total / 5.1B active, MXFP4, 63.4GB file — 4× this laptop's entire RAM) runs on the same 16GB Air in **5.7GB of physical memory**. Every mode below is a measured artifact in `results/`; the day-by-day experiment record with predictions-before-results is [docs/lablog.md](docs/lablog.md) (E1–E24).
+**gpt-oss-120b** (117B total / 5.1B active, MXFP4, 63.4GB file — 4× this laptop's entire RAM) runs on the same 16GB Air in **5.7GB of physical memory**. Every mode below is a measured artifact in `results/`; the day-by-day experiment record with predictions-before-results is [docs/lablog.md](docs/lablog.md) (E1–E26).
 
 | mode | tok/s | quality guarantee | phys RAM |
 |---|---|---|---|
-| exact routing (m=0) | 1.2–1.4 | **bit-identical** logits, hash-gated | 5.7 GB |
-| **default** (margin 0.25 + auto-prefetch) | **1.55–1.62** | 5-domain teacher-forced NLL battery: no measurable change (mean +0.35%, mixed sign); routing fidelity ≥.91 | 5.7 GB |
-| fast (margin 1.25) | 5.1–5.5 | measured quality cost, documented | 5.7 GB |
+| exact routing (m=0) | 1.56 (n=3: 1.48–1.62) | **bit-identical** logits, hash-gated | 5.7 GB |
+| **default** (margin 0.25 + auto-prefetch) | **1.77** (n=3: 1.61–1.82) | 5-domain teacher-forced NLL battery: no measurable change (mean +0.35%, mixed sign); routing fidelity ≥.91 | 5.7 GB |
+| fast (margin 1.25) | 5.58 (n=3: 5.33–5.62) | measured quality cost, documented | 5.7 GB |
 | compute ceiling (cache-hot) | 11.1 CPU / **13.7 Metal** | — | 8.9 GB |
 
-The honest headline is the *pair*: ~1.6 tok/s with quality pinned, 5+ when you spend the dial. run-to-run drift is ±20% until thermal logging lands (D10), so treat single runs as bands.
+The honest headline is the *pair*: ~1.6 tok/s with quality pinned, 5+ when you spend the dial. Within one session the n=3 spread is ±5%; across days it is ±20% until thermal logging lands (D10) — so bands above are same-day medians, and cross-day comparisons stay qualitative.
 
 What this chapter added beyond speed:
 
@@ -74,7 +74,7 @@ What this chapter added beyond speed:
 - **Machine-safety guard, proven live**: under real memory pressure (user actively working), the engine sheds its own cache (8→4 slots, MADV_FREE) and keeps generating instead of taking the host down — observed in-the-wild during the domain battery, plus fault-injection proof. A latent floor bug that would have killed top-8 families under pressure (D11) was found by auditing the artifact against the fix ledger, fixed, and gated.
 - **Prefetch regime law, measured from both signs**: forced prefetch at the default (miss-heavy) lifts hit 0.43→0.81 and speed to 1.55; the same prefetch in the miss-light regime *costs* 30% (5.06→3.59) because speculation steals demand bandwidth. The engine's hit-EMA gate picks the correct side in both measured regimes. (The metric that once condemned prefetch was measuring the wrong question — true recall is 92% on OLMoE, 72% on gpt-oss.)
 - **Where this sits vs the closest prior art** (adversarial sweep, 2026-07-19; all verified with sources): the bare "4×-RAM from SSD" ratio is NOT unique — flash-moe (github.com/danveloper/flash-moe) streams a 209GB Qwen-397B on a 48GB M3 Max at 4.36 tok/s with standard routing, passive OS caching, and *zero quantitative quality evaluation* ("Excellent" is its whole quality section). Cache-aware routing with measured quality exists open-loop (arXiv:2412.00099). What no prior system — academic or shipping — publishes: bit-exact streamed-vs-resident gates, a runtime-enforced fidelity dial, active memory-pressure adaptation (every prior system either sets a static budget or trusts the OS page cache), or a multi-domain NLL battery behind its speed claims. Every shipping product (Ollama, LM Studio, MLX, vLLM, llama.cpp mainline) still refuses, OOMs, or thrashes at 4× RAM; per-expert streaming lives only in unmerged forks. Full survey: docs/novelty-audit.md.
-- **Refutations, priced and closed** (so nobody re-spends these weeks): on-disk expert-major repack (1.5% at realistic queue depth — this SSD doesn't punish 4.4MB random reads), MXFP4 compression (1.040× at zstd-19; int4 ≈ max entropy, re-confirmed physically), LFU-protected eviction (one miss in 4661 — LRU recency already protects Zipf leaders; the +14pt Belady prize is *foresight*, not frequency), background-priority "polite mode" as default (−79% throughput).
+- **Refutations, priced and closed** (so nobody re-spends these weeks): on-disk expert-major repack (1.5% at realistic queue depth — this SSD doesn't punish 4.4MB random reads), MXFP4 compression (1.040× at zstd-19; int4 ≈ max entropy, re-confirmed physically), LFU-protected eviction (one miss in 4661 — LRU recency already protects Zipf leaders; the +14pt Belady prize is *foresight*, not frequency), background-priority "polite mode" as default (−79% throughput), and expert-skip on absent low-weight experts (pre-registered A/B: skipping does ~4.4× the warm-NLL damage of substituting a resident expert — reasoning +31.6% vs +9.7% — because gpt-oss has no shared experts to carry the token; the DeepSeek-V2 skip result is architecture-local, confirming the per-architecture doctrine a third time).
 - **Reproducibility honesty**: exact mode is bit-reproducible run-to-run; margin mode is not, *by construction* (the mask reads cache state, which depends on I/O timing). Documented, and the regression gates demand hash equality only where physics does.
 
 ## Phase 1 milestone M1 — it now runs inside llama.cpp, bit-exact (2026-07-17)
