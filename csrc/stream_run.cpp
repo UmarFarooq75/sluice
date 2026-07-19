@@ -80,6 +80,7 @@ struct layer_cache {
     std::unordered_map<int, std::list<int>::iterator> lru_pos;
     std::unordered_map<int, int> slot_of; // expert -> slot
     std::unordered_set<int> in_flight;    // experts with pending fetches
+    std::unordered_map<int, int> parts_left; // in-flight expert -> parts not yet read
     std::vector<int> free_slots;          // slots shed by the pressure guard
     int n_slots = 0;
     int next_free = 0;
@@ -88,7 +89,7 @@ struct layer_cache {
 struct stream_state;
 
 struct io_pool {
-    struct job { int il, e, slot; bool prefetch; };
+    struct job { int il, e, slot, part; bool prefetch; };
     std::deque<job> q;
     std::mutex m;
     std::condition_variable cv_work;   // workers wait for jobs
@@ -135,9 +136,14 @@ struct stream_state {
     std::thread mon;
 };
 
+// one job = one tensor extent of one expert: the 6 reads of an expert run
+// in parallel across workers instead of serially on one (measured: effective
+// bandwidth collapsed to 216-349 MB/s at low miss counts - a latency floor,
+// ~11ms/miss, from serial preads)
 static void fetch_one(stream_state & st, const io_pool::job & j) {
     layer_cache & lc = st.cache[j.il];
-    for (size_t t = 0; t < lc.ext.size(); t++) {
+    {
+        const size_t t = (size_t) j.part;
         const tensor_extent & ex = lc.ext[t];
         size_t sz  = ex.stride;
         size_t off = ex.file_off + (size_t) j.e * sz;
@@ -175,7 +181,12 @@ static void pool_worker(io_pool * p) {
         fetch_one(*p->st, j);
         {
             std::lock_guard<std::mutex> l(p->m);
-            p->st->cache[j.il].in_flight.erase(j.e);
+            layer_cache & lc = p->st->cache[j.il];
+            auto it = lc.parts_left.find(j.e);
+            if (it != lc.parts_left.end() && --it->second <= 0) {
+                lc.parts_left.erase(it);
+                lc.in_flight.erase(j.e);
+            }
         }
         p->cv_done.notify_all();
     }
@@ -422,7 +433,10 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
             lc.slot_of[e] = slot;
             lru_touch(lc, e);
             lc.in_flight.insert(e);
-            st->pool.q.push_back({nl, e, slot, true});
+            lc.parts_left[e] = (int) lc.ext.size();
+            for (int part = 0; part < (int) lc.ext.size(); part++) {
+                st->pool.q.push_back({nl, e, slot, part, true});
+            }
             st->prefetch_issued++;
             budget--;
         }
@@ -488,7 +502,10 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
             if (slot < 0) { fprintf(stderr, "no evictable slot L%d\n", il); exit(1); }
             lc.slot_of[e] = slot;
             lc.in_flight.insert(e);
-            st->pool.q.push_front({il, e, slot, false}); // demand outranks prefetch
+            lc.parts_left[e] = (int) lc.ext.size();
+            for (int part = (int) lc.ext.size() - 1; part >= 0; part--) {
+                st->pool.q.push_front({il, e, slot, part, false}); // demand outranks prefetch
+            }
             waited_any = true;
         }
         st->pool.cv_work.notify_all();
@@ -698,7 +715,8 @@ int main(int argc, char ** argv) {
                st.prefetch_on ? "on" : "off");
 
         st.pool.st = &st;
-        for (int w = 0; w < 6; w++) st.pool.workers.emplace_back(pool_worker, &st.pool);
+        const int n_workers = getenv("LLMSTREAM_IO_WORKERS") ? atoi(getenv("LLMSTREAM_IO_WORKERS")) : 10;
+        for (int w = 0; w < n_workers; w++) st.pool.workers.emplace_back(pool_worker, &st.pool);
     }
 
     const int n_ubatch = argc > 4 ? atoi(argv[4]) : 1;
@@ -708,6 +726,10 @@ int main(int argc, char ** argv) {
     cparams.n_ubatch = n_ubatch;
     cparams.cb_eval  = cb_eval;
     cparams.cb_eval_user_data = &st;
+    if (getenv("LLMSTREAM_THREADS")) {
+        cparams.n_threads       = atoi(getenv("LLMSTREAM_THREADS"));
+        cparams.n_threads_batch = atoi(getenv("LLMSTREAM_THREADS"));
+    }
     llama_context * ctx = llama_init_from_model(model, cparams);
     if (!ctx) { fprintf(stderr, "ctx init failed\n"); return 1; }
 

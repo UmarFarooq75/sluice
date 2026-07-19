@@ -308,6 +308,22 @@ the gpt-oss-120b bring-up.
   ordering in stream_state dtor path) — does not taint measurements; fix
   queued. GPU ladder (m0.25/m1.25/slots16) running.
 
+### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
+- **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
+  miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.
+- **Expected**: (a) big win — per-miss latency floor from serial preads;
+  (b) 8 threads cut the 0.095s compute term 20-30%.
+- **Result**: (a) m125_s8: 5.37→5.52 tok/s (+3%, noise); per_stream_bw fell
+  1128→314 MB/s (device shares the same time across streams) — the ~11ms
+  miss floor is DEVICE latency, not syscall serialization. REFUTED as a
+  lever, kept as harmless (gate bit-exact). (b) 8 threads: 5.52→3.90 and
+  1.71→1.31 — WORSE in mixed I/O+compute (P/E straggler effect); only the
+  pure-compute ceiling gains: 10.47→11.12 tok/s. Default stays 4 threads.
+- **Conclusion**: decode speed on this machine now reduces to ONE variable:
+  miss count. Remaining unplayed cards: static-table prefetch (needs gpt-oss
+  routing-trace predictability measurement) and agreement-feedback adaptive
+  margin (quality held by live measurement, speed taken where fidelity allows).
+
 ### E16. Clean GPU lifecycle + where GPU streaming actually pays
 - **Teardown abort FIXED**: root cause was our never-freed device slot buffer
   vs Metal's registry destructor at exit; added `llmstream_free()` (fork API)
