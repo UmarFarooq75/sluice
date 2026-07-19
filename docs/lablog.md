@@ -308,6 +308,60 @@ the gpt-oss-120b bring-up.
   ordering in stream_state dtor path) — does not taint measurements; fix
   queued. GPU ladder (m0.25/m1.25/slots16) running.
 
+### E18. Adversarial audits (two subagents) + validation + fix batch
+Two read-only subagents audited the project; every load-bearing claim was
+then validated against artifacts before acting (owner directive: never just
+believe a reviewer).
+
+**Methodology audit — accepted after validation:**
+- **Headline correction (their F7, validated against artifacts)**: all ≥5
+  tok/s numbers are at m=1.25, which our own quality curve rejects; the
+  quality-anchored (m0.25) speed is **1.63–1.83 tok/s**; "5.4" appeared in
+  no artifact. Headlines must state the honest pair: ~1.7 quality-anchored /
+  5.1–5.7 (single-run) at m1.25 with measured quality cost. auto-slots
+  production config measured 3.84–4.18.
+- **(their F2, validated by reading artifact tails)**: long guard runs at
+  m1.25 degrade into repetition; "coherent output throughout" RETRACTED —
+  machine survival proven, output-quality-under-pressure not. Re-run at
+  m0.25+CHAT queued.
+- **(their F1, accepted with a caveat I hold)**: m0.25 rests on one likely
+  memorized passage; the promised domain battery was never run. My caveat:
+  memorization does not invalidate the *differential* NLL across margins on
+  the same passage — but it does make damage-detection sensitivity unknown,
+  so the battery remains the top quality experiment.
+- Also accepted: CHAT=1 built-but-never-used (closing now); Qwen headline
+  has no quality metric; the OLMoE-only gate never covered gpt-oss's new
+  code paths (slot-invariance hash pair now running); COMPUTE pillar has
+  zero measured footprint artifacts (rss logging queued); thermal still
+  unlogged; single-run noise ~5–24% vs config gaps ~12%.
+
+**Code audit — validated, fix batch applied (build pending machine-free):**
+- F1 [QUALITY, silent]: margin-hook name prefix also matches
+  `ffn_moe_probs_biased/_masked` (DeepSeek-style) and misses split
+  selection tensors (LLAMA4/GROVEMOE) → double-masking in mixed score
+  spaces / NaN via -INF gather on families we haven't shipped yet. FIXED:
+  exact `ffn_moe_probs-` match. Family guard for margin still TODO before M3.
+- F2: NGL>0 + CPU slot tensors (documented-corrupt) was still accepted →
+  now a hard startup error.
+- F3: demand path indexed st->cache[il] unbounded; leading/mid dense layers
+  (DeepSeek!) would corrupt memory → bounds check added.
+- F4: guard floor (4) can sit below top_k+prefetch occupancy → exit(1) mid-
+  run under pressure. FIXED: floor = top_k+1 once learned; demand path now
+  waits for in-flight fetches instead of dying.
+- F5: env values unclamped (IO_WORKERS=0 deadlocked) → clamped.
+- F6: madvise returns ignored (device buffers may no-op → speed paid,
+  nothing freed) → counted + reported as madv_fail.
+- F7: in_decode data race → atomic. F9: look-node ask now gated by the same
+  EMA as exec (removes per-layer GPU syncs bought for nothing). F10: pread
+  EINTR retry + strerror.
+- Verified-safe by the auditor (with reasoning): parts_left lifecycle,
+  eviction-vs-fetch tearing, MADV_FREE ordering, cb_eval mutation model,
+  fd sharing, extent arithmetic at 100GB scale.
+- Their top speed ideas, queued with measurements attached: resident bias
+  vectors (needs fork ids-dup split — biases must index ORIGINAL expert ids;
+  ~159MB for -3 syscalls/miss), sub-extent read chunking (per-miss QD),
+  prefetch gate rework (priority queue already protects demand).
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.

@@ -53,6 +53,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cerrno>
 #include <deque>
 #include <fcntl.h>
 #include <list>
@@ -111,7 +112,7 @@ struct stream_state {
     uint64_t uses = 0, misses = 0, prefetch_hits = 0, prefetch_issued = 0, cb_calls = 0;
     uint64_t uses_prefill = 0, misses_prefill = 0;
     double stall_s = 0.0;
-    bool in_decode = false;
+    std::atomic<bool> in_decode{false};
     int top_k = 0;         // learned from first topk node
     double hit_ema = 0.0;  // rolling demand hit rate; prefetch active only while cold
     float margin = 0.0f;   // LLMSTREAM_MARGIN: mask non-resident experts within
@@ -152,7 +153,11 @@ static void fetch_one(stream_state & st, const io_pool::job & j) {
         auto r0 = std::chrono::steady_clock::now();
         while (done < sz) {
             ssize_t r = pread(st.fd, dst + done, sz - done, off + done);
-            if (r <= 0) { fprintf(stderr, "pread failed L%d E%d t%zu\n", j.il, j.e, t); exit(1); }
+            if (r < 0 && errno == EINTR) continue;
+            if (r <= 0) {
+                fprintf(stderr, "pread failed L%d E%d part%zu: %s\n", j.il, j.e, t, r < 0 ? strerror(errno) : "eof");
+                exit(1);
+            }
             done += r;
         }
         st.read_us += (uint64_t) std::chrono::duration_cast<std::chrono::microseconds>(
@@ -194,13 +199,16 @@ static void pool_worker(io_pool * p) {
 
 // return a shed slot's pages to the OS. content correctness is unaffected:
 // the expert mapping is gone, so any future use refetches over these bytes.
+static uint64_t g_madv_fail = 0; // eval thread only (called under pool.m)
 static void madv_free_slot(layer_cache & lc, int slot) {
     const uintptr_t ps = (uintptr_t) sysconf(_SC_PAGESIZE);
     for (auto & ex : lc.ext) {
         const uintptr_t a  = (uintptr_t) ex.slot_t->data + (uintptr_t) slot * ex.slot_stride;
         const uintptr_t pa = (a + ps - 1) & ~(ps - 1);
         const uintptr_t pb = (a + ex.slot_stride) & ~(ps - 1);
-        if (pb > pa) madvise((void *) pa, pb - pa, MADV_FREE);
+        // audit F6: on device (Metal) buffers madvise can fail or be a no-op;
+        // count it so "shed" never silently means "paid speed, freed nothing"
+        if (pb > pa && madvise((void *) pa, pb - pa, MADV_FREE) != 0) g_madv_fail++;
     }
 }
 
@@ -316,13 +324,13 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
     stream_state * st = (stream_state *) user_data;
     const bool is_slots = strncmp(t->name, "ffn_moe_topk_slots", 18) == 0;
     const bool is_look  = strncmp(t->name, "llmstream_look", 14) == 0;
-    const bool is_probs = strncmp(t->name, "ffn_moe_probs", 13) == 0 && strchr(t->name, ' ') == nullptr;
+    const bool is_probs = strncmp(t->name, "ffn_moe_probs-", 14) == 0 && strchr(t->name, ' ') == nullptr;
     static const bool observe_topk = getenv("LLMSTREAM_OBSERVE") != nullptr;
     static const bool dbg = getenv("LLMSTREAM_DEBUG_HASH") != nullptr;
     // is_look only matters while prefetch is live; asking for it anyway ends
     // a scheduler compute range per look node - on GPU that is one extra
     // command-buffer sync per layer per token (2x the necessary syncs)
-    if (ask) return is_slots || (is_look && st->prefetch_on)
+    if (ask) return is_slots || (is_look && st->prefetch_on && st->hit_ema <= 0.80)
         || (st->margin > 0.0f && is_probs)
         || (observe_topk && strncmp(t->name, "ffn_moe_topk", 12) == 0)
         || (dbg && strncmp(t->name, "ffn_moe_", 8) == 0);
@@ -446,6 +454,7 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
 
     // demand path: ffn_moe_topk_slots-<il>
     st->cb_calls++;
+    if (il < 0 || il >= st->n_layers) return true; // dense/malformed layer: never index cache OOB
     const int64_t k = t->ne[0], n_tokens = t->ne[1];
     static int print_ids = getenv("LLMSTREAM_PRINT_IDS") ? atoi(getenv("LLMSTREAM_PRINT_IDS")) : 0;
     if (print_ids > 0) {
@@ -468,7 +477,7 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
 
     bool waited_any = false;
     {
-        std::lock_guard<std::mutex> l(st->pool.m);
+        std::unique_lock<std::mutex> l(st->pool.m);
         // E10: honor a lowered cap first - shed coldest experts and hand their
         // pages back so the OS sees relief before we add any new load
         const int cap = st->slot_cap.load(std::memory_order_relaxed);
@@ -499,7 +508,14 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
             }
             if (st->in_decode) st->misses++; else st->misses_prefill++;
             int slot = assign_slot(lc, e, &need, cap);
-            if (slot < 0) { fprintf(stderr, "no evictable slot L%d\n", il); exit(1); }
+            while (slot < 0 && !lc.in_flight.empty()) {
+                // every victim is needed or in flight: wait for a fetch to
+                // land, then retry - dying here would turn memory pressure
+                // into an availability loss (audit F4)
+                st->pool.cv_done.wait(l);
+                slot = assign_slot(lc, e, &need, cap);
+            }
+            if (slot < 0) { fprintf(stderr, "no evictable slot L%d (slots < top_k?)\n", il); exit(1); }
             lc.slot_of[e] = slot;
             lc.in_flight.insert(e);
             lc.parts_left[e] = (int) lc.ext.size();
@@ -639,6 +655,12 @@ int main(int argc, char ** argv) {
     // MTL0_Mapped for gpt-oss vs a 12.7GB working set -> command-buffer OOM).
     // Without mmap only actually-loaded (non-skipped) tensors allocate.
     if (getenv("LLMSTREAM_SLOT_DEV")) mparams.use_mmap = false;
+    if (n_slots > 0 && mparams.n_gpu_layers > 0 && !getenv("LLMSTREAM_SLOT_DEV")) {
+        fprintf(stderr, "llmstream: NGL>0 with CPU slot tensors is a corrupt configuration "
+                        "(scheduler snapshots cross-backend inputs before mid-graph fills; "
+                        "measured garbage output). Set LLMSTREAM_SLOT_DEV=gpu or NGL=0.\n");
+        return 1;
+    }
     // repacked (interleaved) weight layouts use different gemm kernels than the
     // plain vec_dot path slot tensors take; disable for bit-exact comparisons
     if (getenv("LLMSTREAM_NO_REPACK")) mparams.use_extra_bufts = false;
@@ -715,7 +737,9 @@ int main(int argc, char ** argv) {
                st.prefetch_on ? "on" : "off");
 
         st.pool.st = &st;
-        const int n_workers = getenv("LLMSTREAM_IO_WORKERS") ? atoi(getenv("LLMSTREAM_IO_WORKERS")) : 10;
+        int n_workers = getenv("LLMSTREAM_IO_WORKERS") ? atoi(getenv("LLMSTREAM_IO_WORKERS")) : 10;
+        if (n_workers < 1) n_workers = 1;
+        if (n_workers > 32) n_workers = 32;
         for (int w = 0; w < n_workers; w++) st.pool.workers.emplace_back(pool_worker, &st.pool);
     }
 
@@ -727,8 +751,10 @@ int main(int argc, char ** argv) {
     cparams.cb_eval  = cb_eval;
     cparams.cb_eval_user_data = &st;
     if (getenv("LLMSTREAM_THREADS")) {
-        cparams.n_threads       = atoi(getenv("LLMSTREAM_THREADS"));
-        cparams.n_threads_batch = atoi(getenv("LLMSTREAM_THREADS"));
+        int nt = atoi(getenv("LLMSTREAM_THREADS"));
+        if (nt < 1) nt = 1;
+        cparams.n_threads       = nt;
+        cparams.n_threads_batch = nt;
     }
     llama_context * ctx = llama_init_from_model(model, cparams);
     if (!ctx) { fprintf(stderr, "ctx init failed\n"); return 1; }
@@ -796,8 +822,8 @@ int main(int argc, char ** argv) {
                        st.margin, (double) st.agree_hits / st.agree_total, st.swapped_tokens);
             }
             if (st.cap_drops.load() > 0) {
-                printf("io: guard pressure_drops=%" PRIu64 " cap_evictions=%" PRIu64 " final_cap=%d\n",
-                       st.cap_drops.load(), st.cap_evictions, st.slot_cap.load());
+                printf("io: guard pressure_drops=%" PRIu64 " cap_evictions=%" PRIu64 " final_cap=%d madv_fail=%" PRIu64 "\n",
+                       st.cap_drops.load(), st.cap_evictions, st.slot_cap.load(), g_madv_fail);
             }
         }
         st.mon_stop = true;
