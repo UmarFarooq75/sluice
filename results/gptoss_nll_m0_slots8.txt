@@ -1,0 +1,15 @@
+..................................................
+WARNING: Using native backtrace. Set GGML_BACKTRACE_LLDB for more info.
+WARNING: GGML_BACKTRACE_LLDB may cause native MacOS Terminal.app to crash.
+See: https://github.com/ggml-org/llama.cpp/pull/17869
+0   libggml-base.0.17.0.dylib           0x0000000102ed13d0 ggml_print_backtrace + 276
+1   libggml-base.0.17.0.dylib           0x0000000102ee4168 _ZL23ggml_uncaught_exceptionv + 12
+2   libc++abi.dylib                     0x000000018f4b975c _ZSt11__terminatePFvvE + 16
+3   libc++abi.dylib                     0x000000018f4b96c8 _ZSt9terminatev + 36
+4   stream_run                          0x0000000102de82e4 _ZN12stream_stateD2Ev + 48
+5   stream_run                          0x0000000102de191c main + 4636
+6   dyld                                0x000000018f147e00 start + 6992
+libc++abi: terminating
+llmstream: 36 layers, 8 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=off
+mode=streamed nll_tokens=144 avg_nll=2.84472 ppl=17.1968 (1.35 tok/s)
+io: uses=20880 misses=10647 (hit 0.490) stall=87.03 s read=141112.8 MB read_work=222.51 s preads=63882

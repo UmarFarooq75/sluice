@@ -1,0 +1,78 @@
+..................................................
+llmstream: 36 layers, 8 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=off
+mode=streamed prompt_toks=10 generated=64 n_ubatch=1
+prefill: 4.02 s (2.49 tok/s)
+decode:  7.77 s (8.23 tok/s)
+io: cb_calls=2664 decode_uses=9216 decode_misses=391 (hit 0.958) prefill_uses=1404 prefill_misses=335
+io: prefetch_issued=0 prefetch_hits=0 stall=5.81 s total_read=9622.2 MB avg_bw=816 MB/s
+io: read_work=13.23 s preads=4356 per_stream_bw=727 MB/s
+io: margin=1.500 masked=314205
+io: router_agreement=0.3503 swapped_calls=2577 of=2619
+logits_hash=a5074d4fc30da9c0
+text: 
+
+The sky appears blue because the shorter wavelengths of blue light are scattered more than the longer wavelengths of red light. This scattering causes the sky to appear blue.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

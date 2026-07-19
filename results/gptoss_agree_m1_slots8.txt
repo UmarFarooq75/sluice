@@ -1,0 +1,18 @@
+..................................................
+llmstream: 36 layers, 8 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=off
+mode=streamed prompt_toks=10 generated=64 n_ubatch=1
+prefill: 5.69 s (1.76 tok/s)
+decode:  19.09 s (3.35 tok/s)
+io: cb_calls=2664 decode_uses=9216 decode_misses=1921 (hit 0.792) prefill_uses=1404 prefill_misses=514
+io: prefetch_issued=0 prefetch_hits=0 stall=17.95 s total_read=32272.9 MB avg_bw=1303 MB/s
+io: read_work=41.62 s preads=14610 per_stream_bw=775 MB/s
+io: margin=1.000 masked=310236
+io: router_agreement=0.5850 swapped_calls=2247 of=2619
+logits_hash=827a0f0ca02563f7
+text: 
+
+The sky appears blue because of a phenomenon called Rayleigh scattering. When sunlight passes through Earth's atmosphere, the shorter blue wavelengths are scattered more than the longer red wavelengths, making the sky appear blue.
+
+The
+
+It looks like your message might have been cut off. Could you let me know what you were trying to

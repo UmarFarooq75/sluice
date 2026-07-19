@@ -19,6 +19,8 @@
 //
 // Modes/env:
 //   LLMSTREAM_SLOTS=N     slots per layer (fork reads it too); unset = resident
+//   LLMSTREAM_SLOTS=auto  size the cache from this machine's available memory
+//   LLMSTREAM_GUARD=0     disable the runtime memory-pressure guard
 //   LLMSTREAM_PREFETCH=0  disable lookahead prefetch (default on when slots>0)
 //   LLMSTREAM_NO_REPACK   disable weight repacking (required for bit-exact gate)
 //   LLMSTREAM_OBSERVE     observe plain topk nodes (debug)
@@ -44,6 +46,7 @@
 #include <atomic>
 #include <chrono>
 #include <cinttypes>
+#include <climits>
 #include <cmath>
 #include <condition_variable>
 #include <cstdint>
@@ -53,8 +56,11 @@
 #include <deque>
 #include <fcntl.h>
 #include <list>
+#include <mach/mach.h>
 #include <mutex>
 #include <string>
+#include <sys/mman.h>
+#include <sys/sysctl.h>
 #include <thread>
 #include <unistd.h>
 #include <unordered_map>
@@ -74,6 +80,7 @@ struct layer_cache {
     std::unordered_map<int, std::list<int>::iterator> lru_pos;
     std::unordered_map<int, int> slot_of; // expert -> slot
     std::unordered_set<int> in_flight;    // experts with pending fetches
+    std::vector<int> free_slots;          // slots shed by the pressure guard
     int n_slots = 0;
     int next_free = 0;
 };
@@ -117,6 +124,15 @@ struct stream_state {
     // I/O worker accounting: summed pread wall time across workers vs the eval
     // thread's stall tells queueing from raw device latency apart
     std::atomic<uint64_t> read_us{0}, read_calls{0};
+    // E10 pressure guard: the host machine is never collateral damage. cap is
+    // the live per-layer occupancy limit the monitor thread lowers under
+    // memory pressure and raises back when calm.
+    std::atomic<int> slot_cap{INT_MAX};
+    int slot_cap_max = 0;
+    std::atomic<uint64_t> cap_drops{0};
+    uint64_t cap_evictions = 0;   // eval thread, under pool.m
+    std::atomic<bool> mon_stop{false};
+    std::thread mon;
 };
 
 static void fetch_one(stream_state & st, const io_pool::job & j) {
@@ -165,12 +181,69 @@ static void pool_worker(io_pool * p) {
     }
 }
 
+// return a shed slot's pages to the OS. content correctness is unaffected:
+// the expert mapping is gone, so any future use refetches over these bytes.
+static void madv_free_slot(layer_cache & lc, int slot) {
+    const uintptr_t ps = (uintptr_t) sysconf(_SC_PAGESIZE);
+    for (auto & ex : lc.ext) {
+        const uintptr_t a  = (uintptr_t) ex.slot_t->data + (uintptr_t) slot * ex.slot_stride;
+        const uintptr_t pa = (a + ps - 1) & ~(ps - 1);
+        const uintptr_t pb = (a + ex.slot_stride) & ~(ps - 1);
+        if (pb > pa) madvise((void *) pa, pb - pa, MADV_FREE);
+    }
+}
+
+static size_t avail_mem_bytes(void) {
+    vm_statistics64_data_t vm;
+    mach_msg_type_number_t cnt = HOST_VM_INFO64_COUNT;
+    if (host_statistics64(mach_host_self(), HOST_VM_INFO64, (host_info64_t) &vm, &cnt) != KERN_SUCCESS) {
+        return 0;
+    }
+    return (size_t) (vm.free_count + vm.inactive_count + vm.purgeable_count) *
+           (size_t) sysconf(_SC_PAGESIZE);
+}
+
+// E10: watch the same memorystatus signal jetsam kills on. warning sheds 2
+// slots/layer, critical halves the cap; 30s of calm earns one back. shed
+// slots get MADV_FREE'd so the OS can actually reclaim the pages.
+static void pressure_monitor(stream_state * st) {
+    int calm = 0;
+    while (!st->mon_stop.load()) {
+        for (int i = 0; i < 20 && !st->mon_stop.load(); i++) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        uint32_t lvl = 0;
+        size_t sz = sizeof(lvl);
+        if (sysctlbyname("kern.memorystatus_vm_pressure_level", &lvl, &sz, nullptr, 0) != 0) continue;
+        const int cap = st->slot_cap.load();
+        if (lvl >= 2) {
+            const int ncap = std::max(4, lvl >= 4 ? cap / 2 : cap - 2);
+            if (ncap < cap) {
+                st->slot_cap = ncap;
+                st->cap_drops++;
+                fprintf(stderr, "llmstream: memory pressure %u -> slot cap %d\n", lvl, ncap);
+            }
+            calm = 0;
+        } else if (cap < st->slot_cap_max && ++calm >= 15) {
+            st->slot_cap = cap + 1;
+            calm = 0;
+        }
+    }
+}
+
 // assign a slot for expert e in layer il; caller is the eval thread.
 // returns -1 if no evictable slot (all resident slots needed or in flight).
-static int assign_slot(layer_cache & lc, int e, const std::unordered_set<int> * needed) {
+static int assign_slot(layer_cache & lc, int e, const std::unordered_set<int> * needed, int cap) {
     static const bool identity = getenv("LLMSTREAM_IDENTITY") != nullptr;
     if (identity) return e;
-    if (lc.next_free < lc.n_slots) return lc.next_free++;
+    if ((int) lc.slot_of.size() < cap) {
+        if (!lc.free_slots.empty()) {
+            const int s = lc.free_slots.back();
+            lc.free_slots.pop_back();
+            return s;
+        }
+        if (lc.next_free < lc.n_slots) return lc.next_free++;
+    }
     // evict least-recent expert that is neither needed now nor in flight
     for (auto it = lc.lru.rbegin(); it != lc.lru.rend(); ++it) {
         int victim = *it;
@@ -315,7 +388,7 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
         for (auto & [conf, e] : pred) {
             if (budget == 0) break;
             if (lc.slot_of.count(e) || lc.in_flight.count(e)) continue;
-            int slot = assign_slot(lc, e, nullptr);
+            int slot = assign_slot(lc, e, nullptr, st->slot_cap.load(std::memory_order_relaxed));
             if (slot < 0) break;
             lc.slot_of[e] = slot;
             lru_touch(lc, e);
@@ -353,6 +426,26 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
     bool waited_any = false;
     {
         std::lock_guard<std::mutex> l(st->pool.m);
+        // E10: honor a lowered cap first - shed coldest experts and hand their
+        // pages back so the OS sees relief before we add any new load
+        const int cap = st->slot_cap.load(std::memory_order_relaxed);
+        while ((int) lc.slot_of.size() > cap) {
+            bool evicted = false;
+            for (auto it = lc.lru.rbegin(); it != lc.lru.rend(); ++it) {
+                const int victim = *it;
+                if (need.count(victim) || lc.in_flight.count(victim)) continue;
+                const int s = lc.slot_of[victim];
+                lc.slot_of.erase(victim);
+                lc.lru.erase(lc.lru_pos[victim]);
+                lc.lru_pos.erase(victim);
+                lc.free_slots.push_back(s);
+                madv_free_slot(lc, s);
+                st->cap_evictions++;
+                evicted = true;
+                break;
+            }
+            if (!evicted) break;
+        }
         for (int e : need) {
             if (st->in_decode) st->uses++; else st->uses_prefill++;
             const bool hit = lc.slot_of.count(e) && !lc.in_flight.count(e);
@@ -362,7 +455,7 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
                 continue;
             }
             if (st->in_decode) st->misses++; else st->misses_prefill++;
-            int slot = assign_slot(lc, e, &need);
+            int slot = assign_slot(lc, e, &need, cap);
             if (slot < 0) { fprintf(stderr, "no evictable slot L%d\n", il); exit(1); }
             lc.slot_of[e] = slot;
             lc.in_flight.insert(e);
@@ -398,6 +491,52 @@ int main(int argc, char ** argv) {
     const char * model_path = argv[1];
     const int n_gen = atoi(argv[2]);
     const std::string prompt = argv[3];
+
+    // E10: LLMSTREAM_SLOTS=auto sizes the cache to THIS machine's spare
+    // memory. Measured motivation: slots16 on the 16GB Air collapsed to
+    // 48 MB/s effective SSD bandwidth purely from memory pressure - headroom,
+    // not cache size, governs throughput. Resolve before any llmstream_slots()
+    // reader (the fork reads the env at model load too).
+    {
+        const char * senv = getenv("LLMSTREAM_SLOTS");
+        if (senv && strcmp(senv, "auto") == 0) {
+            int64_t slots = 8; // conservative fallback if the meta scan fails
+            ggml_context * mctx = nullptr;
+            gguf_init_params gp = { /*.no_alloc =*/ true, /*.ctx =*/ &mctx };
+            gguf_context * g = gguf_init_from_file(model_path, gp);
+            if (g) {
+                size_t total_b = 0, exp_b = 0;
+                int64_t n_expert = 0;
+                int max_blk = -1;
+                for (ggml_tensor * t = ggml_get_first_tensor(mctx); t; t = ggml_get_next_tensor(mctx, t)) {
+                    total_b += ggml_nbytes(t);
+                    if (strstr(t->name, "_exps.")) {
+                        exp_b += ggml_nbytes(t);
+                        if (t->ne[2] > 1 && t->ne[2] > n_expert) n_expert = t->ne[2];
+                        int b = -1;
+                        if (sscanf(t->name, "blk.%d.", &b) == 1 && b > max_blk) max_blk = b;
+                    }
+                }
+                const int nl = max_blk + 1;
+                if (nl > 0 && n_expert > 0 && exp_b > 0) {
+                    const double per_slot_layer = (double) exp_b / nl / n_expert;
+                    const double resident = (double) (total_b - exp_b);
+                    const double reserve  = 2.0e9; // KV + compute buffers + OS breathing room
+                    const double budget   = (double) avail_mem_bytes() * 0.80 - resident - reserve;
+                    slots = (int64_t) (budget / (per_slot_layer * nl));
+                    if (slots < 4) slots = 4;
+                    if (slots > n_expert) slots = n_expert;
+                    fprintf(stderr, "llmstream: auto slots=%lld (avail=%.1f GB resident=%.2f GB %.1f MB/slot-layer %d layers)\n",
+                            (long long) slots, avail_mem_bytes() / 1e9, resident / 1e9, per_slot_layer / 1e6, nl);
+                }
+                gguf_free(g);
+                ggml_free(mctx);
+            }
+            char sb[32];
+            snprintf(sb, sizeof(sb), "%lld", (long long) slots);
+            setenv("LLMSTREAM_SLOTS", sb, 1);
+        }
+    }
     const int64_t n_slots = llmstream_slots();
 
     llama_log_set([](ggml_log_level lvl, const char * msg, void *) {
@@ -491,6 +630,12 @@ int main(int argc, char ** argv) {
 
         st.pool.st = &st;
         for (int w = 0; w < 6; w++) st.pool.workers.emplace_back(pool_worker, &st.pool);
+
+        st.slot_cap     = (int) n_slots;
+        st.slot_cap_max = (int) n_slots;
+        if (!(getenv("LLMSTREAM_GUARD") && atoi(getenv("LLMSTREAM_GUARD")) == 0)) {
+            st.mon = std::thread(pressure_monitor, &st);
+        }
     }
 
     const int n_ubatch = argc > 4 ? atoi(argv[4]) : 1;
@@ -559,8 +704,24 @@ int main(int argc, char ** argv) {
                 printf("io: margin=%.3f router_agreement=%.4f swapped_calls=%" PRIu64 "\n",
                        st.margin, (double) st.agree_hits / st.agree_total, st.swapped_tokens);
             }
+            if (st.cap_drops.load() > 0) {
+                printf("io: guard pressure_drops=%" PRIu64 " cap_evictions=%" PRIu64 " final_cap=%d\n",
+                       st.cap_drops.load(), st.cap_evictions, st.slot_cap.load());
+            }
         }
-        llama_free(ctx); llama_model_free(model);
+        st.mon_stop = true;
+        if (st.mon.joinable()) st.mon.join();
+        if (n_slots > 0) {
+            {
+                std::lock_guard<std::mutex> l(st.pool.m);
+                st.pool.stop = true;
+            }
+            st.pool.cv_work.notify_all();
+            for (auto & w : st.pool.workers) w.join();
+        }
+        llama_free(ctx);
+        llama_model_free(model);
+        if (st.fd >= 0) close(st.fd);
         return 0;
     }
 
@@ -623,10 +784,16 @@ int main(int argc, char ** argv) {
                        (double) st.agree_hits / st.agree_total, st.swapped_tokens, st.agree_total / (uint64_t) st.top_k);
             }
         }
+        if (st.cap_drops.load() > 0) {
+            printf("io: guard pressure_drops=%" PRIu64 " cap_evictions=%" PRIu64 " final_cap=%d\n",
+                   st.cap_drops.load(), st.cap_evictions, st.slot_cap.load());
+        }
     }
     printf("logits_hash=%016" PRIx64 "\n", hash);
     printf("text: %s\n", out.c_str());
 
+    st.mon_stop = true;
+    if (st.mon.joinable()) st.mon.join();
     if (n_slots > 0) {
         {
             std::lock_guard<std::mutex> l(st.pool.m);
