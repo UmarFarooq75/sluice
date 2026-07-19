@@ -605,6 +605,30 @@ believe a reviewer).
   gpt-oss-120b on 16GB M2 Air, all measured today: exact 1.2-1.4 /
   default ~1.6 (agreement .92) / m1.25 5.1-5.5 / ceiling 13.7 (GPU, m2 s12).
 
+### E25. Feasibility gates for the steal-list: two refuted free, one survives (2026-07-19)
+- **Protocol** (now standing, per Umar): cheapest offline gate first, engine
+  code only for survivors, env-gated, bit-exact gate before commit, battery
+  for quality, n>=3 for headlines.
+- **Gate A - admission/victim cache (SLRU-style)**: simulated on the real
+  trace at equal total slots. **REFUTED: -14.0/-20.7/-26.9 pts** at s8/12/16.
+  This trace has no cache-pollution problem to fix; first-miss staging just
+  delays admission of good experts. Second policy-refutation on this trace
+  (after LFU) - recency is genuinely hard to beat here.
+- **Gate B - static co-activation prefetch table**: honest half-split.
+  **REFUTED: recall@8 = 61.6% at 2x bytes** vs the live router lookahead's
+  72% at ~1x. The model's own logits beat its history; static tables also
+  lose the D7 card definitively (on this trace size).
+- **Gate C - dual-precision miss fetch, device leg**: 3x2.2MB scattered
+  (a ~2-bit expert) = **2.68 ms/expert vs 4.22 full (1.57x)** at qd4-ish.
+  SURVIVES. Remaining legs before build: transcode cost (Q2->MXFP4 into
+  typed slots - the hidden cost found in design review) and the NLL battery
+  at low-bit cold experts. Expert-skip A/B (hook-only, env-gated) queued
+  alongside.
+- **Incident logged**: orphaned server (UI restart bypasses atexit) mid
+  swap-crawl defeated Stop+idle safeties -> orphan watchdog (parent-death
+  self-exit, tested live), LLMSTREAM_REQ_TIMEOUT=900 wall cap, UI orphan
+  sweep. Engine can no longer outlive its user.
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.

@@ -1,571 +1,349 @@
-"""llmstream probe -- a Streamlit test bench for the llmstream engine.
-
-Drives the CLI binaries (csrc/stream_run for CPU, csrc/stream_run_metal for
-Metal) as a subprocess:
-
-    ./csrc/stream_run <model.gguf> <n_gen> <prompt> [n_ubatch]
-
-with the LLMSTREAM_* environment knobs, streams the engine's stdout live into
-the page, parses the metric lines it prints, and presents them as three pillar
-groups: SPEED (how fast), QUALITY (how faithful), COMPUTE (how small).
-
-Only one engine process is ever allowed at a time -- this is a 16 GB machine
-and two model processes would swap. Starting a new run (from any browser tab)
-terminates the previous process first.
-
-Run with:
-    .venv/bin/streamlit run examples/streamlit_probe/app.py
-"""
-
+# Chat page over the PERSISTENT engine server (LLMSTREAM_SERVER=1).
+#
+# The model loads once and stays warm between messages - no per-message
+# reload, and the expert cache carries over (second reply is faster than the
+# first). Safety contract, because the host machine is never collateral:
+#   - ONE server process ever (shared across all browser sessions)
+#   - visible Stop button kills it instantly
+#   - the server kills ITSELF after 10 minutes idle (driver-side, works even
+#     if this UI dies)
+#   - config changes restart it cleanly (old one terminated first)
+# Multi-turn: the UI sends the whole conversation each turn; the engine
+# reuses the KV prefix shared with the previous request (reused=N in the
+# metrics) so old turns are not re-prefilled.
 import atexit
 import os
 import re
-import select
-import shlex
 import subprocess
-import threading
 import time
-from datetime import datetime
 from pathlib import Path
 
+import psutil
 import streamlit as st
 
-try:
-    import psutil  # optional: enables the Peak RSS tile
-except ImportError:
-    psutil = None
+ROOT = Path(__file__).resolve().parents[3]
+ENGINE = ROOT / "csrc" / "stream_run"
+IDLE_EXIT_S = 600
 
-ROOT = Path(__file__).resolve().parents[2]  # .../Desktop/research
-BACKENDS = {
-    "CPU (stream_run)": ROOT / "csrc" / "stream_run",
-    "Metal GPU (stream_run_metal)": ROOT / "csrc" / "stream_run_metal",
+st.set_page_config(page_title="llmstream chat", layout="wide")
+
+MODELS = {
+    "gpt-oss-120b (117B, MXFP4)": {
+        "path": ROOT / "models" / "gpt-oss-120b-MXFP4.gguf",
+        "slots": 8, "margin": 0.25, "chat": True,
+        "note": "validated default ~1.6 tok/s; first message pays the one-time load (~1-2 min), later turns reuse context",
+    },
+    "OLMoE-1B-7B (fast)": {
+        "path": next((ROOT / "hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots").glob("*/*.gguf"), None)
+        if (ROOT / "hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots").exists() else None,
+        "slots": 32, "margin": 0.0, "chat": True,
+        "note": "small model: ~45 tok/s warm, snappy for UI testing",
+    },
 }
-FALLBACK_MB_PER_EXPERT = 13.25  # gpt-oss-style estimate when the engine line is missing
-LOG_TAIL_CHARS = 12_000         # how much of the log to render live
-POLL_SECONDS = 0.75             # fragment auto-rerun interval while a run is active
-
-st.set_page_config(page_title="llmstream probe", layout="wide")
-
-
-# --------------------------------------------------------------------------- #
-# process management: one engine subprocess, ever, across all sessions        #
-# --------------------------------------------------------------------------- #
-
-def _terminate(proc):
-    """Politely then firmly stop an engine process."""
-    if proc is None or proc.poll() is not None:
-        return
-    proc.terminate()
-    try:
-        proc.wait(timeout=4)
-    except subprocess.TimeoutExpired:
-        proc.kill()
-        try:
-            proc.wait(timeout=2)
-        except subprocess.TimeoutExpired:
-            pass
 
 
 @st.cache_resource
-def _registry():
-    """Cross-session singleton tracking the single allowed engine process."""
-    reg = {"lock": threading.Lock(), "proc": None}
-    atexit.register(lambda: _terminate(reg["proc"]))  # no orphaned model processes
-    return reg
+def _server_slot():
+    # one engine per machine, shared by every browser session
+    return {"proc": None, "key": None, "started": 0.0}
 
 
-def engine_cmd_env(cfg):
-    """Build argv and the extra environment for a run config."""
-    cmd = [cfg["binary"], cfg["model"], str(cfg["n_gen"]), cfg["prompt"]]
-    if cfg["ubatch"]:
-        cmd.append(str(cfg["ubatch"]))
-    env = {
-        "LLMSTREAM_SLOTS": cfg["slots"],
-        "LLMSTREAM_MARGIN": f"{cfg['margin']:g}",
-        "LLMSTREAM_PREFETCH": "1" if cfg["prefetch"] else "0",
-    }
-    if cfg["threads"]:
-        env["LLMSTREAM_THREADS"] = str(cfg["threads"])
-    if cfg["metal"]:
+def _terminate(proc):
+    if proc is None or proc.poll() is not None:
+        return
+    try:
+        proc.stdin.write(b"exit\n")
+        proc.stdin.flush()
+        proc.wait(timeout=3)
+    except Exception:
+        proc.terminate()
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+
+
+atexit.register(lambda: _terminate(_server_slot()["proc"]))
+
+
+def cfg_key(cfg, sys_prompt, n_gen):
+    return (str(cfg["path"]), cfg["slots"], cfg["margin"], cfg["backend"], sys_prompt, n_gen)
+
+
+def ensure_server(cfg, sys_prompt, n_gen, status):
+    slot = _server_slot()
+    key = cfg_key(cfg, sys_prompt, n_gen)
+    if slot["proc"] is not None and slot["proc"].poll() is None and slot["key"] == key:
+        return slot["proc"]
+    _terminate(slot["proc"])
+    # never two engines: also clear any stray from a crashed session
+    subprocess.run(["pkill", "-f", "stream_run.*SERVER_SENTINEL"], capture_output=True)
+
+    env = os.environ.copy()
+    env.update({
+        "LLMSTREAM_SLOTS": str(cfg["slots"]),
+        "LLMSTREAM_MARGIN": str(cfg["margin"]),
+        "LLMSTREAM_STREAM_OUT": "1",
+        "LLMSTREAM_SERVER": "1",
+        "LLMSTREAM_IDLE_EXIT": str(IDLE_EXIT_S),
+        "LLMSTREAM_CHAT": "1",
+    })
+    if sys_prompt.strip():
+        env["LLMSTREAM_SYSTEM"] = sys_prompt.strip()
+    if cfg["backend"] == "gpu":
         env["LLMSTREAM_SLOT_DEV"] = "gpu"
-        env["LLMSTREAM_NGL"] = str(cfg["ngl"])
-    return cmd, env
-
-
-def start_engine(cfg):
-    """Kill whatever engine process exists anywhere, then launch a new one."""
-    reg = _registry()
-    with reg["lock"]:
-        _terminate(reg["proc"])
-        cmd, extra_env = engine_cmd_env(cfg)
-        proc = subprocess.Popen(
-            cmd,
-            cwd=str(ROOT),
-            env={**os.environ, **extra_env},
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,   # loader noise and metrics in one stream
-            stdin=subprocess.DEVNULL,
-            bufsize=0,
-        )
-        reg["proc"] = proc
+        env["LLMSTREAM_NGL"] = "99"
+    status.update(label="loading model (one-time; stays warm after this)…", state="running")
+    proc = subprocess.Popen(
+        [str(ENGINE), str(cfg["path"]), str(n_gen), "SERVER_SENTINEL", "1"],
+        env=env, cwd=ROOT,
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    os.set_blocking(proc.stdout.fileno(), False)
+    os.set_blocking(proc.stderr.fileno(), False)
+    # wait for load-complete READY
+    buf = b""
+    t0 = time.time()
+    while b"<<<READY>>>" not in buf:
+        chunk = proc.stdout.read(4096)
+        if chunk:
+            buf += chunk
+        if proc.poll() is not None:
+            err = (proc.stderr.read() or b"").decode(errors="replace")[-1500:]
+            raise RuntimeError(f"engine died during load:\n{err}")
+        if time.time() - t0 > 600:
+            _terminate(proc)
+            raise RuntimeError("engine load timed out")
+        time.sleep(0.1)
+    slot.update(proc=proc, key=key, started=time.time())
     return proc
 
 
-def drain_output(proc):
-    """Non-blocking: move available engine output into session state.
-
-    Returns True once the pipe hits EOF (the process is done).
-    """
-    fd = proc.stdout.fileno()
-    while True:
-        ready, _, _ = select.select([fd], [], [], 0)
-        if not ready:
-            return False
-        chunk = os.read(fd, 65536)
-        if not chunk:
-            return True
-        st.session_state.raw_out += chunk
+METRIC_PATTERNS = {
+    "prefill": r"prefill:\s+([\d.]+) s \(([\d.]+) tok/s\)",
+    "decode": r"decode:\s+([\d.]+) s \(([\d.]+) tok/s\)",
+    "hit": r"hit ([\d.]+)",
+    "agreement": r"router_agreement=([\d.]+)",
+    "mem": r"peak_rss=([\d.]+) GB phys_footprint=([\d.]+) GB",
+    "generated": r"generated=(\d+)",
+    "reused": r"reused=(\d+)",
+}
 
 
-def sample_rss(proc, run):
-    """Track peak resident set size of the engine, if psutil is available."""
-    if psutil is None or proc.poll() is not None:
-        return
-    try:
-        rss = psutil.Process(proc.pid).memory_info().rss
-        run["peak_rss"] = max(run.get("peak_rss") or 0, rss)
-    except Exception:
-        pass
-
-
-# --------------------------------------------------------------------------- #
-# parsing the engine's output                                                 #
-# --------------------------------------------------------------------------- #
-
-def parse_output(text):
-    """Pull metrics out of the combined stdout/stderr of a run.
-
-    Expected lines (see csrc/stream_run.cpp):
-        llmstream: 36 layers, 8 slots/layer, 2 tensors/expert, 13.25 MB/expert, ...
-        prefill: 13.76 s (0.73 tok/s)
-        decode:  76.00 s (0.75 tok/s)
-        io: ... decode_misses=... (hit 0.526) ...
-        io: margin=... / io: router_agreement=0.9550 ...
-        logits_hash=...
-        text: <generated text, possibly multi-line>
-    """
-    def fnum(pattern):
-        m = re.search(pattern, text)
-        return float(m.group(1)) if m else None
-
-    met = {
-        "prefill_s":   fnum(r"prefill:\s+([\d.]+)\s*s"),
-        "prefill_tps": fnum(r"prefill:\s+[\d.]+\s*s\s*\(([\d.]+)\s*tok/s\)"),
-        "decode_s":    fnum(r"decode:\s+([\d.]+)\s*s"),
-        "decode_tps":  fnum(r"decode:\s+[\d.]+\s*s\s*\(([\d.]+)\s*tok/s\)"),
-        "hit":         fnum(r"\(hit\s+([\d.]+)\)"),
-        "agree":       fnum(r"router_agreement=([\d.]+)"),
-    }
-
-    m = re.search(r"logits_hash=([0-9a-fA-F]+)", text)
-    met["logits_hash"] = m.group(1) if m else None
-
-    m = re.search(
-        r"llmstream:\s+(\d+)\s+layers,\s+(\d+)\s+slots/layer"
-        r"(?:,\s+\d+\s+tensors/expert,\s+([\d.]+)\s+MB/expert)?",
-        text,
-    )
-    met["llmstream_line"] = m.group(0) if m else None
-    met["layers"] = int(m.group(1)) if m else None
-    met["slots_per_layer"] = int(m.group(2)) if m else None
-    met["mb_per_expert"] = float(m.group(3)) if m and m.group(3) else None
-
-    m = re.search(r"generated=(\d+)", text)
-    met["generated"] = int(m.group(1)) if m else None
-
-    # COMPUTE pillar: expert cache = slots x layers x MB-per-expert
-    if met["layers"] and met["slots_per_layer"]:
-        mb = met["mb_per_expert"] or FALLBACK_MB_PER_EXPERT
-        met["cache_gb"] = met["layers"] * met["slots_per_layer"] * mb / 1024.0
-    else:
-        met["cache_gb"] = None
-
-    # generated text: the final "text: ..." line (may span lines), searched
-    # after logits_hash so text that itself contains "text:" cannot confuse us
-    start = 0
-    mh = re.search(r"logits_hash=[0-9a-fA-F]+\n?", text)
-    if mh:
-        start = mh.end()
-    mt = re.search(r"(?m)^text: ", text[start:])
-    met["gen_text"] = text[start + mt.end():].rstrip("\n") if mt else None
-    return met
-
-
-def finalize_run():
-    """Parse the finished (or killed) run, file it into history, clear state."""
-    ss = st.session_state
-    proc, run = ss.proc, ss.run
-    ss.proc = None
-    ss.run = None
-    if proc is None or run is None:
-        return
-    try:
-        rc = proc.wait(timeout=5)
-    except subprocess.TimeoutExpired:
-        proc.kill()
-        rc = proc.wait()
-    try:
-        proc.stdout.close()
-    except OSError:
-        pass
-    reg = _registry()
-    with reg["lock"]:
-        if reg["proc"] is proc:
-            reg["proc"] = None
-
-    met = parse_output(ss.raw_out.decode("utf-8", errors="replace"))
-    status = "ok" if rc == 0 else ("killed" if rc < 0 else f"exit {rc}")
-    result = {**run, **met, "status": status, "rc": rc,
-              "duration": time.time() - run["t0"]}
-    ss.prev = ss.last            # previous run, for metric deltas
-    ss.last = result
-    ss.history.append({
-        "time": run["ts"],
-        "model": run["model_file"],
-        "backend": run["backend"],
-        "slots": run["slots"],
-        "margin": run["margin"],
-        "n_gen": run["n_gen"],
-        "decode tok/s": met["decode_tps"],
-        "prefill tok/s": met["prefill_tps"],
-        "hit %": round(met["hit"] * 100, 1) if met["hit"] is not None else None,
-        "agree %": round(met["agree"] * 100, 2) if met["agree"] is not None else None,
-        "cache GB": round(met["cache_gb"], 2) if met["cache_gb"] is not None else None,
-        "peak GB": round(run["peak_rss"] / 2**30, 2) if run.get("peak_rss") else None,
-        "status": status,
-    })
-
-
-# --------------------------------------------------------------------------- #
-# small formatting helpers                                                    #
-# --------------------------------------------------------------------------- #
-
-def fmt_num(v, nd=2):
-    return f"{v:.{nd}f}" if v is not None else "n/a"
-
-
-def fmt_pct(v, nd=1):
-    return f"{v * 100:.{nd}f}%" if v is not None else "n/a"
-
-
-def delta_str(cur, prev, nd=2, scale=1.0):
-    """Delta vs the previous run for st.metric; None hides the delta."""
-    if cur is None or prev is None:
-        return None
-    return f"{(cur - prev) * scale:+.{nd}f}"
-
-
-def log_tail():
-    text = st.session_state.raw_out.decode("utf-8", errors="replace")
-    if len(text) > LOG_TAIL_CHARS:
-        text = "... (earlier output truncated) ...\n" + text[-LOG_TAIL_CHARS:]
-    return text
-
-
-@st.cache_data(show_spinner=False)
-def find_models():
-    """Scan models/ and hf_home/hub/ for .gguf files -> {label: path}."""
-    paths = []
-    d = ROOT / "models"
-    if d.is_dir():
-        paths += sorted(d.glob("*.gguf"))
-    d = ROOT / "hf_home" / "hub"
-    if d.is_dir():
-        paths += sorted(d.rglob("*.gguf"))
+def parse_metrics(tail):
     out = {}
-    for p in paths:
-        label = f"{p.name}  ({p.stat().st_size / 2**30:.1f} GB)"
-        if label in out:  # duplicate basename: disambiguate with parent dir
-            label = f"{p.parent.name}/{label}"
-        out[label] = str(p)
+    for k, pat in METRIC_PATTERNS.items():
+        m = re.search(pat, tail)
+        if m:
+            out[k] = m.groups()
     return out
 
 
-# --------------------------------------------------------------------------- #
-# session state                                                               #
-# --------------------------------------------------------------------------- #
+# ---------------- sidebar ----------------
+with st.sidebar:
+    st.header("Model")
+    choice = st.selectbox("model", [k for k, v in MODELS.items() if v["path"] and Path(v["path"]).exists()])
+    cfg = dict(MODELS[choice])
+    st.caption(cfg["note"])
+    sys_prompt = st.text_area(
+        "system prompt",
+        value="You are a helpful, concise assistant. Answer the user's message directly. Reasoning: low",
+        help="grounds the model; 'Reasoning: low' keeps gpt-oss from long thinking")
+    cfg["margin"] = st.slider("margin (speed↔quality dial; 0 = bit-exact)", 0.0, 2.0, float(cfg["margin"]), 0.05)
+    if cfg["margin"] > 0.5:
+        st.warning("margin > 0.5 is OUTSIDE the validated quality band — the model can derail. "
+                   "0.25 is the battery-validated default.")
+    cfg["slots"] = st.select_slider(
+        "slots/layer (expert cache)", ["auto", 4, 8, 12, 16, 32, 48], value=cfg["slots"],
+        help="auto = engine sizes the cache from THIS machine's free memory "
+             "(model metadata + available RAM + guard headroom) — the "
+             "docker-style resource mode")
+    cfg["backend"] = st.radio("backend", ["cpu", "gpu"], horizontal=True,
+                              help="CPU loads much faster and decodes the same at default settings")
+    n_gen = st.number_input("max new tokens", min_value=16, max_value=1024, value=128, step=16)
 
-for key, default in (("proc", None), ("run", None), ("last", None),
-                     ("prev", None), ("history", []), ("raw_out", b"")):
-    st.session_state.setdefault(key, default)
-
-
-# --------------------------------------------------------------------------- #
-# sidebar: run configuration                                                  #
-# --------------------------------------------------------------------------- #
-
-st.sidebar.header("Configuration")
-
-models = find_models()
-if st.sidebar.button("Rescan model dirs"):
-    find_models.clear()
-    st.rerun()
-
-model_label = None
-if models:
-    model_label = st.sidebar.selectbox("Model (.gguf)", list(models))
-else:
-    st.sidebar.warning("No .gguf files found under models/ or hf_home/hub/.")
-
-available_backends = {
-    name: path for name, path in BACKENDS.items()
-    if path.is_file() and os.access(path, os.X_OK)
-}
-backend_label = None
-if available_backends:
-    backend_label = st.sidebar.selectbox("Backend", list(available_backends))
-else:
-    st.sidebar.error("No stream_run binary in csrc/ -- build the engine first.")
-is_metal = bool(backend_label) and "metal" in available_backends[backend_label].name
-
-slots_raw = st.sidebar.text_input(
-    "Slots per layer (LLMSTREAM_SLOTS)", value="auto",
-    help="Expert-cache slots per layer: an integer, 0 for fully resident "
-         "(no streaming), or 'auto' to let the engine size the cache.")
-slots = slots_raw.strip().lower()
-slots_ok = slots == "auto" or slots.isdigit()
-if not slots_ok:
-    st.sidebar.error("Slots must be an integer or 'auto'.")
-
-margin = st.sidebar.slider(
-    "Margin (LLMSTREAM_MARGIN)", 0.0, 2.0, 0.0, 0.01,
-    help="Router margin. 0 = bit-exact output; higher = faster (more cache "
-         "hits) at a measured quality cost.")
-st.sidebar.caption("Margin 0 is bit-exact; raising it trades output fidelity "
-                   "for speed.")
-
-n_gen = st.sidebar.number_input("Tokens to generate", 1, 4096, 32)
-prompt = st.sidebar.text_area(
-    "Prompt", height=120,
-    value="The three most important ideas in computer architecture are")
-
-with st.sidebar.expander("Advanced"):
-    prefetch = st.checkbox("Prefetch experts (LLMSTREAM_PREFETCH)", value=True)
-    threads = st.number_input("Threads (LLMSTREAM_THREADS, 0 = engine default)",
-                              0, 32, 0)
-    ubatch = st.number_input("n_ubatch (0 = engine default)", 0, 4096, 0)
-    ngl = 999
-    if is_metal:
-        ngl = st.number_input("GPU layers (LLMSTREAM_NGL)", 0, 999, 999)
-
-ready = bool(models and available_backends and slots_ok and prompt.strip())
-
-cfg = None
-if model_label and backend_label:
-    cfg = {
-        "binary": str(available_backends[backend_label]),
-        "model": models[model_label],
-        "model_file": Path(models[model_label]).name,
-        "backend": "metal" if is_metal else "cpu",
-        "metal": is_metal,
-        "slots": slots if slots_ok else "auto",
-        "margin": float(margin),
-        "n_gen": int(n_gen),
-        "ubatch": int(ubatch),
-        "threads": int(threads),
-        "prefetch": bool(prefetch),
-        "ngl": int(ngl) if is_metal else None,
-        "prompt": prompt,
-    }
-    cmd, extra_env = engine_cmd_env(cfg)
-    preview = " ".join(
-        [f"{k}={v}" for k, v in extra_env.items()]
-        + [shlex.quote(os.path.relpath(c, ROOT) if os.path.isabs(c) else c)
-           for c in cmd])
-    with st.sidebar.expander("Command preview"):
-        st.code(preview, language="bash")
-
-
-# --------------------------------------------------------------------------- #
-# main: title, run/kill controls                                              #
-# --------------------------------------------------------------------------- #
-
-st.title("llmstream probe")
-st.caption("Test bench for the llmstream engine. Every run answers three "
-           "questions: how fast (SPEED), how faithful (QUALITY), "
-           "how small (COMPUTE).")
-
-col_run, col_kill, _ = st.columns([1, 1, 4])
-run_clicked = col_run.button("Run", type="primary", disabled=not ready)
-kill_clicked = col_kill.button("Kill run")
-
-if kill_clicked:
-    reg = _registry()
-    with reg["lock"]:
-        target = st.session_state.proc or reg["proc"]
-        _terminate(target)
-        if reg["proc"] is target:
-            reg["proc"] = None
-    if target is None:
-        st.toast("No engine process is running.")
-    # a killed session process is drained and filed as 'killed' by the
-    # live panel below
-
-if run_clicked and cfg is not None:
-    if st.session_state.proc is not None:
-        # a run is still going: stop it and file it before starting fresh
-        _terminate(st.session_state.proc)
+    st.divider()
+    st.subheader("Engine")
+    slot = _server_slot()
+    alive = slot["proc"] is not None and slot["proc"].poll() is None
+    if alive:
         try:
-            st.session_state.raw_out += st.session_state.proc.stdout.read() or b""
-        except OSError:
-            pass
-        finalize_run()
-    st.session_state.raw_out = b""
-    st.session_state.run = {
-        **cfg,
-        "ts": datetime.now().strftime("%H:%M:%S"),
-        "t0": time.time(),
-        "peak_rss": None,
-    }
-    st.session_state.proc = start_engine(cfg)
-
-
-# --------------------------------------------------------------------------- #
-# live panel: polls the subprocess without full-page reruns                   #
-# --------------------------------------------------------------------------- #
-
-run_active = st.session_state.proc is not None
-
-
-@st.fragment(run_every=POLL_SECONDS if run_active else None)
-def live_panel():
-    ss = st.session_state
-    proc, run = ss.proc, ss.run
-    if proc is not None and run is not None:
-        done = drain_output(proc)
-        sample_rss(proc, run)
-        elapsed = time.time() - run["t0"]
-        label = (f"Running {run['model_file']} on {run['backend']} "
-                 f"(slots={run['slots']}, margin={run['margin']:g}, "
-                 f"n_gen={run['n_gen']}) -- {elapsed:.0f} s")
-        with st.status(label, state="running", expanded=True):
-            st.code(log_tail() or "(waiting for engine output)", language="text")
-        if done:
-            finalize_run()
-            st.rerun()  # full-page rerun renders the results panel below
+            rss = psutil.Process(slot["proc"].pid).memory_info().rss / 1e9
+            st.success(f"running · pid {slot['proc'].pid} · RSS {rss:.1f} GB · "
+                       f"warm {int(time.time() - slot['started'])}s")
+        except psutil.NoSuchProcess:
+            st.info("engine stopped")
+        if st.button("⏹ Stop engine now", type="primary", use_container_width=True):
+            _terminate(slot["proc"])
+            slot.update(proc=None, key=None)
+            st.rerun()
     else:
-        last = ss.last
-        if last is None:
-            st.caption("No run yet. Pick a model in the sidebar and press Run.")
-            return
-        label = (f"Engine log -- {last['model_file']} finished with status "
-                 f"'{last['status']}' in {last['duration']:.1f} s")
-        state = "complete" if last["status"] == "ok" else "error"
-        with st.status(label, state=state, expanded=False):
-            st.code(log_tail() or "(no output captured)", language="text")
+        stray = subprocess.run(["pgrep", "-f", "SERVER_SENTINEL"], capture_output=True)
+        if stray.returncode == 0:
+            subprocess.run(["pkill", "-9", "-f", "SERVER_SENTINEL"], capture_output=True)
+            st.warning("found and killed an orphaned engine from a previous session")
+        st.info("engine off — starts on your first message")
+    st.caption(f"auto-stops after {IDLE_EXIT_S // 60} min idle (driver-side — "
+               "survives even if this UI crashes). Config changes restart it.")
+
+# ---------------- layout ----------------
+chat_col, stats_col = st.columns([2.2, 1.0])
+
+with stats_col:
+    st.subheader("Live machine")
+    cpu_ph = st.empty()
+    ram_ph = st.empty()
+    eng_ph = st.empty()
+    st.subheader("Run metrics")
+    met_ph = st.empty()
+    guard_ph = st.empty()
 
 
-live_panel()
+def refresh_stats(eng_ps=None):
+    vm = psutil.virtual_memory()
+    cpu_ph.metric("system CPU", f"{psutil.cpu_percent(interval=None):.0f}%")
+    ram_ph.metric("RAM used", f"{vm.used / 1e9:.1f} / {vm.total / 1e9:.0f} GB",
+                  f"{vm.available / 1e9:.1f} GB free", delta_color="off")
+    if eng_ps is not None and eng_ps.is_running():
+        with eng_ps.oneshot():
+            eng_ph.metric("engine", f"{eng_ps.cpu_percent(interval=None):.0f}% CPU",
+                          f"RSS {eng_ps.memory_info().rss / 1e9:.2f} GB", delta_color="off")
+    else:
+        eng_ph.metric("engine", "idle")
 
 
-# --------------------------------------------------------------------------- #
-# results panel: SPEED / QUALITY / COMPUTE pillars, output, history           #
-# --------------------------------------------------------------------------- #
+refresh_stats(psutil.Process(slot["proc"].pid) if alive else None)
 
-last = st.session_state.last
-prev = st.session_state.prev or {}
+with chat_col:
+    st.subheader("Chat")
+    if "chat_log" not in st.session_state:
+        st.session_state.chat_log = []
+    for turn in st.session_state.chat_log:
+        with st.chat_message(turn["role"]):
+            if turn.get("thinking"):
+                with st.expander("thinking (analysis channel)"):
+                    st.text(turn["thinking"])
+            st.markdown(turn["text"])
+            if turn.get("timing"):
+                st.caption(turn["timing"])
+    prompt = st.chat_input("ask the model…")
 
-if last is not None:
-    st.subheader("Last run")
-    st.caption(f"{last['model_file']} -- {last['backend']} -- "
-               f"slots={last['slots']} margin={last['margin']:g} "
-               f"n_gen={last['n_gen']} -- status: {last['status']}"
-               + (f" -- generated {last['generated']} tokens"
-                  if last.get("generated") is not None else ""))
+if prompt:
+    with chat_col:
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        st.session_state.chat_log.append({"role": "user", "text": prompt})
 
-    speed_col, quality_col, compute_col = st.columns(3, gap="medium")
+        with st.chat_message("assistant"):
+            status = st.status("starting…", expanded=False)
+            think_ph = st.empty()
+            answer_ph = st.empty()
+            time_ph = st.empty()
+            try:
+                proc = ensure_server(cfg, sys_prompt, n_gen, status)
+            except RuntimeError as e:
+                status.update(label="engine failed", state="error")
+                st.error(str(e))
+                st.stop()
+            eng_ps = psutil.Process(proc.pid)
 
-    with speed_col.container(border=True):
-        st.markdown("**SPEED** -- how fast")
-        a, b = st.columns(2)
-        a.metric("Decode tok/s", fmt_num(last["decode_tps"]),
-                 delta=delta_str(last["decode_tps"], prev.get("decode_tps")),
-                 help="Steady-state generation speed", border=True)
-        b.metric("Prefill tok/s", fmt_num(last["prefill_tps"]),
-                 delta=delta_str(last["prefill_tps"], prev.get("prefill_tps")),
-                 help="Prompt-processing speed", border=True)
-        st.caption(f"prefill {fmt_num(last['prefill_s'])} s + "
-                   f"decode {fmt_num(last['decode_s'])} s wall time")
+            t0 = time.time()
 
-    with quality_col.container(border=True):
-        st.markdown("**QUALITY** -- how faithful")
-        a, b = st.columns(2)
-        if last["agree"] is not None:
-            agree_val = fmt_pct(last["agree"], 2)
-        elif last["margin"] == 0:
-            agree_val = "bit-exact"
-        else:
-            agree_val = "n/a"
-        a.metric("Router agreement", agree_val,
-                 delta=delta_str(last["agree"], prev.get("agree"), scale=100),
-                 help="Share of expert-routing decisions identical to exact "
-                      "(margin 0) routing", border=True)
-        b.metric("Margin", f"{last['margin']:g}",
-                 help="LLMSTREAM_MARGIN used for this run", border=True)
-        st.caption("Margin 0 = bit-exact output; higher runs faster at a "
-                   "measured quality cost."
-                   + (f" logits_hash={last['logits_hash']}"
-                      if last["logits_hash"] else ""))
+            def clean(t):
+                return t.replace("\x1e", " ").replace("\x1f", " ").replace("\n", "\\n")
 
-    with compute_col.container(border=True):
-        st.markdown("**COMPUTE** -- how small")
-        a, b = st.columns(2)
-        a.metric("Expert cache",
-                 f"{last['cache_gb']:.2f} GB" if last["cache_gb"] is not None else "n/a",
-                 delta=delta_str(last["cache_gb"], prev.get("cache_gb")),
-                 delta_color="inverse",
-                 help="slots x layers x MB/expert (engine-reported size; "
-                      f"{FALLBACK_MB_PER_EXPERT} MB/expert fallback)",
-                 border=True)
-        b.metric("Cache hit rate", fmt_pct(last["hit"]),
-                 delta=delta_str(last["hit"], prev.get("hit"), nd=1, scale=100),
-                 help="Expert-cache hit rate during decode", border=True)
-        c, d = st.columns(2)
-        slots_val = (f"{last['slots_per_layer']}/layer"
-                     if last["slots_per_layer"] is not None else str(last["slots"]))
-        c.metric("Slots", slots_val,
-                 help=f"Requested: {last['slots']}", border=True)
-        if last.get("peak_rss"):
-            d.metric("Peak RSS", f"{last['peak_rss'] / 2**30:.2f} GB",
-                     delta=delta_str(
-                         last["peak_rss"] / 2**30,
-                         (prev.get("peak_rss") or 0) / 2**30 if prev.get("peak_rss") else None),
-                     delta_color="inverse",
-                     help="Peak resident memory of the engine process", border=True)
-        st.caption((last["llmstream_line"] or "resident mode (no llmstream line)")
-                   + ("" if psutil else " -- pip install psutil for peak RSS"))
+            turns = ["%s\x1f%s" % (t["role"], clean(t["text"]))
+                     for t in st.session_state.chat_log]
+            proc.stdin.write("\x1e".join(turns).encode() + b"\n")
+            proc.stdin.flush()
+            status.update(label="prefilling prompt…", state="running")
 
-    st.subheader("Generated text")
-    with st.chat_message("user"):
-        st.write(last["prompt"])
-    with st.chat_message("assistant"):
-        if last["gen_text"]:
-            st.write(last["gen_text"])
-        else:
-            st.caption("(no generated text captured -- run killed or failed)")
+            buf = b""
+            stderr_tail = ""
+            streaming = False
+            done = False
+            ttft = None
+            raw = ""
+            last_stat = 0.0
+            while not done:
+                chunk = proc.stdout.read(4096)
+                echunk = proc.stderr.read(4096)
+                if echunk:
+                    stderr_tail = (stderr_tail + echunk.decode(errors="replace"))[-4000:]
+                if chunk:
+                    buf += chunk
+                    if not streaming and b"<<<STREAM>>>\n" in buf:
+                        streaming = True
+                        status.update(label="generating…", state="running")
+                        buf = buf.split(b"<<<STREAM>>>\n", 1)[1]
+                    if streaming:
+                        end = buf.find(b"<<<END>>>")
+                        raw = (buf[:end] if end >= 0 else buf).decode(errors="replace")
+                        if ttft is None and raw.strip():
+                            ttft = time.time() - t0
+                        m = re.search(r"<\|channel\|>final<\|message\|>(.*)", raw, re.S)
+                        if m:
+                            final = re.sub(r"<\|[^|]*\|>", "", m.group(1))
+                            thinking = re.sub(r"<\|[^|]*\|>", " ", raw[:m.start()])
+                        elif "<|" in raw:
+                            final = ""
+                            thinking = re.sub(r"<\|[^|]*\|>", " ", raw)
+                        else:
+                            final = raw
+                            thinking = ""
+                        if thinking.strip():
+                            with think_ph.container():
+                                with st.expander("thinking (analysis channel)", expanded=(not final)):
+                                    st.text(thinking)
+                        answer_ph.markdown((final + ("▌" if end < 0 else "")) if (final or not thinking) else "")
+                    if b"<<<READY>>>" in buf:
+                        done = True
+                if proc.poll() is not None:
+                    done = True
+                if time.time() - last_stat > 0.5:
+                    last_stat = time.time()
+                    try:
+                        refresh_stats(eng_ps)
+                    except psutil.NoSuchProcess:
+                        pass
+                    guard = [l for l in stderr_tail.splitlines() if "pressure" in l or "guard" in l]
+                    if guard:
+                        guard_ph.warning("memory guard active:\n" + "\n".join(guard[-3:]))
+                if not chunk and not echunk:
+                    time.sleep(0.05)
 
-if st.session_state.history:
-    st.subheader(f"History -- {len(st.session_state.history)} run(s) this session")
-    st.dataframe(
-        list(reversed(st.session_state.history)),
-        hide_index=True,
-        column_config={
-            "decode tok/s": st.column_config.NumberColumn(format="%.2f"),
-            "prefill tok/s": st.column_config.NumberColumn(format="%.2f"),
-            "margin": st.column_config.NumberColumn(format="%.2f"),
-        },
-    )
-    if st.button("Clear history"):
-        st.session_state.history = []
-        st.session_state.prev = None
-        st.rerun()
+            total = time.time() - t0
+            tail = buf.decode(errors="replace")
+            met = parse_metrics(tail)
+            status.update(label="done (engine stays warm)", state="complete")
+
+            timing_bits = [f"total {total:.1f}s"]
+            if ttft:
+                timing_bits.append(f"first token {ttft:.1f}s")
+            if "decode" in met:
+                timing_bits.append(f"decode {met['decode'][1]} tok/s")
+            timing = " · ".join(timing_bits)
+            time_ph.caption(timing)
+
+            rows = []
+            if "reused" in met and int(met["reused"][0]) > 0:
+                rows.append(f"context reused {met['reused'][0]} tokens (multi-turn KV)")
+            if "prefill" in met:
+                rows.append(f"prefill {met['prefill'][1]} tok/s")
+            if "decode" in met:
+                rows.append(f"decode {met['decode'][1]} tok/s")
+            if "hit" in met:
+                rows.append(f"cache hit {float(met['hit'][0]) * 100:.0f}%")
+            if "agreement" in met:
+                rows.append(f"routing fidelity {float(met['agreement'][0]) * 100:.1f}%")
+            if "mem" in met:
+                rows.append(f"peak RSS {met['mem'][0]} GB · footprint {met['mem'][1]} GB")
+            met_ph.info("\n\n".join(rows) if rows else "no metrics parsed")
+
+            m = re.search(r"<\|channel\|>final<\|message\|>(.*)", raw, re.S)
+            final_clean = re.sub(r"<\|[^|]*\|>", "", m.group(1) if m else raw).strip()
+            a = re.search(r"<\|channel\|>analysis<\|message\|>(.*?)<\|end\|>", raw, re.S)
+            if met.get("generated") == ("0",) or not (final_clean or (a and a.group(1).strip())):
+                final_clean = final_clean or "*(model produced no tokens — try rephrasing or adjusting the system prompt)*"
+            st.session_state.chat_log.append(
+                {"role": "assistant", "text": final_clean,
+                 "thinking": a.group(1).strip() if a else "", "timing": timing})
