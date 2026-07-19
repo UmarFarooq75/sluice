@@ -111,10 +111,10 @@ index c8ecb0a..777795f 100644
  
 diff --git a/src/llmstream.cpp b/src/llmstream.cpp
 new file mode 100644
-index 0000000..c324e07
+index 0000000..fb425bd
 --- /dev/null
 +++ b/src/llmstream.cpp
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,111 @@
 +#include "llmstream.h"
 +
 +#include "llama-impl.h"
@@ -220,12 +220,18 @@ index 0000000..c324e07
 +    auto it = g_llmstream.tensors.find(name_full);
 +    return it == g_llmstream.tensors.end() ? nullptr : it->second;
 +}
++
++void llmstream_free(void) {
++    if (g_llmstream.buf) { ggml_backend_buffer_free(g_llmstream.buf); g_llmstream.buf = nullptr; }
++    if (g_llmstream.ctx) { ggml_free(g_llmstream.ctx); g_llmstream.ctx = nullptr; }
++    g_llmstream.tensors.clear();
++}
 diff --git a/src/llmstream.h b/src/llmstream.h
 new file mode 100644
-index 0000000..6b477f5
+index 0000000..7b75c3f
 --- /dev/null
 +++ b/src/llmstream.h
-@@ -0,0 +1,40 @@
+@@ -0,0 +1,45 @@
 +#pragma once
 +
 +// llmstream: expert-streaming support (private fork, not for upstream).
@@ -263,6 +269,11 @@ index 0000000..6b477f5
 +
 +// allocate the slot context's CPU buffer; call once after all slot tensors are created
 +void llmstream_alloc(void);
++
++// free the slot buffer + context. Call before process exit when slot tensors
++// live in a device buffer: backend registries destruct at exit and abort if
++// buffers still hold references (measured: ggml_metal_device_free assert).
++LLAMA_API void llmstream_free(void);
 +
 +// driver access to the slot tensors registered by llmstream_slot_tensor()
 +LLAMA_API ggml_tensor * llmstream_get_tensor(const char * name_full);

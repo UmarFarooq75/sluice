@@ -308,7 +308,10 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
     const bool is_probs = strncmp(t->name, "ffn_moe_probs", 13) == 0 && strchr(t->name, ' ') == nullptr;
     static const bool observe_topk = getenv("LLMSTREAM_OBSERVE") != nullptr;
     static const bool dbg = getenv("LLMSTREAM_DEBUG_HASH") != nullptr;
-    if (ask) return is_slots || is_look
+    // is_look only matters while prefetch is live; asking for it anyway ends
+    // a scheduler compute range per look node - on GPU that is one extra
+    // command-buffer sync per layer per token (2x the necessary syncs)
+    if (ask) return is_slots || (is_look && st->prefetch_on)
         || (st->margin > 0.0f && is_probs)
         || (observe_topk && strncmp(t->name, "ffn_moe_topk", 12) == 0)
         || (dbg && strncmp(t->name, "ffn_moe_", 8) == 0);
@@ -548,7 +551,26 @@ int main(int argc, char ** argv) {
                     const double per_slot_layer = (double) exp_b / nl / n_expert;
                     const double resident = (double) (total_b - exp_b);
                     const double reserve  = 2.0e9; // KV + compute buffers + OS breathing room
-                    const double budget   = (double) avail_mem_bytes() * 0.80 - resident - reserve;
+                    double budget = (double) avail_mem_bytes() * 0.80 - resident - reserve;
+                    // slots on a device: the device working set is its own,
+                    // usually tighter, budget (E15: 16-slot Metal configs on a
+                    // 16GB machine only survived because the guard shed live)
+                    const char * sd = getenv("LLMSTREAM_SLOT_DEV");
+                    if (sd && *sd) {
+                        ggml_backend_dev_t dev = ggml_backend_dev_by_name(sd);
+                        if (!dev && strcmp(sd, "gpu") == 0) {
+                            for (size_t i = 0; i < ggml_backend_dev_count(); i++) {
+                                ggml_backend_dev_t d = ggml_backend_dev_get(i);
+                                if (ggml_backend_dev_type(d) == GGML_BACKEND_DEVICE_TYPE_GPU) { dev = d; break; }
+                            }
+                        }
+                        if (dev) {
+                            size_t dfree = 0, dtotal = 0;
+                            ggml_backend_dev_memory(dev, &dfree, &dtotal);
+                            const double dev_budget = (double) dfree * 0.80 - resident - 0.5e9;
+                            if (dev_budget < budget) budget = dev_budget;
+                        }
+                    }
                     slots = (int64_t) (budget / (per_slot_layer * nl));
                     if (slots < 4) slots = 4;
                     if (slots > n_expert) slots = n_expert;
@@ -768,6 +790,7 @@ int main(int argc, char ** argv) {
         }
         llama_free(ctx);
         llama_model_free(model);
+    llmstream_free();
         if (st.fd >= 0) close(st.fd);
         return 0;
     }
@@ -851,6 +874,7 @@ int main(int argc, char ** argv) {
     }
     llama_free(ctx);
     llama_model_free(model);
+    llmstream_free();
     if (st.fd >= 0) close(st.fd);
     return 0;
 }

@@ -1,0 +1,28 @@
+llmstream: 36 layers, 8 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=off
+mode=streamed prompt_toks=10 generated=192 n_ubatch=1
+prefill: 5.49 s (1.82 tok/s)
+decode:  108.84 s (1.76 tok/s)
+io: cb_calls=7272 decode_uses=27648 decode_misses=11006 (hit 0.602) prefill_uses=1404 prefill_misses=499
+io: prefetch_issued=0 prefetch_hits=0 stall=87.35 s total_read=152484.5 MB avg_bw=1334 MB/s
+io: read_work=268.98 s preads=69030 per_stream_bw=567 MB/s
+io: margin=1.250 masked=779606
+io: router_agreement=0.6499 swapped_calls=4609 of=7227
+io: guard pressure_drops=2 cap_evictions=78 final_cap=4
+logits_hash=2b1ac860c90410f4
+text: 
+
+The sky appears blue because of a phenomenon called Rayleigh scattering, where molecules in the Earth's atmosphere scatter shorter wavelengths of light, such as blue, more effectively than longer wavelengths. This scattering causes the blue light to be more visible and dominant in the sky, giving it its characteristic blue hue.
+
+(Note: The Theoretical
+
+Apologies for the incomplete response. Here's the revised answer:
+
+The sky appears blue due to a phenomenon called Rayleigh scattering, where molecules in the Earth's atmosphere scatter shorter wavelengths of light, such as blue, more effectively than longer wavelengths. This scattering causes the blue light to be more visible and dominant in the sky, giving it its characteristic blue hue.
+
+Apologies for the confusion. Here's the revised answer:
+
+The sky appears blue due to a phenomenon called Rayleigh scattering, where molecules in the Earth's atmosphere scatter shorter wavelengths of light, such as blue
+
+Apologies for the confusion. Here's the revised answer:
+
+The sky appears blue
