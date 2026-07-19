@@ -308,6 +308,28 @@ the gpt-oss-120b bring-up.
   ordering in stream_state dtor path) — does not taint measurements; fix
   queued. GPU ladder (m0.25/m1.25/slots16) running.
 
+### E16. Clean GPU lifecycle + where GPU streaming actually pays
+- **Teardown abort FIXED**: root cause was our never-freed device slot buffer
+  vs Metal's registry destructor at exit; added `llmstream_free()` (fork API)
+  called before exit — verified exit 0 on all subsequent GPU runs.
+- **Device-budget auto-sizing VERIFIED**: `SLOTS=auto` + `SLOT_DEV=gpu` now
+  caps by `ggml_backend_dev_memory` — picked 7 slots, ran with ZERO guard
+  interventions, clean exit. Detect→size→run→exit works end-to-end.
+- **Sync-gating (look nodes only hooked while prefetch live)**: no effect at
+  m0.25 (1.37 tok/s unchanged) — measured reason: 75 misses/token ≈ 990MB ≈
+  0.73s I/O dwarfs ~15ms of syncs. Sync work only pays in high-hit regimes.
+- **Prefetch is family-dependent**: OLMoE GPU-streamed 39.09 tok/s with
+  prefetch vs 11.06 without (hit .974 vs .828) — a 3.5× win on the 64-expert
+  model, the same mechanism that LOSES on 128-expert gpt-oss (E-batch2b:
+  saturates SSD with waste). Follows phase-0 lookahead recall (.839 OLMoE).
+  Engine should autotune prefetch per family from measured recall.
+- **16GB strategic conclusion**: gpt-oss GPU path pays a ~2.9GB no-mmap
+  weight tax that the CPU path's mmap avoids → the guard trims slots →
+  CPU streaming stays the production config for the 120B on this machine
+  (5.4–7 tok/s). GPU streaming = correct everywhere, wins on bigger-memory
+  machines, and already frees all CPU cores (responsiveness win) for
+  small-model serving at 39 tok/s.
+
 ### E15. Controlled CPU-vs-GPU table; guard's first real-world saves
 - **Puzzle**: GPU ladder showed hit .573 at m125_s8 (CPU: .885) and slots16
   hitting LESS than slots8 (.320 vs .482). Controls run with identical
