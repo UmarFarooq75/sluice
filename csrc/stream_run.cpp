@@ -381,8 +381,11 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
         const int nl = il + 1;
         if (!st->prefetch_on || st->top_k == 0 || nl >= st->n_layers) return true;
         // phase-0 measurement: prefetch pays at cold/small caches and is pure
-        // contention once LRU is warm - it substitutes for, not stacks with, it
-        if (st->hit_ema > 0.80) return true;
+        // contention once LRU is warm - it substitutes for, not stacks with, it.
+        // that gate was tuned on OLMoE; PREFETCH_FORCE bypasses it so the
+        // big-model regime can be measured rather than assumed.
+        static const bool pf_force = getenv("LLMSTREAM_PREFETCH_FORCE") != nullptr;
+        if (!pf_force && st->hit_ema > 0.80) return true;
         if (st->pool.queued() > 0) return true;
         layer_cache & lc = st->cache[nl];
         const int64_t n_expert = t->ne[0];
@@ -563,7 +566,10 @@ int main(int argc, char ** argv) {
     const int64_t n_slots = llmstream_slots();
 
     llama_log_set([](ggml_log_level lvl, const char * msg, void *) {
-        if (lvl >= GGML_LOG_LEVEL_ERROR) fputs(msg, stderr);
+        // WARN and up: a swallowed warning cost us a corrupt-run debugging
+        // cycle (SLOT_DEV fallback was invisible at ERROR-only)
+        if (lvl >= GGML_LOG_LEVEL_WARN) fputs(msg, stderr);
+        else if (getenv("LLMSTREAM_VERBOSE") && lvl >= GGML_LOG_LEVEL_INFO) fputs(msg, stderr);
     }, nullptr);
 
     stream_state st;
@@ -707,7 +713,7 @@ int main(int argc, char ** argv) {
     if (getenv("LLMSTREAM_NLL")) {
         if (n < 8) { fprintf(stderr, "NLL mode needs a longer prompt\n"); return 1; }
         auto tt0 = std::chrono::steady_clock::now();
-        double nll = 0.0; int scored = 0;
+        double nll = 0.0, nll_tail = 0.0; int scored = 0, scored_tail = 0;
         llama_token first = toks[0];
         llama_batch b0 = llama_batch_get_one(&first, 1);
         if (llama_decode(ctx, b0) != 0) { fprintf(stderr, "decode failed\n"); return 1; }
@@ -717,14 +723,20 @@ int main(int argc, char ** argv) {
             for (int v = 0; v < n_vocab; v++) if (lg[v] > mx) mx = lg[v];
             double se = 0.0;
             for (int v = 0; v < n_vocab; v++) se += exp((double) lg[v] - mx);
-            nll += -((double) lg[toks[i]] - mx - log(se));
+            const double t_nll = -((double) lg[toks[i]] - mx - log(se));
+            nll += t_nll;
             scored++;
+            // second half separately: by then the cache is warm, so this
+            // isolates steady-state routing damage from cold-start damage
+            if (i >= n / 2) { nll_tail += t_nll; scored_tail++; }
             llama_batch b = llama_batch_get_one(&toks[i], 1);
             if (llama_decode(ctx, b) != 0) { fprintf(stderr, "decode failed\n"); return 1; }
         }
         const double dt = std::chrono::duration<double>(std::chrono::steady_clock::now() - tt0).count();
-        printf("mode=%s nll_tokens=%d avg_nll=%.5f ppl=%.4f (%.2f tok/s)\n",
-               n_slots > 0 ? "streamed" : "resident", scored, nll / scored, exp(nll / scored), (n - 1) / dt);
+        printf("mode=%s nll_tokens=%d avg_nll=%.5f ppl=%.4f warm_nll=%.5f warm_ppl=%.4f (%.2f tok/s)\n",
+               n_slots > 0 ? "streamed" : "resident", scored, nll / scored, exp(nll / scored),
+               scored_tail ? nll_tail / scored_tail : 0.0,
+               scored_tail ? exp(nll_tail / scored_tail) : 0.0, (n - 1) / dt);
         if (n_slots > 0) {
             printf("io: uses=%" PRIu64 " misses=%" PRIu64 " (hit %.3f) stall=%.2f s read=%.1f MB read_work=%.2f s preads=%" PRIu64 "\n",
                    st.uses + st.uses_prefill, st.misses + st.misses_prefill,

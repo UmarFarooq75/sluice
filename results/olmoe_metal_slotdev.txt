@@ -1,0 +1,11 @@
+llmstream: 16 layers, 32 slots/layer, 3 tensors/expert, 4.08 MB/expert, prefetch=on
+mode=streamed prompt_toks=17 generated=32 n_ubatch=1
+prefill: 1.76 s (9.68 tok/s)
+decode:  2.87 s (11.14 tok/s)
+io: cb_calls=784 decode_uses=4096 decode_misses=105 (hit 0.974) prefill_uses=2048 prefill_misses=460
+io: prefetch_issued=266 prefetch_hits=0 stall=0.19 s total_read=3156.6 MB avg_bw=682 MB/s
+io: read_work=0.60 s preads=2493 per_stream_bw=5304 MB/s
+logits_hash=a37beccbcab8d29e
+text: 
+
+** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **

@@ -266,6 +266,44 @@ the gpt-oss-120b bring-up.
 - **Open experiment**: gpt-oss hybrid unmeasured; pointless until the
   correctness seam is fixed — deferred, not forgotten.
 
+### E13. Warm-split NLL — hypothesis REVERSED, at-anchor point found
+- **Expected (written in E9)**: cold-start masking overstates margin damage;
+  warm halves should look better.
+- **Result**: the opposite. Warm-half ppl deltas vs the anchor's own warm
+  half (31.7): **m0.25 +5%, m0.5 +34%, m1.0 +158%, m1.25 +217%** — larger
+  than the averaged deltas. Mechanism: while the cache is too cold to
+  restrict, the mask is SKIPPED (`res.size() < top_k` guard), so early tokens
+  are exact — cold-start was DILUTING the damage, not causing it. Margin
+  damage concentrates exactly where sessions live: steady state.
+- **Conclusion**: the no-compromise operating point is **margin 0.25 at
+  slots8** — avg NLL 2.859 vs anchor 2.845 (+0.5%), warm +5%, agreement
+  91.6%. Above it, steady-state quality pays more than average-NLL suggested.
+  Speed at that point comes from prefetch/Metal/prefill engineering, not from
+  routing substitution. Artifacts: `results/gptoss_nll_*_slots8*.txt`.
+- **Protocol note**: batch-2 gen rungs died on a bash quirk (`${5:+VAR=1}`
+  expands to a word, not an assignment → exit 127) — rerun as batch2b with
+  `env`; second shell-portability incident this session (see E4).
+
+### E12. Metal slot buffers — the corruption root cause, found in scheduler source
+- **Investigation**: read `ggml-backend.cpp` sched execution. Two facts:
+  (1) cross-backend split inputs are **snapshot-copied before the split runs**
+  (`ggml_backend_tensor_copy(input, input_cpy)`); (2) the sched synchronizes
+  the backend before every `ask=false` callback. Our architecture fills slot
+  tensors **mid-graph** (demand fetch inside the callback) — legal when
+  everything is one backend (no copies), broken the moment a snapshot exists:
+  the GPU computes from pre-fetch stale slot data. Explains E11's corrupt
+  hybrid output with perfect counters, and the per-hooked-node sync explains
+  its slowness.
+- **Fix implemented (fork)**: `LLMSTREAM_SLOT_DEV=<device>` — allocate slot
+  tensors in that backend's buffer type (Metal = host-visible shared memory
+  on Apple Silicon: pread fills the same pages the GPU reads; no snapshot, no
+  staleness). Device-agnostic via the backend registry (CUDA later needs a
+  staging path — host-visible only for now).
+- **Expected**: OLMoE NGL=99 + SLOT_DEV=Metal + slots32 produces text matching
+  the Metal-resident run; then gpt-oss m=0 exact anchor on GPU, then speed.
+- **Result**: pending (build blocked until batch-2 rungs finish — never swap
+  dylibs under a running measurement).
+
 ---
 
 ## Defect ledger — every known defect, questioned to root cause

@@ -1,0 +1,5 @@
+..................................................
+llmstream: 36 layers, 8 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=off
+mode=streamed nll_tokens=144 avg_nll=3.66310 ppl=38.9820 warm_nll=4.61028 warm_ppl=100.5120 (6.82 tok/s)
+io: uses=20880 misses=1575 (hit 0.925) stall=9.94 s read=20874.7 MB read_work=21.02 s preads=9450
+io: margin=1.250 router_agreement=0.4878 swapped_calls=4886

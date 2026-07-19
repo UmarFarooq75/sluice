@@ -111,10 +111,10 @@ index c8ecb0a..777795f 100644
  
 diff --git a/src/llmstream.cpp b/src/llmstream.cpp
 new file mode 100644
-index 0000000..4a86f3e
+index 0000000..c324e07
 --- /dev/null
 +++ b/src/llmstream.cpp
-@@ -0,0 +1,79 @@
+@@ -0,0 +1,105 @@
 +#include "llmstream.h"
 +
 +#include "llama-impl.h"
@@ -183,7 +183,33 @@ index 0000000..4a86f3e
 +    if (!g_llmstream.ctx || g_llmstream.buf) {
 +        return;
 +    }
-+    g_llmstream.buf = ggml_backend_alloc_ctx_tensors_from_buft(g_llmstream.ctx, ggml_backend_cpu_buffer_type());
++    // LLMSTREAM_SLOT_DEV=<device name>: allocate slot tensors in that
++    // backend's buffers instead of CPU. On Apple Silicon the Metal buffer is
++    // host-visible shared memory, so the driver's pread() fills work
++    // unchanged while the GPU reads the same pages - this removes the
++    // scheduler's cross-backend input snapshot, which goes stale when the
++    // cache fills tensors mid-graph (measured: hybrid GPU runs with CPU slot
++    // tensors produce corrupt output). Host-visible backends only.
++    ggml_backend_buffer_type_t buft = ggml_backend_cpu_buffer_type();
++    const char * slot_dev = getenv("LLMSTREAM_SLOT_DEV");
++    if (slot_dev && *slot_dev) {
++        ggml_backend_dev_t dev = ggml_backend_dev_by_name(slot_dev);
++        if (!dev && strcmp(slot_dev, "gpu") == 0) {
++            // portable alias: first GPU-type device (Metal = "MTL0", CUDA0, ...)
++            for (size_t i = 0; i < ggml_backend_dev_count(); i++) {
++                ggml_backend_dev_t d = ggml_backend_dev_get(i);
++                if (ggml_backend_dev_type(d) == GGML_BACKEND_DEVICE_TYPE_GPU) { dev = d; break; }
++            }
++        }
++        if (dev) {
++            buft = ggml_backend_dev_buffer_type(dev);
++            LLAMA_LOG_INFO("llmstream: slot tensors on device '%s' (buft %s)\n",
++                    slot_dev, ggml_backend_buft_name(buft));
++        } else {
++            LLAMA_LOG_WARN("llmstream: LLMSTREAM_SLOT_DEV device '%s' not found, using CPU\n", slot_dev);
++        }
++    }
++    g_llmstream.buf = ggml_backend_alloc_ctx_tensors_from_buft(g_llmstream.ctx, buft);
 +    GGML_ASSERT(g_llmstream.buf);
 +    ggml_backend_buffer_clear(g_llmstream.buf, 0);
 +    LLAMA_LOG_INFO("llmstream: %zu slot tensors, %.2f MiB expert cache\n",
