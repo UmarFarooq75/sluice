@@ -258,9 +258,17 @@ static void pressure_monitor(stream_state * st) {
     std::chrono::steady_clock::time_point t_decode{};
     bool injected = false;
     int calm = 0;
+    static const bool srv = getenv("LLMSTREAM_SERVER") != nullptr;
     while (!st->mon_stop.load()) {
         for (int i = 0; i < 20 && !st->mon_stop.load(); i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        // a server whose parent (the UI) died must never outlive it - the
+        // idle timer can't fire mid-generation, so this watchdog can.
+        // (observed: orphaned engine at 9GB RSS mid-swap-crawl, 2026-07-19)
+        if (srv && getppid() == 1) {
+            fprintf(stderr, "llmstream: parent died - exiting\n");
+            _exit(0);
         }
         uint32_t lvl = 0;
         size_t sz = sizeof(lvl);
@@ -1087,9 +1095,16 @@ int main(int argc, char ** argv) {
     // channel markers let the UI split thinking from the final answer).
     static const bool stream_out = getenv("LLMSTREAM_STREAM_OUT") != nullptr;
     if (stream_out) { printf("<<<STREAM>>>\n"); fflush(stdout); }
+    static const int req_timeout_s = getenv("LLMSTREAM_REQ_TIMEOUT")
+        ? atoi(getenv("LLMSTREAM_REQ_TIMEOUT")) : 900;
     int generated = 0;
     for (int s = 0; s < n_gen; s++) {
         if (llama_vocab_is_eog(vocab, cur)) break;
+        if (req_timeout_s > 0 &&
+            std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count() > req_timeout_s) {
+            fprintf(stderr, "llmstream: request exceeded %ds - ending generation early\n", req_timeout_s);
+            break;
+        }
         char piece[128];
         int pn = llama_token_to_piece(vocab, cur, piece, sizeof(piece), 0, print_toks || stream_out);
         if (print_toks) printf("tok %6d |%.*s|\n", cur, pn > 0 ? pn : 0, piece);

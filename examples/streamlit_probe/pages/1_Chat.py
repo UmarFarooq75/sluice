@@ -177,6 +177,10 @@ with st.sidebar:
             slot.update(proc=None, key=None)
             st.rerun()
     else:
+        stray = subprocess.run(["pgrep", "-f", "SERVER_SENTINEL"], capture_output=True)
+        if stray.returncode == 0:
+            subprocess.run(["pkill", "-9", "-f", "SERVER_SENTINEL"], capture_output=True)
+            st.warning("found and killed an orphaned engine from a previous session")
         st.info("engine off — starts on your first message")
     st.caption(f"auto-stops after {IDLE_EXIT_S // 60} min idle (driver-side — "
                "survives even if this UI crashes). Config changes restart it.")

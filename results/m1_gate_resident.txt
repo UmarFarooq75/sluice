@@ -1,7 +1,7 @@
 mode=resident prompt_toks=17 reused=0 generated=32 n_ubatch=1
-prefill: 0.26 s (65.60 tok/s)
-decode:  0.46 s (68.82 tok/s)
-mem: peak_rss=4.38 GB phys_footprint=0.16 GB
+prefill: 0.25 s (69.14 tok/s)
+decode:  0.45 s (71.30 tok/s)
+mem: peak_rss=4.37 GB phys_footprint=0.16 GB
 logits_hash=b6869f5b6ef36376
 text: 
 
