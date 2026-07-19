@@ -36,7 +36,7 @@ Key measured findings (details in [docs/findings-phase0.md](docs/findings-phase0
 1. **Streamed compute is bit-correct** — identical NLL to the resident model in every mode. (The correctness gate prior systems skipped.)
 2. **The bandwidth formula holds on real hardware** — measured speed tracks the I/O ceiling; I/O dominates exactly when predicted.
 3. **Margin-gated cache-aware routing** — fetch a non-resident expert only when the router wants it ≥m more than the weakest resident pick — **doubles real speed at zero measured quality cost** (NLL *and* exact-match answer accuracy). A smooth quality↔traffic dial, quantified for the first time.
-4. **Expert-major prefill**: prompts touch ~all experts, so loading each expert once per layer instead of per-token cuts prefill I/O **16×–599×** (grows with prompt length). No shipped engine does this.
+4. **Expert-major prefill**: prompts touch ~all experts, so loading each expert once per layer instead of per-token cuts prefill I/O **16×–599×** (trace-measured; grows with prompt length). No shipped engine does this — and ours doesn't yet either: the engine port needs a prefill-mode dynamic slot pool (per-layer unions of 40–90 experts exceed fixed slot caches), scoped in lablog E24.
 5. **Router-lookahead prefetch generalizes and works physically**: applying layer L+1's router to layer L's state recalls **83.9%** of the true next-layer experts (beats the 71.6% reported on GLM-5.2); on the physical streamer it delivers **+72% throughput at small cache sizes**. Measured composition effect: prefetch and margin routing *substitute* rather than stack (they attack the same miss latency) — the engine coordinates them instead of enabling both blindly.
 6. **The router is a free task classifier**: task switches detected in ~6 tokens from routing statistics alone; per-task expert profiles are real (code≈math, but code∩prose ≈ 8%) — so the engine *learns you* and starts warm.
 6b. **Expert-skip (our mechanism, validated on DeepSeek-V2-Lite)**: on router-indifferent tokens, attention runs normally (KV stays intact) but routed experts are skipped — shared experts carry the token. Skips 15–18% of all routed I/O + FLOPs for 1.4–2.5% NLL on math/prose, and the inverse control (skipping *confident* tokens: 50–100× more damage per token) proves the trigger signal is real. Replication also revived adaptive top-k for DeepSeek-family models (k=3-of-6 costs just +3.6–7.7% there vs +14–25% on OLMoE) — per-architecture validation matters, twice over.
@@ -54,6 +54,27 @@ Key measured findings (details in [docs/findings-phase0.md](docs/findings-phase0
 | ours, exact routing (m=0), 5.9GB cache | 3.6 tok/s |
 
 The margin router pushes I/O below the compute floor: a 2.9GB cache ties a 5.9GB one. Total RAM used ≈ 6GB for a 26.5GB model. Family adapter for this brand-new architecture (hybrid attention, merged gate_up, shared expert): ~20 lines. Details: `results/qwen36_headtohead.json`, finding 33.
+
+## The 120B stress test (2026-07-19): 117B params on 16 GB, quality-gated
+
+**gpt-oss-120b** (117B total / 5.1B active, MXFP4, 63.4GB file — 4× this laptop's entire RAM) runs on the same 16GB Air in **5.7GB of physical memory**. Every mode below is a measured artifact in `results/`; the day-by-day experiment record with predictions-before-results is [docs/lablog.md](docs/lablog.md) (E1–E24).
+
+| mode | tok/s | quality guarantee | phys RAM |
+|---|---|---|---|
+| exact routing (m=0) | 1.2–1.4 | **bit-identical** logits, hash-gated | 5.7 GB |
+| **default** (margin 0.25 + auto-prefetch) | **1.55–1.62** | 5-domain teacher-forced NLL battery: no measurable change (mean +0.35%, mixed sign); routing fidelity ≥.91 | 5.7 GB |
+| fast (margin 1.25) | 5.1–5.5 | measured quality cost, documented | 5.7 GB |
+| compute ceiling (cache-hot) | 11.1 CPU / **13.7 Metal** | — | 8.9 GB |
+
+The honest headline is the *pair*: ~1.6 tok/s with quality pinned, 5+ when you spend the dial. run-to-run drift is ±20% until thermal logging lands (D10), so treat single runs as bands.
+
+What this chapter added beyond speed:
+
+- **Adaptive margin** (`LLMSTREAM_AGREE_TARGET`): set a routing-fidelity floor ("keep 93% of true expert picks") — the engine finds the largest margin that honors it, scale-free across router families (logit-scale gpt-oss, prob-scale OLMoE/Qwen). The speed dial is now calibrated in quality units, not per-family magic numbers.
+- **Machine-safety guard, proven live**: under real memory pressure (user actively working), the engine sheds its own cache (8→4 slots, MADV_FREE) and keeps generating instead of taking the host down — observed in-the-wild during the domain battery, plus fault-injection proof. A latent floor bug that would have killed top-8 families under pressure (D11) was found by auditing the artifact against the fix ledger, fixed, and gated.
+- **Prefetch regime law, measured from both signs**: forced prefetch at the default (miss-heavy) lifts hit 0.43→0.81 and speed to 1.55; the same prefetch in the miss-light regime *costs* 30% (5.06→3.59) because speculation steals demand bandwidth. The engine's hit-EMA gate picks the correct side in both measured regimes. (The metric that once condemned prefetch was measuring the wrong question — true recall is 92% on OLMoE, 72% on gpt-oss.)
+- **Refutations, priced and closed** (so nobody re-spends these weeks): on-disk expert-major repack (1.5% at realistic queue depth — this SSD doesn't punish 4.4MB random reads), MXFP4 compression (1.040× at zstd-19; int4 ≈ max entropy, re-confirmed physically), LFU-protected eviction (one miss in 4661 — LRU recency already protects Zipf leaders; the +14pt Belady prize is *foresight*, not frequency), background-priority "polite mode" as default (−79% throughput).
+- **Reproducibility honesty**: exact mode is bit-reproducible run-to-run; margin mode is not, *by construction* (the mask reads cache state, which depends on I/O timing). Documented, and the regression gates demand hash equality only where physics does.
 
 ## Phase 1 milestone M1 — it now runs inside llama.cpp, bit-exact (2026-07-17)
 
@@ -89,7 +110,7 @@ Target machines, in order: ordinary no-GPU laptops (8–16 GB) · cheap NVMe min
 
 - **Phase 0 — evidence** ✅ (this repo: traces, simulators, quality/accuracy evals, physical PoC)
 - **Phase 0.9 — replication**: DeepSeek-V2-Lite (sigmoid router + shared experts) re-run; decides adaptive-k and expert-skip per-architecture
-- **Phase 1 — engine core**: compiled runtime, GGUF in, A/B vs llama.cpp mmap on identical hardware
+- **Phase 1 — engine core** (in progress): streams inside llama.cpp bit-exact (M1 ✅), CPU+Metal backends ✅, pressure guard ✅, adaptive margin ✅, 120B-on-16GB chapter ✅; next: expert-major prefill (fork dynamic slot pool), thermal protocol
 - **Phase 2 — the brain**: prefetcher + persistent working sets + shareable profiles
 - **Phase 3 — the ROM stack**: usage-weighted mixed precision (hot 4-bit / cold 2-bit), REAP-style prune-at-install, network-as-coldest-tier
 - **Phase 4 — edges**: Metal/NPU tiers, phone build
@@ -109,6 +130,12 @@ src/network_tier.py       disk-budget / network-tail simulation
 src/dp_alloc.py           exact cache-allocation DP
 src/build_store.py        per-expert store builder
 src/streamer_poc.py       the physical SSD-streaming proof of concept
+csrc/stream_run.cpp       llama.cpp-fork driver: slot caches, margin/adaptive
+                          routing, prefetch, pressure guard, NLL/chat modes
+patches/llmstream.patch   the ~135-line llama.cpp fork diff
+scripts/                  benchmark ladders, batteries, gates, sims (bash+py)
+docs/lablog.md            E1-E24 chronological experiment log + defect ledger
+examples/streamlit_probe/ local test UI over the engine (streamlit)
 traces/ results/          data (generated)
 ```
 
