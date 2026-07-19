@@ -595,6 +595,11 @@ int main(int argc, char ** argv) {
     // LLMSTREAM_NGL: layers to offload to GPU (Metal build only). default 0 =
     // CPU; the bit-exact gate is defined on the CPU backend.
     mparams.n_gpu_layers = getenv("LLMSTREAM_NGL") ? atoi(getenv("LLMSTREAM_NGL")) : 0;
+    // With device-resident slot tensors, mmap is fatal for big models: the
+    // GPU path maps the ENTIRE file as one device buffer (measured: 60.4GB
+    // MTL0_Mapped for gpt-oss vs a 12.7GB working set -> command-buffer OOM).
+    // Without mmap only actually-loaded (non-skipped) tensors allocate.
+    if (getenv("LLMSTREAM_SLOT_DEV")) mparams.use_mmap = false;
     // repacked (interleaved) weight layouts use different gemm kernels than the
     // plain vec_dot path slot tensors take; disable for bit-exact comparisons
     if (getenv("LLMSTREAM_NO_REPACK")) mparams.use_extra_bufts = false;

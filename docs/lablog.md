@@ -284,6 +284,30 @@ the gpt-oss-120b bring-up.
   expands to a word, not an assignment → exit 127) — rerun as batch2b with
   `env`; second shell-portability incident this session (see E4).
 
+### E14. GPU streaming lands: OLMoE bit-exact, then gpt-oss-120b on Metal
+- **OLMoE proof**: `SLOT_DEV` first silently no-opped — device is named `MTL0`
+  not "Metal", and the fallback WARN was invisible at the driver's ERROR-only
+  log filter (both fixed: `gpu` alias picks the first GPU-type device from
+  the registry — portable to CUDA later; log filter now WARN+, INFO under
+  LLMSTREAM_VERBOSE). With it engaged: **GPU-streamed OLMoE logits_hash
+  `7ef6c26bdadc0cbd` = bit-identical to GPU-resident**, 39.09 tok/s at
+  half-cache (32/64 slots). E12's snapshot-staleness diagnosis confirmed by
+  the strongest possible evidence (`results/olmoe_gpuslots.txt`).
+- **gpt-oss OOM wall**: first GPU attempt aborted — verbose buffers showed
+  `MTL0_Mapped model buffer size = 60438 MiB` vs 12.7GB working set: with
+  mmap, the GPU path maps the ENTIRE file as one device buffer; skipped
+  experts cost nothing as tensors but everything as mapping. Fix:
+  `use_mmap=false` whenever SLOT_DEV is set → only loaded tensors allocate
+  (~2.9GB weights + 3.8GB slot cache). OLMoE never hit this (whole file <
+  working set).
+- **Milestone**: **gpt-oss-120b (117B) ran on the M2 GPU with streamed
+  experts, exact routing, correct text** (matches CPU anchor opening
+  word-for-word): decode 1.30 tok/s at hit .443, slots8, m=0 — 1.7× the CPU
+  exact-mode figure before any tuning (`results/gptoss_gpu_m0.txt`).
+- **Known defect**: post-output SIGABRT at teardown (Metal buffer free
+  ordering in stream_state dtor path) — does not taint measurements; fix
+  queued. GPU ladder (m0.25/m1.25/slots16) running.
+
 ### E12. Metal slot buffers — the corruption root cause, found in scheduler source
 - **Investigation**: read `ggml-backend.cpp` sched execution. Two facts:
   (1) cross-backend split inputs are **snapshot-copied before the split runs**
