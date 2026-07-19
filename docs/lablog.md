@@ -239,6 +239,33 @@ the gpt-oss-120b bring-up.
   factor costs ~10-20% speed. Tune the 0.80/2GB constants only with more
   cross-model data, never to zero headroom (that's how engines hang laptops).
 
+### E11. Metal bring-up: resident PROVEN, naive hybrid REFUTED (2026-07-19)
+- **Change**: built the fork with GGML_METAL in a separate `build-metal` tree
+  (CPU build untouched as gate reference); `LLMSTREAM_NGL` env for GPU layer
+  offload (default 0 = CPU, gate unaffected — re-PASS `b6869f5b6ef36376`);
+  driver variant `stream_run_metal`.
+- **Expected**: resident OLMoE faster than CPU's 73.9 tok/s; hybrid (GPU
+  graph + CPU slot tensors) either works or fails loudly.
+- **Result — resident**: **84.12 tok/s** on Metal, text identical opening to
+  CPU reference — first GPU numbers, backend validated
+  (`results/olmoe_metal_resident.txt`).
+- **Result — hybrid**: ran "cleanly" (exit 0, hit .974, sane counters,
+  12.08 tok/s) but **output is garbage** (`** ** ** …`) — silent numerical
+  corruption, not slowness. Root-cause hypothesis: the cb_eval id-rewrite
+  mutates the ids tensor via host pointer; with a Metal graph the scheduler's
+  copy/ownership of that buffer races or ignores the host write. Naive hybrid
+  is therefore both slower (~16×2 GPU↔CPU crossings/token) AND wrong
+  (`results/olmoe_metal_slots32.txt`).
+- **Conclusions**: (a) counters cannot certify correctness — only output
+  checks (text/NLL/hash) can; the protocol already demands this and it just
+  paid off; (b) the road to GPU streaming is a **Metal slot backend**: slot
+  tensors in shared MTLBuffers (unified memory), id-rewrite before command
+  submission, explicit sync — an engineering project, now scoped by a
+  measured failure; (c) until then the production config is pure-CPU
+  streaming (5.7 clean / ~7 warm tok/s on gpt-oss-120b).
+- **Open experiment**: gpt-oss hybrid unmeasured; pointless until the
+  correctness seam is fixed — deferred, not forgotten.
+
 ---
 
 ## Defect ledger — every known defect, questioned to root cause
