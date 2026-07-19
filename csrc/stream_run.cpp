@@ -89,6 +89,12 @@ struct layer_cache {
     std::vector<int> free_slots;          // slots shed by the pressure guard
     int n_slots = 0;
     int next_free = 0;
+    // E23: routing is Zipf-heavy per layer (measured: 8 of 128 experts cover
+    // 49% of uses, 32 cover 88%; belady-lru gap +14 pts at s8). LLMSTREAM_EVICT=lfu
+    // protects each layer's frequency leaders from eviction; the tail stays LRU.
+    std::unordered_map<int, uint32_t> use_count;
+    std::unordered_set<int> freq_protected;
+    uint32_t uses_since_recompute = 0;
 };
 
 struct stream_state;
@@ -306,22 +312,54 @@ static int assign_slot(layer_cache & lc, int e, const std::unordered_set<int> * 
         }
         if (lc.next_free < lc.n_slots) return lc.next_free++;
     }
-    // evict least-recent expert that is neither needed now nor in flight
-    for (auto it = lc.lru.rbegin(); it != lc.lru.rend(); ++it) {
-        int victim = *it;
-        if (needed && needed->count(victim)) continue;
-        if (lc.in_flight.count(victim)) continue;
-        int slot = lc.slot_of[victim];
-        lc.slot_of.erase(victim);
-        lc.pf_filled.erase(victim);
-        lc.lru.erase(lc.lru_pos[victim]);
-        lc.lru_pos.erase(victim);
-        return slot;
+    // evict least-recent expert that is neither needed now nor in flight.
+    // pass 0 spares the layer's frequency leaders (LFU protection); pass 1
+    // allows them so protection can never deadlock the cache.
+    static const bool lfu = [] {
+        const char * ev = getenv("LLMSTREAM_EVICT");
+        return ev && strcmp(ev, "lfu") == 0;
+    }();
+    for (int pass = lfu ? 0 : 1; pass < 2; pass++) {
+        for (auto it = lc.lru.rbegin(); it != lc.lru.rend(); ++it) {
+            int victim = *it;
+            if (needed && needed->count(victim)) continue;
+            if (lc.in_flight.count(victim)) continue;
+            if (pass == 0 && lc.freq_protected.count(victim)) continue;
+            int slot = lc.slot_of[victim];
+            lc.slot_of.erase(victim);
+            lc.pf_filled.erase(victim);
+            lc.lru.erase(lc.lru_pos[victim]);
+            lc.lru_pos.erase(victim);
+            return slot;
+        }
     }
     return -1;
 }
 
+// refresh the protected set: top slots/2 experts by use count. cheap
+// (n_expert-sized partial sort every 256 uses) and deliberately sticky -
+// counts accumulate over the whole run, approximating the static-frequency
+// oracle the trace sim showed beating LRU at every slot count.
+static void lfu_recompute(layer_cache & lc) {
+    const size_t keep = (size_t) std::max(1, lc.n_slots / 2);
+    std::vector<std::pair<uint32_t, int>> byc;
+    byc.reserve(lc.use_count.size());
+    for (auto & [e, c] : lc.use_count) byc.push_back({c, e});
+    if (byc.size() > keep) {
+        std::partial_sort(byc.begin(), byc.begin() + keep, byc.end(),
+                          [](auto & a, auto & b) { return a.first > b.first; });
+        byc.resize(keep);
+    }
+    lc.freq_protected.clear();
+    for (auto & [c, e] : byc) lc.freq_protected.insert(e);
+}
+
 static void lru_touch(layer_cache & lc, int e) {
+    lc.use_count[e]++;
+    if (++lc.uses_since_recompute >= 256) {
+        lc.uses_since_recompute = 0;
+        lfu_recompute(lc);
+    }
     auto pit = lc.lru_pos.find(e);
     if (pit != lc.lru_pos.end()) {
         if (pit->second != lc.lru.begin()) {

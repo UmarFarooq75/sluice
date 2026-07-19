@@ -530,6 +530,53 @@ believe a reviewer).
   RAM; (2) higher compute ceiling — GPU path; (3) prefill TTFT —
   expert-major scheduling port.
 
+### E23. Eviction headroom: Belady says +14 pts, routing is Zipf-heavy (2026-07-19)
+- **Question**: is LRU the right eviction policy, or are we paying misses a
+  smarter policy would avoid? Method: real routing trace (2412 decode calls,
+  m0 exact, s8, one prompt), replayed through LRU / Belady (clairvoyant
+  demand-fill optimum) / static top-N frequency pin (scripts/belady_sim.py).
+- **Result**:
+
+  | slots | LRU | Belady | static top-N | Belady−LRU |
+  |---|---|---|---|---|
+  | 8  | .411 | .547 | .489 | **+13.6 pts** |
+  | 12 | .498 | .648 | .600 | **+15.1 pts** |
+  | 16 | .562 | .705 | .685 | **+14.4 pts** |
+  | 32 | .737 | .783 | .881 | +4.6 pts |
+
+  Pre-registered rule said >10 pts → build. **Routing is Zipf-heavy per
+  layer: 8 of 128 experts cover 49% of uses, 32 cover 88%.** Static beats
+  LRU everywhere (and beats Belady at s32 — legal: pinning is not demand-fill,
+  it never suffers forced insertions). Caveats stated: one 64-tok prompt;
+  static scored on its own trace (train=test, optimistic); Belady bound is
+  honest for demand-fill.
+- **Change**: LLMSTREAM_EVICT=lfu — frequency-protected LRU. Per layer,
+  use counts accumulate; every 256 uses the top slots/2 experts by count
+  become eviction-protected (pass-0 skip); pass-1 lifts protection so it can
+  never deadlock. Driver-only, no fork change; default remains lru until
+  measured.
+- **Prediction (written before batch4)**: s8 m0 hit .411 → .43-.47 online
+  (between LRU and the optimistic static .489), decode +5-15%; s12 m0 hit
+  → .55-.58. Quality bar: m0 hashes BIT-IDENTICAL lru vs lfu (eviction moves
+  retention, never logits) — gate in the batch script.
+- **Result: REFUTED — prediction failed and the failure teaches the
+  mechanism.** m0_s8 lru vs lfu: 4660 vs 4661 misses (one miss!), 1.39 vs
+  1.39 tok/s, hashes bit-identical (quality gate PASS as designed). LRU's
+  recency ALREADY protects frequency leaders: an expert taking 49% of
+  traffic never reaches the LRU tail, so explicit protection changes
+  nothing. The +14pt Belady gap is real but comes from FORESIGHT (next-use
+  distance), which no frequency statistic approximates online. The honest
+  chain: sim-static looked strong because train=test; online frequency adds
+  zero. Code stays (env-gated, default off, harmless); card closed. The
+  only online foresight we have is next-layer router logits — already
+  exploited by prefetch; margin-mode residency coupling is the stronger
+  version of the same idea and already ships.
+- **Bonus numbers from batch4**: product-default candidate
+  (m0.25+auto-prefetch) reproduced at **1.62 tok/s** (band 1.55-1.62,
+  n=2); m0 s8 measured 1.05→1.39 across the day at identical configs and
+  hashes — run-to-run drift up to ±20%, D10 (thermal logging, n≥3 repeats
+  for headlines) now blocking honest headline claims.
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.
