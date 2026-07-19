@@ -59,6 +59,7 @@
 #include <list>
 #include <mach/mach.h>
 #include <mutex>
+#include <poll.h>
 #include <string>
 #include <sys/mman.h>
 #include <sys/resource.h>
@@ -659,6 +660,27 @@ static void print_mem_footprint() {
     }
 }
 
+// LLMSTREAM_SERVER: read the next request line from stdin, waiting at most
+// idle_s seconds. The server exits on timeout, EOF, or "exit" - a forgotten
+// 6GB engine must never outlive its user (host-safety, same pillar as E10).
+static bool server_next_request(std::string & out_prompt, int idle_s) {
+    struct pollfd pf = { 0, POLLIN, 0 };
+    int pr = poll(&pf, 1, idle_s > 0 ? idle_s * 1000 : -1);
+    if (pr <= 0) { fprintf(stderr, "llmstream: server idle %ds - shutting down\n", idle_s); return false; }
+    std::string line;
+    char c; ssize_t r;
+    while ((r = read(0, &c, 1)) == 1 && c != '\n') line.push_back(c);
+    if (line.empty()) return false;
+    if (line == "exit") return false;
+    std::string un; un.reserve(line.size());
+    for (size_t i = 0; i < line.size(); i++) {
+        if (line[i] == '\\' && i + 1 < line.size() && line[i + 1] == 'n') { un.push_back('\n'); i++; }
+        else un.push_back(line[i]);
+    }
+    out_prompt = std::move(un);
+    return true;
+}
+
 int main(int argc, char ** argv) {
     if (argc < 4) {
         fprintf(stderr, "usage: %s <model.gguf> <n_gen> <prompt> [n_ubatch]\n", argv[0]);
@@ -895,10 +917,33 @@ int main(int argc, char ** argv) {
     if (!ctx) { fprintf(stderr, "ctx init failed\n"); return 1; }
 
     const llama_vocab * vocab = llama_model_get_vocab(model);
+    // LLMSTREAM_SERVER=1: persistent mode. Model + expert cache stay warm
+    // across requests (no per-message reload); each stdin line is one
+    // request. <<<READY>>> marks load-done and request-done. KV is cleared
+    // between requests (stateless turns, warm cache). The server kills
+    // ITSELF after LLMSTREAM_IDLE_EXIT seconds without a request (default
+    // 600) so an abandoned engine never squats on the machine.
+    const bool server_mode = getenv("LLMSTREAM_SERVER") != nullptr;
+    const int idle_exit_s = getenv("LLMSTREAM_IDLE_EXIT") ? atoi(getenv("LLMSTREAM_IDLE_EXIT")) : 600;
+    std::string req_prompt = prompt;
+    bool have_req = true;
+    if (server_mode) {
+        printf("<<<READY>>>\n"); fflush(stdout);
+        have_req = server_next_request(req_prompt, idle_exit_s);
+    }
+    while (have_req) {
+    if (server_mode) {
+        // per-request counters: each reply reports its own physics
+        st.uses = st.misses = st.uses_prefill = st.misses_prefill = 0;
+        st.cb_calls = st.prefetch_issued = st.prefetch_hits = st.prefetch_used = 0;
+        st.agree_hits = st.agree_total = st.swapped_tokens = st.margin_masked = 0;
+        st.stall_s = 0.0; st.bytes = 0; st.read_us = 0; st.read_calls = 0;
+        st.in_decode = false;
+    }
     // LLMSTREAM_CHAT=1: wrap the prompt in the model's own chat template
     // (gpt-oss is harmony-format trained; raw text prompts confound quality
     // reads with template mismatch). parse_special so template tokens survive.
-    std::string ptext = prompt;
+    std::string ptext = req_prompt;
     bool chat = false;
     if (getenv("LLMSTREAM_CHAT")) {
         const char * tmpl = llama_model_chat_template(model, nullptr);
@@ -909,8 +954,8 @@ int main(int argc, char ** argv) {
             const char * sys = getenv("LLMSTREAM_SYSTEM");
             std::vector<llama_chat_message> msgs;
             if (sys && sys[0]) msgs.push_back({ "system", sys });
-            msgs.push_back({ "user", prompt.c_str() });
-            std::vector<char> buf(prompt.size() * 2 + (sys ? strlen(sys) * 2 : 0) + 4096);
+            msgs.push_back({ "user", req_prompt.c_str() });
+            std::vector<char> buf(req_prompt.size() * 2 + (sys ? strlen(sys) * 2 : 0) + 4096);
             int32_t r = llama_chat_apply_template(tmpl, msgs.data(), msgs.size(), true,
                                                   buf.data(), (int32_t) buf.size());
             if (r > 0 && r <= (int32_t) buf.size()) { ptext.assign(buf.data(), r); chat = true; }
@@ -1068,6 +1113,12 @@ int main(int argc, char ** argv) {
     print_mem_footprint();
     printf("logits_hash=%016" PRIx64 "\n", hash);
     printf("text: %s\n", out.c_str());
+
+    if (!server_mode) break;
+    llama_memory_clear(llama_get_memory(ctx), true);
+    printf("<<<READY>>>\n"); fflush(stdout);
+    have_req = server_next_request(req_prompt, idle_exit_s);
+    }
 
     st.mon_stop = true;
     if (st.mon.joinable()) st.mon.join();
