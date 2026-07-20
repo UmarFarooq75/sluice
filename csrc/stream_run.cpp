@@ -1303,14 +1303,18 @@ int main(int argc, char ** argv) {
     // LLMSTREAM_REP_LAST, LLMSTREAM_SEED. Any of REP_PEN>1 or TEMP>0 turns it on.
     const float s_temp    = getenv("LLMSTREAM_TEMP")     ? (float) atof(getenv("LLMSTREAM_TEMP"))     : 0.0f;
     const float s_reppen  = getenv("LLMSTREAM_REP_PEN")  ? (float) atof(getenv("LLMSTREAM_REP_PEN"))  : 1.0f;
-    const float s_topp    = getenv("LLMSTREAM_TOP_P")    ? (float) atof(getenv("LLMSTREAM_TOP_P"))    : 0.95f;
-    const int   s_replast = getenv("LLMSTREAM_REP_LAST") ? atoi(getenv("LLMSTREAM_REP_LAST"))         : 128;
+    const float s_topp    = getenv("LLMSTREAM_TOP_P")    ? (float) atof(getenv("LLMSTREAM_TOP_P"))    : 0.9f;
+    const int   s_topk    = getenv("LLMSTREAM_TOP_K")    ? atoi(getenv("LLMSTREAM_TOP_K"))            : 40;
+    const int   s_replast = getenv("LLMSTREAM_REP_LAST") ? atoi(getenv("LLMSTREAM_REP_LAST"))         : 64;
     const uint32_t s_seed = getenv("LLMSTREAM_SEED")     ? (uint32_t) atoll(getenv("LLMSTREAM_SEED")) : 0u;
     llama_sampler * smpl = nullptr;
     if (s_reppen > 1.0f || s_temp > 0.0f) {
+        // sampler chain matching Ollama's default order: penalties -> top_k ->
+        // top_p -> temperature -> sample
         smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
         llama_sampler_chain_add(smpl, llama_sampler_init_penalties(s_replast, s_reppen, 0.0f, 0.0f));
         if (s_temp > 0.0f) {
+            if (s_topk > 0) llama_sampler_chain_add(smpl, llama_sampler_init_top_k(s_topk));
             llama_sampler_chain_add(smpl, llama_sampler_init_top_p(s_topp, 1));
             llama_sampler_chain_add(smpl, llama_sampler_init_temp(s_temp));
             llama_sampler_chain_add(smpl, llama_sampler_init_dist(s_seed));

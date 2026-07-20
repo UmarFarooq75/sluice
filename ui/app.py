@@ -169,11 +169,13 @@ def ensure_server(cfg, sys_prompt, n_gen, status):
         "LLMSTREAM_PREFILL_SLOTS": "1",  # E27: expert-major prefill (8× TTFT)
         # chat sampling: greedy decoding loops ("X for Y for X for Y..."), so
         # use a repetition penalty + light temperature like every LLM runtime.
+        # These match Ollama's defaults exactly (docs.ollama.com/modelfile).
         # (The bit-exact gates run WITHOUT these, staying greedy/deterministic.)
-        "LLMSTREAM_REP_PEN": "1.15",
-        "LLMSTREAM_TEMP": "0.7",
-        "LLMSTREAM_TOP_P": "0.95",
-        "LLMSTREAM_REP_LAST": "256",
+        "LLMSTREAM_TEMP": "0.8",
+        "LLMSTREAM_TOP_P": "0.9",
+        "LLMSTREAM_TOP_K": "40",
+        "LLMSTREAM_REP_PEN": "1.1",
+        "LLMSTREAM_REP_LAST": "64",
     })
     if sys_prompt.strip():
         env["LLMSTREAM_SYSTEM"] = sys_prompt.strip()
