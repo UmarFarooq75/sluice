@@ -71,21 +71,8 @@ def model_meta(name):
 # Speed↔quality dial, calibrated by the measured battery - not raw knobs.
 MODES = {
     "Exact": {"margin": 0.0, "desc": "bit-identical to the resident model, hash-gated"},
-    "Balanced": {"margin": 0.25, "desc": "5-domain NLL battery: no measurable change · fidelity ≥ .91"},
-    "Fast": {"margin": 1.25, "desc": "~3× decode speed · measured, documented quality cost"},
-}
-
-SUGGESTIONS = {
-    ":blue[:material/lightbulb:] Explain something": "Explain why the sky is blue in two sentences.",
-    ":green[:material/code:] Write code": "Write a Python function that checks whether a number is prime.",
-    ":violet[:material/psychology:] Reason": "A train leaves at 9am at 40 mph; another at 11am at 60 mph on a parallel track. When does the second catch the first?",
-}
-
-# Speed↔quality dial, calibrated by the measured battery - not raw knobs.
-MODES = {
-    "Exact": {"margin": 0.0, "desc": "bit-identical to the resident model, hash-gated"},
-    "Balanced": {"margin": 0.25, "desc": "5-domain NLL battery: no measurable change · fidelity ≥ .91"},
-    "Fast": {"margin": 1.25, "desc": "~3× decode speed · measured, documented quality cost"},
+    "Balanced": {"margin": 0.25, "desc": "no measurable quality change (5-domain NLL battery) · recommended"},
+    "Fast": {"margin": 0.5, "desc": "faster · edge of the validated band, may occasionally dip"},
 }
 
 SUGGESTIONS = {
@@ -486,10 +473,24 @@ if prompt:
         final_clean, _ = split_harmony(raw)
         final_clean = re.sub(r"<\|[^|]*\|>", "", final_clean).strip()
         a = re.search(r"<\|channel\|>analysis<\|message\|>(.*?)<\|end\|>", raw, re.S)
-        if met.get("generated") == ("0",) or not (final_clean or (a and a.group(1).strip())):
-            final_clean = final_clean or ("*(model produced no tokens - try rephrasing "
-                                          "or adjusting the system prompt)*")
+        analysis = a.group(1).strip() if a else ""
+        if not final_clean:
+            # No clean <|channel|>final|> wrapper. High margin (Fast) can derail
+            # the harmony channel structure, so the model's real text ends up in
+            # an unterminated analysis channel. Show that text — never claim
+            # "no tokens" when the engine actually generated some.
+            fallback = re.sub(r"\s+", " ", re.sub(r"<\|[^|]*\|>", " ", raw)).strip()
+            if fallback:
+                final_clean, analysis = fallback, ""
+                if met.get("decode") and float(met["decode"][1]) > 0:
+                    st.caption("⚠︎ Fast mode produced unstructured output — "
+                               "switch to Balanced for clean answers.")
+            elif met.get("generated") == ("0",):
+                final_clean = ("*(the model chose to stop immediately — try Balanced "
+                               "quality, or rephrase your message)*")
+            else:
+                final_clean = "*(empty response)*"
         st.session_state.chat_log.append(
             {"role": "assistant", "text": final_clean,
-             "thinking": a.group(1).strip() if a else "", "timing": timing})
+             "thinking": analysis, "timing": timing})
         st.rerun()
