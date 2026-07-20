@@ -295,7 +295,9 @@ with st.sidebar:
         cfg["backend"] = st.segmented_control("Backend", ["cpu", "gpu"], default="cpu",
                                               help="CPU loads much faster and decodes the "
                                                    "same below ~0.9 hit; GPU pays at high hit rates") or "cpu"
-        n_gen = st.number_input("Max new tokens", min_value=16, max_value=1024, value=256, step=16)
+        n_gen = st.number_input("Max new tokens", min_value=16, max_value=3584, value=2048, step=128,
+                                help="Cap on reply length. Context window is 4096 tokens total "
+                                     "(prompt + reply); very long chats truncate the oldest turns.")
         sys_prompt = st.text_area(
             "System prompt", value=DEFAULT_SYSTEM, height=200,
             help="Grounds the model. The trailing 'Reasoning: low' keeps gpt-oss "

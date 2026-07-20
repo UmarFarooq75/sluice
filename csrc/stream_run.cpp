@@ -1105,12 +1105,16 @@ int main(int argc, char ** argv) {
     }
 
     const int n_ubatch = argc > 4 ? atoi(argv[4]) : 1;
+    // LLMSTREAM_CTX: total context window (prompt + generated). Default 4096
+    // (was a hard 1024) so real chats and 2k-token replies fit. Bigger ctx
+    // costs KV-cache RAM; the pressure guard still protects the host.
+    const int n_ctx = getenv("LLMSTREAM_CTX") ? atoi(getenv("LLMSTREAM_CTX")) : 4096;
     llama_context_params cparams = llama_context_default_params();
-    cparams.n_ctx    = 1024;
+    cparams.n_ctx    = (uint32_t) n_ctx;
     // the driver passes a whole prompt as one llama_decode batch, so n_batch
     // must cover anything the context can hold (llama.cpp splits internally
     // into n_ubatch pieces); found by GGML_ASSERT on a 712-token prompt
-    cparams.n_batch  = 1024;
+    cparams.n_batch  = (uint32_t) n_ctx;
     cparams.n_ubatch = n_ubatch;
     cparams.cb_eval  = cb_eval;
     cparams.cb_eval_user_data = &st;
