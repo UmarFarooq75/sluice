@@ -34,3 +34,5 @@ csrc/transcode_bench
 tools/
 ollama_models/
 csrc/stream_run_metal
+.agents/
+.claude/

@@ -1,0 +1,64 @@
+load: special_eos_id is not in special_eog_ids - the tokenizer config may be incorrect
+model has unused tensor blk.0.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.0.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.0.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.1.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.1.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.1.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.2.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.2.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.2.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.3.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.3.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.3.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.4.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.4.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.4.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.5.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.5.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.5.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.6.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.6.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.6.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.7.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.7.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.7.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.8.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.8.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.8.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.9.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.9.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.9.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.10.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.10.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.10.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.11.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.11.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.11.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.12.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.12.ffn_down_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.12.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.13.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.13.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.13.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.14.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.14.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.14.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.15.ffn_gate_exps.weight (size = 75497472 bytes) -- ignoring
+model has unused tensor blk.15.ffn_down_exps.weight (size = 110100480 bytes) -- ignoring
+model has unused tensor blk.15.ffn_up_exps.weight (size = 75497472 bytes) -- ignoring
+........................................................
+/Users/umarfarooq/Desktop/research/vendor/llama.cpp/ggml/src/ggml-metal/ggml-metal-device.m:622: GGML_ASSERT([rsets->data count] == 0) failed
+WARNING: Using native backtrace. Set GGML_BACKTRACE_LLDB for more info.
+WARNING: GGML_BACKTRACE_LLDB may cause native MacOS Terminal.app to crash.
+See: https://github.com/ggml-org/llama.cpp/pull/17869
+0   libggml-base.0.17.0.dylib           0x000000010236d3d0 ggml_print_backtrace + 276
+1   libggml-base.0.17.0.dylib           0x00000001023dad84 ggml_abort + 156
+2   libggml-metal.0.17.0.dylib          0x00000001028922ec ggml_metal_device_init + 0
+3   libggml-metal.0.17.0.dylib          0x0000000102892f18 ggml_metal_device_free + 24
+4   libggml-metal.0.17.0.dylib          0x00000001028949ec _ZNSt3__16vectorINS_10unique_ptrI17ggml_metal_device25ggml_metal_device_deleterEENS_9allocatorIS4_EEED1B9nqe210106Ev + 72
+5   libsystem_c.dylib                   0x000000018f3bb7f4 __cxa_finalize_ranges + 416
+6   libsystem_c.dylib                   0x000000018f3bb5f4 exit + 44
+7   libdyld.dylib                       0x000000018f1102e4 _ZNK5dyld416LibSystemHelpers6getenvEPKc + 0
+8   dyld                                0x000000018f147f0c _ZNK5dyld423LibSystemHelpersWrapper4exitEi + 164
+9   dyld                                0x000000018f147e30 start + 7040

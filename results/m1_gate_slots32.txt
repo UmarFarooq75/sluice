@@ -1,16 +1,18 @@
-llmstream: 16 layers, 32 slots/layer, 3 tensors/expert, 4.08 MB/expert, prefetch=on
-mode=streamed prompt_toks=17 reused=0 generated=32 n_ubatch=1
-prefill: 0.39 s (43.50 tok/s)
-decode:  0.67 s (48.10 tok/s)
-io: cb_calls=784 decode_uses=4096 decode_misses=630 (hit 0.846) prefill_uses=2048 prefill_misses=486
-io: prefetch_issued=351 prefetch_hits=0 prefetch_used=337 stall=0.24 s total_read=5605.8 MB avg_bw=5308 MB/s
-io: read_work=1.57 s preads=4401 per_stream_bw=3563 MB/s
-mem: peak_rss=6.25 GB phys_footprint=2.11 GB
-logits_hash=b6869f5b6ef36376
+llmstream: 24 layers, 32 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+mode=streamed prompt_toks=17 reused=0 generated=24 n_ubatch=1
+prefill: 13.05 s (1.30 tok/s)
+decode:  10.99 s (2.18 tok/s)
+io: cb_calls=984 decode_uses=2304 decode_misses=152 (hit 0.934) prefill_uses=1568 prefill_misses=246
+io: prefetch_issued=235 prefetch_hits=65 prefetch_used=230 stall=7.16 s total_read=8389.6 MB avg_bw=349 MB/s
+io: read_work=43.35 s preads=3798 per_stream_bw=194 MB/s
+io: guard pressure_drops=6 cap_evictions=86 final_cap=20
+mem: peak_rss=8.03 GB phys_footprint=9.24 GB
+therm: nominal
+logits_hash=0ec1c81919bbdafc
 text: 
 
-Here's a simple Python function that checks if a number is prime:
+Here is a simple Python function that checks whether a number is prime:
 
-```python
+```
 def is_prime(n):
-    if n
+    if

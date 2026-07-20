@@ -1,12 +1,13 @@
-mode=resident prompt_toks=17 reused=0 generated=32 n_ubatch=1
-prefill: 0.32 s (53.44 tok/s)
-decode:  0.46 s (69.23 tok/s)
-mem: peak_rss=4.36 GB phys_footprint=0.16 GB
-logits_hash=b6869f5b6ef36376
+mode=resident prompt_toks=17 reused=0 generated=24 n_ubatch=1
+prefill: 13.22 s (1.29 tok/s)
+decode:  7.40 s (3.24 tok/s)
+mem: peak_rss=8.99 GB phys_footprint=0.17 GB
+therm: nominal
+logits_hash=0ec1c81919bbdafc
 text: 
 
-Here's a simple Python function that checks if a number is prime:
+Here is a simple Python function that checks whether a number is prime:
 
-```python
+```
 def is_prime(n):
-    if n
+    if
