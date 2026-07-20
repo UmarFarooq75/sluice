@@ -81,23 +81,23 @@ What this chapter added beyond speed:
 - **Refutations, priced and closed** (so nobody re-spends these weeks): on-disk expert-major repack (1.5% at realistic queue depth — this SSD doesn't punish 4.4MB random reads), MXFP4 compression (1.040× at zstd-19; int4 ≈ max entropy, re-confirmed physically), LFU-protected eviction (one miss in 4661 — LRU recency already protects Zipf leaders; the +14pt Belady prize is *foresight*, not frequency), background-priority "polite mode" as default (−79% throughput), and expert-skip on absent low-weight experts (pre-registered A/B: skipping does ~4.4× the warm-NLL damage of substituting a resident expert — reasoning +31.6% vs +9.7% — because gpt-oss has no shared experts to carry the token; the DeepSeek-V2 skip result is architecture-local, confirming the per-architecture doctrine a third time).
 - **Reproducibility honesty**: exact mode is bit-reproducible run-to-run; margin mode is not, *by construction* (the mask reads cache state, which depends on I/O timing). Documented, and the regression gates demand hash equality only where physics does.
 
-## Using it — the `llmstream` CLI and chat UI
+## Using it — `sluice`, the CLI and chat UI
 
-The product surface lives in [cli/llmstream](cli/llmstream) and [ui/app.py](ui/app.py):
+**sluice** is the product name (a sluice gate controls a powerful stream — which is what the dial and the pressure guard do). The internal engine layer keeps its `llmstream` namespace (env vars, fork branch), the way llama.cpp keeps GGML inside. The surface lives in [cli/sluice](cli/sluice) and [ui/app.py](ui/app.py):
 
 ```
-llmstream list             # models on disk, with honest pull costs
-llmstream estimate [name]  # probes YOUR machine (RAM, cold disk bw) and prints
-                           # expected tok/s per mode — measured numbers scaled
-                           # to your hardware, with provenance, BEFORE you download
-llmstream run <name>       # chat REPL on the persistent warm server (multi-turn
-                           # KV reuse, expert-major prefill, one-model safety rule)
-llmstream ui               # the dev/test chat UI (streamlit): mode dial in
-                           # battery-calibrated steps, live machine stats, per-turn
-                           # physics (hit rate, fidelity, footprint, thermal),
-                           # Stop button + idle self-exit + orphan sweep
-llmstream pull <name>      # estimator first, disk-headroom warning, resumable pull
-llmstream rm <name>        # delete the file (the measurements stay)
+sluice list             # models on disk, with honest pull costs
+sluice estimate [name]  # probes YOUR machine (RAM, cold disk bw) and prints
+                        # expected tok/s per mode — measured numbers scaled
+                        # to your hardware, with provenance, BEFORE you download
+sluice run <name>       # chat REPL on the persistent warm server (multi-turn
+                        # KV reuse, expert-major prefill, one-model safety rule)
+sluice ui               # the dev/test chat UI (streamlit): mode dial in
+                        # battery-calibrated steps, live machine stats, per-turn
+                        # physics (hit rate, fidelity, footprint, thermal),
+                        # Stop button + idle self-exit + orphan sweep
+sluice pull <name>      # estimator first, disk-headroom warning, resumable pull
+sluice rm <name>        # delete the file (the measurements stay)
 ```
 
 The estimator is the product's honesty contract: every speed it prints traces to a lab artifact in `results/`, I/O-bound modes scale by your measured disk bandwidth, and nothing downloads until you've seen what your machine will actually deliver.

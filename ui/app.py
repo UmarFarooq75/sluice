@@ -1,4 +1,4 @@
-# llmstream chat - the packaged dev/test UI (`llmstream ui`).
+# sluice chat - the packaged dev/test UI (`sluice ui`).
 #
 # Chat over the PERSISTENT engine server (LLMSTREAM_SERVER=1): the model loads
 # once and stays warm between messages; the expert cache carries over, and
@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ENGINE = ROOT / "csrc" / "stream_run"
 IDLE_EXIT_S = 600
 
-st.set_page_config(page_title="llmstream", page_icon=":material/stream:", layout="centered")
+st.set_page_config(page_title="sluice", page_icon=":material/stream:", layout="centered")
 
 MODELS = {
     "gpt-oss-120b": {
@@ -185,7 +185,7 @@ def split_harmony(raw):
 
 # ---------------- sidebar ----------------
 with st.sidebar:
-    st.markdown("### :material/stream: llmstream")
+    st.markdown("### :material/water: sluice")
     st.caption("Virtual memory for LLMs - models bigger than your RAM, with quality receipts.")
 
     available = [k for k, v in MODELS.items() if v["path"] and Path(v["path"]).exists()]

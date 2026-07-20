@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""llmstream - virtual memory for LLMs.
+"""sluice - virtual memory for LLMs.
 
 Run MoE models bigger than your RAM by streaming experts from disk, with a
 calibrated speed<->quality dial and the receipts to back every number.
 
 Commands:
-  llmstream list             models on disk (and what they'd cost to pull)
-  llmstream estimate [name]  probe THIS machine, print honest expected tok/s
-  llmstream run <name>       chat REPL on the persistent warm server
-  llmstream ui               launch the dev/test chat UI (streamlit)
-  llmstream pull <name>      estimator first, then resumable download
-  llmstream rm <name>        delete a pulled model file
+  sluice list             models on disk (and what they'd cost to pull)
+  sluice estimate [name]  probe THIS machine, print honest expected tok/s
+  sluice run <name>       chat REPL on the persistent warm server
+  sluice ui               launch the dev/test chat UI (streamlit)
+  sluice pull <name>      estimator first, then resumable download
+  sluice rm <name>        delete a pulled model file
 
 Every speed number ships with its provenance: measured on the reference
 machine (M2 Air 16GB, ~1.7 GB/s cold SSD reads) and scaled by YOUR disk's
@@ -135,7 +135,7 @@ def fmt_modes(name, probe):
 
 def cmd_list(_):
     probe = {"disk_gbs": None}
-    print(f"{BOLD}models{RESET}  ({MODELS_DIR}){DIM} · llmstream estimate <name> for honest speeds{RESET}")
+    print(f"{BOLD}models{RESET}  ({MODELS_DIR}){DIM} · sluice estimate <name> for honest speeds{RESET}")
     for name in REGISTRY:
         p = model_path(name)
         want = REGISTRY[name]["bytes"]
@@ -171,7 +171,7 @@ def cmd_estimate(args):
 
 def cmd_pull(args):
     if not args or args[0] not in REGISTRY:
-        print(f"usage: llmstream pull <{'|'.join(REGISTRY)}>"); return 1
+        print(f"usage: sluice pull <{'|'.join(REGISTRY)}>"); return 1
     name = args[0]
     r = REGISTRY[name]
     dst = model_path(name)
@@ -191,7 +191,7 @@ def cmd_pull(args):
 
 def cmd_rm(args):
     if not args or args[0] not in REGISTRY:
-        print(f"usage: llmstream rm <{'|'.join(REGISTRY)}>"); return 1
+        print(f"usage: sluice rm <{'|'.join(REGISTRY)}>"); return 1
     p = model_path(args[0])
     if not p.exists():
         print("not on disk"); return 1
@@ -215,14 +215,14 @@ MODES = {"exact": 0.0, "balanced": 0.25, "fast": 1.25}
 
 def cmd_run(args):
     if not args or args[0] not in REGISTRY:
-        print(f"usage: llmstream run <{'|'.join(REGISTRY)}> [--mode exact|balanced|fast]"); return 1
+        print(f"usage: sluice run <{'|'.join(REGISTRY)}> [--mode exact|balanced|fast]"); return 1
     name = args[0]
     mode = "balanced"
     if "--mode" in args:
         mode = args[args.index("--mode") + 1]
     p = model_path(name)
     if not p.exists() or p.stat().st_size < REGISTRY[name]["bytes"] * 0.99:
-        print(f"{name} not fully on disk - `llmstream pull {name}` first"); return 1
+        print(f"{name} not fully on disk - `sluice pull {name}` first"); return 1
     if subprocess.run(["pgrep", "-f", "stream_run"], capture_output=True).returncode == 0:
         print("another engine/benchmark is running - one model at a time (machine-safety rule)")
         return 1
