@@ -69,10 +69,14 @@ def model_meta(name):
     return KNOWN[key] if key else {"size": "custom model", "note": "auto-detected on disk.", "mem": DEFAULT_MEM}
 
 # Speed↔quality dial, calibrated by the measured battery - not raw knobs.
+# Quality maps to a FAMILY-AGNOSTIC routing-fidelity floor (D3, closed E20):
+# the fraction of the model's true top-k experts the router must keep. Same
+# meaning on gpt-oss / OLMoE / Qwen / DeepSeek — the engine's adaptive
+# controller finds the margin that holds it. Exact = bit-identical (agree off).
 MODES = {
-    "Exact": {"margin": 0.0, "desc": "bit-identical to the resident model, hash-gated"},
-    "Balanced": {"margin": 0.25, "desc": "no measurable quality change (5-domain NLL battery) · recommended"},
-    "Fast": {"margin": 0.5, "desc": "faster · edge of the validated band, may occasionally dip"},
+    "Exact": {"agree": 0.0, "margin": 0.0, "desc": "bit-identical to the resident model, hash-gated"},
+    "Balanced": {"agree": 0.95, "margin": 0.0, "desc": "keep ≥95% of routing decisions · no measurable quality change (5-domain NLL) · recommended"},
+    "Fast": {"agree": 0.90, "margin": 0.0, "desc": "keep ≥90% · faster · edge of the validated band"},
 }
 
 SUGGESTIONS = {
@@ -134,7 +138,7 @@ atexit.register(lambda: _terminate(_server_slot()["proc"]))
 
 
 def cfg_key(cfg, sys_prompt, n_gen):
-    return (str(cfg["path"]), cfg["slots"], cfg["margin"], cfg["backend"],
+    return (str(cfg["path"]), cfg["slots"], cfg["margin"], cfg.get("agree", 0.0), cfg["backend"],
             cfg.get("temp", 0.8), sys_prompt, n_gen)
 
 
@@ -163,6 +167,7 @@ def ensure_server(cfg, sys_prompt, n_gen, status):
     env.update({
         "LLMSTREAM_SLOTS": str(cfg["slots"]),
         "LLMSTREAM_MARGIN": str(cfg["margin"]),
+        "LLMSTREAM_AGREE_TARGET": str(cfg.get("agree", 0.0)),
         "LLMSTREAM_STREAM_OUT": "1",
         "LLMSTREAM_SERVER": "1",
         "LLMSTREAM_IDLE_EXIT": str(IDLE_EXIT_S),
@@ -298,17 +303,22 @@ with st.sidebar:
                                 help="The speed↔quality dial, in battery-calibrated steps")
     mode = mode or "Balanced"
     cfg["margin"] = MODES[mode]["margin"]
+    cfg["agree"] = MODES[mode]["agree"]
     st.caption(f":material/verified: {MODES[mode]['desc']}")
 
     cfg["backend"] = "cpu"
     cfg["temp"] = 0.8
     with st.expander("Advanced", icon=":material/tune:"):
-        cfg["margin"] = st.slider("Margin (raw dial; 0 = bit-exact)", 0.0, 2.0,
-                                  float(cfg["margin"]), 0.05,
-                                  help="The raw quality knob behind the Response-quality presets")
-        if cfg["margin"] > 0.5:
-            st.warning("Margin > 0.5 is outside the validated quality band — "
-                       "the model can derail. 0.25 is the battery default.")
+        if cfg["agree"] > 0.0:
+            cfg["agree"] = st.slider("Routing fidelity floor (keep ≥ of true experts)",
+                                     0.85, 1.0, float(cfg["agree"]), 0.01,
+                                     help="Family-agnostic quality dial (D3): the fraction of the "
+                                          "model's true top-k experts the router must keep. Means the "
+                                          "same thing on every model; lower = faster, more streaming skips.")
+            if cfg["agree"] < 0.90:
+                st.warning("Below 0.90 fidelity is outside the validated band — the model can dip.")
+        else:
+            st.caption(":material/lock: Exact: bit-identical routing (100% fidelity, reproducible).")
         cfg["slots"] = st.select_slider("Expert-cache slots/layer (raw)",
                                         [4, 8, 12, 16, 24, 32, 48], value=cfg["slots"],
                                         help="The raw cache size behind the Memory presets")
