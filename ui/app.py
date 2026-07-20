@@ -312,9 +312,12 @@ with st.sidebar:
         cfg["slots"] = st.select_slider("Expert-cache slots/layer (raw)",
                                         [4, 8, 12, 16, 24, 32, 48], value=cfg["slots"],
                                         help="The raw cache size behind the Memory presets")
-        cfg["backend"] = st.segmented_control("Backend", ["cpu", "gpu"], default="cpu",
-                                              help="CPU loads much faster and decodes the "
-                                                   "same below ~0.9 hit; GPU pays at high hit rates") or "cpu"
+        # GPU is a footgun on Apple Silicon: it has no expert-major prefill pool,
+        # so it prefills token-by-token (ubatch=1) and first-token can hit 100-300s
+        # on a long prompt, while decoding no faster than CPU below ~0.9 hit. There
+        # is no case on this hardware where GPU wins, so it is not selectable.
+        cfg["backend"] = "cpu"
+        st.caption(":material/bolt: Backend: CPU (expert-major prefill — fastest on Apple Silicon)")
         cfg["temp"] = st.slider("Temperature (creativity)", 0.0, 1.5, 0.8, 0.05,
                                 help="0 = deterministic/focused, higher = more varied. "
                                      "Ollama's default is 0.8. Below ~0.3 can loop on long replies.")
