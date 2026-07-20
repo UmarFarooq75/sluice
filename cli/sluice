@@ -188,9 +188,12 @@ def cmd_pull(args):
     free = shutil.disk_usage(str(ROOT)).free / 1e9
     print(f"download {need:.1f} GB -> {dst}  (free disk now: {free:.0f} GB, after: {free - need:.0f} GB)")
     if free - need < 8:
+        # only stop to ask when it's genuinely risky; otherwise just go (ollama-style)
         print(f"{YELLOW}warning: this leaves <8 GB free - macOS degrades (swap, pressure) below that.{RESET}")
-    if input("proceed? [y/N] ").strip().lower() != "y":
-        print("aborted"); return 1
+        if input("proceed anyway? [y/N] ").strip().lower() != "y":
+            print("aborted"); return 1
+    else:
+        print(f"{DIM}downloading…{RESET}")
     dst.parent.mkdir(parents=True, exist_ok=True)
     return subprocess.call(["curl", "-L", "-C", "-", "-o", str(dst), r["url"]])
 
@@ -219,6 +222,25 @@ def cmd_ui(_):
 MODES = {"exact": 0.0, "balanced": 0.25, "fast": 1.25}
 
 
+def ensure_engine_built():
+    """First-run bootstrap: build the engine if it isn't there, so the user
+    never has to run cmake/build scripts by hand (ollama-style: it just works)."""
+    if ENGINE.exists():
+        return True
+    print(f"{DIM}first-time setup: building the sluice engine (one-time)…{RESET}")
+    lc = ROOT / "vendor" / "llama.cpp"
+    if not (lc / "build" / "bin").exists():
+        print(f"{DIM}  compiling llama.cpp with Metal — a few minutes…{RESET}")
+        if subprocess.call(["cmake", "-B", str(lc / "build"), "-S", str(lc),
+                            "-DGGML_METAL=ON", "-DCMAKE_BUILD_TYPE=Release"]) == 0:
+            subprocess.call(["cmake", "--build", str(lc / "build"), "--config", "Release", "-j"])
+    if subprocess.call(["bash", str(ROOT / "scripts" / "build_driver.sh")]) != 0 or not ENGINE.exists():
+        print(f"{YELLOW}engine build failed. Need Xcode CLT + cmake: xcode-select --install{RESET}")
+        return False
+    print(f"{GREEN}engine ready.{RESET}")
+    return True
+
+
 def cmd_run(args):
     if not args or args[0] not in REGISTRY:
         print(f"usage: sluice run <{'|'.join(REGISTRY)}> [--mode exact|balanced|fast]"); return 1
@@ -226,9 +248,14 @@ def cmd_run(args):
     mode = "balanced"
     if "--mode" in args:
         mode = args[args.index("--mode") + 1]
+    if not ensure_engine_built():
+        return 1
     p = model_path(name)
     if not p.exists() or p.stat().st_size < REGISTRY[name]["bytes"] * 0.99:
-        print(f"{name} not fully on disk - `sluice pull {name}` first"); return 1
+        print(f"{DIM}{name} isn't on disk yet — pulling it first (like ollama)…{RESET}")
+        if cmd_pull([name]) != 0:
+            return 1
+        p = model_path(name)
     if subprocess.run(["pgrep", "-f", "stream_run"], capture_output=True).returncode == 0:
         print("another engine/benchmark is running - one model at a time (machine-safety rule)")
         return 1
@@ -355,6 +382,8 @@ def cmd_serve(args):
     default_ref = next((a for a in args if not a.startswith("--") and a not in
                         (mode, str(temp), str(port))), None)
 
+    if not ensure_engine_built():
+        return 1
     eng = {"proc": None, "key": None, "lock": threading.Lock()}
     strip = lambda t: _re.sub(r"<\|[^|]*\|>", "", t)
 
