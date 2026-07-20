@@ -235,14 +235,25 @@ def parse_metrics(tail):
     return out
 
 
+def strip_harmony(t):
+    """Remove ALL harmony control tokens from text, including the plain-text
+    channel/role labels that follow a marker (`<|channel|>analysis`,
+    `<|start|>assistant`) — otherwise the literal word 'analysis'/'final'
+    leaks into the rendered text."""
+    t = re.sub(r"<\|channel\|>\s*\w+", " ", t)   # channel marker + its name
+    t = re.sub(r"<\|start\|>\s*\w+", " ", t)     # start marker + role
+    t = re.sub(r"<\|[^|]*\|>", " ", t)           # any remaining markers
+    return re.sub(r"[ \t]+\n", "\n", re.sub(r"[ \t]+", " ", t)).strip()
+
+
 def split_harmony(raw):
     """gpt-oss harmony format: analysis channel = thinking, final = answer."""
     m = re.search(r"<\|channel\|>final<\|message\|>(.*)", raw, re.S)
     if m:
-        final = re.sub(r"<\|[^|]*\|>", "", m.group(1))
-        thinking = re.sub(r"<\|[^|]*\|>", " ", raw[:m.start()]).strip()
+        final = strip_harmony(m.group(1))
+        thinking = strip_harmony(raw[:m.start()])
     elif "<|" in raw:
-        final, thinking = "", re.sub(r"<\|[^|]*\|>", " ", raw).strip()
+        final, thinking = "", strip_harmony(raw)
     else:
         final, thinking = raw, ""
     return final, thinking
@@ -525,15 +536,14 @@ if prompt:
                     st.warning("memory guard was active:\n" + "\n".join(guard_seen))
 
         final_clean, _ = split_harmony(raw)
-        final_clean = re.sub(r"<\|[^|]*\|>", "", final_clean).strip()
         a = re.search(r"<\|channel\|>analysis<\|message\|>(.*?)<\|end\|>", raw, re.S)
-        analysis = a.group(1).strip() if a else ""
+        analysis = strip_harmony(a.group(1)) if a else ""
         if not final_clean:
             # No clean <|channel|>final|> wrapper. High margin (Fast) can derail
             # the harmony channel structure, so the model's real text ends up in
             # an unterminated analysis channel. Show that text — never claim
             # "no tokens" when the engine actually generated some.
-            fallback = re.sub(r"\s+", " ", re.sub(r"<\|[^|]*\|>", " ", raw)).strip()
+            fallback = strip_harmony(raw)
             if fallback:
                 final_clean, analysis = fallback, ""
                 if met.get("decode") and float(met["decode"][1]) > 0:
