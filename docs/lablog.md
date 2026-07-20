@@ -834,6 +834,46 @@ believe a reviewer).
   generated; uses/144 tells the truth. Rungs labeled accordingly, only
   full-length runs quoted for warm claims.
 
+### E31. Frontier MLA+MTP family scan — PRE-REGISTERED envelope (2026-07-20)
+- **Question (Umar)**: commit sluice to an MLA+MTP frontier family (DeepSeek-V3 /
+  GLM) for "big + fast + zero-quality-loss"? Spec exact active-params, MLA dims,
+  MTP, compute the honest tok/s envelope on 16/32/64 GB, pre-register before build.
+- **Method**: two sourced spec pulls (config.json + arXiv + GGUF repos + llama.cpp
+  PRs) → scripts/envelope.py, calibrated against 5 measured anchors
+  (OLMoE 69/73, Qwen3.6-A3B 8.3, gpt-oss-120b 11.1/13.7). Master variable:
+  active_bytes/token = active_params × bytes/weight. K = tok/s×active_B ∈ [25..95].
+- **Two format-level killers found (apply to ALL of these families)**:
+  1. **MTP is carried-but-UNUSED in mainline llama.cpp GGUF** for both `deepseek2`
+     and `glm4moe` (nextn tensors dropped/inert; PR #14939). The 1.8× speculative
+     lever the papers sell is **unavailable to any GGUF engine.** mtp=1.0.
+  2. **MLA saves KV RAM (~71×), NOT bytes/token.** It helps residency, not speed.
+- **Sourced active-params + PRE-REGISTERED predictions** (MacBook-class, CPU):
+
+  | model | tot/act B | Q4 disk | active B/tok | bus ceil | 16 GB | 32 GB | 64 GB |
+  |---|---|---|---|---|---|---|---|
+  | **Qwen3.6-35B-A3B** | 35/3 | 26 GB | 2.07 | 48 | ~8 (MEASURED) | **fits: 10-13 pred** | fits: 10-13 |
+  | GLM-4.5-Air | 106/12 | 73 GB | 6.6 | 15 | 0.1-2 | ~2-3 | ~2-4 |
+  | DeepSeek-V3/R1 | 671/37 | 377 GB | 20.4 | 5 | 0.1-2 | 0.1-2 | 0.1-2 |
+  | GLM-4.5 / 4.6 | 355/32 | 201 GB | 17.6 | 6 | 0.1-2 | 0.1-2 | 0.1-2 |
+  | GLM-5.2 | 750/40 | 466 GB | 22.0 | 5 | 0.1-2 | 0.1-2 | 0.1-2 |
+
+  Predictions are FALSIFIABLE bands to grade later. Qwen resident band narrowed to
+  10-13 (not the raw 13-30) because its model-specific K≈30 (Q5 dequant + shared
+  expert + hybrid attn) is far below OLMoE's K≈90; the head-to-head json already
+  measured the CPU compute ceiling at ~9-11 for 3B active. Streamed "0.1-2" rows
+  are anchored to colibri's MEASURED GLM-5.2 (0.05-0.1 tok/s @25 GB, 1.8 @128 GB).
+- **Verdict (decision, not yet an experiment)**: the frontier MLA+MTP giants are
+  **dead ends on consumer hardware** — 32-40 B active → ≤6 tok/s bus ceiling *even
+  all-resident*, they don't fit so they stream (colibri regime), and their one
+  escape (MTP) is inert in GGUF. The design rule holds and is now sourced:
+  **chase high-total / LOW-active (A3B-class), not active-heavy frontier models.**
+  Quality ∝ active-params ∝ bytes/token ∝ 1/speed — the trilemma's root, quantified.
+- **Only near-miss**: GLM-4.5-Air (12 B active) — colibri regime on 16 GB, ~2-4 on
+  64 GB. Not competitive with the A3B path on this hardware.
+- **Next**: the winning target is the model we already hold. Pre-registered test to
+  run when a 32 GB machine is available: Qwen3.6-35B-A3B fully resident → predict
+  10-13 tok/s (falsifies if <8 or >16). No frontier download justified by this scan.
+
 ### Product arc 1: llmstream CLI + chat UI v2 + D10 closed (2026-07-20)
 - **Name decided**: llmstream ("virtual memory for LLMs"). CLI in
   cli/llmstream: list / estimate / run / ui / pull / rm. The estimator is
