@@ -7,9 +7,11 @@
 set -e
 cd "$(dirname "$0")/.."
 
-GGUF=$(find hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots -name "*.gguf" | head -1)
-[ -z "$GGUF" ] && { echo "GGUF not found"; exit 1; }
-N_GEN=${N_GEN:-32}
+# OLMoE was the original gate model; after disk cleanup (2026-07-20) we gate on
+# gpt-oss-20b, which is on disk and is a shipped family. Override with GGUF=...
+GGUF=${GGUF:-models/gpt-oss-20b-MXFP4.gguf}
+[ ! -f "$GGUF" ] && { echo "gate model not found: $GGUF"; exit 1; }
+N_GEN=${N_GEN:-24}
 PROMPT=${PROMPT:-"Write a Python function that checks whether a number is prime, then explain its complexity."}
 
 # all gate runs disable weight repacking: repacked layouts use different gemm

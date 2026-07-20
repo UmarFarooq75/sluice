@@ -1290,11 +1290,44 @@ int main(int argc, char ** argv) {
     uint64_t hash = 0xcbf29ce484222325ULL;
     std::string out;
     llama_token cur = 0;
+
+    // Token selection. Default = greedy argmax, which keeps the logit-hash gate
+    // bit-exact (our correctness contract). But greedy loops on real chat
+    // ("X for Y for X for Y..."), so chat mode enables a repetition penalty and
+    // light temperature via env - the same fix every LLM runtime ships.
+    // LLMSTREAM_REP_PEN (1.0=off), LLMSTREAM_TEMP (0=greedy), LLMSTREAM_TOP_P,
+    // LLMSTREAM_REP_LAST, LLMSTREAM_SEED. Any of REP_PEN>1 or TEMP>0 turns it on.
+    const float s_temp    = getenv("LLMSTREAM_TEMP")     ? (float) atof(getenv("LLMSTREAM_TEMP"))     : 0.0f;
+    const float s_reppen  = getenv("LLMSTREAM_REP_PEN")  ? (float) atof(getenv("LLMSTREAM_REP_PEN"))  : 1.0f;
+    const float s_topp    = getenv("LLMSTREAM_TOP_P")    ? (float) atof(getenv("LLMSTREAM_TOP_P"))    : 0.95f;
+    const int   s_replast = getenv("LLMSTREAM_REP_LAST") ? atoi(getenv("LLMSTREAM_REP_LAST"))         : 128;
+    const uint32_t s_seed = getenv("LLMSTREAM_SEED")     ? (uint32_t) atoll(getenv("LLMSTREAM_SEED")) : 0u;
+    llama_sampler * smpl = nullptr;
+    if (s_reppen > 1.0f || s_temp > 0.0f) {
+        smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
+        llama_sampler_chain_add(smpl, llama_sampler_init_penalties(s_replast, s_reppen, 0.0f, 0.0f));
+        if (s_temp > 0.0f) {
+            llama_sampler_chain_add(smpl, llama_sampler_init_top_p(s_topp, 1));
+            llama_sampler_chain_add(smpl, llama_sampler_init_temp(s_temp));
+            llama_sampler_chain_add(smpl, llama_sampler_init_dist(s_seed));
+        } else {
+            llama_sampler_chain_add(smpl, llama_sampler_init_greedy());
+        }
+    }
+    auto pick = [&](const float * logits) -> llama_token {
+        if (smpl) {
+            llama_token t = llama_sampler_sample(smpl, ctx, -1);
+            llama_sampler_accept(smpl, t);
+            return t;
+        }
+        llama_token best_id = 0; float best = -1e30f;
+        for (int i = 0; i < n_vocab; i++) if (logits[i] > best) { best = logits[i]; best_id = i; }
+        return best_id;
+    };
     {
         const float * logits = llama_get_logits_ith(ctx, -1);
         hash = fnv1a(logits, sizeof(float) * n_vocab, hash);
-        float best = -1e30f;
-        for (int i = 0; i < n_vocab; i++) if (logits[i] > best) { best = logits[i]; cur = i; }
+        cur = pick(logits);
     }
     static const bool print_toks = getenv("LLMSTREAM_PRINT_TOKS") != nullptr;
     // LLMSTREAM_STREAM_OUT: emit pieces to stdout as they decode, bracketed by
@@ -1323,9 +1356,9 @@ int main(int argc, char ** argv) {
         generated++;
         const float * logits = llama_get_logits_ith(ctx, -1);
         hash = fnv1a(logits, sizeof(float) * n_vocab, hash);
-        float best = -1e30f;
-        for (int i = 0; i < n_vocab; i++) if (logits[i] > best) { best = logits[i]; cur = i; }
+        cur = pick(logits);
     }
+    if (smpl) llama_sampler_free(smpl);
     if (stream_out) { printf("\n<<<END>>>\n"); fflush(stdout); }
     auto t2 = std::chrono::steady_clock::now();
 

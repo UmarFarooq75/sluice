@@ -81,6 +81,33 @@ SUGGESTIONS = {
     ":violet[:material/psychology:] Reason": "A train leaves at 9am at 40 mph; another at 11am at 60 mph on a parallel track. When does the second catch the first?",
 }
 
+DEFAULT_SYSTEM = """You are a knowledgeable, reliable, and practical AI assistant.
+
+Your goals are to:
+- Provide accurate, clear, and helpful answers.
+- Ask brief clarifying questions when information is missing or ambiguous.
+- Be concise by default, but provide more detail when requested or when it improves the answer.
+- Explain complex topics in plain language without oversimplifying.
+- Be honest about uncertainty. Never fabricate facts, sources, or capabilities.
+- If you don't know something, say so and suggest how the user can find the answer.
+- Follow the user's instructions as long as they are safe, legal, and consistent with your role.
+- Correct mistakes when identified without being defensive.
+- Structure responses for readability using headings or bullet points when appropriate.
+- When solving problems, think through the task internally and present only the final reasoning needed for the user.
+- For code, prioritize correctness, readability, security, and maintainability. Include comments only when they add value.
+- When multiple valid approaches exist, briefly compare the main trade-offs and recommend one.
+- Avoid unnecessary verbosity, repetition, and filler.
+
+Communication style:
+- Be friendly, professional, and direct.
+- Match the user's level of technical knowledge when possible.
+- Do not be overly apologetic or overly confident.
+- Focus on actionable, useful responses.
+
+Always prioritize being truthful, helpful, and clear.
+
+Reasoning: low"""
+
 
 @st.cache_resource
 def _server_slot():
@@ -140,6 +167,13 @@ def ensure_server(cfg, sys_prompt, n_gen, status):
         "LLMSTREAM_IDLE_EXIT": str(IDLE_EXIT_S),
         "LLMSTREAM_CHAT": "1",
         "LLMSTREAM_PREFILL_SLOTS": "1",  # E27: expert-major prefill (8× TTFT)
+        # chat sampling: greedy decoding loops ("X for Y for X for Y..."), so
+        # use a repetition penalty + light temperature like every LLM runtime.
+        # (The bit-exact gates run WITHOUT these, staying greedy/deterministic.)
+        "LLMSTREAM_REP_PEN": "1.15",
+        "LLMSTREAM_TEMP": "0.7",
+        "LLMSTREAM_TOP_P": "0.95",
+        "LLMSTREAM_REP_LAST": "256",
     })
     if sys_prompt.strip():
         env["LLMSTREAM_SYSTEM"] = sys_prompt.strip()
@@ -263,9 +297,9 @@ with st.sidebar:
                                                    "same below ~0.9 hit; GPU pays at high hit rates") or "cpu"
         n_gen = st.number_input("Max new tokens", min_value=16, max_value=1024, value=256, step=16)
         sys_prompt = st.text_area(
-            "System prompt",
-            value="You are a helpful, concise assistant. Answer the user's message directly. Reasoning: low",
-            help="'Reasoning: low' keeps gpt-oss from very long thinking")
+            "System prompt", value=DEFAULT_SYSTEM, height=200,
+            help="Grounds the model. The trailing 'Reasoning: low' keeps gpt-oss "
+                 "from very long internal thinking — raise to medium/high for harder tasks.")
 
     st.space("small")
 
