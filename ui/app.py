@@ -258,8 +258,13 @@ with st.sidebar:
         st.error("No models found on disk. Pull one with `sluice pull gpt-oss-20b`, "
                  "then it appears here automatically.")
         st.stop()
-    choice = st.selectbox("Model", list(disk_models), help="Every model on your disk — "
-                          "newly pulled ones show up automatically")
+    # default to gpt-oss-20b when present (best speed/quality balance on 16 GB).
+    # note "20b" is a substring of "120b", so exclude the 120b explicitly.
+    names = list(disk_models)
+    default_ix = next((i for i, n in enumerate(names)
+                       if "20b" in n.lower() and "120b" not in n.lower()), 0)
+    choice = st.selectbox("Model", names, index=default_ix,
+                          help="Every model on your disk — newly pulled ones show up automatically")
     meta = model_meta(choice)
     cfg = {"path": disk_models[choice]}
     st.caption(f":material/database: {meta['size']}")
@@ -384,7 +389,10 @@ if not st.session_state.chat_log:
     if picked:
         prompt = SUGGESTIONS[picked]
 
-typed = st.chat_input(f"Message {choice}…", submit_mode="disable")
+# submit_mode="stop": while a reply streams, the send button becomes a Stop
+# button that halts the script mid-generation (the script is blocked in the
+# read loop, so this is the only way to interrupt from the browser).
+typed = st.chat_input(f"Message {choice}…", submit_mode="stop")
 prompt = typed or prompt
 
 if prompt:
@@ -397,6 +405,13 @@ if prompt:
         think_ph = st.empty()
         answer_ph = st.empty()
         foot_ph = st.empty()
+        # if the previous reply was stopped mid-stream, the warm engine still
+        # has an unfinished generation in its pipe - it's dirty, so restart it
+        # clean before this request rather than reading stale tokens
+        if st.session_state.get("gen_active"):
+            _terminate(_server_slot()["proc"])
+            _server_slot().update(proc=None, key=None)
+            st.session_state.gen_active = False
         try:
             proc = ensure_server(cfg, sys_prompt, n_gen, status)
         except RuntimeError as e:
@@ -414,6 +429,7 @@ if prompt:
                  for t in st.session_state.chat_log]
         proc.stdin.write("\x1e".join(turns).encode() + b"\n")
         proc.stdin.flush()
+        st.session_state.gen_active = True  # if Stop is hit, this stays True -> clean restart next turn
         status.update(label="Prefilling prompt (expert-major)…", state="running")
 
         buf = b""
@@ -528,6 +544,7 @@ if prompt:
                                "quality, or rephrase your message)*")
             else:
                 final_clean = "*(empty response)*"
+        st.session_state.gen_active = False  # completed normally - engine is clean
         st.session_state.chat_log.append(
             {"role": "assistant", "text": final_clean,
              "thinking": analysis, "timing": timing})
