@@ -219,7 +219,24 @@ def cmd_ui(_):
     os.execvp(exe, [exe, "run", str(app)])
 
 
-MODES = {"exact": 0.0, "balanced": 0.25, "fast": 1.25}
+# Quality modes map to a FAMILY-AGNOSTIC routing-fidelity floor (D3, closed in
+# E20): the fraction of the true top-k experts the router must keep. It means
+# the SAME thing on gpt-oss (logit-scale gating) and OLMoE/Qwen/DeepSeek
+# (prob/sigmoid-scale) — the engine's adaptive controller finds the margin that
+# holds it. 'exact' = bit-identical routing (margin 0, reproducible); the
+# floored modes trade a little routing fidelity for streaming speed.
+MODES = {
+    "exact":    {"agree": 0.0,  "margin": 0.0},   # bit-exact, run-reproducible
+    "balanced": {"agree": 0.95, "margin": 0.0},   # keep >=95% of routing decisions (E20)
+    "fast":     {"agree": 0.90, "margin": 0.0},   # keep >=90%, more speed
+}
+
+
+def mode_env(mode):
+    m = MODES.get(mode, MODES["balanced"])
+    # AGREE_TARGET>0 enables the adaptive controller (seeds from a small margin
+    # and climbs to hold the floor); =0 means fixed exact routing.
+    return {"LLMSTREAM_AGREE_TARGET": str(m["agree"]), "LLMSTREAM_MARGIN": str(m["margin"])}
 
 
 def ensure_engine_built():
@@ -263,7 +280,7 @@ def cmd_run(args):
     env = os.environ.copy()
     env.update({
         "LLMSTREAM_SLOTS": str(REGISTRY[name]["slots"]),
-        "LLMSTREAM_MARGIN": str(MODES.get(mode, 0.25)),
+        **mode_env(mode),
         "LLMSTREAM_SERVER": "1", "LLMSTREAM_STREAM_OUT": "1", "LLMSTREAM_CHAT": "1",
         "LLMSTREAM_IDLE_EXIT": "600", "LLMSTREAM_PREFILL_SLOTS": "1",
         "LLMSTREAM_SYSTEM": "You are a helpful, concise assistant. Answer the user's message directly. Reasoning: low",
@@ -351,7 +368,7 @@ def _serve_spawn(path, is_registry, name, mode, temp, system):
     env.update({
         "LLMSTREAM_SERVER": "1", "LLMSTREAM_STREAM_OUT": "1", "LLMSTREAM_CHAT": "1",
         "LLMSTREAM_IDLE_EXIT": "600", "LLMSTREAM_PREFILL_SLOTS": "1",
-        "LLMSTREAM_MARGIN": str(MODES.get(mode, 0.25)),
+        **mode_env(mode),
         "LLMSTREAM_TEMP": str(temp), "LLMSTREAM_TOP_P": "0.9",
         "LLMSTREAM_TOP_K": "40", "LLMSTREAM_REP_PEN": "1.1", "LLMSTREAM_REP_LAST": "64",
         "LLMSTREAM_SYSTEM": system,
