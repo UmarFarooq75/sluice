@@ -53,10 +53,12 @@ REGISTRY = {
         "bytes": 12_110_000_000,
         "size": "21B total / 3.6B active, 12.1 GB",
         "slots": 16,
-        "modes": {
-            "exact (bit-identical)":   {"toks": None, "io_bound": True},  # E28 leg 2 pending
+        "modes": {  # E28 leg 2, measured 2026-07-20 (32-expert model, 24 layers)
+            "balanced, ~6.6 GB cache":   {"toks": 5.9, "io_bound": True},
+            "performance, ~8.5 GB cache": {"toks": 4.0, "io_bound": True},
         },
-        "note": "middle tier - E28 leg-2 measurement pending; numbers land after first run.",
+        "note": "middle tier — ~3× the 120B, comfortable on 16 GB (6.6 GB footprint at "
+                "balanced, hit 0.905). Higher cache lifts hit but not speed on this box (D10).",
     },
     "olmoe-7b": {
         "file": None,  # lives in hf_home from the research phase

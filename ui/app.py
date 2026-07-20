@@ -24,26 +24,61 @@ ROOT = Path(__file__).resolve().parents[1]
 ENGINE = ROOT / "csrc" / "stream_run"
 IDLE_EXIT_S = 600
 
-st.set_page_config(page_title="sluice", page_icon=":material/stream:", layout="centered")
+st.set_page_config(page_title="sluice", page_icon=":material/water:", layout="centered")
 
-MODELS = {
+# Known-model metadata: nice descriptions + per-preset slot counts (measured
+# footprints, E28/E30). Matched to discovered files by filename substring;
+# anything else found on disk still runs, with safe auto defaults.
+KNOWN = {
     "gpt-oss-120b": {
-        "path": ROOT / "models" / "gpt-oss-120b-MXFP4.gguf",
-        "slots": 8, "chat": True, "size": "117B total · 5.1B active · 63.4 GB file",
-        "note": "the flagship: 4× this machine's RAM. First message pays a one-time "
-                "load (~1–2 min); later turns stay warm.",
+        "size": "117B total · 5.1B active · 63.4 GB",
+        "note": "the flagship: 4× this machine's RAM. First message pays a one-time load (~1–2 min); later turns stay warm.",
+        "mem": {"Light": (8, "~5.7 GB"), "Balanced": (12, "~7.6 GB"), "Performance": (12, "~7.6 GB (16 trips the guard on 16GB)")},
     },
     "gpt-oss-20b": {
-        "path": ROOT / "models" / "gpt-oss-20b-MXFP4.gguf",
-        "slots": 16, "chat": True, "size": "21B total · 3.6B active · 12.1 GB file",
-        "note": "the middle tier - much faster, still bigger than RAM comfort.",
+        "size": "21B total · 3.6B active · 12.1 GB",
+        "note": "the middle tier — ~3× the 120B, comfortable on 16 GB RAM.",
+        "mem": {"Light": (12, "~5.5 GB"), "Balanced": (16, "~6.6 GB"), "Performance": (24, "~8.5 GB")},
     },
-    "OLMoE-1B-7B": {
-        "path": next((ROOT / "hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots").glob("*/*.gguf"), None)
-        if (ROOT / "hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots").exists() else None,
-        "slots": 32, "chat": True, "size": "7B total · 1.3B active · 4.3 GB file",
-        "note": "small and snappy (~45-70 tok/s warm) - ideal for UI testing.",
+    "olmoe": {
+        "size": "7B total · 1.3B active · 4.3 GB",
+        "note": "small and snappy — ideal for UI testing.",
+        "mem": {"Light": (16, "~1.4 GB"), "Balanced": (32, "~2.6 GB"), "Performance": (48, "~3.5 GB")},
     },
+}
+DEFAULT_MEM = {"Light": (8, "smaller cache"), "Balanced": (16, "balanced cache"), "Performance": (32, "large cache")}
+
+
+@st.cache_data(ttl=10)
+def discover_models():
+    """Scan disk for runnable GGUFs - models/ plus the hf_home cache. Newly
+    pulled models appear automatically; nothing is hard-coded."""
+    found = {}
+    for gguf in sorted((ROOT / "models").glob("*.gguf")):
+        found[gguf.stem.replace("-MXFP4", "").replace("-mxfp4", "")] = gguf
+    hf = ROOT / "hf_home" / "hub"
+    if hf.exists():
+        for snap in hf.glob("models--*/snapshots/*/*.gguf"):
+            name = snap.parts[snap.parts.index("hub") + 1].split("--")[-1]
+            found.setdefault(name, snap)
+    return {k: str(v) for k, v in found.items()}
+
+
+def model_meta(name):
+    key = next((k for k in KNOWN if k in name.lower()), None)
+    return KNOWN[key] if key else {"size": "custom model", "note": "auto-detected on disk.", "mem": DEFAULT_MEM}
+
+# Speed↔quality dial, calibrated by the measured battery - not raw knobs.
+MODES = {
+    "Exact": {"margin": 0.0, "desc": "bit-identical to the resident model, hash-gated"},
+    "Balanced": {"margin": 0.25, "desc": "5-domain NLL battery: no measurable change · fidelity ≥ .91"},
+    "Fast": {"margin": 1.25, "desc": "~3× decode speed · measured, documented quality cost"},
+}
+
+SUGGESTIONS = {
+    ":blue[:material/lightbulb:] Explain something": "Explain why the sky is blue in two sentences.",
+    ":green[:material/code:] Write code": "Write a Python function that checks whether a number is prime.",
+    ":violet[:material/psychology:] Reason": "A train leaves at 9am at 40 mph; another at 11am at 60 mph on a parallel track. When does the second catch the first?",
 }
 
 # Speed↔quality dial, calibrated by the measured battery - not raw knobs.
@@ -188,31 +223,47 @@ with st.sidebar:
     st.markdown("### :material/water: sluice")
     st.caption("Virtual memory for LLMs - models bigger than your RAM, with quality receipts.")
 
-    available = [k for k, v in MODELS.items() if v["path"] and Path(v["path"]).exists()]
-    if not available:
-        st.error(f"No model files found under {ROOT} - check models/ and hf_home/")
+    disk_models = discover_models()
+    if not disk_models:
+        st.error("No models found on disk. Pull one with `sluice pull gpt-oss-20b`, "
+                 "then it appears here automatically.")
         st.stop()
-    choice = st.selectbox("Model", available, help="Only models present on disk are listed")
-    cfg = dict(MODELS[choice])
-    st.caption(f":material/database: {cfg['size']}")
-    st.caption(cfg["note"])
+    choice = st.selectbox("Model", list(disk_models), help="Every model on your disk — "
+                          "newly pulled ones show up automatically")
+    meta = model_meta(choice)
+    cfg = {"path": disk_models[choice]}
+    st.caption(f":material/database: {meta['size']}")
+    st.caption(meta["note"])
 
-    mode = st.segmented_control("Mode", list(MODES.keys()), default="Balanced",
+    # Memory: a plain-language budget, not "slots/layer". Each preset maps to a
+    # measured RAM footprint for this model; the engine sizes its expert cache
+    # to fit. "How much of your Mac to spend."
+    mem_opts = meta["mem"]
+    mem_choice = st.segmented_control(
+        "Memory to use", list(mem_opts), default="Balanced",
+        help="How much RAM to give the expert cache. More = faster (higher cache "
+             "hit rate), up to what your Mac can spare without slowing down.")
+    mem_choice = mem_choice or "Balanced"
+    cfg["slots"], mem_gb = mem_opts[mem_choice]
+    st.caption(f":material/memory: uses {mem_gb} of RAM")
+
+    mode = st.segmented_control("Response quality", list(MODES.keys()), default="Balanced",
                                 help="The speed↔quality dial, in battery-calibrated steps")
     mode = mode or "Balanced"
     cfg["margin"] = MODES[mode]["margin"]
     st.caption(f":material/verified: {MODES[mode]['desc']}")
 
+    cfg["backend"] = "cpu"
     with st.expander("Advanced", icon=":material/tune:"):
         cfg["margin"] = st.slider("Margin (raw dial; 0 = bit-exact)", 0.0, 2.0,
-                                  float(cfg["margin"]), 0.05)
+                                  float(cfg["margin"]), 0.05,
+                                  help="The raw quality knob behind the Response-quality presets")
         if cfg["margin"] > 0.5:
-            st.warning("Margin > 0.5 is outside the validated quality band - "
+            st.warning("Margin > 0.5 is outside the validated quality band — "
                        "the model can derail. 0.25 is the battery default.")
-        cfg["slots"] = st.select_slider("Slots/layer (expert cache)",
-                                        [4, 8, 12, 16, 32, 48], value=cfg["slots"],
-                                        help="More slots = more RAM, higher hit rate. "
-                                             "12 is the measured 16GB-Mac ceiling for 120B.")
+        cfg["slots"] = st.select_slider("Expert-cache slots/layer (raw)",
+                                        [4, 8, 12, 16, 24, 32, 48], value=cfg["slots"],
+                                        help="The raw cache size behind the Memory presets")
         cfg["backend"] = st.segmented_control("Backend", ["cpu", "gpu"], default="cpu",
                                               help="CPU loads much faster and decodes the "
                                                    "same below ~0.9 hit; GPU pays at high hit rates") or "cpu"
@@ -277,8 +328,8 @@ with st.sidebar:
 
 # ---------------- chat ----------------
 st.title("Chat", anchor=False)
-st.caption(f"{choice} · {mode} mode · streaming from a {cfg['size'].split('·')[-1].strip()} "
-           "file through the expert cache")
+st.caption(f"{choice} · {mem_choice} memory · {mode} quality · "
+           f"streaming from a {meta['size'].split('·')[-1].strip()} file")
 
 if "chat_log" not in st.session_state:
     st.session_state.chat_log = []
