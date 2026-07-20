@@ -834,6 +834,32 @@ believe a reviewer).
   generated; uses/144 tells the truth. Rungs labeled accordingly, only
   full-length runs quoted for warm claims.
 
+### Product arc 1: llmstream CLI + chat UI v2 + D10 closed (2026-07-20)
+- **Name decided**: llmstream ("virtual memory for LLMs"). CLI in
+  cli/llmstream: list / estimate / run / ui / pull / rm. The estimator is
+  the honesty contract - probes THIS machine (RAM, 32x8MB F_NOCACHE random
+  reads = the streaming access pattern) and prints per-mode tok/s scaled
+  from the reference measurements, with provenance, BEFORE any download.
+  First live probe immediately proved the concept: it measured 1.4 GB/s
+  (the 20b download was competing for the disk) and scaled the streamed
+  estimate down accordingly.
+- **Chat UI v2** (ui/app.py, one-dark-pro theme): real chat surface
+  (st.chat_message/chat_input, suggestion pills, streaming with thinking
+  expander), the dial as battery-calibrated modes (Exact/Balanced/Fast)
+  instead of raw knobs (raw margin+slots under Advanced), live machine
+  stats as a 2s auto-refresh fragment, per-turn physics popover (hit,
+  fidelity, footprint, thermal), engine card with Stop + orphan sweep.
+  All safety plumbing carried over; server now runs with
+  LLMSTREAM_PREFILL_SLOTS=1 + ubatch 128 (E27 fast TTFT in chat). Old
+  examples/streamlit_probe/app.py retired (probe.py stays).
+- **D10 CLOSED**: NSProcessInfo.thermalState via the objc runtime prints
+  "therm: nominal|fair|serious|critical" in every artifact (build needs
+  -lobjc -framework Foundation - scripts/build_driver.sh is now the
+  canonical build). No cross-run speed comparison is blind to throttling
+  again.
+- gpt-oss-20b pull running in background (12.11 GB, user-approved; leaves
+  ~4 GB free - keep-vs-delete decided after the E28 leg-2 measurement).
+
 ### E17. Deep-dive refutations: parallel part-fetch ≈ flat, E-cores hurt
 - **Change**: (a) one I/O job per tensor extent (6-way parallel per expert
   miss, 10 workers, LLMSTREAM_IO_WORKERS); (b) LLMSTREAM_THREADS env.

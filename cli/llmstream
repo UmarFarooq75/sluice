@@ -1,0 +1,314 @@
+#!/usr/bin/env python3
+"""llmstream - virtual memory for LLMs.
+
+Run MoE models bigger than your RAM by streaming experts from disk, with a
+calibrated speed<->quality dial and the receipts to back every number.
+
+Commands:
+  llmstream list             models on disk (and what they'd cost to pull)
+  llmstream estimate [name]  probe THIS machine, print honest expected tok/s
+  llmstream run <name>       chat REPL on the persistent warm server
+  llmstream ui               launch the dev/test chat UI (streamlit)
+  llmstream pull <name>      estimator first, then resumable download
+  llmstream rm <name>        delete a pulled model file
+
+Every speed number ships with its provenance: measured on the reference
+machine (M2 Air 16GB, ~1.7 GB/s cold SSD reads) and scaled by YOUR disk's
+measured bandwidth for the I/O-bound modes. No marketing numbers.
+"""
+import json
+import os
+import random
+import shutil
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+ENGINE = ROOT / "csrc" / "stream_run"
+MODELS_DIR = ROOT / "models"
+
+# Reference machine: everything below was MEASURED there (docs/lablog.md
+# E19-E30); io_bound modes scale ~linearly with disk bandwidth vs REF_BW.
+REF_BW_GBS = 1.7
+REGISTRY = {
+    "gpt-oss-120b": {
+        "file": "gpt-oss-120b-MXFP4.gguf",
+        "url": "https://huggingface.co/ggml-org/gpt-oss-120b-GGUF/resolve/main/gpt-oss-120b-mxfp4-00001-of-00003.gguf",
+        "bytes": 63_387_346_208,
+        "size": "117B total / 5.1B active, 63.4 GB",
+        "slots": 8,
+        "modes": {  # tok/s on the reference machine, warm; io_bound scales with your disk
+            "exact (bit-identical)":   {"toks": 1.6, "io_bound": True},
+            "balanced (default)":      {"toks": 2.4, "io_bound": True},
+            "fast (measured cost)":    {"toks": 5.6, "io_bound": True},
+        },
+        "note": "prefill 10.8 tok/s expert-major (E27); ~2.4 tok/s warm at 10GB (E30). "
+                "60+ tok/s for this model needs a wider memory bus (Mac Studio class), not more software.",
+    },
+    "gpt-oss-20b": {
+        "file": "gpt-oss-20b-MXFP4.gguf",
+        "url": "https://huggingface.co/ggml-org/gpt-oss-20b-GGUF/resolve/main/gpt-oss-20b-MXFP4.gguf",
+        "bytes": 12_110_000_000,
+        "size": "21B total / 3.6B active, 12.1 GB",
+        "slots": 16,
+        "modes": {
+            "exact (bit-identical)":   {"toks": None, "io_bound": True},  # E28 leg 2 pending
+        },
+        "note": "middle tier - E28 leg-2 measurement pending; numbers land after first run.",
+    },
+    "olmoe-7b": {
+        "file": None,  # lives in hf_home from the research phase
+        "hf_glob": "hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots/*/*.gguf",
+        "url": "https://huggingface.co/allenai/OLMoE-1B-7B-0125-Instruct-GGUF/resolve/main/olmoe-1b-7b-0125-instruct-q4_k_m.gguf",
+        "bytes": 4_300_000_000,
+        "size": "7B total / 1.3B active, 4.3 GB",
+        "slots": 32,
+        "modes": {
+            "resident CPU":            {"toks": 69.4, "io_bound": False},
+            "resident Metal":          {"toks": 72.9, "io_bound": False},
+            "streamed s48 (1/3 RAM)":  {"toks": 48.1, "io_bound": True},
+        },
+        "note": "the 60-70 tok/s tier on a 16GB machine (E28), bit-exact.",
+    },
+}
+
+BOLD, DIM, RESET, CYAN, GREEN, YELLOW = "\033[1m", "\033[2m", "\033[0m", "\033[36m", "\033[32m", "\033[33m"
+
+
+def model_path(name):
+    r = REGISTRY[name]
+    if r.get("file"):
+        return MODELS_DIR / r["file"]
+    hits = sorted(ROOT.glob(r["hf_glob"]))
+    return hits[0] if hits else MODELS_DIR / f"{name}.gguf"
+
+
+def measure_disk_bw(sample_file):
+    """Read 32 random 8MB spans of a big file - cold-ish sequential-random mix,
+    the pattern expert streaming actually does. Returns GB/s."""
+    size = sample_file.stat().st_size
+    span = 8 * 1024 * 1024
+    n = 32
+    fd = os.open(str(sample_file), os.O_RDONLY)
+    try:
+        try:
+            import fcntl
+            F_NOCACHE = 48
+            fcntl.fcntl(fd, F_NOCACHE, 1)  # macOS: bypass page cache = honest cold reads
+        except Exception:
+            pass
+        rng = random.Random(42)
+        t0 = time.time()
+        got = 0
+        for _ in range(n):
+            off = rng.randrange(0, max(1, size - span)) & ~4095
+            got += len(os.pread(fd, span, off))
+        dt = time.time() - t0
+    finally:
+        os.close(fd)
+    return got / dt / 1e9
+
+
+def machine_probe():
+    ram = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES") / 1e9
+    free_disk = shutil.disk_usage(str(ROOT)).free / 1e9
+    sample = next((p for n in REGISTRY if (p := model_path(n)) and p.exists() and p.stat().st_size > 1e9), None)
+    bw = measure_disk_bw(sample) if sample else None
+    return {"ram_gb": ram, "free_disk_gb": free_disk, "disk_gbs": bw}
+
+
+def fmt_modes(name, probe):
+    r = REGISTRY[name]
+    lines = []
+    scale = (probe["disk_gbs"] / REF_BW_GBS) if probe.get("disk_gbs") else 1.0
+    for mode, m in r["modes"].items():
+        if m["toks"] is None:
+            lines.append(f"    {mode:<26} not yet measured")
+            continue
+        t = m["toks"] * (scale if m["io_bound"] else 1.0)
+        prov = "scaled to your disk" if (m["io_bound"] and probe.get("disk_gbs")) else "measured"
+        lines.append(f"    {mode:<26} {BOLD}{t:5.1f} tok/s{RESET}  {DIM}({prov}){RESET}")
+    return lines
+
+
+def cmd_list(_):
+    probe = {"disk_gbs": None}
+    print(f"{BOLD}models{RESET}  ({MODELS_DIR}){DIM} · llmstream estimate <name> for honest speeds{RESET}")
+    for name in REGISTRY:
+        p = model_path(name)
+        want = REGISTRY[name]["bytes"]
+        if p and p.exists() and p.stat().st_size >= want * 0.99:
+            mark = f"{GREEN}on disk{RESET}"
+        elif p and p.exists():
+            mark = f"{YELLOW}partial {p.stat().st_size/1e9:.1f}/{want/1e9:.1f} GB (pull resumes it){RESET}"
+        else:
+            mark = f"{DIM}pull to get ({want/1e9:.1f} GB){RESET}"
+        print(f"  {CYAN}{name:<14}{RESET} {REGISTRY[name]['size']:<38} {mark}")
+    return 0
+
+
+def cmd_estimate(args):
+    names = [args[0]] if args else list(REGISTRY)
+    print(f"{DIM}probing this machine (RAM, disk bandwidth - takes ~10s)…{RESET}")
+    probe = machine_probe()
+    bw = f"{probe['disk_gbs']:.1f} GB/s" if probe["disk_gbs"] else "unknown (no big file to sample)"
+    print(f"{BOLD}this machine{RESET}: RAM {probe['ram_gb']:.0f} GB · free disk "
+          f"{probe['free_disk_gb']:.0f} GB · cold read {bw}\n")
+    for name in names:
+        if name not in REGISTRY:
+            print(f"unknown model: {name}"); return 1
+        r = REGISTRY[name]
+        print(f"{CYAN}{name}{RESET}  {r['size']}")
+        for l in fmt_modes(name, probe):
+            print(l)
+        print(f"    {DIM}{r['note']}{RESET}\n")
+    print(f"{DIM}reference: M2 Air 16GB @ {REF_BW_GBS} GB/s cold reads; every number has a lab "
+          f"artifact (docs/lablog.md). I/O-bound modes scale with disk; resident modes with compute.{RESET}")
+    return 0
+
+
+def cmd_pull(args):
+    if not args or args[0] not in REGISTRY:
+        print(f"usage: llmstream pull <{'|'.join(REGISTRY)}>"); return 1
+    name = args[0]
+    r = REGISTRY[name]
+    dst = model_path(name)
+    if dst.exists() and dst.stat().st_size >= r["bytes"] * 0.99:
+        print(f"{name} already on disk: {dst}"); return 0
+    cmd_estimate([name])
+    need = r["bytes"] / 1e9
+    free = shutil.disk_usage(str(ROOT)).free / 1e9
+    print(f"download {need:.1f} GB -> {dst}  (free disk now: {free:.0f} GB, after: {free - need:.0f} GB)")
+    if free - need < 8:
+        print(f"{YELLOW}warning: this leaves <8 GB free - macOS degrades (swap, pressure) below that.{RESET}")
+    if input("proceed? [y/N] ").strip().lower() != "y":
+        print("aborted"); return 1
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    return subprocess.call(["curl", "-L", "-C", "-", "-o", str(dst), r["url"]])
+
+
+def cmd_rm(args):
+    if not args or args[0] not in REGISTRY:
+        print(f"usage: llmstream rm <{'|'.join(REGISTRY)}>"); return 1
+    p = model_path(args[0])
+    if not p.exists():
+        print("not on disk"); return 1
+    print(f"delete {p} ({p.stat().st_size/1e9:.1f} GB)?")
+    if input("confirm [y/N] ").strip().lower() != "y":
+        print("aborted"); return 1
+    p.unlink()
+    print("deleted (re-pull any time - the measurements stay in results/)")
+    return 0
+
+
+def cmd_ui(_):
+    app = ROOT / "ui" / "app.py"
+    st = ROOT / ".venv" / "bin" / "streamlit"
+    exe = str(st) if st.exists() else "streamlit"
+    os.execvp(exe, [exe, "run", str(app)])
+
+
+MODES = {"exact": 0.0, "balanced": 0.25, "fast": 1.25}
+
+
+def cmd_run(args):
+    if not args or args[0] not in REGISTRY:
+        print(f"usage: llmstream run <{'|'.join(REGISTRY)}> [--mode exact|balanced|fast]"); return 1
+    name = args[0]
+    mode = "balanced"
+    if "--mode" in args:
+        mode = args[args.index("--mode") + 1]
+    p = model_path(name)
+    if not p.exists() or p.stat().st_size < REGISTRY[name]["bytes"] * 0.99:
+        print(f"{name} not fully on disk - `llmstream pull {name}` first"); return 1
+    if subprocess.run(["pgrep", "-f", "stream_run"], capture_output=True).returncode == 0:
+        print("another engine/benchmark is running - one model at a time (machine-safety rule)")
+        return 1
+
+    env = os.environ.copy()
+    env.update({
+        "LLMSTREAM_SLOTS": str(REGISTRY[name]["slots"]),
+        "LLMSTREAM_MARGIN": str(MODES.get(mode, 0.25)),
+        "LLMSTREAM_SERVER": "1", "LLMSTREAM_STREAM_OUT": "1", "LLMSTREAM_CHAT": "1",
+        "LLMSTREAM_IDLE_EXIT": "600", "LLMSTREAM_PREFILL_SLOTS": "1",
+        "LLMSTREAM_SYSTEM": "You are a helpful, concise assistant. Answer the user's message directly. Reasoning: low",
+    })
+    print(f"{DIM}loading {name} ({mode} mode) - one-time, stays warm…{RESET}")
+    proc = subprocess.Popen([str(ENGINE), str(p), "512", "CLI_REPL", "128"],
+                            env=env, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                            stderr=subprocess.DEVNULL)
+
+    def read_until(marker):
+        buf = b""
+        while marker not in buf:
+            b1 = proc.stdout.read(1)
+            if not b1:
+                if proc.poll() is not None:
+                    print("engine exited"); sys.exit(1)
+                continue
+            buf += b1
+        return buf
+
+    read_until(b"<<<READY>>>")
+    print(f"{GREEN}ready.{RESET} {DIM}multi-turn, KV-reused, expert-major prefill. /exit to quit.{RESET}")
+    history = []
+    try:
+        while True:
+            try:
+                msg = input(f"\n{BOLD}you>{RESET} ").strip()
+            except EOFError:
+                break
+            if not msg or msg == "/exit":
+                break
+            history.append(("user", msg))
+            clean = lambda t: t.replace("\x1e", " ").replace("\x1f", " ").replace("\n", "\\n")
+            req = "\x1e".join(f"{r}\x1f{clean(t)}" for r, t in history)
+            proc.stdin.write(req.encode() + b"\n")
+            proc.stdin.flush()
+            read_until(b"<<<STREAM>>>\n")
+            print(f"{CYAN}model>{RESET} ", end="", flush=True)
+            out = b""
+            t0 = time.time()
+            while b"<<<END>>>" not in out:
+                c = proc.stdout.read(1)
+                if not c:
+                    if proc.poll() is not None:
+                        break
+                    continue
+                out += c
+                if b"<<<END>>>" not in out:
+                    sys.stdout.write(c.decode(errors="replace"))
+                    sys.stdout.flush()
+            tail = read_until(b"<<<READY>>>").decode(errors="replace")
+            import re as _re
+            reply = _re.sub(r"<\|[^|]*\|>", " ", out.replace(b"<<<END>>>", b"").decode(errors="replace"))
+            m = _re.search(r"decode:\s+[\d.]+ s \(([\d.]+) tok/s\)", tail)
+            r2 = _re.search(r"reused=(\d+)", tail)
+            bits = [f"{time.time()-t0:.1f}s"]
+            if m: bits.append(f"{m.group(1)} tok/s")
+            if r2 and int(r2.group(1)): bits.append(f"reused {r2.group(1)} ctx")
+            print(f"\n{DIM}[{' · '.join(bits)}]{RESET}")
+            history.append(("assistant", reply.strip()))
+    finally:
+        try:
+            proc.stdin.write(b"exit\n"); proc.stdin.flush()
+            proc.wait(timeout=3)
+        except Exception:
+            proc.terminate()
+    print(f"{DIM}engine stopped.{RESET}")
+    return 0
+
+
+def main():
+    cmds = {"list": cmd_list, "estimate": cmd_estimate, "pull": cmd_pull,
+            "rm": cmd_rm, "ui": cmd_ui, "run": cmd_run}
+    if len(sys.argv) < 2 or sys.argv[1] not in cmds:
+        print(__doc__.strip())
+        return 1
+    return cmds[sys.argv[1]](sys.argv[2:])
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -59,6 +59,8 @@
 #include <list>
 #include <mach/mach.h>
 #include <mutex>
+#include <objc/message.h>
+#include <objc/runtime.h>
 #include <poll.h>
 #include <string>
 #include <sys/mman.h>
@@ -773,6 +775,20 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
     return true;
 }
 
+// D10 closure: the OS's own thermal verdict, printed into every artifact so
+// no cross-run speed comparison is ever blind to throttling again (the
+// 2026-07-20 afternoon bandwidth sag 1.7->1.1 GB/s made this load-bearing).
+// NSProcessInfo.thermalState via the objc runtime - public API, no sudo.
+static const char * therm_state(void) {
+    id cls = (id) objc_getClass("NSProcessInfo");
+    if (!cls) return "unavailable";
+    id info = ((id (*)(id, SEL)) objc_msgSend)(cls, sel_registerName("processInfo"));
+    if (!info) return "unavailable";
+    long s = ((long (*)(id, SEL)) objc_msgSend)(info, sel_registerName("thermalState"));
+    static const char * names[] = {"nominal", "fair", "serious", "critical"};
+    return (s >= 0 && s <= 3) ? names[s] : "unknown";
+}
+
 // COMPUTE pillar artifact: what this run actually cost in memory. ru_maxrss is
 // the process peak RSS (bytes on macOS); phys_footprint is what the OS bills
 // us for right now (the number Activity Monitor shows) - both printed so no
@@ -788,6 +804,7 @@ static void print_mem_footprint() {
     } else {
         printf("mem: peak_rss=%.2f GB\n", ru.ru_maxrss / 1e9);
     }
+    printf("therm: %s\n", therm_state());
 }
 
 // LLMSTREAM_SERVER: read the next request line from stdin, waiting at most
