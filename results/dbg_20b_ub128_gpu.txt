@@ -1,0 +1,167 @@
+load: setting token '<|message|>' (200008) attribute to USER_DEFINED (16), old attributes: 8
+load: setting token '<|constrain|>' (200003) attribute to USER_DEFINED (16), old attributes: 8
+load: setting token '<|channel|>' (200005) attribute to USER_DEFINED (16), old attributes: 8
+load: setting token '<|start|>' (200006) attribute to USER_DEFINED (16), old attributes: 8
+load: special_eog_ids contains both '<|return|>' and '<|call|>', or '<|calls|>' and '<|flush|>' tokens, removing '<|end|>' token from EOG list
+model has unused tensor blk.0.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.0.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.0.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.0.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.0.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.0.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.1.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.1.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.1.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.1.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.1.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.1.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.2.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.2.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.2.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.2.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.2.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.2.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.3.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.3.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.3.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.3.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.3.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.3.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.4.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.4.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.4.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.4.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.4.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.4.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.5.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.5.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.5.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.5.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.5.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.5.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.6.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.6.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.6.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.6.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.6.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.6.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.7.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.7.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.7.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.7.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.7.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.7.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.8.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.8.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.8.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.8.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.8.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.8.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.9.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.9.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.9.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.9.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.9.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.9.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.10.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.10.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.10.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.10.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.10.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.10.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.11.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.11.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.11.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.11.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.11.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.11.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.12.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.12.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.12.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.12.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.12.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.12.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.13.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.13.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.13.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.13.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.13.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.13.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.14.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.14.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.14.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.14.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.14.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.14.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.15.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.15.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.15.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.15.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.15.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.15.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.16.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.16.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.16.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.16.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.16.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.16.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.17.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.17.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.17.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.17.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.17.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.17.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.18.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.18.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.18.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.18.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.18.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.18.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.19.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.19.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.19.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.19.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.19.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.19.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.20.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.20.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.20.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.20.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.20.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.20.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.21.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.21.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.21.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.21.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.21.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.21.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.22.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.22.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.22.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.22.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.22.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.22.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.23.ffn_gate_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.23.ffn_down_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.23.ffn_up_exps.weight (size = 141004800 bytes) -- ignoring
+model has unused tensor blk.23.ffn_gate_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.23.ffn_down_exps.bias (size = 368640 bytes) -- ignoring
+model has unused tensor blk.23.ffn_up_exps.bias (size = 368640 bytes) -- ignoring
+llmstream: LLMSTREAM_SLOT_DEV device 'gpu' not found, using CPU
+......................................
+llama_kv_cache_iswa: using full-size SWA cache (ref: https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+llmstream: pressure lvl=2 avail=4.1GB -> slot cap 22
+llmstream: 24 layers, 24 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+mode=streamed prompt_toks=11 reused=0 generated=64 n_ubatch=128
+prefill: 4.60 s (2.39 tok/s)
+decode:  5.79 s (11.05 tok/s)
+io: cb_calls=1560 decode_uses=6144 decode_misses=35 (hit 0.994) prefill_uses=324 prefill_misses=260
+io: prefetch_issued=87 prefetch_hits=14 prefetch_used=86 stall=4.49 s total_read=5062.9 MB avg_bw=487 MB/s
+io: read_work=41.32 s preads=2292 per_stream_bw=123 MB/s
+io: margin=1.250 masked=25511 skip_fills=0
+io: router_agreement=0.7638 swapped_calls=951 of=1536
+io: guard pressure_drops=1 cap_evictions=0 final_cap=22
+mem: peak_rss=6.53 GB phys_footprint=9.70 GB
+therm: nominal
+logits_hash=bce98cc3efe47610
+text: <|channel|>analysis<|message|>We have a conversation: user says "hi there how are you". The assistant should respond with a friendly greeting. The user is greeting. The assistant should respond with a friendly greeting. The user says "hi there how are you". The assistant should respond with "Hello! I'm doing well, thanks for

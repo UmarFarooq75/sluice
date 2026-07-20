@@ -156,13 +156,20 @@ def ensure_server(cfg, sys_prompt, n_gen, status):
     })
     if sys_prompt.strip():
         env["LLMSTREAM_SYSTEM"] = sys_prompt.strip()
+    # ubatch drives batched (expert-major) prefill, which needs the CPU-only
+    # prefill pool to absorb a batch's expert union. On GPU there is no pool,
+    # so a batched prefill whose union exceeds the slot count hits the engine's
+    # exit(1) boundary (D12) and the request dies with 0 tokens. GPU therefore
+    # runs ubatch=1 (token-by-token prefill, always safe); CPU keeps 128 + pool.
+    ubatch = "128"
     if cfg["backend"] == "gpu":
         env["LLMSTREAM_SLOT_DEV"] = "gpu"
         env["LLMSTREAM_NGL"] = "99"
         env.pop("LLMSTREAM_PREFILL_SLOTS", None)  # pf pool is CPU-only (v1)
+        ubatch = "1"
     status.update(label="Loading model - one-time, stays warm after this…", state="running")
     proc = subprocess.Popen(
-        [str(ENGINE), str(cfg["path"]), str(n_gen), "SERVER_SENTINEL", "128"],
+        [str(ENGINE), str(cfg["path"]), str(n_gen), "SERVER_SENTINEL", ubatch],
         env=env, cwd=ROOT,
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     os.set_blocking(proc.stdout.fileno(), False)
@@ -419,10 +426,28 @@ if prompt:
                                        if (final or not thinking) else "")
                 if b"<<<READY>>>" in buf:
                     done = True
-            if proc.poll() is not None:
+            engine_died = proc.poll() is not None
+            if engine_died:
                 done = True
             if not chunk and not echunk:
                 time.sleep(0.05)
+
+        # engine crashed mid-request (e.g. D12 union>slots): surface the real
+        # stderr reason instead of a misleading "no tokens", and clear the
+        # dead handle so the next message starts a fresh engine
+        if engine_died and not raw.strip():
+            slot = _server_slot()
+            slot.update(proc=None, key=None)
+            status.update(label="Engine stopped mid-request", state="error")
+            reason = [l for l in stderr_tail.splitlines()
+                      if any(w in l.lower() for w in ("union", "slot", "exit", "error", "fail", "abort"))]
+            st.error("The engine stopped before answering. Most likely cause:\n\n"
+                     + ("\n".join(reason[-4:]) if reason else stderr_tail[-500:] or "no stderr captured")
+                     + "\n\nTry CPU backend, or lower Memory / raise it so the cache fits the prompt.")
+            st.session_state.chat_log.append(
+                {"role": "assistant", "text": "*(engine stopped before answering — see the error above)*",
+                 "thinking": "", "timing": ""})
+            st.stop()
 
         total = time.time() - t0
         tail = buf.decode(errors="replace")
