@@ -134,7 +134,8 @@ atexit.register(lambda: _terminate(_server_slot()["proc"]))
 
 
 def cfg_key(cfg, sys_prompt, n_gen):
-    return (str(cfg["path"]), cfg["slots"], cfg["margin"], cfg["backend"], sys_prompt, n_gen)
+    return (str(cfg["path"]), cfg["slots"], cfg["margin"], cfg["backend"],
+            cfg.get("temp", 0.8), sys_prompt, n_gen)
 
 
 def ensure_server(cfg, sys_prompt, n_gen, status):
@@ -171,7 +172,7 @@ def ensure_server(cfg, sys_prompt, n_gen, status):
         # use a repetition penalty + light temperature like every LLM runtime.
         # These match Ollama's defaults exactly (docs.ollama.com/modelfile).
         # (The bit-exact gates run WITHOUT these, staying greedy/deterministic.)
-        "LLMSTREAM_TEMP": "0.8",
+        "LLMSTREAM_TEMP": str(cfg.get("temp", 0.8)),
         "LLMSTREAM_TOP_P": "0.9",
         "LLMSTREAM_TOP_K": "40",
         "LLMSTREAM_REP_PEN": "1.1",
@@ -300,6 +301,7 @@ with st.sidebar:
     st.caption(f":material/verified: {MODES[mode]['desc']}")
 
     cfg["backend"] = "cpu"
+    cfg["temp"] = 0.8
     with st.expander("Advanced", icon=":material/tune:"):
         cfg["margin"] = st.slider("Margin (raw dial; 0 = bit-exact)", 0.0, 2.0,
                                   float(cfg["margin"]), 0.05,
@@ -313,6 +315,9 @@ with st.sidebar:
         cfg["backend"] = st.segmented_control("Backend", ["cpu", "gpu"], default="cpu",
                                               help="CPU loads much faster and decodes the "
                                                    "same below ~0.9 hit; GPU pays at high hit rates") or "cpu"
+        cfg["temp"] = st.slider("Temperature (creativity)", 0.0, 1.5, 0.8, 0.05,
+                                help="0 = deterministic/focused, higher = more varied. "
+                                     "Ollama's default is 0.8. Below ~0.3 can loop on long replies.")
         n_gen = st.number_input("Max new tokens", min_value=16, max_value=3584, value=2048, step=128,
                                 help="Cap on reply length. Context window is 4096 tokens total "
                                      "(prompt + reply); very long chats truncate the oldest turns.")
