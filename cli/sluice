@@ -67,7 +67,7 @@ REGISTRY = {
     "olmoe-7b": {
         "file": None,  # lives in hf_home from the research phase
         "hf_glob": "hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots/*/*.gguf",
-        "url": "https://huggingface.co/allenai/OLMoE-1B-7B-0125-Instruct-GGUF/resolve/main/olmoe-1b-7b-0125-instruct-q4_k_m.gguf",
+        "url": "https://huggingface.co/allenai/OLMoE-1B-7B-0125-Instruct-GGUF/resolve/main/OLMoE-1B-7B-0125-Instruct-Q4_K_M.gguf",
         "bytes": 4_300_000_000,
         "size": "7B total / 1.3B active, 4.3 GB",
         "slots": 32,
