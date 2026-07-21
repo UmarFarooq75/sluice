@@ -12,6 +12,8 @@ Commands:
   sluice ui               launch the playground chat UI (streamlit)
   sluice pull <name>      estimator first, then resumable download
   sluice rm <name>        delete a pulled model file
+  sluice doctor [name]    preflight: RAM, swap, disk, strays, models -> go/no-go
+  sluice urls             HEAD-check every model URL (no downloads)
 
 serve/run accept a registry name OR a path to any .gguf. Backend is CPU
 (the fast, correct path on Apple Silicon — GPU streaming is slower here, E24).
@@ -23,6 +25,7 @@ measured bandwidth for the I/O-bound modes. No marketing numbers.
 import json
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -304,6 +307,152 @@ def ensure_engine_built():
     return True
 
 
+def avail_ram_gb():
+    """Free-ish RAM, in GB, from vm_stat's own reported page size.
+
+    The page size is QUERIED, never assumed. Assuming 4096 is the bug this project
+    actually hit (2026-07-21): macOS on Apple Silicon uses 16384, so a hardcoded
+    4096 under-reports available memory by 4x — it read 2.58 GB when the machine
+    genuinely had 10.7 GB free, and aborted runs that would have been fine.
+    Same four buckets as every gate script in results/, so the numbers agree.
+    """
+    if sys.platform != "darwin":
+        return None
+    out = subprocess.run(["vm_stat"], capture_output=True, text=True).stdout
+    m = re.search(r"page size of (\d+)", out)
+    if not m:
+        return None
+    ps = int(m.group(1))
+    pages = 0
+    for k in ("Pages free", "Pages inactive", "Pages speculative", "Pages purgeable"):
+        mm = re.search(rf"{k}:\s+(\d+)", out)
+        if mm:
+            pages += int(mm.group(1))
+    return pages * ps / 1e9
+
+
+def swap_used_gb():
+    if sys.platform != "darwin":
+        return None
+    out = subprocess.run(["sysctl", "-n", "vm.swapusage"], capture_output=True, text=True).stdout
+    m = re.search(r"used\s*=\s*([\d.]+)M", out)
+    return float(m.group(1)) / 1024 if m else None
+
+
+def cmd_doctor(args):
+    """Preflight: will this machine run a model well, and how fast? Loads nothing."""
+    name = args[0] if args and args[0] in REGISTRY else None
+    ok, warn = [], []
+    P, F, W = f"{GREEN}✓{RESET}", f"{YELLOW}✗{RESET}", f"{YELLOW}!{RESET}"
+    print(f"{BOLD}sluice doctor{RESET}{DIM} — preflight, no model is loaded{RESET}\n")
+
+    # --- 1. memory -----------------------------------------------------------
+    ram = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES") / 1e9
+    av = avail_ram_gb()
+    print(f"{BOLD}memory{RESET}")
+    print(f"  {P} installed            {ram:.0f} GB")
+    if av is None:
+        print(f"  {W} available            unknown (non-macOS)")
+    else:
+        mark = P if av >= 8 else (W if av >= 4 else F)
+        print(f"  {mark} available            {av:.2f} GB"
+              f"{'' if av >= 8 else DIM + '  (streaming wants >= 8 GB free; close apps)' + RESET}")
+        if av < 8:
+            warn.append(f"only {av:.1f} GB free — expect the memory guard to shed cache slots")
+        if av < 4:
+            ok.append(False)
+    sw = swap_used_gb()
+    if sw is not None:
+        mark = P if sw < 0.5 else W
+        print(f"  {mark} swap in use          {sw:.2f} GB"
+              f"{'' if sw < 0.5 else DIM + '  (already paging — speeds below will not hold)' + RESET}")
+        if sw >= 0.5:
+            warn.append(f"{sw:.1f} GB of swap in use; the machine is already paging")
+
+    # --- 2. engine + strays --------------------------------------------------
+    print(f"\n{BOLD}engine{RESET}")
+    if ENGINE.exists():
+        print(f"  {P} built                {ENGINE.relative_to(ROOT)}")
+    else:
+        print(f"  {F} not built            run: bash scripts/install.sh")
+        ok.append(False)
+    # protocol #1, promoted from a lab rule to a user-facing check: a second engine
+    # took this machine into swap once (2026-07-19) and the symptom was a hang.
+    stray = subprocess.run(["pgrep", "-f", "csrc/stream_run"], capture_output=True, text=True)
+    if stray.returncode == 0:
+        pids = " ".join(stray.stdout.split())
+        print(f"  {F} another engine running  pid(s) {pids} — one model at a time")
+        ok.append(False)
+    else:
+        print(f"  {P} no stray engines")
+
+    # --- 3. disk -------------------------------------------------------------
+    print(f"\n{BOLD}disk{RESET}")
+    free = shutil.disk_usage(str(ROOT)).free / 1e9
+    print(f"  {P if free > 20 else W} free space           {free:.0f} GB")
+    sample = next((p for n in REGISTRY if (p := model_path(n)) and p.exists()
+                   and p.stat().st_size > 1e9), None)
+    bw = None
+    if sample:
+        bw = measure_disk_bw(sample)
+        mark = P if bw >= 1.0 else W
+        print(f"  {mark} cold read bandwidth  {bw:.2f} GB/s{DIM}  (reference machine: {REF_BW_GBS} GB/s){RESET}")
+    else:
+        print(f"  {W} cold read bandwidth  not measured (no model on disk to sample)")
+
+    # --- 4. models -----------------------------------------------------------
+    print(f"\n{BOLD}models{RESET}")
+    for n in ([name] if name else list(REGISTRY)):
+        p, want = model_path(n), REGISTRY[n]["bytes"]
+        if p and p.exists():
+            got = p.stat().st_size
+            # exact-bytes logic, matching cmd_run/cmd_pull. These sizes are the
+            # server's Content-Length (scripts/check_urls.py), not rounded — a
+            # rounded-UP size made a COMPLETE file look truncated forever.
+            if got >= want * 0.99:
+                print(f"  {P} {n:<14} on disk, {got/1e9:.2f} GB")
+            else:
+                print(f"  {W} {n:<14} PARTIAL {got/1e9:.2f}/{want/1e9:.2f} GB — `sluice pull {n}` resumes")
+        else:
+            print(f"  {DIM}·{RESET} {n:<14} not downloaded ({want/1e9:.1f} GB)")
+
+    # --- 5. speed prediction -------------------------------------------------
+    if name:
+        print(f"\n{BOLD}predicted speed — {name}{RESET}")
+        for l in fmt_modes(name, {"disk_gbs": bw}):
+            print(l)
+        if av is not None and av < 8:
+            print(f"  {DIM}measured load curve: 6.14 tok/s at 9.2 GB free, 4.89 at 8.4, "
+                  f"1.57 at 1.5 (E37c/E37d/E37) — you are at {av:.1f}{RESET}")
+        print(f"  {DIM}{REGISTRY[name]['note']}{RESET}")
+    else:
+        print(f"\n{DIM}pass a model name for a speed prediction: sluice doctor {list(REGISTRY)[1]}{RESET}")
+
+    # --- 6. verdict ----------------------------------------------------------
+    good = all(ok) if ok else True
+    print()
+    if good and not warn:
+        print(f"{GREEN}{BOLD}GO{RESET} — nothing blocking.")
+    elif good:
+        print(f"{YELLOW}{BOLD}GO, with caveats{RESET}")
+        for w in warn:
+            print(f"  {DIM}·{RESET} {w}")
+        print(f"{DIM}  It will run. The speeds above assume a quiet machine.{RESET}")
+    else:
+        print(f"{YELLOW}{BOLD}NO-GO{RESET} — fix the ✗ items above first.")
+    return 0 if good else 1
+
+
+def cmd_urls(args):
+    """HEAD-check every model URL. Delegates to the checker so there is one
+    implementation, not a CLI copy that can drift from it."""
+    script = ROOT / "scripts" / "check_urls.py"
+    if not script.exists():
+        print(f"{YELLOW}scripts/check_urls.py is missing{RESET}"); return 1
+    print(f"{BOLD}model URL reachability{RESET}{DIM} — HEAD only, downloads nothing{RESET}")
+    return subprocess.call([sys.executable, str(script)] + list(args))
+
+
 def cmd_run(args):
     usage = (f"usage: sluice run <{'|'.join(REGISTRY)}> [--mode exact|balanced|fast] "
              f"[--reasoning {'|'.join(REASONING)}]")
@@ -579,7 +728,8 @@ def cmd_serve(args):
 
 def main():
     cmds = {"list": cmd_list, "estimate": cmd_estimate, "pull": cmd_pull,
-            "rm": cmd_rm, "ui": cmd_ui, "run": cmd_run, "serve": cmd_serve}
+            "rm": cmd_rm, "ui": cmd_ui, "run": cmd_run, "serve": cmd_serve,
+            "doctor": cmd_doctor, "urls": cmd_urls}
     if len(sys.argv) < 2 or sys.argv[1] not in cmds:
         print(__doc__.strip())
         return 1
