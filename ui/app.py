@@ -29,23 +29,66 @@ st.set_page_config(page_title="sluice", page_icon=":material/water:", layout="ce
 # Known-model metadata: nice descriptions + per-preset slot counts (measured
 # footprints, E28/E30). Matched to discovered files by filename substring;
 # anything else found on disk still runs, with safe auto defaults.
+# "toks" = balanced-mode decode tok/s MEASURED on the reference machine (M2 Air,
+# ~1.7 GB/s cold reads; docs/lablog.md); io-bound so it scales with YOUR disk.
+REF_BW_GBS = 1.7
 KNOWN = {
     "gpt-oss-120b": {
-        "size": "117B total · 5.1B active · 63.4 GB",
+        "size": "117B total · 5.1B active · 63.4 GB", "toks": 2.4,
         "note": "the flagship: 4× this machine's RAM. First message pays a one-time load (~1–2 min); later turns stay warm.",
         "mem": {"Light": (8, "~5.7 GB"), "Balanced": (12, "~7.6 GB"), "Performance": (12, "~7.6 GB (16 trips the guard on 16GB)")},
     },
     "gpt-oss-20b": {
-        "size": "21B total · 3.6B active · 12.1 GB",
+        "size": "21B total · 3.6B active · 12.1 GB", "toks": 3.5,
         "note": "the middle tier — ~3× the 120B, comfortable on 16 GB RAM.",
         "mem": {"Light": (12, "~5.5 GB"), "Balanced": (16, "~6.6 GB"), "Performance": (24, "~8.5 GB")},
     },
     "olmoe": {
-        "size": "7B total · 1.3B active · 4.3 GB",
+        "size": "7B total · 1.3B active · 4.3 GB", "toks": 48.0,
         "note": "small and snappy — ideal for UI testing.",
         "mem": {"Light": (16, "~1.4 GB"), "Balanced": (32, "~2.6 GB"), "Performance": (48, "~3.5 GB")},
     },
 }
+
+
+@st.cache_data(show_spinner=False)
+def machine_disk_bw():
+    """Sample a model file with F_NOCACHE random reads (the streaming access
+    pattern) → GB/s. Cached: runs once per session. None if no file to sample."""
+    import fcntl, random as _rnd
+    f = next((p for p in (ROOT / "models").glob("*.gguf") if p.stat().st_size > 1e9), None)
+    if not f:
+        return None
+    span, n = 8 * 1024 * 1024, 24
+    fd = os.open(str(f), os.O_RDONLY)
+    try:
+        try:
+            fcntl.fcntl(fd, 48, 1)  # F_NOCACHE: honest cold reads
+        except Exception:
+            pass
+        rng = _rnd.Random(42)
+        size = f.stat().st_size
+        t0 = time.time(); got = 0
+        for _ in range(n):
+            off = rng.randrange(0, max(1, size - span)) & ~4095
+            got += len(os.pread(fd, span, off))
+        return got / (time.time() - t0) / 1e9
+    finally:
+        os.close(fd)
+
+
+def preload_estimate(choice, mode):
+    """Expected decode tok/s for the selected model on THIS machine, before load.
+    Scales the reference (io-bound) number by the measured disk bandwidth, and by
+    the quality mode (higher fidelity floor = fewer skips = a touch slower)."""
+    meta = model_meta(choice)
+    ref = meta.get("toks")
+    if not ref:
+        return None
+    bw = machine_disk_bw()
+    scale = (bw / REF_BW_GBS) if bw else 1.0
+    mode_mult = {"Exact": 0.75, "Balanced": 1.0, "Fast": 1.25}.get(mode, 1.0)
+    return ref * scale * mode_mult, bw
 DEFAULT_MEM = {"Light": (8, "smaller cache"), "Balanced": (16, "balanced cache"), "Performance": (32, "large cache")}
 
 
@@ -365,6 +408,11 @@ with st.sidebar:
                 st.warning("Found and killed an orphaned engine from a previous session")
             st.badge("Engine off", icon=":material/power_settings_new:", color="gray")
             st.caption("Starts on your first message")
+            est = preload_estimate(choice, mode)
+            if est:
+                toks, bw = est
+                prov = f"scaled to your {bw:.1f} GB/s disk" if bw else "reference machine"
+                st.caption(f":material/speed: expected ~**{toks:.0f} tok/s** ({mode.lower()}) · {prov}")
         st.caption(f":material/timer: auto-stops after {IDLE_EXIT_S // 60} min idle "
                    "(driver-side - survives a UI crash)")
 
