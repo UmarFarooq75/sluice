@@ -38,3 +38,6 @@ csrc/stream_run_metal
 .claude/
 raw/
 ui_streamlit.log
+
+# byte-identical-off reference binary (make gate-ref)
+.gate/

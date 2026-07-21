@@ -2265,3 +2265,47 @@ the next quiet window.
   too cheap and projecting 14–73 tok/s. Caught by a unit check that replays the model
   at K=1 and demands it reproduce the measured 6.14 tok/s. That check is now written
   into the doc as a required step, not an optional one.
+
+### Tasks D/E/F — client contract, doctor, and the gate as one command (2026-07-21)
+Non-engine work while E41b and R0 wait on the RAM gate. No model process launched.
+
+- **D. canon_reply client contract, DARK** (`4ac08ca`). Both clients stored the
+  wrong assistant text, and the CLI worse than the UI: its history entry strips
+  every harmony marker, which **concatenates the analysis and final channels** —
+  precisely the text the template will not render next turn, guaranteeing a full
+  re-prefill. Now `text` is what the user sees and `canon` is what the engine sees.
+  Mismatch raises a **visible** warning in both surfaces, because the only symptom
+  of getting this wrong is "it got slower", the same invisible-degradation class
+  that cost a day on E38. Pass-through only, no UI control and no CLI flag, since
+  E41b's gate has not run. `sluice serve` is deliberately untouched: its history
+  comes from the HTTP request, so the client owns it and the contract cannot be
+  enforced server-side without an API change. **Live smoke test pending.**
+- **E. `sluice doctor`** (`b0c331f`). The campaign's lessons as user-facing tooling:
+  avail RAM with the page size **queried** (hardcoding 4096 is the bug that read
+  2.58 GB on a machine with 10.7 GB free), swap-in-use, disk bandwidth, model
+  completeness on the exact-bytes logic, and the stray-engine check — **protocol #1
+  promoted from a lab rule to a product feature.** Verdict is go/no-go plus the
+  predicted tok/s per mode, and when RAM is low it prints the measured load curve
+  next to where the user actually is. Verified by running it: correctly reports
+  **NO-GO** on this box at 3.28 GB avail / 3.10 GB swap.
+  *Bug found while wiring it*: `re` was imported only inside a function, so
+  `avail_ram_gb`'s module-scope use would have raised NameError on first call. My
+  first static check passed it **falsely**, because `"import re"` is a substring of
+  the local `import re as _re`. The check was wrong before the code was.
+- **F. `make gate`** (this commit). The standing protocol as one command, so no rung
+  hand-rolls it again. That hand-rolling is exactly what put **two different
+  definitions of "available RAM" in the tree at once** — E37b/c summed four vm_stat
+  buckets with a queried page size; `results/e41b/gate.py` summed three with 4096
+  hardcoded. One run could pass one gate and abort on the other. `scripts/lib/preflight.sh`
+  is now the single definition and future rungs source it.
+  Static legs: syntax of every shipped script, manifest JSON, engine compiles, and
+  **no undocumented engine flags** (42 `LLMSTREAM_*` vars, all currently in README).
+  Model legs **self-defer** with an explicit "PENDING MODEL WINDOW" and the verdict
+  is **GATE PARTIAL — this is NOT a green gate**, so a deferral can never be
+  mistaken for a pass.
+  Two things verified rather than assumed: (a) the build check compiles to a **temp
+  path**, because rewriting `csrc/stream_run` while E41b and R0 are armed against
+  that exact path could hand a launcher a half-written binary — confirmed by md5
+  before/after; (b) **fault injection** — removing the `LLMSTREAM_KV_CANON` row from
+  the README made the gate go **RED** and restoring it returned it to PARTIAL. A
+  gate nobody has seen fail is not known to work.
