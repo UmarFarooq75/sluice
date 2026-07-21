@@ -1163,8 +1163,12 @@ target ≥10 tok/s. Measurement only, no new features/levers.
   8. **Bit-exact gate**: streamed hash must equal resident hash (exact greedy).
   *(measured numbers appended below the run.)*
 
-**Measured (appended after the run — gpt-oss-20b, exact greedy, CLEAN; run (a)
-GUARD ON SLOTS=24 as pre-registered; RSS via `/usr/bin/time -l`):**
+**Measured — ⚠️ CONTAMINATED (UNDER DESKTOP LOAD): superseded by E37b for the
+clean numbers.** Taken with ~13 GB of the user's apps resident (avail ~1.5 GB), so
+bw collapsed to ~0.12–0.58 GB/s and decode carried a swap-fault tax. **Kept
+deliberately as the "under desktop load" datapoint — a real user condition worth
+having** — but not the clean G1 baseline (see E37b). *(gpt-oss-20b, exact greedy;
+run (a) GUARD ON SLOTS=24; RSS via `/usr/bin/time -l`.)*
 
 Run (a) streamed, requesting 24 slots (the 10 GB budget):
 
@@ -1252,6 +1256,46 @@ load (bw collapsed to ~0.12 GB/s, swap-fault tax) → to be relabelled contamina
 - **Verdict deferred**: comes after, from the on-disk artifacts only. Mark G1
   **closed** iff the streamed leg lands in the 5–6 t/s band at ≤10 GB, bit-exact.
   *(measured numbers appended below the run.)*
+
+**Measured (from `results/e37b/` artifacts — CLEAN, quiet box, avail 9.24 GB ≥ 8
+verified; streamed-first so no page-cache warming; exact greedy, prompt A, N=20):**
+
+| leg | hit | tok/s | RSS | decode | stall | avg_bw | per_stream_bw | hash |
+|---|---|---|---|---|---|---|---|---|
+| streamed (SLOTS=16, guard ON, cap held 16) | .847 | **4.14** | **8.69 GB** | 4.83 s | 3.56 s | 1404 MB/s | 209 MB/s | `e3fa62923ee35254` |
+| resident | — | — | — | — | — | — | — | **skipped** (avail 11.56 < 12) |
+
+- **Predicted vs measured:**
+  - hit: pred ~.90 → **.847** (E28's .905 was a different/longer workload; this
+    short prompt at 16 slots / N=20 sits ~.85, matching E37's loaded .855).
+  - RSS: pred ~6.6 GB → **8.69 GB** — higher than predicted (I under-counted the
+    prefill pool: `fill … pool 32 slots` + the 16-slot decode cache + 1.92 trunk),
+    but **≤ 10 GB ✓** with ~1.3 GB headroom to spare.
+  - tok/s: pred ~5–6 → **4.14** — **below band by ~0.9 t/s.**
+  - decode bw: pred ~1.15 GB/s → **1.40 GB/s** (avg_bw) — clean box *beat* the
+    anchor; ~2× the loaded-box 0.66. **Bandwidth is healthy, not the bottleneck.**
+- **Per-token decomposition (clean — NO swap-fault term, as pre-registered)**:
+  0.2415 s/tok = **miss-wait 0.178 s (74%)** + **true compute 0.0635 s (26%)**.
+  Pure compute ≈ **15.7 t/s** (quiet box beats even E7's 0.095 s term). Contrast
+  E37 (loaded): compute+faults 0.319 s of which ~0.224 s was swap-fault tax — that
+  tax is **gone** here; the clean decode is **miss-wait dominated**.
+- **Bit-exact gate**: streamed N=20 hash `e3fa62923ee35254` = the **identical** hash
+  E37 produced at N=20 (loaded box, different slot trajectory) → compute is
+  box- and cache-invariant. Resident hash not taken (skipped), so streamed==resident
+  isn't shown *this* run; the hash matches the established exact reference and
+  exact-mode==resident is the standing contract. **Green by reference.**
+- **VERDICT — G1 NOT closed on this run.** Streamed clean = **4.14 t/s**, outside
+  the 5–6 band (owner's close condition not met). It is **not** a bandwidth or a
+  memory-budget failure: bw is healthy (1.40 GB/s) and RSS (8.69 GB) leaves ~1.3 GB
+  under the 10 GB cap. It is a **hit-rate** shortfall — .847 vs the ~.90 the band
+  needs — and decode is now miss-wait-dominated (74%). The obvious lever (raise
+  slots into the ~1.3 GB headroom to lift hit toward .90) is **tuning, forbidden in
+  this task** → candidate for a separate directive. **G1 stays OPEN**, one hit-rate
+  rung short, on an otherwise-clean, bit-exact, ≤10 GB streamed baseline.
+- **Resident/compute ceiling**: unmeasured this run (avail 11.56 < 12 gate);
+  **E7 anchor ≥10.47 t/s stands** as the ceiling of record.
+- **Artifacts**: `results/e37b/` — `streamed.{out,err}`, `summary.txt`, `gate.log`
+  (resident leg skipped, not run).
 
 ### Gap logged. MTP-via-GGUF format ceiling (2026-07-21)
 Documented in `techniques.md` → "Format ceilings": colibri ships a native int8
