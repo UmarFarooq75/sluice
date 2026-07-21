@@ -39,7 +39,7 @@ REF_BW_GBS = 1.7
 REGISTRY = {
     "gpt-oss-120b": {
         "file": "gpt-oss-120b-MXFP4.gguf",
-        "url": "https://huggingface.co/ggml-org/gpt-oss-120b-GGUF/resolve/main/gpt-oss-120b-mxfp4-00001-of-00003.gguf",
+        "url": "https://huggingface.co/ggml-org/gpt-oss-120b-GGUF/resolve/main/gpt-oss-120b-MXFP4.gguf",
         "bytes": 63_387_346_208,
         "size": "117B total / 5.1B active, 63.4 GB",
         "slots": 8,
@@ -54,7 +54,7 @@ REGISTRY = {
     "gpt-oss-20b": {
         "file": "gpt-oss-20b-MXFP4.gguf",
         "url": "https://huggingface.co/ggml-org/gpt-oss-20b-GGUF/resolve/main/gpt-oss-20b-MXFP4.gguf",
-        "bytes": 12_110_000_000,
+        "bytes": 12_109_566_624,
         "size": "21B total / 3.6B active, 12.1 GB",
         "slots": 16,
         "modes": {  # E28 leg 2, measured 2026-07-20 (32-expert model, 24 layers)
@@ -68,8 +68,8 @@ REGISTRY = {
         "file": None,  # lives in hf_home from the research phase
         "hf_glob": "hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots/*/*.gguf",
         "url": "https://huggingface.co/allenai/OLMoE-1B-7B-0125-Instruct-GGUF/resolve/main/OLMoE-1B-7B-0125-Instruct-Q4_K_M.gguf",
-        "bytes": 4_300_000_000,
-        "size": "7B total / 1.3B active, 4.3 GB",
+        "bytes": 4_213_512_192,
+        "size": "7B total / 1.3B active, 4.2 GB",
         "slots": 32,
         "modes": {
             "resident CPU":            {"toks": 69.4, "io_bound": False},
@@ -255,12 +255,25 @@ def ensure_engine_built():
     never has to run cmake/build scripts by hand (ollama-style: it just works)."""
     if ENGINE.exists():
         return True
-    print(f"{DIM}first-time setup: building the sluice engine (one-time)…{RESET}")
     lc = ROOT / "vendor" / "llama.cpp"
+    # vendor/ is gitignored and there is no submodule, so a FRESH CLONE has no
+    # llama.cpp at all. cmake on a directory that doesn't exist fails with an
+    # error about CMakeLists.txt that reads like a broken toolchain — send the
+    # user to the installer, which is the thing that knows the pinned revision
+    # and the fork patch.
+    if not (lc / "CMakeLists.txt").exists():
+        print(f"{YELLOW}llama.cpp isn't vendored yet (vendor/ is gitignored, so a clone "
+              f"doesn't ship it).{RESET}")
+        print(f"run the installer once — it fetches the pinned revision, applies the "
+              f"fork patch, and builds:\n\n    bash scripts/install.sh\n")
+        return False
+    print(f"{DIM}first-time setup: building the sluice engine (one-time)…{RESET}")
     if not (lc / "build" / "bin").exists():
         print(f"{DIM}  compiling llama.cpp with Metal — a few minutes…{RESET}")
+        # flags kept in step with scripts/install.sh on purpose
         if subprocess.call(["cmake", "-B", str(lc / "build"), "-S", str(lc),
-                            "-DGGML_METAL=ON", "-DCMAKE_BUILD_TYPE=Release"]) == 0:
+                            "-DGGML_METAL=ON", "-DCMAKE_BUILD_TYPE=Release",
+                            "-DLLAMA_CURL=OFF"]) == 0:
             subprocess.call(["cmake", "--build", str(lc / "build"), "--config", "Release", "-j"])
     if subprocess.call(["bash", str(ROOT / "scripts" / "build_driver.sh")]) != 0 or not ENGINE.exists():
         print(f"{YELLOW}engine build failed. Need Xcode CLT + cmake: xcode-select --install{RESET}")

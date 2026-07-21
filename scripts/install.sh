@@ -55,15 +55,42 @@ fi
 
 if [ ! -e vendor/llama.cpp/build/bin/libllama.dylib ] && [ ! -e vendor/llama.cpp/build/bin/libllama.so ]; then
   say "building llama.cpp (this is the slow step)"
-  cmake -S vendor/llama.cpp -B vendor/llama.cpp/build -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF >/dev/null
+  # GGML_METAL is passed explicitly rather than left to the platform default so
+  # this and cli/sluice's own bootstrap produce the SAME library. Two build paths
+  # that disagree on a flag is how you get a "works for me" that isn't.
+  CM_FLAGS=(-DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF)
+  [ "$OS" = "Darwin" ] && CM_FLAGS+=(-DGGML_METAL=ON)
+  cmake -S vendor/llama.cpp -B vendor/llama.cpp/build "${CM_FLAGS[@]}" >/dev/null
   cmake --build vendor/llama.cpp/build --config Release -j"$(sysctl -n hw.ncpu 2>/dev/null || nproc)"
 else
   say "llama.cpp already built — skipping"
 fi
 
+# the driver links -lllama -lggml -lggml-base -lggml-cpu by name; if the build
+# half-finished, failing here with the missing library named beats a link error
+for lib in llama ggml ggml-base ggml-cpu; do
+  ls vendor/llama.cpp/build/bin/lib${lib}.dylib >/dev/null 2>&1 || \
+    ls vendor/llama.cpp/build/bin/lib${lib}.so  >/dev/null 2>&1 || \
+    die "llama.cpp build incomplete: lib${lib} missing from vendor/llama.cpp/build/bin"
+done
+
 # ------------------------------------------------------------------ driver ----
 say "building the streaming driver"
 bash scripts/build_driver.sh
+
+# ------------------------------------------------------------------ verify ----
+# End-to-end check of everything this script built, WITHOUT a model: the driver
+# prints its usage line and exits when given too few arguments, which only
+# happens if the binary linked and the rpath resolved libllama at load time.
+# Verifying an actual inference needs a ~12 GB download, so that last mile is
+# documented below rather than run here.
+say "verifying the build (no model needed)"
+if out="$(./csrc/stream_run 2>&1)"; case "$out" in *"usage:"*) true;; *) false;; esac; then
+  say "  driver runs and resolves libllama: ok"
+else
+  die "driver built but will not start — check the rpath in scripts/build_driver.sh
+     output was: ${out:-<empty>}"
+fi
 
 # --------------------------------------------------------------- python env ---
 if [ ! -x .venv/bin/python3 ]; then
@@ -77,7 +104,10 @@ say "installing Python deps (streamlit, psutil)"
 # ------------------------------------------------------------------- done -----
 cat <<'EOF'
 
-sluice is installed. No model has been downloaded yet — on purpose.
+sluice is installed and the engine has been verified to start. No model has been
+downloaded yet — on purpose, and that means the one thing this script could NOT
+verify is an actual inference: that needs a ~12 GB file. The first `run`/`ui`
+below is therefore the real end-to-end test.
 
   ./cli/sluice estimate gpt-oss-20b   # what THIS machine will actually do, before you commit
   ./cli/sluice pull     gpt-oss-20b   # ~12 GB
