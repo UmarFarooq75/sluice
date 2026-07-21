@@ -1,0 +1,10 @@
+lru3a      N=3   hit=0.681  tok/s=1.81  
+lru3b      N=3   hit=0.681  tok/s=1.84  
+lfru3      N=3   hit=0.674  tok/s=1.65  
+lru1       N=1   hit=0.667  tok/s=1.43  
+lfru1      N=1   hit=0.646  tok/s=1.59  
+lru8       N=8   hit=0.715  tok/s=1.86  
+lfru8      N=8   hit=0.712  tok/s=1.58  
+lru20      N=20  hit=0.719  tok/s=2.06  
+lfru20     N=20  hit=0.726  tok/s=1.87  
+DONE

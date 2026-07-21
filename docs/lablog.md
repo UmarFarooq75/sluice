@@ -1038,6 +1038,83 @@ unchanged (62 GB free).
 - **Hook**: remains gated, off by default, correct, and bit-exact ("dark").
   Pillar-2 "starts warm" stays caveated exactly as E34 left it — no doc change.
 
+### E36. Dynamic LFRU repin vs pure LRU — live gpt-oss-20b (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before any run.** E23 refuted *static* top-N pinning
+(train=test optimism; LRU already protects Zipf leaders). Colibri's variant is
+*dynamic* — frequency-tracked, repins the hottest at runtime. We have never A/B'd
+that. This is the test.
+
+- **Mechanism under test**: `LLMSTREAM_EVICT=lfru` — dynamic LFU. Implemented as
+  lfu-with-decay: the per-layer use-counter halves every 256 uses (half-life =
+  the recompute cadence), so the protected/repinned set = top `slots/2` by
+  **recent** frequency, protected from eviction (existing two-pass path). This is
+  distinct from the shipped `lfu` (undecayed whole-run counts ≈ static) and from
+  E23's static top-N. **Repin decided at eviction time** via the protected set;
+  no prefetch change, no slot-count change, no second knob.
+- **OFF byte-identical**: unset ⇒ `protect=false` (eviction pass starts at 1 =
+  pure LRU), `g_lfru_decay=false` (no decay); the LRU and lfu paths are unchanged.
+  Executable OFF check: OFF `logits_hash` must equal the committed stock hash.
+- **Workload**: gpt-oss-20b, prompt A (code, held out from any pack), exact
+  greedy, `GUARD=0 SLOTS=5` — **identical to E34** so numbers are comparable.
+  No offline pack is involved, so the A/B is **CLEAN by construction** (no
+  train/test fit to contaminate; policy uses only live runtime counts).
+- **Structural caution (honest, E34)**: 5 slots vs top_k=4 gives *any* policy ~1
+  spare slot. The working set (~15 experts/layer) ≫ cache, so evictions are
+  constant, but whichever ≤2 experts lfru protects, the other ~10 hot ones still
+  miss. This is the same memory-bound wall as E34.
+- **Prediction**: **no detectable difference at this cache size.** LRU already
+  keeps the most-recent (≈ the only viable set when cache ≈ top_k), and lfru's
+  protected set is only `slots/2 = 2` experts — too little leverage to move the
+  aggregate hit beyond noise. The one plausible signal: protecting the 1–2 Zipf
+  leaders from eviction could give lfru a *marginal* hit edge; I expect it bounded
+  and sub-noise. tok/s: predicted equal within noise (policy changes residency
+  choice, not I/O volume materially).
+- **Noise bar**: OFF↔OFF (LRU↔LRU) spread on prompt A, **run first**. lfru only
+  "beats" LRU if `|Δhit| > 2 ×` that spread at a given N.
+- **Falsifier**: the "no detectable difference" prediction is falsified if lfru's
+  Δhit exceeds 2× the noise bar at any N (either direction).
+- **Verdict space (any is a pass if gate + labeling clean)**: lfru beats LRU
+  beyond noise / no difference / worse. **No tuning the 256-use / halve decay to
+  chase a win** — one pre-registered setting; a loss ends the thread here.
+  *(measured numbers appended below the run.)*
+
+**Measured (appended after the run — gpt-oss-20b, exact greedy, GUARD=0 SLOTS=5,
+prompt A; CLEAN — no pack, policy uses only live runtime counts):**
+
+| N | LRU hit | lfru hit | Δ hit (lfru−LRU) | LRU tok/s | lfru tok/s |
+|---|---|---|---|---|---|
+| 1  | .667 | .646 | −2.1 pt | 1.43 | 1.59 |
+| 3  | .681 / .681 | .674 | −0.7 pt | 1.83 | 1.65 |
+| 8  | .715 | .712 | −0.3 pt | 1.86 | 1.58 |
+| 20 | .719 | .726 | +0.7 pt | 2.06 | 1.87 |
+
+- **Noise bar**: LRU↔LRU at N=3 = **.681 vs .681 = 0.000 pt** (hit is
+  deterministic in exact greedy — routing + LRU eviction are fully determined).
+  So the Δ's above are *signal, not noise* — but tiny and **mixed-sign**.
+- **Gate**: OFF (unset) = LRU = lfru = `fdf0f83dd70504c5` = the committed stock
+  hash. Byte-identical OFF confirmed; lfru changes residency only, never compute.
+- **Verdict: lfru does NOT beat LRU.** Δhit swings −2.1 → +0.7 pt across N —
+  marginally *worse* early, a smaller gain late; no systematic improvement, and
+  the net is negative over the horizons that matter (first tokens). tok/s: lfru
+  ~0.2 slower (extra per-eviction scan + decay), within noise. **My pre-registered
+  "no detectable win" holds**; my directional guess (a marginal Zipf-leader edge)
+  was wrong — at cache≈top_k the decayed counter is *cold* for the first tokens,
+  so protecting `slots/2 = 2` experts on near-zero counts evicts a more-useful
+  recent expert → early harm (N=1 −2.1). Counts only stabilize by ~N=20, where it
+  roughly ties.
+- **Why (structural, consistent with E23 + E34)**: 5 slots vs top_k=4 leaves ~1
+  spare slot; protecting 2 experts out of a ~15-wide working set can't move the
+  aggregate, and LRU already keeps the most-recent (≈ the only viable set at this
+  size). E23 refuted *static* top-N; E36 shows the *dynamic* decayed variant
+  (colibri's mechanism) also fails to beat LRU **on this hardware** — not because
+  the mechanism is inherently bad, but because cache≈top_k gives no policy room
+  (same wall as E34/E35). A fair test needs a machine/model where cache ≫ top_k is
+  memory-safe; that is a **separate directive**, not a re-run here.
+- **Thread ends** (loss). Policy stays `LLMSTREAM_EVICT` = {unset=LRU default |
+  lfu | lfru}, off by default, bit-exact, dark. No decay tuning, no follow-up.
+- **Artifacts**: `results/lfru_ab/` — `{lru,lfru}{1,3,8,20}.{out,err}`, `lru3{a,b}`
+  (noise bar), `curve.txt`.
+
 ### Doc fix. colibri CACHE_ROUTE wording corrected (2026-07-21)
 - Backfill of the doc-only honesty task committed in `8f3ff6c`. An earlier draft
   in `docs/techniques.md` and `docs/findings-phase0.md` called colibri's

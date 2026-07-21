@@ -366,11 +366,14 @@ static int assign_slot(layer_cache & lc, int e, const std::unordered_set<int> * 
     // evict least-recent expert that is neither needed now nor in flight.
     // pass 0 spares the layer's frequency leaders (LFU protection); pass 1
     // allows them so protection can never deadlock the cache.
-    static const bool lfu = [] {
+    // Both lfu (accumulated counts) and lfru (decayed counts, E36) protect the
+    // freq_protected set; the only difference is how that set ages (see
+    // g_lfru_decay in lru_touch). Unset = pure LRU (pass starts at 1) = stock.
+    static const bool protect = [] {
         const char * ev = getenv("LLMSTREAM_EVICT");
-        return ev && strcmp(ev, "lfu") == 0;
+        return ev && (strcmp(ev, "lfu") == 0 || strcmp(ev, "lfru") == 0);
     }();
-    for (int pass = lfu ? 0 : 1; pass < 2; pass++) {
+    for (int pass = protect ? 0 : 1; pass < 2; pass++) {
         for (auto it = lc.lru.rbegin(); it != lc.lru.rend(); ++it) {
             int victim = *it;
             if (needed && needed->count(victim)) continue;
@@ -405,10 +408,22 @@ static void lfu_recompute(layer_cache & lc) {
     for (auto & [c, e] : byc) lc.freq_protected.insert(e);
 }
 
+// E36: LLMSTREAM_EVICT=lfru is dynamic LFU — the frequency counter DECAYS, so
+// the protected/repinned set tracks the RECENT hot experts (colibri's runtime
+// repin) instead of whole-run leaders (the static top-N that E23 refuted).
+// One pre-registered setting: halve every 256 uses (half-life = the recompute
+// cadence). Applies only in lfru mode; lfu and pure-LRU are byte-identical.
+static const bool g_lfru_decay = [] {
+    const char * ev = getenv("LLMSTREAM_EVICT");
+    return ev && strcmp(ev, "lfru") == 0;
+}();
+
 static void lru_touch(layer_cache & lc, int e) {
     lc.use_count[e]++;
     if (++lc.uses_since_recompute >= 256) {
         lc.uses_since_recompute = 0;
+        if (g_lfru_decay)
+            for (auto & kv : lc.use_count) kv.second >>= 1;  // exponential aging
         lfu_recompute(lc);
     }
     auto pit = lc.lru_pos.find(e);
