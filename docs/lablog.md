@@ -2427,3 +2427,64 @@ Evidence: `results/e41b/run1_void/{B_canon_off,C_fresh}.out`.
 **Not yet root-caused, and two candidates are confounded** (reused-prefix vs batch
 composition). **PENDING R0**, which varies batch shape alone and is running now. Do
 not act on this until R0 lands; do not quote it without the confound.
+
+### OWNER RULING (conditional on R0) — chat default + strict switch (2026-07-21)
+Recorded before R0 lands so the condition is on the record, not reconstructed after.
+
+- **Chat default stays the fast path with cache reuse.** Documented honestly:
+  *"answers are full-quality and deterministic per session; bit-reproducibility
+  requires strict mode."*
+- **Strict switch** (`--strict-exact` / `LLMSTREAM_STRICT_EXACT`): guarantees
+  bit-identical-to-fresh output by disabling prefix reuse in chat. Priced in help
+  text as slower per turn. **Quality is identical in both modes — the switch buys
+  reproducibility, not correctness.**
+- **Condition**: R0 must confirm the batch/prefix mechanism. If R0 **refutes** it, the
+  ruling goes **dormant** and E39/E41b reopen as ordinary bugs.
+- **Sequencing**: R0 → (ruling implemented **or** dormant) → E41b run 2 + leg D.
+  Nothing implemented yet; R0 has not landed.
+
+### E41b: the token-410 divergence — canon's benefit may be STRUCTURALLY zero
+The owner asked for this explanation before run 2, on the grounds that "the canon
+benefit is zero until that's solved." Working it produced a worse answer than
+expected, and one derivable from the artifacts alone — no model, no tokenizer.
+
+**Arithmetic** (`run1_void/A_canon_on.out`):
+- turn-1 `rendered=296` ⇒ prompt occupies indices 0..295, ending `<|start|>assistant`.
+- `canon: kept=296 … canonical=404` ⇒ canonical[0..295] == that prompt; canonical
+  [296..403] are the 108 appended tokens.
+- `diverged_at=297` reports `ctx_toks[297] = 410 |**|`, and `canon_reply.txt` begins
+  `**How Earth Came to Be**` ⇒ **the reply body starts at canonical[297]**.
+- Therefore **exactly ONE token** sits between `<|start|>assistant` and the content:
+  canonical[296].
+
+`<|channel|>final<|message|>` is **three** tokens (200005, 17196, 200008). Three cannot
+occupy one slot. **So the canonical render does not contain `<|channel|>final<|message|>`
+before the content.**
+
+**Hypothesis that fits both observations**: with `add_generation_prompt=false` and the
+assistant message **last**, the template renders it as
+`<|start|>assistant<|message|>CONTENT<|return|>` — one marker token at 296, and a
+`<|return|>` terminator. This also explains the *other* half of the divergence: leg A's
+turn-2 render has `200002 |<|return|>|` at 297, exactly where an **empty** content
+would put the terminator.
+
+**Why this is worse than a harness bug.** E41 established that a **past** assistant
+turn (one followed by a later message) renders as
+`<|start|>assistant<|channel|>final<|message|>CONTENT<|end|>`. If the **last** assistant
+turn instead renders with one marker and `<|return|>`, then the canonical form the
+engine writes into KV is **not a prefix of what the next turn will render** — the two
+disagree at the marker (position 296) and again at the terminator. The prefix match
+would die at ~296 **no matter how correct the client echo is.**
+
+That is precisely what was measured: canon moved the match 296 → **297. One token.**
+The harness bug is then not the cause of the null result; it merely **hid** it.
+
+**Consequence for the plan**: E41b run 2 as specified may be **not worth running** —
+with a correct echo it would likely still match ~296 and re-prefill nearly everything,
+burning a scarce window to re-measure a structural mismatch. **Not acting on this**:
+it is a hypothesis from arithmetic, and the deciding measurement is a tokenization of
+the two exact renderings (`add_generation_prompt` false vs a following user turn),
+which needs the model and therefore the window. **R0 keeps the window per the
+sequencing.** Proposed: fold that tokenization into run 2 as a cheap first leg, so the
+run either proves the mismatch or clears it before spending time on the full A/B/C/D
+matrix. **Flagging for a directive rather than changing the spec unilaterally.**
