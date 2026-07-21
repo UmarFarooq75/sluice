@@ -1644,6 +1644,68 @@ it stayed free. A second stray check runs after the poll, since up to 12 h can p
 between the first one and the moment RAM is actually spent. Launched under
 `nohup caffeinate -i`, no `-t`, so it outlives the IDE and the terminal.
 
+### R0. Batch-shape invariance probe (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before the run.** Rung 0 of the E42 build plan, and
+the shared dependency of three open threads: E39 (KV restore, failed its hash gate
+for a cause never established), E41b (KV canon, gate pending), E42 (spec-dec).
+Harness only — **the engine binary is unchanged**, so this cannot itself perturb
+what it measures.
+
+**Method.** `cparams.n_ubatch` comes from `argv[4]`, and the prompt is submitted as
+one `llama_batch` that llama.cpp splits into `n_ubatch` pieces. Varying it varies the
+prefill batch shape and nothing else; decode is always one token per pass, so any
+downstream difference is inherited from prefill. Two families, because the prefill
+pool is a second variable that must not be confounded with batch shape:
+- **A (pool OFF)**: ubatch 1, 2, 4, 8 — pure shape variation through one code path.
+- **B (pool ON)**: ubatch 1, 128 — 128 is **D12's path** (per-layer union > slots).
+
+Pool logic engages only at `ne[1] > 1`, so **A1 and B1 run identical code and must
+produce identical hashes** — a consistency check on the harness, not a result.
+
+**Validity precondition, checked before any conclusion is drawn**: leg B128 must
+reproduce E37c's published `7fff2b7b9461da2a` (same prompt, N=64, SLOTS=16,
+PREFILL_SLOTS=64, ubatch=128). If it does not, the harness is not measuring what
+E37c measured and the run is **void**, not merely negative.
+
+**Two questions, deliberately reported apart** — they are not the same question and
+E39 is the proof:
+- **argmax stability** (token sequence identical) — what **spec-dec** needs.
+- **bit equality** (`logits_hash` identical) — what **our gate** demands, strictly
+  stronger. E39 failed here while its text matched.
+
+`n_gen=1` legs answer "first-divergence position" directly: if prefill numerics
+differ at all, the *first* sampled logits already differ, so divergence at step 1 is
+the signature of a batch-shape effect rather than something that accumulates.
+
+**Pre-registered consequences — both directions, written before the result.**
+1. **Invariant (bit-equal AND argmax-stable)** ⇒ batch shape is exonerated.
+   **E39's hash failure is then a real restore bug and gets REOPENED as one** — the
+   comfortable explanation is gone. E42 keeps its Exact-tier claim and gate 1(b) is
+   expected to pass. E41b's pending gate has one fewer excuse available to it.
+2. **Argmax stable but NOT bit-equal** ⇒ E39's exact signature. Spec-dec would emit
+   **identical text while failing a bit-equality gate**. This forces an owner call on
+   what "Exact" *means* — identical output, or identical logits? Our gate currently
+   demands the stronger reading. Either E39/E41b/E42 re-scope together, or the gate's
+   definition changes; that is a product decision, not mine.
+3. **Argmax flips** ⇒ bit-exact speculative decoding is **impossible** on this
+   backend. E42 re-scopes to Balanced-tier pending owner call; E39 and E41b inherit
+   the same verdict and one root cause covers all three. The property gets written
+   into `docs/techniques.md` as a **measured engine fact**, not a suspicion.
+
+**Instrumentation gap, declared up front rather than quietly dropped.** The directive
+asked for **max |Δlogit|**. It is **not obtainable from this harness**: the engine
+emits a digest (`logits_hash`) and token ids, never raw logits, so magnitude cannot
+be recovered without an engine change — which this rung forbids. What exists and was
+deliberately *not* used: `LLMSTREAM_DEBUG_HASH` prints a per-tensor FNV of every
+`ffn_moe_*` intermediate and would localise a divergence to the first differing
+(layer, node) — arguably more actionable than a magnitude. It is held for a follow-up
+because enabling it changes which nodes the callback is asked about, and that is a
+perturbation this probe must not carry.
+
+**Gating**: fires only after `results/e41b/DONE` exists (E41b owns the quiet window;
+two model processes at once is precisely protocol #1's prohibition), then waits for
+a live engine to clear, then the standard ≥8 GB / 3-consecutive-readings poll.
+
 ### E37d. Realistic-load leg — G2 task 4 (PRE-REGISTERED 2026-07-21)
 **Pre-registration — written before the run.** Goal: the "with your apps open"
 number for the README, so users see a speed that matches their real machine rather
