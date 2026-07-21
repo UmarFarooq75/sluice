@@ -1018,6 +1018,26 @@ prompt A = pack source ⇒ CONTAMINATED upper bound):**
   `gptossA.warmpack.{json,pack}` (real pack), `gate_{off,on}.out` (bit-exact),
   `A_{off,on}{1,3,3b,8,20}.{out,err}`, `curve.txt`.
 
+### E35. Warmpack A/B in E33's regime — CLOSED, not run (owner call, 2026-07-21)
+Intended as the decisive close-out: put warm-start in the regime E33 *simulated*
+(cache ≫ top_k, ≪ working set) on OLMoE-1B-7B — the one model whose tiny experts
+would let the cache hold the E33 cap without the RSS guard throttling to ≈top_k.
+That requires an OLMoE GGUF (we have only OLMoE *traces*, not loadable weights,
+and only gpt-oss-20b on disk). **Owner halted the download: gpt-oss-20b only, no
+new models.** A brief OLMoE-1B-7B pull was started and then stopped/deleted; disk
+unchanged (62 GB free).
+
+- **Status**: regime **unreachable** on the target model/hardware. On the only
+  loadable model here (gpt-oss-20b at 16 GB), the memory-safe cache pins to
+  ≈top_k (E34), so the cache-≫-top_k regime cannot be made memory-safe on this
+  box. The E33-regime live test is therefore not runnable as specified.
+- **Verdict**: warm-start benefit is **unverified live**; the claim is **retired
+  pending a machine or model where cache ≫ top_k is memory-safe**. E34 stands as
+  the final word for this hardware: no live Δhit beyond noise. No re-runs to chase
+  a different result; the RSS guard is **not** to be widened to force slots.
+- **Hook**: remains gated, off by default, correct, and bit-exact ("dark").
+  Pillar-2 "starts warm" stays caveated exactly as E34 left it — no doc change.
+
 ### Doc fix. colibri CACHE_ROUTE wording corrected (2026-07-21)
 - Backfill of the doc-only honesty task committed in `8f3ff6c`. An earlier draft
   in `docs/techniques.md` and `docs/findings-phase0.md` called colibri's
