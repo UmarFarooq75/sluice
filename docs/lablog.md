@@ -1219,6 +1219,32 @@ Run (a) streamed, requesting 24 slots (the 10 GB budget):
 - **Artifacts**: `results/g1_e37/` — `stream_N{1,3,8,20}.{out,err}`,
   `resident_N8.{out,err}` (thrash), `streamed.txt`.
 
+### E37b. G1 close-out on a QUIET box (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before staging anything.** Owner relaxed the scope:
+**G1 is now gpt-oss-20b, ≤10 GB RSS, bit-exact, ~5–6 tok/s verified clean** — E37b
+is the close-out, not a feasibility gate. E37's numbers were taken under desktop
+load (bw collapsed to ~0.12 GB/s, swap-fault tax) → to be relabelled contaminated.
+
+- **Memory gate (protocol #2)**: a detached self-guarding script waits up to 2 min
+  for **avail ≥ 12 GB** (vm_stat, **16 KB page size** — E37b caught that E37-era
+  avail math used 4 KB; corrected here). If not reached → abort + logged reason,
+  no run. Both legs GUARD ON; **no GUARD=0**.
+- **Resident leg (N=20)**: fresh compute-ceiling measurement, exact greedy,
+  prompt A. **Predict ≥ 10.47 tok/s** — E7's ceiling was measured *despite* swap,
+  so a quiet box should meet or slightly beat it; band **10.5–13 t/s**. This is the
+  number G1 lives or dies on.
+- **Streamed leg (N=20)**: `SLOTS=16` (registry "balanced" default), GUARD ON,
+  exact greedy, prompt A. **Predict hit ~0.90** (E28 .905), **RSS ~6.6 GB**
+  (≤10 GB ✓), **~5–6 tok/s** (E28 5.9; law at clean 1.15 GB/s bw, hit .90 →
+  9.6 miss×13.25MB÷1150 = .111s + .095s compute = .206s → ~4.9 t/s), effective
+  decode bw **~1.15 GB/s**, and a **clean miss-wait / true-compute split with NO
+  swap-fault term** (compute ≈ 0.095 s/tok, miss-wait ≈ 0.1 s/tok).
+- **Bit-exact gate**: resident N=20 hash **==** streamed N=20 hash (exact greedy
+  selects the true top-k → identical experts computed → identical logits).
+- **Verdict deferred**: comes after, from the on-disk artifacts only. Mark G1
+  **closed** iff the streamed leg lands in the 5–6 t/s band at ≤10 GB, bit-exact.
+  *(measured numbers appended below the run.)*
+
 ### Gap logged. MTP-via-GGUF format ceiling (2026-07-21)
 Documented in `techniques.md` → "Format ceilings": colibri ships a native int8
 MTP head (their 2.2–2.8× throughput figure); MTP weights are **dropped in GGUF
