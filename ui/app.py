@@ -155,6 +155,25 @@ Always prioritize being truthful, helpful, and clear.
 
 Reasoning: low"""
 
+# The DEFAULT_SYSTEM literal above must stay exactly as it is, trailing
+# "Reasoning: low" included: results/e38/legs.py and results/e41b/gate.py scrape it
+# out of this file with re.search(r'DEFAULT_SYSTEM = """(.*?)"""') so their runs use
+# the UI's real system prompt. Both fall back SILENTLY to "You are a helpful
+# assistant." on a miss, which would quietly destroy E38<->E41b comparability. So the
+# reasoning level is stripped and re-appended at runtime rather than templated in.
+REASONING_LEVELS = ["Low", "Medium", "High"]
+_REASONING_RE = re.compile(r"\n*^Reasoning:[ \t]*\w+[ \t]*$", re.M)
+
+
+def with_reasoning(sys_text, level):
+    """Replace any trailing 'Reasoning: x' line with the chosen level.
+
+    gpt-oss reads this line from the system prompt; it is not an engine flag.
+    At Low this reproduces DEFAULT_SYSTEM byte for byte (asserted in the sidebar),
+    so the default path is unchanged.
+    """
+    return _REASONING_RE.sub("", sys_text).rstrip() + f"\n\nReasoning: {level.lower()}"
+
 
 @st.cache_resource
 def _server_slot():
@@ -349,6 +368,23 @@ with st.sidebar:
     cfg["agree"] = MODES[mode]["agree"]
     st.caption(f":material/verified: {MODES[mode]['desc']}")
 
+    reasoning = st.selectbox(
+        "Reasoning effort", REASONING_LEVELS, index=0,
+        help="How much the model thinks before answering. The honest trade-off: "
+             "higher reasoning means MORE HIDDEN TOKENS generated before the first "
+             "visible word, and at streamed speeds those tokens cost the same as "
+             "visible ones. High can add tens of seconds to perceived first-token "
+             "time even though tok/s is unchanged. Raise it for hard problems, not "
+             "for chat.")
+    reasoning = reasoning or "Low"
+    show_thinking = st.toggle(
+        "Show thinking", value=True,
+        help="Reveal the model's internal reasoning in a collapsible panel. Hiding it "
+             "does not make it cheaper — those tokens are still generated and still "
+             "paid for; it only removes them from view.")
+    if reasoning != "Low":
+        st.caption(":material/timer: Slower first token — more hidden reasoning to generate.")
+
     cfg["backend"] = "cpu"
     cfg["temp"] = 0.8
     with st.expander("Advanced", icon=":material/tune:"):
@@ -377,10 +413,16 @@ with st.sidebar:
         n_gen = st.number_input("Max new tokens", min_value=16, max_value=3584, value=2048, step=128,
                                 help="Cap on reply length. Context window is 4096 tokens total "
                                      "(prompt + reply); very long chats truncate the oldest turns.")
-        sys_prompt = st.text_area(
-            "System prompt", value=DEFAULT_SYSTEM, height=200,
-            help="Grounds the model. The trailing 'Reasoning: low' keeps gpt-oss "
-                 "from very long internal thinking — raise to medium/high for harder tasks.")
+        sys_prompt_base = st.text_area(
+            "System prompt", value=_REASONING_RE.sub("", DEFAULT_SYSTEM).rstrip(), height=200,
+            help="Grounds the model. The 'Reasoning:' line is no longer edited here — "
+                 "the Reasoning effort dropdown above owns it and appends it for you. "
+                 "Any 'Reasoning:' line you type is replaced by that setting.")
+
+    sys_prompt = with_reasoning(sys_prompt_base, reasoning)
+    # the default path must be byte-identical to what shipped before this control
+    # existed, or every prior measurement stops describing the default UI
+    assert with_reasoning(_REASONING_RE.sub("", DEFAULT_SYSTEM).rstrip(), "Low") == DEFAULT_SYSTEM
 
     st.space("small")
 
@@ -450,7 +492,7 @@ if "chat_log" not in st.session_state:
 
 for turn in st.session_state.chat_log:
     with st.chat_message(turn["role"]):
-        if turn.get("thinking"):
+        if turn.get("thinking") and show_thinking:
             with st.expander("Thinking", icon=":material/psychology:"):
                 st.text(turn["thinking"])
         st.markdown(turn["text"])
@@ -535,11 +577,17 @@ if prompt:
                     if ttft is None and raw.strip():
                         ttft = time.time() - t0
                     final, thinking = split_harmony(raw)
-                    if thinking:
+                    if thinking and show_thinking:
                         with think_ph.container():
                             with st.expander("Thinking", icon=":material/psychology:",
                                              expanded=(not final)):
                                 st.text(thinking)
+                    elif thinking and not final:
+                        # thinking hidden and no visible answer yet: without this the
+                        # user stares at a blank pane for the whole reasoning phase,
+                        # which at High is the longest part of the wait
+                        with think_ph.container():
+                            st.caption(":material/psychology: Thinking…")
                     answer_ph.markdown((final + ("▌" if end < 0 else ""))
                                        if (final or not thinking) else "")
                 if b"<<<READY>>>" in buf:

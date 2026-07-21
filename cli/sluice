@@ -232,6 +232,17 @@ MODES = {
 }
 
 
+# gpt-oss reads its reasoning budget from a "Reasoning: <level>" line in the SYSTEM
+# prompt — it is not an engine flag, so this is prompt text, not env. Low is the
+# default and reproduces the string this CLI hardcoded before the flag existed.
+REASONING = ("low", "medium", "high")
+CLI_SYSTEM = "You are a helpful, concise assistant. Answer the user's message directly."
+
+
+def system_with_reasoning(level):
+    return f"{CLI_SYSTEM} Reasoning: {level}"
+
+
 def mode_env(mode):
     m = MODES.get(mode, MODES["balanced"])
     # AGREE_TARGET>0 enables the adaptive controller (seeds from a small margin
@@ -259,12 +270,24 @@ def ensure_engine_built():
 
 
 def cmd_run(args):
+    usage = (f"usage: sluice run <{'|'.join(REGISTRY)}> [--mode exact|balanced|fast] "
+             f"[--reasoning {'|'.join(REASONING)}]")
     if not args or args[0] not in REGISTRY:
-        print(f"usage: sluice run <{'|'.join(REGISTRY)}> [--mode exact|balanced|fast]"); return 1
+        print(usage); return 1
     name = args[0]
     mode = "balanced"
     if "--mode" in args:
         mode = args[args.index("--mode") + 1]
+    reasoning = "low"
+    if "--reasoning" in args:
+        reasoning = args[args.index("--reasoning") + 1].lower()
+        if reasoning not in REASONING:
+            print(f"unknown reasoning level {reasoning!r}\n{usage}"); return 1
+        if reasoning != "low":
+            # say it before the wait, not after: at streamed speeds the extra
+            # hidden tokens are the wait
+            print(f"{DIM}reasoning={reasoning}: more hidden thinking before the first "
+                  f"visible word — expect a slower first token.{RESET}")
     if not ensure_engine_built():
         return 1
     p = model_path(name)
@@ -283,7 +306,7 @@ def cmd_run(args):
         **mode_env(mode),
         "LLMSTREAM_SERVER": "1", "LLMSTREAM_STREAM_OUT": "1", "LLMSTREAM_CHAT": "1",
         "LLMSTREAM_IDLE_EXIT": "600", "LLMSTREAM_PREFILL_SLOTS": "1",
-        "LLMSTREAM_SYSTEM": "You are a helpful, concise assistant. Answer the user's message directly. Reasoning: low",
+        "LLMSTREAM_SYSTEM": system_with_reasoning(reasoning),
     })
     print(f"{DIM}loading {name} ({mode} mode) - one-time, stays warm…{RESET}")
     proc = subprocess.Popen([str(ENGINE), str(p), "512", "CLI_REPL", "128"],
