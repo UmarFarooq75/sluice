@@ -2126,3 +2126,80 @@ Docs-only; no code.
 - **No model process was launched for any of the three.** The armed E41b launcher
   owns the next quiet window; every check above is static analysis, HEAD requests, a
   local worktree, or one no-argument binary invocation that exits immediately.
+
+### E42 prep. Speculative decoding — DESIGN STUDY, no code, no runs (2026-07-21)
+Full document: `docs/e42-speculative-design.md`. Read-only: every number is read from
+an existing artifact or derived from it, plus a GGUF **metadata header** parse (a few
+KB, no model load). No model process was launched — E41b's armed launcher still owns
+the next quiet window.
+
+- **Headline, and it inverts the obvious intuition**: on an MoE with SSD-streamed
+  experts, **short drafts win and long drafts lose.** Batched verification must
+  materialise the *union* of experts routed by all K drafted positions, so miss-bytes
+  grow with draft length while committed tokens grow far more slowly. Modelled tok/s
+  is **monotonically decreasing in K** at every acceptance rate; **K=2 is optimal**.
+- **This contradicts llama.cpp's own guidance** (`docs/speculative.md`: *"MoEs require
+  long drafts"*, sample `n-max 64`), which is written for MoEs held in RAM where a
+  wider union costs only FLOPs. For us the union IS the cost. Logged as prediction P2
+  precisely so we find out who is wrong. Two independent papers (MoE-Spec 2602.16052;
+  Cost-Aware Spec-Dec for MoE 2607.12696) formalise the same tension, which is
+  reassurance that this is a real MoE effect and not an artefact of our fit.
+- **The union number is measured, not assumed**: E37c's own log line
+  `pf_calls=23 pf_experts=502 union avg=21.8 min=17 max=27` is a 23-token batch
+  touching 21.8 of 32 experts per layer. Independent routing would predict 30.5, so
+  **routing locality is real and worth ~30% of the union.** Fitted U(K) ≈ 4·K^0.541
+  on two points (U(1)=4 by construction, U(23)=21.8 measured) — flagged in the doc as
+  its own weakest link, and pre-registered as P1 rather than asserted.
+- **Projected payoff, bounded honestly**: 8.27 tok/s at the acceptance the only real
+  gpt-oss draft advertises (a≈0.72, K=2, no batching benefit) = **1.35×, short of 10.**
+  Crossing 10 needs a ≥ 0.90 (then 10.02 falls out at g=1) **or** measured GEMM
+  batching efficiency ≥ 1.61. Both plausible, neither established. The study does not
+  claim 10+; it claims 10+ is for the first time inside reach of a buildable
+  mechanism, and names the two measurements that decide it.
+- **Draft candidates**: exactly one real option exists —
+  `RedHatAI/gpt-oss-20b-speculator.eagle3` (854M, 1 layer, inherits the target's
+  tokenizer at conversion, llama.cpp supports it by name). Every community
+  "pruned gpt-oss" is **expert**-pruned: perfect vocab match, and useless as a draft,
+  because `num_experts_per_tok` and depth are unchanged so active params are
+  unchanged. No layer-pruned gpt-oss exists. `--spec-type ngram-mod` needs no model
+  at all (~16 MB) and llama.cpp lists reasoning models that repeat their thinking as
+  its target case — which is exactly harmony's analysis→final pattern.
+- **RAM tax is first-class here**: 1 expert slot = 319 MB, so a 0.55 GB Q4 draft costs
+  **1.7 of our 16 slots** — it raises the very miss rate spec-dec is trying to
+  amortize. A +30% miss regression eats over half the win. That is why ngram-mod
+  (0.05 slots) is rung 5 and EAGLE-3 is rung 6, not the reverse.
+- **D12 decides the architecture, not preference.** Batched verification IS the
+  `n_ubatch>1` case, and D12 says union > slots exhausts victims → `exit(1)`.
+  Verification must therefore run through the **prefill pool** (32 slots, 424 MB,
+  type-variant aware per D14) and not the decode cache. Pool headroom covers K up to
+  ~23; the decode cache would overflow at K≥16 — a second independent reason long
+  drafts are wrong for us.
+- **Vocabulary constraint verified locally**, not taken from a model card: our GGUF
+  reports `tokenizer.ggml.tokens = 201088`, pre `gpt-4o`. llama.cpp's
+  `common_speculative_are_compatible` compares token *text* for every id and hard
+  throws, so "same tokenizer family" does not pass.
+- **Bit-exactness splits cleanly, and lands on an already-open problem.** llama.cpp
+  verifies by exact match against the *target's own sampler* (not Leviathan rejection
+  sampling), so the committed sequence is algorithmically identical for any draft
+  quality — **Claim A**. But the target's logits come from a K-token batched pass
+  instead of K single-token passes, so bit-exactness reduces to **Claim B**: argmax
+  must be invariant to batch shape. **That is the same suspect as E39 (failed) and
+  E41b (pending)** — three features now depend on one unestablished property.
+  **Recommendation: resolve the batch-shape determinism question BEFORE building E42**,
+  because a negative answer re-scopes spec-dec from an Exact-tier feature to a
+  Balanced-tier one, and that is a product decision the owner should make with the
+  fact in hand rather than after a build.
+- **Instrumentation prerequisite found**: `logits_hash` currently hashes every
+  generated step. Under speculation a pass yields logits for K positions of which only
+  some commit, so the hash must be redefined over **committed positions in commit
+  order** or the gate would manufacture a false failure. Its own rung (R4).
+- **Build plan**: 8 rungs, R0–R7, each separately greenlightable. **R0–R2 touch no
+  engine code** — they are measurements on what we already have and can kill the idea
+  before a line is written. Recommended first directive is **R0** (batch-shape
+  determinism), because it is shared with E39 and E41b and its answer changes what
+  E42 *is*.
+- **One process error caught mid-study, recorded because it nearly shipped**: the
+  first payoff table divided an already-in-seconds quantity by 1000, making I/O 1000×
+  too cheap and projecting 14–73 tok/s. Caught by a unit check that replays the model
+  at K=1 and demands it reproduce the measured 6.14 tok/s. That check is now written
+  into the doc as a required step, not an optional one.
