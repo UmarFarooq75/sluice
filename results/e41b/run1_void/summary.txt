@@ -1,0 +1,12 @@
+E41b — KV canonicalization (2026-07-21 21:46)
+avail at start 8.07 GB | NGEN=200 SLOTS=16 guard ON | CLEAN
+total wall 466 s
+
+turn-1 canonicalization: canon: held=496 kept=296 dropped=200 decoded=108 canonical=404 (13.23 s, post-reply)
+
+A turn2 (canon ON)     hash=0101f7d30ad830a4 rendered=315 reused=297 reprefill=18 ttft=6742 ms prefill=6.73 s
+B turn2 (canon OFF)    hash=81e84aa667640f55 rendered=421 reused=296 reprefill=125 ttft=12187 ms prefill=12.15 s
+C fresh                hash=865919727c751b58 rendered=421 reused=0 reprefill=421 ttft=24764 ms prefill=24.76 s
+
+GATE 1 faithfulness  A == C : RED
+CONTROL              B == C : DIFFER

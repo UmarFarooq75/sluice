@@ -107,8 +107,12 @@ if [ "$can_run" -eq 1 ]; then
   # --- 6. byte-identical-off (protocol #3) -----------------------------------
   if [ -x "$REF" ]; then
     ip="Name three primary colors."
-    env LLMSTREAM_CHAT=1 LLMSTREAM_SLOTS=5 "$REF" "$MODEL" 8 "$ip" 1 >/tmp/gate_ref.out 2>/dev/null
-    env LLMSTREAM_CHAT=1 LLMSTREAM_SLOTS=5 "$BIN" "$MODEL" 8 "$ip" 1 >/tmp/gate_new.out 2>/dev/null
+    # Compare only DETERMINISTIC lines. Wall-clock timings, prefetch race counters
+    # and peak_rss differ between two runs of the SAME binary, so a full-stdout cmp
+    # can never pass — E41b run 1 reported "inert: DIFFERS" on nothing but timing
+    # noise while mode=, logits_hash= and text: were identical.
+    env LLMSTREAM_CHAT=1 LLMSTREAM_SLOTS=5 "$REF" "$MODEL" 8 "$ip" 1 2>/dev/null | grep -E '^(mode=|logits_hash=|text:|ttft: ctx_held|canon:|canon_reply:)' >/tmp/gate_ref.out
+    env LLMSTREAM_CHAT=1 LLMSTREAM_SLOTS=5 "$BIN" "$MODEL" 8 "$ip" 1 2>/dev/null | grep -E '^(mode=|logits_hash=|text:|ttft: ctx_held|canon:|canon_reply:)' >/tmp/gate_new.out
     if cmp -s /tmp/gate_ref.out /tmp/gate_new.out; then say "$P" "byte-identical with flags unset (vs .gate reference)"
     else bad "stdout DIFFERS from the reference with all flags unset:
 $(diff /tmp/gate_ref.out /tmp/gate_new.out | head -8)"; fi

@@ -28,6 +28,19 @@ avail_gb() {
           printf "%.2f", (f+iv+sp+pu)*ps/1e9 }'
 }
 
+# RUN 2. Run 1 was VOID — see results/e41b/run1_void/VOID.md (a missing re.M made
+# leg A render a different conversation). R0 now owns the window, so wait for it.
+echo "[$(date '+%m-%d %H:%M:%S')] run 2 armed; waiting for R0 (results/r0/DONE)" >> "$OUT/gate.log"
+while [ ! -f "$REPO/results/r0/DONE" ]; do
+  if ! pgrep -f "r0/run.sh" > /dev/null 2>&1; then
+    echo "ABORTED: R0's launcher is gone and it never wrote DONE. Not starting on an unknown state." > "$OUT/ABORTED"
+    echo "aborted" > "$OUT/DONE"; exit 0
+  fi
+  sleep 60
+done
+echo "[$(date '+%m-%d %H:%M:%S')] R0 finished: $(cat "$REPO/results/r0/DONE")" >> "$OUT/gate.log"
+for i in $(seq 1 30); do pgrep -f "csrc/stream_run" > /dev/null 2>&1 || break; sleep 10; done
+
 # protocol #1: never start a second model process
 if pgrep -f "csrc/stream_run" > /dev/null 2>&1; then
   echo "ABORTED: a stream_run is already running (protocol #1). No run performed." > "$OUT/ABORTED"
@@ -82,7 +95,11 @@ for pair in "old:$PREV" "new:$BIN"; do
   tag=${pair%%:*}; exe=${pair#*:}
   [ -x "$exe" ] || { echo "inert check SKIPPED: $exe missing" >> "$OUT/gate.log"; continue; }
   env LLMSTREAM_CHAT=1 LLMSTREAM_SLOTS=5 "$exe" "$MODEL" 8 "$IP" 1 \
-    > "$OUT/inert_$tag.out" 2> "$OUT/inert_$tag.err"
+    > "$OUT/inert_$tag.raw" 2> "$OUT/inert_$tag.err"
+  # keep only lines that are DETERMINISTIC for a given binary+input. Timings,
+  # prefetch race counters and peak_rss differ between two runs of the SAME
+  # binary, so comparing them guarantees a false RED (run 1 hit exactly that).
+  grep -E '^(mode=|logits_hash=|text:|ttft: ctx_held|canon:|canon_reply:)' "$OUT/inert_$tag.raw" > "$OUT/inert_$tag.out"
 done
 
 # --- protocol #4: bit-exact gate, canonical prompt A / N=8 / SLOTS=5 ---------

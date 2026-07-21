@@ -103,8 +103,33 @@ def server(label, requests, canon):
 
 
 def field(block, pat, cast=str, default=None):
-    mm = re.search(pat, block)
+    """Pull one field out of an engine block. ALWAYS multiline.
+
+    Run 1 was voided by this function. It used a bare re.search, so `^` anchored to
+    the start of the whole block rather than to a line. One call site had noticed
+    and passed an inline (?m); the one that built leg A's turn-2 history had not,
+    so `^canon_reply:` silently returned the default "" and leg A ran with an EMPTY
+    assistant turn — a different conversation from legs B and C (rendered 315 vs
+    421), which made the gate-1 comparison meaningless.
+
+    The fix is re.M here, not another (?m) at a call site: a helper whose behaviour
+    disagrees with what every caller assumes will be got wrong again. And a silent
+    `default` on a field the run DEPENDS on is a second bug, so callers that must
+    have a value now use require_field().
+    """
+    mm = re.search(pat, block, re.M)
     return cast(mm.group(1)) if mm else default
+
+
+def require_field(block, pat, what):
+    """Like field(), but a miss is fatal. Use for anything the run's validity
+    depends on — silently substituting a default is how run 1 produced a
+    confident-looking RED from a conversation that was never rendered."""
+    mm = re.search(pat, block, re.M)
+    if not mm:
+        sys.exit(f"ABORT: could not read {what} from the engine output — "
+                 f"refusing to run legs against a value that does not exist")
+    return mm.group(1)
 
 
 def unesc(s):
@@ -123,13 +148,13 @@ def main():
     # --- leg A: canon ON -------------------------------------------------
     A = server("A_canon_on", [
         hist([("user", P1)]),
+        # fatal on a miss: leg A's whole purpose is to carry the canonical reply
         lambda b: hist([("user", P1),
-                        ("assistant", unesc(field(b[0], r"^canon_reply: (.*)$", default=""))),
+                        ("assistant", unesc(require_field(b[0], r"^canon_reply: (.*)$",
+                                                          "canon_reply (leg A turn 1)"))),
                         ("user", P2)]),
     ], canon=True)
-    reply = unesc(field(A[0], r"(?m)^canon_reply: (.*)$", default=""))
-    if not reply:
-        sys.exit("ABORT: leg A produced no canon_reply — canonicalization did not run")
+    reply = unesc(require_field(A[0], r"^canon_reply: (.*)$", "canon_reply (leg A turn 1)"))
     (OUT / "canon_reply.txt").write_text(reply)
 
     turn2 = hist([("user", P1), ("assistant", reply), ("user", P2)])
@@ -152,7 +177,14 @@ def main():
         )
 
     rA, rB, rC = row("A turn2 (canon ON)", A[1]), row("B turn2 (canon OFF)", B[1]), row("C fresh", C[0])
-    canon_line = field(A[0], r"(?m)^(canon: .*)$", default="(none)")
+    canon_line = field(A[0], r"^(canon: .*)$", default="(none)")
+
+    # PREMISE CHECK — the one run 1 lacked. All three legs must render the SAME
+    # prompt; only the KV path may differ. Run 1 compared a 315-token render against
+    # a 421-token render and reported a confident RED. If the renders disagree the
+    # comparison is void, and that has to be stated as VOID, never as a result.
+    renders = {r["leg"]: r["rendered"] for r in (rA, rB, rC)}
+    premise_ok = len(set(renders.values())) == 1 and rA["rendered"]
 
     L = []
     L.append(f"E41b — KV canonicalization ({time.strftime('%Y-%m-%d %H:%M')})")
@@ -166,8 +198,20 @@ def main():
                  f"reused={r['reused']} reprefill={r['reprefill']} "
                  f"ttft={r['ttft_ms']} ms prefill={r['prefill_s']} s")
     L.append("")
-    L.append(f"GATE 1 faithfulness  A == C : {'GREEN' if rA['hash'] == rC['hash'] else 'RED'}")
-    L.append(f"CONTROL              B == C : {'match' if rB['hash'] == rC['hash'] else 'DIFFER'}")
+    L.append(f"PREMISE  identical renderings across legs: {renders} -> "
+             f"{'OK' if premise_ok else 'VIOLATED'}")
+    if premise_ok:
+        L.append(f"GATE 1 faithfulness  A == C : {'GREEN' if rA['hash'] == rC['hash'] else 'RED'}")
+    else:
+        L.append("GATE 1 faithfulness  A == C : VOID — the legs rendered different "
+                 "prompts, so their hashes cannot be compared. This is a HARNESS "
+                 "failure, not an engine result. Do not read a verdict into it.")
+    # the control only needs B and C to agree with each other
+    if rB["rendered"] == rC["rendered"]:
+        L.append(f"CONTROL              B == C : {'match' if rB['hash'] == rC['hash'] else 'DIFFER'}"
+                 "   (stock KV reuse vs fresh full prefill, identical rendering)")
+    else:
+        L.append("CONTROL              B == C : VOID — B and C rendered differently")
     txt = "\n".join(L)
     (OUT / "summary.txt").write_text(txt + "\n")
     print(txt)

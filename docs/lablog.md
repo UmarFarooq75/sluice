@@ -2309,3 +2309,55 @@ Non-engine work while E41b and R0 wait on the RAM gate. No model process launche
   before/after; (b) **fault injection** — removing the `LLMSTREAM_KV_CANON` row from
   the README made the gate go **RED** and restoring it returned it to PARTIAL. A
   gate nobody has seen fail is not known to work.
+
+### E41b RUN 1 — VOID for gate 1. Harness bug, not an engine result (2026-07-21 21:46)
+The gate opened at 21:38 (avail 8.08 GB, 3/3 streak) after ~7 h of waiting, and the
+legs ran clean. Then the summary printed `GATE 1: RED`. **That verdict is not real
+and must not be quoted.**
+
+- **What went wrong**: `field()` used a bare `re.search`, so `^` anchored to the
+  start of the whole block rather than to a line. One call site had noticed and
+  passed an inline `(?m)`; the one building **leg A's turn-2 history had not**. So
+  `^canon_reply:` never matched, the silent `default=""` was returned, and **leg A
+  ran with an EMPTY assistant turn** — a different conversation from B and C.
+- **How it was caught**: not by the summary, which looked confident, but by the
+  rendered counts. **A rendered 315 tokens; B and C rendered 421.** The premise of
+  the whole design is that all three legs render byte-identically so that only the
+  KV path differs. It was violated, and nothing checked.
+- **Two bugs, not one.** The missing `re.M` is the proximate cause; the deeper one is
+  a helper that **silently substitutes a default for a value the run depends on**.
+  Fixed both: `field()` is now always multiline, and anything load-bearing goes
+  through `require_field()`, which aborts rather than inventing a value. The summary
+  now checks the premise first and prints **VOID** — never a verdict — when the
+  renderings disagree.
+- **The "inert: DIFFERS" line was ALSO a harness flaw.** It compared full stdout,
+  which includes wall-clock timings, prefetch race counters and `peak_rss` — all of
+  which differ between two runs of *the same* binary. Re-filtered to the
+  deterministic lines, run 1's own artifacts are **IDENTICAL**
+  (`logits_hash=74a27209c03b5503`, same `mode=`, same `text:`). **Protocol #3 passed.**
+  `scripts/gate.sh` shipped the same flawed comparison this afternoon and is fixed too.
+
+**What run 1 DID establish, and is quotable:**
+1. **CONTROL: B ≠ C. This is the headline.** Legs B and C both rendered 421 tokens
+   from the identical string; B reused a 296-token KV prefix (canon **OFF** — stock,
+   shipping behaviour) and C prefilled all 421 fresh. Hashes `81e84aa667640f55` vs
+   `865919727c751b58`. **Stock KV reuse does not reproduce a fresh full prefill.**
+   That is E39's signature, present in the default path, with no new feature
+   involved — it predates E41b entirely.
+   *Caveat stated before anyone leans on it*: B and C differ in **two** ways at once
+   — reused-prefix vs fresh, and prefill batch shape (125 tokens in one batch vs 421
+   split into four ubatches). **R0 is built to separate exactly those.** This makes
+   R0 more valuable, not less.
+2. **The canonicalization mechanism works**: `held=496 kept=296 dropped=200
+   decoded=108 canonical=404` in **13.23 s, after the reply was printed** — off the
+   TTFT critical path, as designed. Prediction 5 said ~9–12 s; measured 13.23, a
+   miss on the high side.
+3. **Bit-exact gate GREEN**: `fdf0f83dd70504c5`.
+4. Predictions 2/3/4 (kv_match, reprefill, TTFT collapse) are **untested** — leg A's
+   `reused=297 reprefill=18 ttft=6.7 s` came from a 315-token render, so its low
+   re-prefill is partly just a shorter prompt. No collapse claim is supported.
+
+**Run 2 armed**, chained behind R0 (which now owns the window), with the premise
+check, `require_field`, and the corrected inert comparison in place. Run 1's
+artifacts are preserved under `results/e41b/run1_void/` with `VOID.md` explaining
+why they must not be cited as a gate result.

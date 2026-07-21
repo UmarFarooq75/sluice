@@ -1,0 +1,39 @@
+ttft: total=29586 ms | template=1 tokenize=2 kv_match=0 prefill=29583 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=296 reused=0 generated=200 n_ubatch=128
+prefill: 29.58 s (10.01 tok/s)
+decode:  74.78 s (2.67 tok/s)
+io: cb_calls=4872 decode_uses=19200 decode_misses=2642 (hit 0.862) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=19.56 s (pool 32 slots)
+io: prefetch_issued=751 prefetch_hits=216 prefetch_used=666 stall=36.22 s total_read=66162.8 MB avg_bw=634 MB/s
+io: read_work=406.60 s preads=29952 per_stream_bw=163 MB/s
+io: guard pressure_drops=2 cap_evictions=72 final_cap=14
+mem: peak_rss=7.14 GB phys_footprint=6.36 GB
+therm: nominal
+logits_hash=95bbde6ba90ae818
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth is habitable: distance from Sun, size, gravity, magnetic field, atmosphere, water, etc. Provide simple language.<|end|><|start|>assistant<|channel|>final<|message|>**How Earth Came to Be**
+
+| Stage | What Happened | Key Result |
+|-------|---------------|------------|
+| **Solar Nebula (≈4.6 billion yr ago)** | A rotating cloud of gas and dust collapsed under gravity, forming a protostar (the Sun) at the center. | Sun ignites; material flattens into a protoplanetary disk. |
+| **Planetesimal Formation** | Dust grains stuck together, grew into kilometer‑sized “planetes
+
+<<<TURN>>>
+ttft: total=12187 ms | template=1 tokenize=39 kv_match=0 prefill=12146 first_sample=1
+ttft: ctx_held=496 rendered=421 reused=296 reprefill=125 (29.7% of rendered)
+ttft: diverged_at=296 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+mode=streamed prompt_toks=421 reused=296 generated=200 n_ubatch=128
+prefill: 12.15 s (10.29 tok/s)
+decode:  56.25 s (3.56 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=4214 (hit 0.781) prefill_uses=11504 prefill_misses=572
+io: pf_calls=23 pf_experts=570 union avg=24.8 min=16 max=32 fill=8.46 s (pool 32 slots)
+io: prefetch_issued=6318 prefetch_hits=1743 prefetch_used=4908 stall=40.32 s total_read=147169.8 MB avg_bw=2152 MB/s
+io: read_work=439.28 s preads=66624 per_stream_bw=335 MB/s
+io: guard pressure_drops=7 cap_evictions=287 final_cap=6
+mem: peak_rss=7.14 GB phys_footprint=3.80 GB
+therm: fair
+logits_hash=81e84aa667640f55
+text: <|channel|>analysis<|message|>The user wants a summary in three bullet points. They previously asked "Explain how the Earth formed and why it can support life." The assistant gave a table. Now they want a summary in three bullet points. So we need to produce three bullet points summarizing Earth formation and why it can support life. Should be concise. Let's do that.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation**: About 4.6 billion years ago, a rotating cloud of gas and dust collapsed under gravity, forming the Sun and a surrounding protoplanetary disk; dust grains in the disk accreted into planetesimals, which merged into the Earth.  
+- **Key conditions**: The Earth’s distance from the Sun places it in the “habitable zone,” giving it a temperate climate; its gravity and magnetic field protect the surface from harmful solar radiation and retain an atmosphere.  
+- **Life‑supporting features**: A stable, water‑

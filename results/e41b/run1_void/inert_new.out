@@ -1,0 +1,11 @@
+llmstream: 24 layers, 5 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+mode=streamed prompt_toks=11 reused=0 generated=8 n_ubatch=1
+prefill: 5.51 s (2.00 tok/s)
+decode:  2.21 s (3.63 tok/s)
+io: cb_calls=456 decode_uses=768 decode_misses=186 (hit 0.758) prefill_uses=1016 prefill_misses=310
+io: prefetch_issued=654 prefetch_hits=141 prefetch_used=493 stall=6.39 s total_read=15241.8 MB avg_bw=1976 MB/s
+io: read_work=54.56 s preads=6900 per_stream_bw=279 MB/s
+mem: peak_rss=8.87 GB phys_footprint=3.22 GB
+therm: fair
+logits_hash=74a27209c03b5503
+text: <|channel|>analysis<|message|>The user asks: "

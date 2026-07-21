@@ -1,0 +1,43 @@
+ttft: total=18658 ms | template=1 tokenize=15 kv_match=0 prefill=18641 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=296 reused=0 generated=200 n_ubatch=128
+prefill: 18.64 s (15.88 tok/s)
+decode:  59.79 s (3.35 tok/s)
+io: cb_calls=4872 decode_uses=19200 decode_misses=2072 (hit 0.892) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=11.21 s (pool 32 slots)
+io: prefetch_issued=335 prefetch_hits=89 prefetch_used=313 stall=25.18 s total_read=53094.6 MB avg_bw=677 MB/s
+io: read_work=238.46 s preads=24036 per_stream_bw=223 MB/s
+io: guard pressure_drops=1 cap_evictions=48 final_cap=14
+mem: peak_rss=6.87 GB phys_footprint=6.12 GB
+therm: nominal
+logits_hash=95bbde6ba90ae818
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth is habitable: distance from Sun, size, gravity, magnetic field, atmosphere, water, etc. Provide simple language.<|end|><|start|>assistant<|channel|>final<|message|>**How Earth Came to Be**
+
+| Stage | What Happened | Key Result |
+|-------|---------------|------------|
+| **Solar Nebula (≈4.6 billion yr ago)** | A rotating cloud of gas and dust collapsed under gravity, forming a protostar (the Sun) at the center. | Sun ignites; material flattens into a protoplanetary disk. |
+| **Planetesimal Formation** | Dust grains stuck together, grew into kilometer‑sized “planetes
+canon: held=496 kept=296 dropped=200 decoded=108 canonical=404 (13.23 s, post-reply)
+canon_reply: **How Earth Came to Be**\n\n| Stage | What Happened | Key Result |\n|-------|---------------|------------|\n| **Solar Nebula (≈4.6 billion yr ago)** | A rotating cloud of gas and dust collapsed under gravity, forming a protostar (the Sun) at the center. | Sun ignites; material flattens into a protoplanetary disk. |\n| **Planetesimal Formation** | Dust grains stuck together, grew into kilometer‑sized “planetes
+
+<<<TURN>>>
+ttft: total=6742 ms | template=0 tokenize=10 kv_match=0 prefill=6731 first_sample=1
+ttft: ctx_held=404 rendered=315 reused=297 reprefill=18 (5.7% of rendered)
+ttft: diverged_at=297 kv_had=410|**| rerender_has=200002|<|return|>|
+mode=streamed prompt_toks=315 reused=297 generated=200 n_ubatch=128
+prefill: 6.73 s (2.67 tok/s)
+decode:  61.10 s (3.27 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=4174 (hit 0.783) prefill_uses=1660 prefill_misses=408
+io: pf_calls=23 pf_experts=405 union avg=17.6 min=11 max=24 fill=5.56 s (pool 32 slots)
+io: prefetch_issued=6283 prefetch_hits=1833 prefetch_used=4787 stall=42.08 s total_read=144002.1 MB avg_bw=2123 MB/s
+io: read_work=428.73 s preads=65190 per_stream_bw=336 MB/s
+io: guard pressure_drops=3 cap_evictions=264 final_cap=6
+mem: peak_rss=6.87 GB phys_footprint=3.55 GB
+therm: nominal
+logits_hash=0101f7d30ad830a4
+text: <|channel|>analysis<|message|>The user wants a summary in three bullet points. They previously asked "Explain how the Earth formed and why it can support life." The assistant gave a long answer. Now they want a summary in three bullet points. So we need to produce three bullet points summarizing the formation of Earth and why it can support life. Should be concise. Let's do that.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation**: Earth formed ~4.5 billion years ago from a rotating protoplanetary disk around the young Sun, accreting dust and gas into a molten body that differentiated into core, mantle, and crust.  
+- **Stable environment**: Its distance from the Sun places it in the habitable zone, giving a temperate climate; a magnetic field shields the surface from solar wind, and a thick atmosphere retains heat and protects against radiation.  
+- **Essential ingredients**: The planet’s water‑rich surface, a carbon‑based chemistry,
+canon: held=515 kept=315 dropped=200 decoded=121 canonical=436 (9.18 s, post-reply)
+canon_reply: - **Formation**: Earth formed ~4.5 billion years ago from a rotating protoplanetary disk around the young Sun, accreting dust and gas into a molten body that differentiated into core, mantle, and crust.  \n- **Stable environment**: Its distance from the Sun places it in the habitable zone, giving a temperate climate; a magnetic field shields the surface from solar wind, and a thick atmosphere retains heat and protects against radiation.  \n- **Essential ingredients**: The planet’s water‑rich surface, a carbon‑based chemistry,
