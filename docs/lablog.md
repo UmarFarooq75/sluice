@@ -899,6 +899,33 @@ believe a reviewer).
   per-family prior so it starts closer to the settle point.
 - **Verdict**: D3 CLOSED and live-verified. Dial surfaced in both CLI + UI.
 
+### E33. Working-set persistence sidecar (warm-start packs) (2026-07-21)
+- **Scope (colleague-directed)**: ONLY the persistence half — save/reload warm-
+  start packs, env-gated, off by default. Engine preload hook = go/no-go below.
+- **Built**: `src/warmpack.py` — build the per-layer hot-expert working set
+  (smallest set covering `coverage` of a task's routing) from a trace or a live
+  id-dump; save/load a compact sidecar JSON (results/warmpacks/<task>.warmpack.json).
+  Inert unless invoked; the engine consumes a pack only when LLMSTREAM_WARMPACK is
+  set (stock path byte-identical without it — protocol #3).
+- **Packs built** (OLMoE 64-expert traces, 16 layers, coverage 0.90): 38-47
+  experts/layer, round-trip verified.
+- **Measured cold-start lift** (LRU-16, preseed pack top-16 vs cold), FRONT-LOADED:
+
+  | window | cold hit | warm hit | lift |
+  |---|---|---|---|
+  | first 3 tok | .331 | .599 | **+26.8 pts** |
+  | first 8 tok | .466 | .567 | +10.2 |
+  | first 20 tok | .514 | .555 | +4.1 |
+  | first 50 tok | .529 | .545 | +1.6 |
+
+  Big exactly where it matters (first-token latency / fresh session / task switch),
+  decays as the cache self-warms. Honest: negligible beyond ~30 tokens.
+- **Pre-warm is logit-neutral** — changes residency-at-start, not which experts
+  compute — so exact-mode hash must stay 0ec1c81919bbdafc when the hook lands.
+- **Go/no-go (deferred per "ONLY the sidecar")**: LLMSTREAM_WARMPACK engine hook
+  = pre-fill slots from the pack at init (assign_slot+fetch_one loop). Justified
+  by the +26.8 pt token-3 lift; cost = one hot-path C++ change + rebuild + gate.
+
 ### Product arc 1: llmstream CLI + chat UI v2 + D10 closed (2026-07-20)
 - **Name decided**: llmstream ("virtual memory for LLMs"). CLI in
   cli/llmstream: list / estimate / run / ui / pull / rm. The estimator is
