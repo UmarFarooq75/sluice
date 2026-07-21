@@ -1297,6 +1297,37 @@ verified; streamed-first so no page-cache warming; exact greedy, prompt A, N=20)
 - **Artifacts**: `results/e37b/` — `streamed.{out,err}`, `summary.txt`, `gate.log`
   (resident leg skipped, not run).
 
+### E37c. G1 close-out at matched N — the warming fix (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before the run.** Diagnosis overturned from artifacts
+(senior lead): E37b's 4.14 t/s was **N=20 still warming**, not a slot ceiling. Proof
+in-hand: (1) prompt-A hit curve **.677→.747→.832→.855** across N=1→20 is monotonic
+rising, not plateaued; (2) `results/e28_20b_stream_s16.txt` is **N=64 steady-state**
+— hit **.905**, decode **5.86 t/s** at SLOTS=16 — but on a *different* prompt
+("why is the sky blue") and **ubatch=1**. So the E37b gap is **measurement length**,
+not slot count. E37c re-runs at matched N=64.
+
+- **Config**: one streamed leg, **N=64**, `SLOTS=16`, `PREFILL_SLOTS=64`,
+  `ubatch=128`, guard ON, exact greedy, **prompt A** (merge sorted lists), quiet
+  box (gate avail ≥ 8 GB, same self-guarding script pattern → `results/e37c/`).
+- **Predictions:**
+  1. **hit ≈ 0.90** — prompt-A warming curve plateaus toward the E28 .905 by N=64.
+  2. **tok/s in the 5–6 band** — E28 reproduces at matched N (its 5.86 is the
+     64-token average; extending E37b's warm curve: 20 tok in 4.83 s + ~44 tok at
+     steady-state ~0.15 s ≈ 11.4 s → ~5.6 t/s).
+  3. **peak RSS ≈ 8.7 GB (time -l) / ~9.3 GB (engine peak_rss), ≤ 10 GB ✓** —
+     N-independent: the peak is the prefill transient (424 MB pool + ubatch=128
+     activation buffers, unshed via lazy madv_free), not the decode cache (16 slots
+     = 5.09 GB) which is already `cap=full` at N=20. phys_footprint ~6.7 GB is the
+     true steady state (matches E28's 6.57). **Confirms the E37b 8.69 explanation.**
+- **Hash anchor**: no prior N=64 *prompt-A* artifact exists (E28's
+  `8c170e11c74c5ce8` is a *different* prompt → not an anchor). **This run sets the
+  N=64 prompt-A reference hash.** Bit-exactness rides on (a) the established
+  exact-mode contract (margin 0 = bit-reproducible = resident) and (b) demonstrated
+  cross-config invariance — prompt-A N=20 hash `e3fa62923ee35254` is identical
+  across loaded/clean boxes and slot counts 5/16/24.
+- **Close condition**: if hit ~.90 and tok/s ∈ [5,6] at ≤10 GB → **G1 CLOSES**.
+  Else report, **no tuning**. *(measured numbers appended below the run.)*
+
 ### Gap logged. MTP-via-GGUF format ceiling (2026-07-21)
 Documented in `techniques.md` → "Format ceilings": colibri ships a native int8
 MTP head (their 2.2–2.8× throughput figure); MTP weights are **dropped in GGUF
