@@ -1225,14 +1225,22 @@ Run (a) streamed, requesting 24 slots (the 10 GB budget):
 is the close-out, not a feasibility gate. E37's numbers were taken under desktop
 load (bw collapsed to ~0.12 GB/s, swap-fault tax) → to be relabelled contaminated.
 
-- **Memory gate (protocol #2)**: a detached self-guarding script waits up to 2 min
-  for **avail ≥ 12 GB** (vm_stat, **16 KB page size** — E37b caught that E37-era
-  avail math used 4 KB; corrected here). If not reached → abort + logged reason,
-  no run. Both legs GUARD ON; **no GUARD=0**.
-- **Resident leg (N=20)**: fresh compute-ceiling measurement, exact greedy,
-  prompt A. **Predict ≥ 10.47 tok/s** — E7's ceiling was measured *despite* swap,
-  so a quiet box should meet or slightly beat it; band **10.5–13 t/s**. This is the
-  number G1 lives or dies on.
+- **Re-scope (owner-approved, 2026-07-21)**: the 12 GB gate is unreachable without
+  a reboot — avail floors at ~9.4 GB with everything closed (macOS baseline + our
+  two terminal sessions). **G1 close-out = the streamed leg only.** So: (1) streamed
+  leg is **primary and runs FIRST** — gate drops to **avail ≥ 8 GB** (streamed
+  footprint ~6.2 GB); running it first also avoids a resident-first run warming the
+  OS page cache the streamed leg reads through. (2) resident leg is **opportunistic**
+  — after the streamed leg, re-check avail and run it only if ≥ 12 GB (it won't be
+  → log "skipped: avail=X, E7 anchor ≥10.47 stands"). No thrash risk ever.
+- **Memory gate (protocol #2)**: detached self-guarding script waits up to 2 min
+  for the streamed gate (avail ≥ 8 GB; vm_stat, **16 KB page size** — E37b caught
+  that E37-era avail math used 4 KB). If not reached → abort + logged reason, no
+  run. Both legs GUARD ON; **no GUARD=0**.
+- **Resident leg (N=20, opportunistic)**: fresh compute-ceiling measurement if
+  avail ≥ 12 GB; **predict ≥ 10.47 tok/s** (E7's ceiling was measured *despite*
+  swap → a quiet box meets or beats it; band 10.5–13). Expected to be **skipped**
+  this run; the E7 anchor (≥10.47) stands as the ceiling of record.
 - **Streamed leg (N=20)**: `SLOTS=16` (registry "balanced" default), GUARD ON,
   exact greedy, prompt A. **Predict hit ~0.90** (E28 .905), **RSS ~6.6 GB**
   (≤10 GB ✓), **~5–6 tok/s** (E28 5.9; law at clean 1.15 GB/s bw, hit .90 →
