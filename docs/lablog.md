@@ -874,6 +874,31 @@ believe a reviewer).
   run when a 32 GB machine is available: Qwen3.6-35B-A3B fully resident → predict
   10-13 tok/s (falsifies if <8 or >16). No frontier download justified by this scan.
 
+### E32. D3 live verification: gate green + AGREE_TARGET dial holds (2026-07-21)
+- **Goal (colleague-directed)**: don't trust the ledger — prove D3 live. Exact
+  vs resident bit-identical hash; Balanced/Fast actually emit AGREE_TARGET
+  .95/.90 and the engine honors them. Artifact: results/d3_live_verify.txt.
+- **Exact-mode gate (protocol #4)**: gpt-oss-20b, resident vs slots32 vs
+  slots12, N_GEN=24 → **all bit-identical, hash 0ec1c81919bbdafc. GATE PASS.**
+  Exact (agree=0, margin=0) is streamed==resident bit-for-bit.
+- **Dial live (64-tok, logit-scale gating)**:
+
+  | AGREE_TARGET | settled margin | router_agreement | decode |
+  |---|---|---|---|
+  | 0.95 | 0.021 | 0.9977 | 3.35 tok/s |
+  | 0.90 | 0.188 | 0.9848 | 3.78 tok/s |
+
+  Family-agnostic (one knob lands on logit-scale margins on gpt-oss), directional
+  (lower target → higher margin → faster), floor HELD both runs (agreement ≥
+  target). CLI mode_env + UI MODES emit exactly .95/.90.
+- **Honest caveat (known, E20 arithmetic)**: under-exploits on short 64-tok runs
+  — agreement sits ABOVE target because 8 windows can't climb the full range in
+  64 tokens; needs ~200 tok / warm run (E30) to settle nearer the floor. Quality
+  floor is safe (errs conservative); speed under-exploited on short replies. Not
+  a bug — quality-first by construction. Candidate follow-up: seed margin from a
+  per-family prior so it starts closer to the settle point.
+- **Verdict**: D3 CLOSED and live-verified. Dial surfaced in both CLI + UI.
+
 ### Product arc 1: llmstream CLI + chat UI v2 + D10 closed (2026-07-20)
 - **Name decided**: llmstream ("virtual memory for LLMs"). CLI in
   cli/llmstream: list / estimate / run / ui / pull / rm. The estimator is

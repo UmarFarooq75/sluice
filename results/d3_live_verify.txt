@@ -1,0 +1,36 @@
+D3 live verification — AGREE_TARGET family-agnostic quality dial
+model: gpt-oss-20b-MXFP4.gguf (logit-scale gating), slots=16, gen=64
+date: 2026-07-21   binary: csrc/stream_run
+
+===== AGREE_TARGET=0.95 =====
+llmstream: adaptive margin on, fidelity target 0.95 (seed margin 0.010)
+decode:  19.09 s (3.35 tok/s)
+io: margin=0.021 masked=26106 skip_fills=0
+io: router_agreement=0.9977 swapped_calls=14 of=1513
+io: adaptive_margin target=0.95 final=0.021 range=[0.010,0.021] steps=8
+logits_hash=db5d2c333213603c
+
+===== AGREE_TARGET=0.90 =====
+llmstream: adaptive margin on, fidelity target 0.90 (seed margin 0.010)
+decode:  16.92 s (3.78 tok/s)
+io: margin=0.188 masked=27223 skip_fills=0
+io: router_agreement=0.9848 swapped_calls=87 of=1513
+io: adaptive_margin target=0.90 final=0.188 range=[0.010,0.188] steps=8
+logits_hash=a88a11a1d6166f14
+
+===== EXACT vs RESIDENT gate (protocol #4, N_GEN=24) =====
+[resident] logits_hash=0ec1c81919bbdafc
+[slots32]  logits_hash=0ec1c81919bbdafc  (hit 0.904)
+[slots12]  logits_hash=0ec1c81919bbdafc  (hit 0.843)
+GATE PASS: all logit hashes bit-identical (0ec1c81919bbdafc)
+-> Exact mode (agree=0, margin=0) is streamed==resident, bit-for-bit.
+
+===== product emission check =====
+CLI mode_env(): exact->AGREE_TARGET 0.0 | balanced->0.95 | fast->0.90
+UI MODES:       Exact 0.0 | Balanced 0.95 | Fast 0.90   (cfg->LLMSTREAM_AGREE_TARGET)
+
+VERDICT: dial is directional + family-agnostic (one target knob lands on
+logit-scale margins on gpt-oss); floor HELD in both runs (agreement >= target);
+lower target -> higher margin -> more skips -> faster. Known limitation (E20):
+under-exploits on short runs (agreement above target) — needs ~200 tok / warm
+to settle; quality-first by construction. Exact mode bit-exact (m1_gate 0ec1c8).
