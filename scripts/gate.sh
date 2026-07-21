@@ -135,7 +135,10 @@ fi
 # Protocol #4 says no engine commit before a green bit-exact gate; a rule that
 # lives only in a document is a rule that gets swept up by a wildcard.
 printf "\n${B}staging${R}\n"
-staged_engine=$(git diff --cached --name-only 2>/dev/null | grep -E '^(csrc/|patches/)' || true)
+# match the ENGINE specifically, not all of csrc/: csrc/tmpl_probe.cpp is a
+# standalone probe that never links into stream_run, and a guard that cannot tell
+# them apart trains people to ignore it.
+staged_engine=$(git diff --cached --name-only 2>/dev/null | grep -E '^(csrc/stream_run\.cpp|patches/)' || true)
 if [ -n "$staged_engine" ]; then
   cur_md5=$(md5 -q "$BIN" 2>/dev/null || md5sum "$BIN" 2>/dev/null | cut -d" " -f1)
   rec_md5=$(sed -n 's/^binary_md5=//p' "$ROOT/.gate/last-green" 2>/dev/null)

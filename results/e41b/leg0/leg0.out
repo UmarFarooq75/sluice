@@ -1,0 +1,17 @@
+template: 16738 chars
+
+=== (i) assistant LAST, add_generation_prompt=false  [what canon writes] ===
+<|start|>system<|message|>You are a helpful assistant.<|end|><|start|>user<|message|>Explain how the Earth formed.<|end|><|start|>assistant<|message|>ANSWERBODY<|return|>
+
+=== (ii) assistant PAST + user turn, add_generation_prompt=true  [next render] ===
+<|start|>system<|message|>You are a helpful assistant.<|end|><|start|>user<|message|>Explain how the Earth formed.<|end|><|start|>assistant<|message|>ANSWERBODY<|return|><|start|>user<|message|>Summarize that.<|end|><|start|>assistant
+
+=== VERDICT ===
+(i) is a byte-prefix of (ii): YES
+
+OUTCOME (b): MISMATCH CLEARED — the canonical form IS a prefix of the next
+render, so the harness echo bug was the whole story.
+
+assistant turn as rendered:
+  (i)  |<|start|>assistant<|message|>ANSWERBODY<|return|>|
+  (ii) |<|start|>assistant<|message|>ANSWERBODY<|return|>|

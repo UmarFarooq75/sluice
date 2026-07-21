@@ -2488,3 +2488,100 @@ which needs the model and therefore the window. **R0 keeps the window per the
 sequencing.** Proposed: fold that tokenization into run 2 as a cheap first leg, so the
 run either proves the mismatch or clears it before spending time on the full A/B/C/D
 matrix. **Flagging for a directive rather than changing the spec unilaterally.**
+
+### E41b run 2 — RE-SPECCED (PRE-REGISTERED 2026-07-21, before leg 0)
+Leg 0 is the deciding tokenization. **It needs no model**: `llama_chat_apply_template`
+takes the template *string*, and that string lives in GGUF **metadata** (a few KB
+read), so leg 0 can run outside the window and settle the branch before R0 finishes.
+A small standalone probe (`csrc/tmpl_probe.cpp`) links libllama and calls the same
+function the engine calls — ground truth, not a re-implementation, because llama.cpp
+uses its own built-in handlers rather than the Jinja source.
+
+**Leg 0**: render the same assistant turn two ways —
+(i) as the **last** message with `add_generation_prompt=false` (what canon writes), and
+(ii) as a **past** message followed by a user turn (what the next turn renders) —
+then diff at token level.
+
+**Pre-registered outcomes:**
+- **(a) Forms differ at marker + terminator**, as the arithmetic in the previous entry
+  predicts (one marker token and `<|return|>` for the last-turn form, vs
+  `<|channel|>final<|message|>` … `<|end|>` for the past-turn form) ⇒ **structural
+  mismatch CONFIRMED**. The canonical KV can never be a prefix of the next render, and
+  canon's measured 296→297 gain is explained without reference to the harness bug.
+- **(b) Forms match** ⇒ **mismatch CLEARED**; the harness echo bug was the whole story
+  and the original matrix stands.
+
+**Branch (a), authorized and bounded**: change canon to decode the **past-turn**
+rendering (channel-final form, `<|end|>` terminator). **Only if that stays inside the
+existing canon block** in `stream_run.cpp`; if the fix wants to touch anything outside
+it, **stop and report — no matrix.**
+
+*Predictions for the corrected canon (written before the change):*
+1. **A's reuse ≈ the full canonical KV** — 404-class, **not** 297.
+   *Falsifier*: reuse < 380.
+2. **A's reprefill ≈ new-suffix-only** (the user turn + generation prompt, ~17–25
+   tokens of a ~421-token render). *Falsifier*: > 60.
+3. **Leg D faithfulness on the corrected rendering**: a cold single-shot of A's exact
+   turn-2 rendering must match A's turn-2 `logits_hash`. Same prompt, two KV paths.
+   *Falsifier*: hashes differ ⇒ RED, and it joins the E39/R0 batch-shape question
+   rather than being rationalised.
+4. **Turn-2 TTFT** falls from the stock 12.2 s (B) toward the prefill cost of ~20
+   tokens. *Falsifier*: no improvement over B on a **matched rendering** — the trap
+   run 1 fell into, so B and A must both render ~421 or the comparison is void.
+
+**Branch (b)**: run the matrix as originally specced with the corrected echo.
+
+All standing gates apply: byte-identical off, **semantic** inert check, bit-exact gate,
+`.gate` receipt. R0 keeps priority; this chains behind it.
+
+### E41b LEG 0 — RESULT: outcome (b). My structural-mismatch hypothesis is REFUTED.
+Ran **without the model** and therefore without the window: `llama_chat_apply_template`
+takes the template *string*, extracted from GGUF metadata. Probe:
+`csrc/tmpl_probe.cpp` (`make tmpl-probe`), artifacts `results/e41b/leg0/`.
+
+```
+(i)  assistant LAST, add_generation_prompt=false   [what canon writes]
+     <|start|>assistant<|message|>ANSWERBODY<|return|>
+(ii) assistant PAST + user turn, add_gen=true      [what the next turn renders]
+     <|start|>assistant<|message|>ANSWERBODY<|return|>
+VERDICT: (i) is a byte-prefix of (ii): YES
+```
+
+**Outcome (b): mismatch CLEARED. The harness echo bug was the whole story.**
+⇒ **Branch (b)**: run the matrix as originally specced with the corrected echo. The
+authorized canon change under branch (a) is **not** made — it would have "fixed" a
+form that is already correct.
+
+**My arithmetic was right; my inference from it was wrong.** The deduction that exactly
+**one** marker token sits between `<|start|>assistant` and the content, with a
+`<|return|>` terminator, is confirmed exactly — that *is* the shape. What was wrong was
+assuming the **past-turn** form differs from it. It does not.
+
+**Correction to the E41 record.** E41 stated the template renders a past assistant turn
+as `<|start|>assistant<|channel|>final<|message|>CONTENT<|end|>` (tokens 200006, 173781,
+200005, 17196, 200008, …, 200007). **That describes the reference harmony format, not
+what our engine renders.** llama.cpp does not interpret the GGUF Jinja for known
+families — it dispatches to its own built-in handler, which drops the channel markers
+for past turns and terminates with `<|return|>`. E41's *conclusion* stands (append-only
+is impossible, because the model generates an analysis channel that no re-render
+contains), but its token-level description of the rendering was of the wrong
+implementation. **Lesson repeated from D11: verify against the artifact the code
+actually produces, not the spec it is supposed to follow.**
+
+**Everything now reconciles with run 1's telemetry**, which is the real check on this:
+- canonical KV: `…<|start|>assistant<|message|>` **CONTENT**… `<|return|>`
+- turn-2 render (empty echo): `…<|start|>assistant<|message|>` `<|return|>` `<|start|>user…`
+- shared through position 296 (`<|message|>`); at 297 KV has `**` (410) and the render
+  has `<|return|>` (200002) — **exactly** `kv_had=410|**| rerender_has=200002|<|return|>|`.
+- And leg B's stock divergence (`kv_had=<|channel|>` → `rerender_has=<|message|>`) is the
+  same mechanism one step earlier: the model generates a channel marker the re-render
+  never contains.
+
+So canon's 296→297 result was **not** structural. With a correct echo the canonical KV
+*should* be a prefix of the next render, and predictions 1–4 for run 2 stand as
+pre-registered. **Run 2 is worth running.**
+
+Guard note: `scripts/gate.sh`'s staging check matched all of `csrc/`, which would have
+flagged `csrc/tmpl_probe.cpp` — a standalone probe that never links into the engine.
+Narrowed to `csrc/stream_run.cpp|patches/`. A guard that cannot tell those apart trains
+people to ignore it.

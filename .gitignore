@@ -41,3 +41,4 @@ ui_streamlit.log
 
 # byte-identical-off reference binary (make gate-ref)
 .gate/
+csrc/tmpl_probe
