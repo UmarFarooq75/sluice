@@ -1218,6 +1218,26 @@ int main(int argc, char ** argv) {
     std::string req_prompt = prompt;
     bool have_req = true;
     std::vector<llama_token> ctx_toks; // what the KV currently holds (server mode)
+    // E39: LLMSTREAM_KV_PERSIST=<path> - checkpoint/restore the conversation KV so a
+    // restarted chat resumes warm instead of re-prefilling. OFF by default (unset =>
+    // this block never runs => byte-identical). Uses llama.cpp's maintained
+    // state_seq file API, which persists the KV *and* its token list.
+    const char * kv_path = getenv("LLMSTREAM_KV_PERSIST");
+    if (server_mode && kv_path && *kv_path) {
+        std::vector<llama_token> loaded((size_t) n_ctx);
+        size_t n_loaded = 0;
+        if (llama_state_seq_load_file(ctx, kv_path, 0, loaded.data(), loaded.size(), &n_loaded)
+            && n_loaded > 0) {
+            ctx_toks.assign(loaded.begin(), loaded.begin() + n_loaded);
+            // LOUD on purpose: colibri shipped a SILENT resume and a chat inherited
+            // 670 stale tokens - replies came back in the wrong language and it
+            // "read as a quantization bug for a day". A resume must never be quiet.
+            fprintf(stderr, "llmstream: KV RESUMED from %s - %zu tokens of prior conversation "
+                            "are in context. Delete the file to start fresh.\n", kv_path, n_loaded);
+        } else {
+            fprintf(stderr, "llmstream: KV persist armed (%s) - no usable prior state, starting fresh\n", kv_path);
+        }
+    }
     if (server_mode) {
         printf("<<<READY>>>\n"); fflush(stdout);
         have_req = server_next_request(req_prompt, idle_exit_s);
@@ -1526,6 +1546,19 @@ int main(int argc, char ** argv) {
     printf("text: %s\n", out.c_str());
 
     if (!server_mode) break;
+    // E39: checkpoint the conversation after each completed turn. Written to a
+    // temp file then atomically renamed, so a crash mid-write can never leave a
+    // torn checkpoint behind (colibri gets this via data-then-counter ordering).
+    if (kv_path && *kv_path && !ctx_toks.empty()) {
+        std::string tmp = std::string(kv_path) + ".tmp";
+        if (llama_state_seq_save_file(ctx, tmp.c_str(), 0, ctx_toks.data(), ctx_toks.size())
+            && rename(tmp.c_str(), kv_path) == 0) {
+            fprintf(stderr, "llmstream: KV checkpointed (%zu tokens) -> %s\n", ctx_toks.size(), kv_path);
+        } else {
+            unlink(tmp.c_str());
+            fprintf(stderr, "llmstream: KV checkpoint FAILED (chat still fine, resume unavailable)\n");
+        }
+    }
     printf("<<<READY>>>\n"); fflush(stdout);
     have_req = server_next_request(req_prompt, idle_exit_s);
     }

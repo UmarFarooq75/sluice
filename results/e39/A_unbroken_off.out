@@ -1,0 +1,34 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=15280 ms | template=0 tokenize=2 kv_match=0 prefill=15277 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=296 reused=0 generated=60 n_ubatch=128
+prefill: 15.28 s (19.38 tok/s)
+decode:  8.95 s (6.71 tok/s)
+io: cb_calls=1512 decode_uses=5760 decode_misses=460 (hit 0.920) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=8.33 s (pool 32 slots)
+io: prefetch_issued=242 prefetch_hits=69 prefetch_used=225 stall=4.82 s total_read=30496.9 MB avg_bw=1259 MB/s
+io: read_work=109.55 s preads=13806 per_stream_bw=278 MB/s
+mem: peak_rss=9.96 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=22ab70701690e8ae
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also
+<<<READY>>>
+ttft: total=8427 ms | template=0 tokenize=15 kv_match=0 prefill=8411 first_sample=1
+ttft: ctx_held=356 rendered=375 reused=296 reprefill=79 (21.1% of rendered)
+ttft: diverged_at=296 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+mode=streamed prompt_toks=375 reused=296 generated=60 n_ubatch=128
+prefill: 8.41 s (44.58 tok/s)
+decode:  9.66 s (6.21 tok/s)
+io: cb_calls=1464 decode_uses=5760 decode_misses=843 (hit 0.854) prefill_uses=7272 prefill_misses=560
+io: pf_calls=23 pf_experts=557 union avg=24.2 min=18 max=32 fill=6.32 s (pool 32 slots)
+io: prefetch_issued=462 prefetch_hits=230 prefetch_used=375 stall=5.63 s total_read=24718.3 MB avg_bw=1368 MB/s
+io: read_work=98.15 s preads=11190 per_stream_bw=252 MB/s
+io: guard pressure_drops=2 cap_evictions=94 final_cap=12
+mem: peak_rss=9.96 GB phys_footprint=5.51 GB
+therm: nominal
+logits_hash=fc1efa9e0bd36fcc
+text: <|channel|>analysis<|message|>User wants a summary in three bullet points. Provide concise bullet points.<|end|><|start|>assistant<|channel|>final<|message|>- **Accretion & Differentiation** – About 4.6 billion years ago, dust and gas in the solar nebula coalesced into planetes
+<<<READY>>>

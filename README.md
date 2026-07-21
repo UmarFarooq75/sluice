@@ -157,6 +157,8 @@ The engine (`csrc/stream_run`) is driven entirely by `LLMSTREAM_*` env vars. Def
 |---|---|---|
 | `LLMSTREAM_WARMPACK` | *unset (dark)* | Pre-fill the cache from a working-set pack at init. Correct + bit-exact, but its live benefit is hardware-gated (needs cache ≫ top_k; no measurable win on this 16 GB box — E34). Off; stock path byte-identical. |
 | `LLMSTREAM_EVICT` | `LRU` | `lfu` = protect frequency leaders; `lfru` = dynamic decayed-frequency repin (colibri's mechanism). A/B'd (E36): **no win over LRU** at cache≈top_k on this box. Kept gated/dark; residency-only, bit-exact. |
+| `LLMSTREAM_KV_PERSIST` | *unset (dark)* | Checkpoint/restore the chat KV to a file so a **restarted** server resumes without re-prefilling (server mode; resume is announced loudly on stderr). **NOT bit-exact when enabled** — E39 measured identical output *text* but a differing `logits_hash` on resume, cause not yet established. Off by default; do not enable where bit-exactness is required. It also does **not** reduce multi-turn TTFT (E39: reuse is unchanged at 296/79 with it on or off) — that needs prefix-stable history, not persistence. |
+| `LLMSTREAM_PHASE_TIMERS` | *unset* | Print a TTFT phase breakdown (template / tokenize / kv_match / prefill / first_sample) plus the KV divergence point. Diagnostic only; chrono reads, provably inert (E38). |
 
 ### Debug / advanced
 

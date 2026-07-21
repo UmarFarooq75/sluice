@@ -1409,6 +1409,87 @@ CACHE_ROUTE wording, no strawmen), and a full `LLMSTREAM_*` env-var reference
 comment for Umar to supply. Docs only, no code. Prior detailed chapters remain in
 git history + `docs/findings-phase0.md`.
 
+### E39. KV-cache persistence — G2 task 2 (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before the run.**
+
+- **Build**: `LLMSTREAM_KV_PERSIST=<path>`, **off by default** (unset ⇒ code never
+  entered ⇒ byte-identical). Server mode only. Uses llama.cpp's maintained
+  `llama_state_seq_save_file` / `llama_state_seq_load_file` (they persist the KV
+  **and** the token list) rather than hand-rolling KV serialization — the E38 desk
+  study's recommendation. Load at startup, save after every turn. **Resume is
+  announced loudly on stderr** — colibri's measured failure was a *silent* resume
+  that inherited 670 stale tokens and answered in the wrong language for a day.
+- **PREDICTION CONFLICT, declared up front.** The directive predicts *"second-turn
+  first-token drops from 47.6 s to seconds."* **E38's telemetry says persistence
+  alone cannot deliver that**, and I will not quietly adopt a prediction my own
+  evidence contradicts. E38 proved the second-turn cost comes from *within-session
+  prefix divergence*: KV holds the harmony `<|channel|>` token the model generated,
+  the re-rendered history does not, so the match breaks at the assistant boundary
+  (`diverged_at=296`). Saving and restoring KV faithfully does **not** change what
+  the re-render produces. So I register **both**:
+  - **Directive's prediction (P-A)**: second-turn TTFT → seconds.
+  - **My prediction (P-B)**: second-turn TTFT ≈ **unchanged** (~20 s in this config)
+    with persist ON, because the divergence is upstream of persistence.
+  - **Falsifier for P-B**: if second-turn TTFT drops to seconds with persist ON,
+    I am wrong and P-A stands. Whichever way it lands gets reported plainly.
+- **What persistence genuinely buys (and the gate)**: faithful **checkpoint /
+  restore** of a conversation. **Gate = resumed-chat output byte-identical to
+  unbroken-chat output** — i.e. run turns 1→2 in one process, versus turn 1 → save →
+  exit → restore → turn 2, and require the turn-2 `logits_hash` **and** text to
+  match exactly. That is a correctness gate and it is achievable regardless of the
+  timing question.
+- **Honest scope note**: the *time* win on multi-turn chat is bounded by the same
+  divergence, so the real TTFT fix is **prefix-stable history** (stop re-rendering
+  the assistant tail, or feed back the generated tokens verbatim). That is a
+  separate task and I will name it as the recommended follow-up, not smuggle it in.
+- **Byte-identical-off check**: unset ⇒ 0 new output lines + unchanged
+  `logits_hash` vs the canonical `fdf0f83dd70504c5`.
+  *(measured numbers appended below the run.)*
+
+**Measured (from `results/e39/` — CLEAN, n_gen=60, SLOTS=16 guard ON, exact greedy):**
+
+| arm | turn-2 hash | TTFT | ctx_held | rendered | reused | reprefill |
+|---|---|---|---|---|---|---|
+| A unbroken (feature OFF) | `fc1efa9e0bd36fcc` | 8427 ms | 356 | 375 | **296** | **79** |
+| B2 resumed (feature ON) | `f40384bd332e7eab` | 6357 ms | 356 | 375 | **296** | **79** |
+
+- **Byte-identical OFF: confirmed** (`fdf0f83dd70504c5`, unchanged).
+- **Resume announced on stderr: YES** (colibri's silent-resume hazard avoided).
+- **PREDICTION CONFLICT SETTLED — P-A refuted, P-B confirmed.** `reused` and
+  `reprefill` are **identical (296 / 79)** with persistence ON and OFF. Persistence
+  did **not** increase reuse and did **not** drop second-turn TTFT "to seconds";
+  both arms still re-prefill the assistant tail, exactly as E38's divergence
+  predicts. (The 8.4 s → 6.4 s difference is fresh-vs-warm process, not reuse —
+  the reuse counters are byte-for-byte equal.) The smaller reprefill here vs E38's
+  219 is just the shorter answer (n_gen=60 → ~60-token tail + new user turn = 79),
+  which *further* confirms the mechanism: **reprefill ≈ assistant tail + new turn.**
+- **GATE: split verdict, reported precisely rather than collapsed.**
+  - **Owner's literal gate — "resumed-chat output byte-identical to unbroken-chat
+    output" — PASSES**: the generated **text matches byte-for-byte**.
+  - **sluice's bit-exact standard — FAILS**: the `logits_hash` differs
+    (`fc1efa9e…` vs `f40384bd…`). Same argmax, different low-order logit values ⇒
+    **the KV restore is not numerically bit-faithful.** Expert residency cannot
+    explain it (exact mode is logit-neutral, invariant across slot counts in
+    E34/E36/E37c), so it is the restore itself.
+  - Under our own standard this is **RED**, and I am not shipping it as bit-exact.
+- **Diagnosis, stopped at 1 attempt (standing rule: never debug past 2 unattended).**
+  Hypothesis "the iSWA sliding-window cache isn't persisted" — **REFUTED by source**:
+  `llama_kv_cache_iswa::state_write/state_read` with `flags=0` (what the file API
+  passes) write **both** `kv_base` and `kv_swa`, so the full iSWA state does round
+  trip. **Cause not established.** Remaining suspects, untested and unclaimed:
+  KV cell placement differing after restore (changing float summation order), or a
+  precision detail in the state serialization. Needs its own directive.
+- **Disposition**: `LLMSTREAM_KV_PERSIST` is committed **off by default, byte-identical
+  off, and explicitly marked NOT bit-exact when enabled.** Do **not** advertise it;
+  do not enable it in the CLI/UI. The engine's stock bit-exact gate is green
+  (`fdf0f83dd70504c5`), which is what authorises the commit.
+- **The real TTFT fix is NOT persistence.** E38 + E39 together show the cost is the
+  *re-render* discarding the assistant tail. The fix is **prefix-stable history** —
+  either feed the generated tokens back verbatim, or have the server own the
+  conversation and append only the new user turn. **Recommended next directive.**
+- **Artifacts**: `results/e39/` — `summary.txt`, `gate.py`, `A_unbroken_off.*`,
+  `B1_turn1_on.*`, `B2_resume_on.*`, `chat.kv`.
+
 ### E38. First-token decomposition — G2 task 1 (PRE-REGISTERED 2026-07-21)
 **Pre-registration — written before the legs run.** G2 opens on TTFT, named in the
 README as our worst UX number. Target: explain the **47.6 s second-turn** TTFT seen

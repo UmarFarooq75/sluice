@@ -1,0 +1,18 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=13905 ms | template=0 tokenize=1 kv_match=0 prefill=13902 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=296 reused=0 generated=60 n_ubatch=128
+prefill: 13.90 s (21.29 tok/s)
+decode:  8.18 s (7.33 tok/s)
+io: cb_calls=1512 decode_uses=5760 decode_misses=465 (hit 0.919) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=7.15 s (pool 32 slots)
+io: prefetch_issued=237 prefetch_hits=71 prefetch_used=223 stall=4.16 s total_read=30496.9 MB avg_bw=1381 MB/s
+io: read_work=94.59 s preads=13806 per_stream_bw=322 MB/s
+mem: peak_rss=10.75 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=22ab70701690e8ae
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also
+<<<READY>>>

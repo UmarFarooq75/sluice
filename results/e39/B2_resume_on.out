@@ -1,0 +1,18 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=6357 ms | template=0 tokenize=2 kv_match=0 prefill=6353 first_sample=1
+ttft: ctx_held=356 rendered=375 reused=296 reprefill=79 (21.1% of rendered)
+ttft: diverged_at=296 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+mode=streamed prompt_toks=375 reused=296 generated=60 n_ubatch=128
+prefill: 6.35 s (59.03 tok/s)
+decode:  9.61 s (6.24 tok/s)
+io: cb_calls=1464 decode_uses=5760 decode_misses=687 (hit 0.881) prefill_uses=7272 prefill_misses=561
+io: pf_calls=23 pf_experts=557 union avg=24.2 min=16 max=32 fill=4.32 s (pool 32 slots)
+io: prefetch_issued=280 prefetch_hits=104 prefetch_used=253 stall=5.81 s total_read=20251.7 MB avg_bw=1269 MB/s
+io: read_work=75.01 s preads=9168 per_stream_bw=270 MB/s
+mem: peak_rss=10.73 GB phys_footprint=6.74 GB
+therm: nominal
+logits_hash=f40384bd332e7eab
+text: <|channel|>analysis<|message|>User wants a summary in three bullet points. Provide concise bullet points.<|end|><|start|>assistant<|channel|>final<|message|>- **Accretion & Differentiation** – About 4.6 billion years ago, dust and gas in the solar nebula coalesced into planetes
+<<<READY>>>

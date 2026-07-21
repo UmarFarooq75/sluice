@@ -1,0 +1,12 @@
+E39 gate — resumed vs unbroken (2026-07-21 08:39)
+n_gen=60 SLOTS=16 guard ON exact greedy | CLEAN
+
+A unbroken(OFF)  turn2: hash=fc1efa9e0bd36fcc ttft=8427 ms ctx(held,rendered,reused,reprefill)=('356', '375', '296', '79')
+B2 resumed(ON)   turn2: hash=f40384bd332e7eab ttft=6357 ms ctx(held,rendered,reused,reprefill)=('356', '375', '296', '79')
+B1 turn1(ON)          : ttft=13905 ms
+
+resume announced on stderr : YES
+turn-2 logits_hash match   : FAIL
+turn-2 text match          : PASS
+
+GATE: RED
