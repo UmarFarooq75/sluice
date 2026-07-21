@@ -1,0 +1,105 @@
+{
+  "$comment": [
+    "sluice model library — DRAFT manifest (packaging task, 2026-07-21).",
+    "Extracts the library out of cli/sluice's hardcoded REGISTRY so it becomes data.",
+    "NOT yet wired into the CLI: that is a code change and this task was docs/scripts",
+    "only. Wiring it is a separate directive.",
+    "RULE: every tok/s here must cite a results/ artifact or a lablog entry. Numbers",
+    "with no source do not belong in this file. 'measured_on' names the machine the",
+    "number came from, because speed is a function of the machine, not the model."
+  ],
+  "manifest_version": 1,
+  "reference_machine": {
+    "id": "m2air-16gb",
+    "description": "MacBook Air M2, 16 GB, CPU backend, internal SSD",
+    "note": "All measured numbers below are from this machine unless stated otherwise."
+  },
+  "load_profiles": {
+    "$comment": "Measured free-RAM -> speed curve (E37c / E37d / E37). Same model, same settings, identical output hash 7fff2b7b9461da2a in every row.",
+    "quiet": { "free_ram_gb": 9.2, "exact_tok_s": 6.14, "source": "E37c results/e37c/" },
+    "light": { "free_ram_gb": 8.4, "exact_tok_s": 4.89, "source": "E37d results/e37d/" },
+    "heavy": { "free_ram_gb": 1.5, "exact_tok_s": 1.57, "source": "E37 results/g1_e37/ (contaminated, kept as the under-load datapoint)" }
+  },
+  "models": [
+    {
+      "name": "gpt-oss-20b",
+      "file": "gpt-oss-20b-MXFP4.gguf",
+      "url": "https://huggingface.co/ggml-org/gpt-oss-20b-GGUF/resolve/main/gpt-oss-20b-MXFP4.gguf",
+      "bytes": 12110000000,
+      "params_total": "21B",
+      "params_active": "3.6B",
+      "quant": "MXFP4",
+      "layers": 24,
+      "experts": 32,
+      "top_k": 4,
+      "default_slots": 16,
+      "footprint_gb": 6.73,
+      "footprint_metric": "phys_footprint (load- and length-invariant; peak_rss runs higher and includes reclaimable mmap pages)",
+      "measured": [
+        { "mode": "exact",       "tok_s": 6.14, "conditions": "quiet box, N=64",                       "source": "E37c results/e37c/summary.txt" },
+        { "mode": "exact",       "tok_s": 4.89, "conditions": "light desktop load, 8.4 GB free, N=64", "source": "E37d results/e37d/" },
+        { "mode": "fast",        "tok_s": 8.79, "conditions": "warm sustained chat, FIELD OBSERVATION (uncontrolled UI, temp 0.80)", "source": "lablog Live-UI observation 2026-07-21" }
+      ],
+      "ttft_seconds_cold": 21.7,
+      "ttft_note": "TTFT is dominated by prefill and grows with conversation length, because the re-rendered history discards the assistant tail (E38). Known worst UX number.",
+      "status": "primary — all G1/G2 measurements run on this model"
+    },
+    {
+      "name": "gpt-oss-120b",
+      "file": "gpt-oss-120b-MXFP4.gguf",
+      "url": "https://huggingface.co/ggml-org/gpt-oss-120b-GGUF/resolve/main/gpt-oss-120b-mxfp4-00001-of-00003.gguf",
+      "bytes": 63387346208,
+      "params_total": "117B",
+      "params_active": "5.1B",
+      "quant": "MXFP4",
+      "default_slots": 8,
+      "footprint_gb": 5.7,
+      "measured": [
+        { "mode": "exact",    "tok_s": 1.56, "conditions": "bit-identical logits, hash-gated", "source": "lablog E1-E26, results/" },
+        { "mode": "balanced", "tok_s": 1.77, "conditions": "margin 0.25 + auto-prefetch",      "source": "lablog E1-E26, results/" },
+        { "mode": "fast",     "tok_s": 5.58, "conditions": "margin 1.25, quality cost documented", "source": "lablog E1-E26, results/" }
+      ],
+      "status": "stress test — 117B params in 5.7 GB on a 16 GB laptop, 4x RAM the file size"
+    },
+    {
+      "name": "qwen3.6-35b-a3b",
+      "file": "Qwen3.6-35B-A3B-Q5_K_M.gguf",
+      "url": null,
+      "bytes": 26500000000,
+      "params_total": "35B",
+      "params_active": "3B",
+      "quant": "Q5_K_M",
+      "footprint_gb": 6.0,
+      "measured": [
+        { "mode": "margin m=0.02", "tok_s": 8.3, "conditions": "2.9 GB expert cache, coherent output", "source": "results/qwen36_headtohead.json, finding 33" },
+        { "mode": "exact",         "tok_s": 3.6, "conditions": "5.9 GB cache",                          "source": "results/qwen36_headtohead.json" }
+      ],
+      "note": "stock llama.cpp (the engine under Ollama/LM Studio) was OOM-killed loading this on the same machine; family adapter for this architecture was ~20 lines",
+      "status": "head-to-head datapoint; url not pinned in this draft"
+    },
+    {
+      "name": "olmoe-7b",
+      "hf_glob": "hf_home/hub/models--allenai--OLMoE-1B-7B-0125-Instruct-GGUF/snapshots/*/*.gguf",
+      "url": "https://huggingface.co/allenai/OLMoE-1B-7B-0125-Instruct-GGUF/resolve/main/OLMoE-1B-7B-0125-Instruct-Q4_K_M.gguf",
+      "bytes": 4300000000,
+      "params_total": "7B",
+      "params_active": "1.3B",
+      "quant": "Q4_K_M",
+      "layers": 16,
+      "experts": 64,
+      "top_k": 8,
+      "default_slots": 32,
+      "measured": [
+        { "mode": "resident cpu",   "tok_s": 69.4, "conditions": "reference",        "source": "lablog E28" },
+        { "mode": "resident metal", "tok_s": 72.9, "conditions": "reference",        "source": "lablog E28" },
+        { "mode": "streamed s48",   "tok_s": 48.1, "conditions": "1/3 RAM, bit-exact", "source": "lablog E28" }
+      ],
+      "note": "the routing-trace model for our offline simulations; url corrected 2026-07-21 (the filename in cli/sluice REGISTRY is stale-cased and 404s)",
+      "status": "research / small-model tier"
+    }
+  ],
+  "known_issues": [
+    "cli/sluice REGISTRY has a stale lowercase olmoe filename that 404s; the corrected URL is in this manifest (see olmoe-7b.url).",
+    "vendor/ is gitignored and there is no submodule, so a fresh clone cannot build until scripts/install.sh fetches llama.cpp @ b10064 and applies patches/llmstream.patch."
+  ]
+}

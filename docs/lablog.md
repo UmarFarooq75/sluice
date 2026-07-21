@@ -1409,6 +1409,36 @@ CACHE_ROUTE wording, no strawmen), and a full `LLMSTREAM_*` env-var reference
 comment for Umar to supply. Docs only, no code. Prior detailed chapters remain in
 git history + `docs/findings-phase0.md`.
 
+### Packaging. Install script + model-library manifest — G2 task 5 (2026-07-21)
+Docs/scripts only, no engine changes, run after the queue cleared. Drafted
+`scripts/install.sh` and `packaging/models.json`.
+
+- **Real defect found, and it invalidated a README claim I wrote yesterday**:
+  `vendor/` is **gitignored with 0 tracked files** and there is no submodule, so a
+  **fresh clone cannot build at all** — `scripts/build_driver.sh` links against
+  `vendor/llama.cpp/build/bin`, which does not exist. Yesterday's README told users
+  the CLI "auto-builds the engine on first run"; that is true only on *this* machine,
+  where the vendored tree already exists. **Corrected**: the quickstart now leads with
+  `scripts/install.sh` and states plainly why it is required.
+- **`scripts/install.sh`** reconstructs what the clone omits: clone llama.cpp at the
+  pinned **`b10064`** (the working tree reports `b10064-4-g…` = that tag plus our 4
+  fork commits), apply `patches/llmstream.patch`, cmake-build the library, build the
+  driver, create `.venv` with streamlit+psutil. Idempotent (every step skipped if
+  satisfied), no destructive operations, and it **downloads no model** — it ends by
+  pointing at `sluice estimate` first. Platform honesty: `build_driver.sh` hardcodes
+  `-lobjc -framework Foundation`, so the script says up front that only macOS/Apple
+  Silicon is tested rather than failing mysteriously on Linux.
+- **`packaging/models.json`** lifts the library out of `cli/sluice`'s hardcoded
+  REGISTRY into data: 4 models, each speed carrying a `source` pointing at a
+  `results/` artifact or lablog entry, plus the measured free-RAM→speed curve
+  (quiet 6.14 / light 4.89 / heavy 1.57, identical output hash in all three).
+  **Not wired into the CLI** — that is a code change and this task was docs/scripts
+  only; wiring is a separate directive.
+- **Second defect logged, not fixed**: `cli/sluice`'s `olmoe-7b` URL uses a stale
+  lowercase filename that **404s** (hit live during E37b). The corrected URL is
+  recorded in the manifest's `known_issues` and `olmoe-7b.url`; fixing the CLI is a
+  code change, deliberately not bundled here.
+
 ### E37d. Realistic-load leg — G2 task 4 (PRE-REGISTERED 2026-07-21)
 **Pre-registration — written before the run.** Goal: the "with your apps open"
 number for the README, so users see a speed that matches their real machine rather

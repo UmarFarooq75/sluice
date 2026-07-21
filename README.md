@@ -50,18 +50,23 @@ The full experiment record — every prediction written *before* the result, eve
 
 ## Quickstart
 
-Needs a Mac (Apple Silicon) or Linux, Python 3, and a C++ toolchain. ~12 GB free disk for the default model.
+Needs macOS on Apple Silicon (the only tested platform), Python 3, cmake, and a C++ toolchain. ~12 GB free disk for the default model.
 
 ```bash
 git clone https://github.com/UmarFarooq75/sluice.git
 cd sluice
+bash scripts/install.sh                # one-time: fetches llama.cpp, applies our fork
+                                       # patch, builds the engine, creates the venv.
+                                       # Downloads NO model.
 
 # See what THIS machine will actually do — before downloading anything.
 ./cli/sluice estimate gpt-oss-20b      # probes your disk bandwidth, prints honest tok/s per mode
 
-# Launch the playground chat UI (auto-builds the engine + auto-pulls the model on first run).
-./cli/sluice ui                        # → http://localhost:8501
+./cli/sluice pull gpt-oss-20b          # ~12 GB, only once you've seen the estimate
+./cli/sluice ui                        # playground → http://localhost:8501
 ```
+
+`scripts/install.sh` is **required on a fresh clone**: `vendor/` is deliberately not committed, so there is no llama.cpp to link against until the installer fetches the pinned revision (`b10064`) and applies [patches/llmstream.patch](patches/llmstream.patch). It is safe to re-run — each step is skipped if already satisfied. **Only macOS/Apple Silicon is tested**: the driver links `-lobjc -framework Foundation` for the thermal probe, so Linux needs edits, and the installer says so up front instead of failing mysteriously.
 
 Prefer the terminal, or an API?
 
