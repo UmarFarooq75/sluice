@@ -1409,6 +1409,37 @@ CACHE_ROUTE wording, no strawmen), and a full `LLMSTREAM_*` env-var reference
 comment for Umar to supply. Docs only, no code. Prior detailed chapters remain in
 git history + `docs/findings-phase0.md`.
 
+### Doc. README rewritten — colibri-class packaging, sluice-class honesty (2026-07-21)
+Full `README.md` rewrite (docs-only, no code). Structure studied from
+`raw/colibri/README.md` (quickstart-first, one demo, feature table, env reference)
+but written in our measurement-first voice, not theirs. Sections: what sluice is
+(honest promise quoted verbatim from `ROLES-AND-STATE.md`) · headline numbers ·
+quickstart · the quality dial · **honest limits** · how we compare · full
+`LLMSTREAM_*` env reference.
+
+- **Gate honored — every headline number cites an artifact**: gpt-oss-20b
+  6.73 GB phys_footprint + 6.14 tok/s exact (E37c, `results/e37c/`), 8.79 tok/s
+  Fast **labeled a field observation** (uncontrolled UI, temp 0.80), 21.7 s cold
+  first token. No projections, no "up to". The `time -l` peak (10.04 GB) is
+  reported alongside phys_footprint rather than hidden.
+- **Honest-limits section is load-bearing** (our differentiator): dense = batch/
+  fleet only; huge-model demos are **capability, not speed** (~0.1 tok/s, Pillar 6
+  framing); MTP lost through GGUF = **format ceiling, not a TODO**; first-token
+  latency named as our worst UX number today.
+- **Comparison table has no strawmen**: colibri credited for native int8 MTP,
+  O_DIRECT/io_uring, KV persistence, live-learning cache, packaging maturity;
+  CACHE_ROUTE described with the **corrected** wording (opt-in, keeps true top-J,
+  arXiv:2412.00099, ROUTE_AGREE telemetry). Ollama credited for packaging breadth.
+- **Experimental flags marked dark** with one line each on why: `WARMPACK`
+  (hardware-gated, no measurable win at cache≈top_k — E34) and `EVICT=lfru`
+  (no win over LRU — E36).
+- Opening reframed to the frontier class the product targets (DeepSeek-V4,
+  Kimi K2.7/K3, GLM-class 700B+) while keeping the one concrete sparsity ratio
+  attached to gpt-oss-20b, explicitly flagged as "the model our numbers come
+  from" — **named targets, measured claims, never conflated.**
+- UI screenshot slot reserved as an HTML comment (`docs/media/ui.png`) so no
+  broken image renders until one is supplied.
+
 ### Gap logged. MTP-via-GGUF format ceiling (2026-07-21)
 Documented in `techniques.md` → "Format ceilings": colibri ships a native int8
 MTP head (their 2.2–2.8× throughput figure); MTP weights are **dropped in GGUF

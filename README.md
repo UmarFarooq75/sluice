@@ -4,7 +4,7 @@
 
 > **The honest promise we defend:** run any MoE model on arbitrarily small RAM/compute with **bit-exact quality**, where **speed is a smooth, predictable function of the resources you give it — measured up front, never a bait-and-switch.**
 
-A MoE model touches only a sliver of itself per token (gpt-oss-20b activates 3.6 B of 21 B params; DeepSeek-V3, 37 B of 671 B). So the model doesn't need to *fit* in RAM — it needs to be *placed*: the dense trunk (attention, embeddings, router, shared experts) stays resident at int4, the routed experts live on disk and stream through an expert-aware cache. Everything the engine does is an attack on one formula:
+A frontier MoE touches only a sliver of itself per token — **DeepSeek-V4, Kimi K2.7 / K3, GLM-class 700B+** checkpoints all route just a few percent of their experts per token (the model our numbers below come from, gpt-oss-20b, activates 3.6 B of 21 B). So the model doesn't need to *fit* in RAM — it needs to be *placed*: the dense trunk (attention, embeddings, router, shared experts) stays resident at int4, the routed experts live on disk and stream through an expert-aware cache. Everything the engine does is an attack on one formula:
 
 ```
 tok/s  ≤  storage_bandwidth / ((1 − cache_hit_rate) × routed_bytes_per_token)
