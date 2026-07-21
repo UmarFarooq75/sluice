@@ -1,0 +1,2 @@
+E37c results (Tue Jul 21 07:44:33 PKT 2026) — CLEAN quiet box (avail>=8.0GB), N=64 SLOTS=16 prompt A exact
+streamed  hit=0.861  tok/s=6.14  decode=10.42s  stall=6.46s  RSS(time)=10.04GB  peak_rss=10.78 GB phys_footprint=6.73 GB  cap=full  avg_bw=1421 MB/s  logits_hash=7fff2b7b9461da2a
