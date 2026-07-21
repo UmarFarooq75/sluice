@@ -1409,6 +1409,65 @@ CACHE_ROUTE wording, no strawmen), and a full `LLMSTREAM_*` env-var reference
 comment for Umar to supply. Docs only, no code. Prior detailed chapters remain in
 git history + `docs/findings-phase0.md`.
 
+### E37d. Realistic-load leg — G2 task 4 (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before the run.** Goal: the "with your apps open"
+number for the README, so users see a speed that matches their real machine rather
+than only a quiet-box best case.
+
+- **Config**: one streamed run, **N=64, SLOTS=16, PREFILL_SLOTS=64, guard ON,
+  exact greedy, prompt A, ubatch 128** — *identical to E37c* so the only variable is
+  machine load.
+- **Documented load profile (measured at pre-registration, not asserted)**:
+  VS Code (5 `Code Helper` processes, ~1.0 GB RSS total) + the Claude Code agent
+  (~0.54 GB) + system services. **avail 8.36 GB, active 4.97 GB.**
+- **Honesty caveat, stated up front**: this is a **LIGHT** desktop load, *not* the
+  owner's real working set. E37's contaminated leg ran at ~1.5 GB avail (Chrome,
+  Meet, VS Code) and produced 1.57 tok/s; E37c ran quiet at ~9.2 GB avail and
+  produced 6.14. Today's box sits near the quiet end, so this leg cannot be labelled
+  "typical apps open" — it will be labelled **"light desktop load (VS Code + agent,
+  8.4 GB avail)"**, and a true heavy-load leg needs re-running during the owner's
+  workday.
+- **Predictions**: directive's band **4.5–6.0 tok/s**; my point estimate is the
+  **upper end, ~5.8–6.1**, because the load is light and E37c (same config, quieter)
+  measured 6.14 — I expect a small deficit, not a large one.
+- **Falsifier**: a result outside **4.5–6.5** falsifies both bands and gets reported
+  as measured, with the load profile attached.
+  *(measured numbers appended below the run.)*
+
+**Measured (from `results/e37d/` — N=64, SLOTS=16, guard ON, exact greedy, prompt A;
+load profile captured as an artifact at run time):**
+
+| | E37 (heavy, contaminated) | **E37d (light load)** | E37c (quiet) |
+|---|---|---|---|
+| avail at run | ~1.5 GB | **8.37 GB** | ~9.24 GB |
+| load | Chrome + Meet + VS Code | **VS Code (5 helpers) + agent** | none |
+| decode | 1.57 tok/s (N=20) | **4.89 tok/s** | 6.14 tok/s |
+| hit | .855 | **.860** | .861 |
+| avg_bw | 660 MB/s | **1254 MB/s** | 1421 MB/s |
+| stall | — | **8.64 s** | 6.46 s |
+| phys_footprint | — | **6.73 GB** | 6.73 GB |
+| hash | — | **`7fff2b7b9461da2a`** | `7fff2b7b9461da2a` |
+
+- **Predicted vs measured**: directive's band 4.5–6.0 → **4.89 ✓ in band.** My own
+  point estimate 5.8–6.1 → **WRONG (4.89)**. I assumed "light load ≈ quiet" and
+  predicted only a small deficit; the real deficit was **20 %**. Owning it: the
+  load→bandwidth sensitivity is **steeper** than I assumed.
+- **Mechanism, isolated cleanly**: cache hit rate is **unchanged** (.860 vs .861), so
+  the loss is **not** a caching effect — it is pure I/O. `avg_bw` fell 12 %
+  (1421→1254 MB/s) and stall rose 34 % (6.46→8.64 s). ~1.5 GB less headroom is
+  enough to measurably starve the streaming reads. This is E30's "memory headroom
+  governs effective SSD bandwidth" reproduced at the *light* end of the curve, where
+  I did not expect it to bite.
+- **Bit-exact across load conditions**: `7fff2b7b9461da2a` is **identical** to E37c's
+  quiet-box hash. Machine load changes speed, never output. `phys_footprint` is also
+  identical (6.73 GB) — load- and N-invariant, as E37c found.
+- **Labelling (honest)**: this is **"light desktop load (VS Code + agent, 8.4 GB
+  avail)"**, *not* "typical apps open". The owner's real working set (Chrome/Meet,
+  ~1.5 GB avail) is the E37 row at 1.57 tok/s. A true heavy-load leg still needs a
+  run during the owner's workday; until then the README carries the light-load number
+  with its profile attached, and the three rows above are the honest load→speed curve.
+- **Artifacts**: `results/e37d/` — `streamed.{out,err}`, `load_profile.txt`.
+
 ### E39. KV-cache persistence — G2 task 2 (PRE-REGISTERED 2026-07-21)
 **Pre-registration — written before the run.**
 

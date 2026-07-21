@@ -1,0 +1,10 @@
+=== load profile at run time ===
+     382 MB  /Users/umarfarooq/Downloads/applications/Visual
+     328 MB  /Users/umarfarooq/.vscode/extensions/anthropic.claude-code-2.1.216-darwin-arm64/resources/native-binary/claude
+     225 MB  /Users/umarfarooq/Downloads/applications/Visual
+     141 MB  /Users/umarfarooq/Downloads/applications/Visual
+     107 MB  /Users/umarfarooq/.vscode/extensions/anthropic.claude-code-2.1.216-darwin-arm64/resources/native-binary/claude
+     106 MB  /Users/umarfarooq/.vscode/extensions/anthropic.claude-code-2.1.216-darwin-arm64/resources/native-binary/claude
+     101 MB  /Users/umarfarooq/Downloads/applications/Visual
+      53 MB  /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer
+avail=8.37 GB active=4.93 GB

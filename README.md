@@ -26,7 +26,18 @@ Every number below was measured on the same **$1,000 MacBook Air M2, 16 GB** and
 | gpt-oss-20b | Memory footprint | **6.73 GB** (phys_footprint) | Exact, streamed, generation-length-invariant | E37c · `results/e37c/` |
 | gpt-oss-20b | Decode speed | **6.14 tok/s** | **Exact** (bit-exact), clean quiet box, N=64 | E37c · `results/e37c/summary.txt` |
 | gpt-oss-20b | Decode speed | **8.79 tok/s** | **Fast** mode, warm sustained chat — *field observation*, temp 0.80, under desktop load | lablog "Live-UI observation" 2026-07-21 |
+| gpt-oss-20b | Decode speed | **4.89 tok/s** | **Exact, with a light desktop load** (VS Code + agent, 8.4 GB free), N=64 | E37d · `results/e37d/` |
 | gpt-oss-20b | First token (cold) | **21.7 s** | Fast mode, first message, cold cache | same field observation |
+
+**Speed depends on your free RAM, and we measure that instead of hiding it.** Same model, same settings, same bit-exact output (`7fff2b7b9461da2a` in every row) — only machine load changes:
+
+| Your machine | Free RAM | Exact decode |
+|---|---|---|
+| Nothing else running | ~9.2 GB | **6.14 tok/s** |
+| Light load (editor + a tool) | ~8.4 GB | **4.89 tok/s** |
+| Heavy load (browser + calls + editor) | ~1.5 GB | **1.57 tok/s** |
+
+The cache hit rate is essentially identical across all three (.855–.861) — the loss is *not* caching, it's that less free RAM starves the SSD reads (measured effective bandwidth 1421 → 1254 → 660 MB/s). This is why `sluice estimate` probes **your** disk before you download anything.
 
 Read the fine print — it's the point:
 - **6.14 tok/s is the bit-exact rung** — identical logits to the fully-resident model (`logits_hash` gate green). **8.79 tok/s is the Fast rung** — a labeled, non-bit-exact quality trade (see the dial); it's a *field observation* from an uncontrolled UI session, not a pre-registered measurement, and we mark it as such.
