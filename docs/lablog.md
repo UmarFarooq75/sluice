@@ -1396,6 +1396,19 @@ generation.
 - Does **not** change the open G1 call (the phys_footprint-vs-peak-RSS ruling on the
   Exact rung stands).
 
+### Docs. README rewritten — colibri-class packaging, sluice-class honesty (2026-07-21)
+Replaced the research-phase `README.md` with a product-facing one (studied
+`raw/colibri/README.md` for structure; our voice stays measurement-first).
+Sections: what sluice is (+ the ROLES-AND-STATE honest promise verbatim), headline
+numbers (gpt-oss-20b: 6.73 GB / 6.14 t/s exact — E37c; 8.79 t/s Fast field-obs;
+21.7 s cold TTFT — each citing its artifact, no projections), quickstart, the
+quality dial, **honest limits** (dense=batch-only, Pillar 6=capability not speed,
+MTP format ceiling, TTFT worst UX), how-we-compare (vs colibri/Ollama, corrected
+CACHE_ROUTE wording, no strawmen), and a full `LLMSTREAM_*` env-var reference
+(WARMPACK + EVICT=lfru marked gated/dark). UI screenshot slot reserved as an HTML
+comment for Umar to supply. Docs only, no code. Prior detailed chapters remain in
+git history + `docs/findings-phase0.md`.
+
 ### Gap logged. MTP-via-GGUF format ceiling (2026-07-21)
 Documented in `techniques.md` → "Format ceilings": colibri ships a native int8
 MTP head (their 2.2–2.8× throughput figure); MTP weights are **dropped in GGUF
