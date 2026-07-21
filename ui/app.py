@@ -165,6 +165,26 @@ REASONING_LEVELS = ["Low", "Medium", "High"]
 _REASONING_RE = re.compile(r"\n*^Reasoning:[ \t]*\w+[ \t]*$", re.M)
 
 
+def parse_canon_reply(text):
+    """Extract the engine's `canon_reply:` line (E41b), or None if absent.
+
+    Absent is the normal case: the line only exists when LLMSTREAM_KV_CANON is set,
+    so None means "engine did not canonicalize" and the caller keeps its own text.
+    The engine escapes newlines and backslashes to keep the line parseable; this
+    reverses exactly that, in the order that makes \\\\n survive as a literal.
+    """
+    m = re.search(r"^canon_reply: (.*)$", text, re.M)
+    if not m:
+        return None
+    out, s, i = [], m.group(1), 0
+    while i < len(s):
+        if s[i] == "\\" and i + 1 < len(s):
+            out.append("\n" if s[i + 1] == "n" else s[i + 1]); i += 2
+        else:
+            out.append(s[i]); i += 1
+    return "".join(out)
+
+
 def with_reasoning(sys_text, level):
     """Replace any trailing 'Reasoning: x' line with the chosen level.
 
@@ -247,6 +267,13 @@ def ensure_server(cfg, sys_prompt, n_gen, status):
     })
     if sys_prompt.strip():
         env["LLMSTREAM_SYSTEM"] = sys_prompt.strip()
+    # E41b, DARK: no UI control on purpose — the feature's faithfulness gate has not
+    # run yet (see docs/lablog.md E41b). It is a pass-through only, so a developer
+    # can set LLMSTREAM_KV_CANON=1 in the shell that launches the UI and get the
+    # client contract wired end to end. Unset => the engine emits no canon_reply,
+    # the client stores no canon, and every byte of this path is unchanged.
+    if os.environ.get("LLMSTREAM_KV_CANON"):
+        env["LLMSTREAM_KV_CANON"] = os.environ["LLMSTREAM_KV_CANON"]
     # ubatch drives batched (expert-major) prefill, which needs the CPU-only
     # prefill pool to absorb a batch's expert union. On GPU there is no pool,
     # so a batched prefill whose union exceeds the slot count hits the engine's
@@ -544,7 +571,15 @@ if prompt:
         def clean(t):
             return t.replace("\x1e", " ").replace("\x1f", " ").replace("\n", "\\n")
 
-        turns = ["%s\x1f%s" % (t["role"], clean(t["text"]))
+        # E41b client contract: when KV canonicalization is on, the engine rewrites
+        # its KV into the template's canonical form for the turn and tells us the
+        # exact assistant text that form contains, via `canon_reply:`. We MUST echo
+        # that string back, not our own extraction — anything else stops the KV from
+        # being a prefix of the next render and the reuse silently evaporates (no
+        # error, just a slow turn). `text` stays what the USER sees; `canon` is what
+        # the ENGINE sees. Absent the flag no canon_reply is emitted, `canon` is
+        # never set, and this is byte-identical to the previous behaviour.
+        turns = ["%s\x1f%s" % (t["role"], clean(t.get("canon") or t["text"]))
                  for t in st.session_state.chat_log]
         proc.stdin.write("\x1e".join(turns).encode() + b"\n")
         proc.stdin.flush()
@@ -668,8 +703,23 @@ if prompt:
                                "quality, or rephrase your message)*")
             else:
                 final_clean = "*(empty response)*"
+        # E41b: the engine's canonical assistant text, if it canonicalized the KV.
+        canon = parse_canon_reply(tail)
+        if canon is not None and canon.strip() != final_clean.strip():
+            # NEVER silent. A mismatch means the next turn will re-prefill the whole
+            # history and the only symptom the user would see is "it got slow" —
+            # which is exactly the class of bug that cost us a day on E38.
+            st.warning(
+                ":material/warning: KV-canon mismatch — the reply we stored differs "
+                "from the engine's canonical form, so the next turn will re-prefill "
+                "the whole conversation instead of reusing it. Speed only; the answer "
+                "is unaffected.\n\n"
+                f"- stored (ours): `{final_clean.strip()[:120]}…` ({len(final_clean.strip())} chars)\n"
+                f"- engine canon: `{canon.strip()[:120]}…` ({len(canon.strip())} chars)")
         st.session_state.gen_active = False  # completed normally - engine is clean
-        st.session_state.chat_log.append(
-            {"role": "assistant", "text": final_clean,
-             "thinking": analysis, "timing": timing})
+        turn = {"role": "assistant", "text": final_clean,
+                "thinking": analysis, "timing": timing}
+        if canon is not None:
+            turn["canon"] = canon
+        st.session_state.chat_log.append(turn)
         st.rerun()

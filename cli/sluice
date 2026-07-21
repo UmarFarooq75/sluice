@@ -243,6 +243,28 @@ def system_with_reasoning(level):
     return f"{CLI_SYSTEM} Reasoning: {level}"
 
 
+def parse_canon_reply(text):
+    """E41b: the engine's canonical assistant text, or None if it did not canonicalize.
+
+    When LLMSTREAM_KV_CANON is on the engine rewrites its KV into the form the chat
+    template will render next turn, and prints the exact text that form contains.
+    The client MUST echo that back or the KV stops being a prefix of the next render
+    and the reuse silently evaporates. None (the default) means no canonicalization
+    happened and the caller keeps its own extraction.
+    """
+    import re as _re
+    m = _re.search(r"^canon_reply: (.*)$", text, _re.M)
+    if not m:
+        return None
+    out, s, i = [], m.group(1), 0
+    while i < len(s):
+        if s[i] == "\\" and i + 1 < len(s):
+            out.append("\n" if s[i + 1] == "n" else s[i + 1]); i += 2
+        else:
+            out.append(s[i]); i += 1
+    return "".join(out)
+
+
 def mode_env(mode):
     m = MODES.get(mode, MODES["balanced"])
     # AGREE_TARGET>0 enables the adaptive controller (seeds from a small margin
@@ -321,6 +343,11 @@ def cmd_run(args):
         "LLMSTREAM_IDLE_EXIT": "600", "LLMSTREAM_PREFILL_SLOTS": "1",
         "LLMSTREAM_SYSTEM": system_with_reasoning(reasoning),
     })
+    # E41b, DARK: pass-through only, no flag on purpose — the feature's faithfulness
+    # gate has not run (docs/lablog.md E41b). Unset => no canon_reply is emitted, the
+    # client stores nothing extra, and this path is byte-identical.
+    if os.environ.get("LLMSTREAM_KV_CANON"):
+        env["LLMSTREAM_KV_CANON"] = os.environ["LLMSTREAM_KV_CANON"]
     print(f"{DIM}loading {name} ({mode} mode) - one-time, stays warm…{RESET}")
     proc = subprocess.Popen([str(ENGINE), str(p), "512", "CLI_REPL", "128"],
                             env=env, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -375,8 +402,22 @@ def cmd_run(args):
             bits = [f"{time.time()-t0:.1f}s"]
             if m: bits.append(f"{m.group(1)} tok/s")
             if r2 and int(r2.group(1)): bits.append(f"reused {r2.group(1)} ctx")
+            # E41b client contract. Note what `reply` actually is: every harmony
+            # marker stripped, which concatenates the analysis and final channels.
+            # That is precisely the text the template will NOT render next turn, so
+            # storing it guarantees a full re-prefill. canon_reply is the fix.
+            canon = parse_canon_reply(tail)
+            stored = canon if canon is not None else reply.strip()
+            if canon is not None:
+                bits.append("canon")
+                if canon.strip() != reply.strip():
+                    # visible, never silent: the symptom of getting this wrong is
+                    # only "it got slower", which is the hardest kind of bug to see
+                    print(f"{YELLOW}[kv-canon: stored reply differs from our extraction "
+                          f"({len(reply.strip())} chars -> {len(canon.strip())}); using the "
+                          f"engine's canonical form so the next turn can reuse the KV]{RESET}")
             print(f"\n{DIM}[{' · '.join(bits)}]{RESET}")
-            history.append(("assistant", reply.strip()))
+            history.append(("assistant", stored))
     finally:
         try:
             proc.stdin.write(b"exit\n"); proc.stdin.flush()
