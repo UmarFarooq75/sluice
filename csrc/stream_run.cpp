@@ -1506,7 +1506,14 @@ int main(int argc, char ** argv) {
 
     printf("mode=%s prompt_toks=%d reused=%d generated=%d n_ubatch=%d\n",
            n_slots > 0 ? "streamed" : "resident", n, reused, generated, n_ubatch);
-    printf("prefill: %.2f s (%.2f tok/s)\n", dt_prefill, n / dt_prefill);
+    // tok/s must be over the tokens we ACTUALLY prefilled, not the whole rendered
+    // prompt: in server mode with KV reuse the suffix is what costs time, and
+    // dividing by n overstated it (E38 measured 25.14 printed vs 10.7 true).
+    // Protocol #7: a metric we quote has to be true. reused==0 outside server mode,
+    // so single-shot numbers are unchanged.
+    const int n_prefilled = n - reused;
+    printf("prefill: %.2f s (%.2f tok/s)\n", dt_prefill,
+           (n_prefilled > 0 && dt_prefill > 0.0) ? n_prefilled / dt_prefill : 0.0);
     printf("decode:  %.2f s (%.2f tok/s)\n", dt_decode, generated / dt_decode);
     if (n_slots > 0) {
         const double mb = st.bytes / 1e6;
