@@ -1123,6 +1123,55 @@ prompt A; CLEAN — no pack, policy uses only live runtime counts):**
 - **Artifacts**: `results/lfru_ab/` — `{lru,lfru}{1,3,8,20}.{out,err}`, `lru3{a,b}`
   (noise bar), `curve.txt`.
 
+### G1 CLOSE-OUT — DRAFT, awaiting owner metric sign-off (2026-07-21)
+**Status: not closed. One decision is missing and it is the owner's, not mine.**
+Drafted here so the evidence sits in one place instead of across E37/E37b/E37c/E37d.
+
+**G1 as re-scoped by the owner**: gpt-oss-20b · ≤10 GB RSS · bit-exact · ~5–6 tok/s
+verified clean. (The original ≥10 tok/s floor was relaxed after E37 showed it sits
+above the model's own compute ceiling of ~10.5 tok/s — see below.)
+
+| criterion | measured | verdict |
+|---|---|---|
+| bit-exact | hash `7fff2b7b9461da2a`, identical in every N=64 leg | **MET** |
+| ~5–6 tok/s clean | **6.14** tok/s, quiet box, N=64, SLOTS=16 (E37c) | **MET** |
+| ≤10 GB RSS | **6.73 GB** `phys_footprint` / **10.04 GB** `time -l` peak | **DEPENDS ON THE METRIC** |
+
+**The open decision.** The two RSS numbers are not a discrepancy to resolve — they
+measure different things, and G1 does not say which one it means:
+- `phys_footprint` = **6.73 GB**. Real resident RAM. Load-invariant and
+  length-invariant — identical at N=8, N=20 and N=64, and identical on a quiet box
+  and a loaded one. Comfortably inside 10 GB.
+- `time -l` peak / `ru_maxrss` = **10.04 GB**. Includes reclaimable mmap pages from
+  the 12.1 GB model file. Grows with N (my E37c prediction that it was N-invariant
+  was WRONG and is corrected here). Sits 0.04 GB inside 10 GB — i.e. it would fail
+  on a slightly longer run, and the number tracks how much the kernel has not yet
+  bothered to evict rather than how much memory we need.
+
+**My recommendation: `phys_footprint`**, because it is the number that predicts
+whether the machine swaps, it is stable across load and length, and the peak figure
+counts pages the kernel will drop for free under pressure. But adopting it is a
+change to what G1 *means*, and that is an owner call — G1 stays formally **OPEN**
+until it is made. I am not closing a goal by picking the metric that passes it.
+
+**Supporting evidence, and one correction I owe.**
+- **The ≥10 tok/s floor was never reachable**, and not for want of engineering: E7's
+  governing law puts the compute ceiling at ~10.47 tok/s with a *perfect* cache, so
+  a 10 tok/s target demanded ~96% hit rate. The binding constraint at this rung is
+  compute and RSS, not storage bandwidth.
+- **The E37b "one rung short" reading was wrong, and the owner caught it.** I read
+  4.14 tok/s at N=20 as a slot-count deficit. From the artifacts it is measurement
+  length: the hit curve climbs 0.677→0.855 across N, so N=20 is still warming, and
+  E28's 0.905/5.86 is N=64 steady state. Re-run at matched N=64: **6.14 tok/s**,
+  in band. The gap was the ruler, not the engine.
+- **Load sensitivity is measured, not assumed**: 6.14 tok/s quiet (9.2 GB free),
+  4.89 light (8.4 GB free, E37d), 1.57 heavy (1.5 GB free, contaminated, kept only
+  as the under-load datapoint). Same settings, same output hash in every row.
+- **One run was GUARD=0** (E36's probe), declared and tolerated at the time; no G1
+  number above depends on it.
+- **Artifacts**: `results/e37c/`, `results/e37d/`, `results/e37b/`, `results/g1_e37/`,
+  `results/e28_20b_stream_s16.txt`.
+
 ### E37. The 10 GB rung for gpt-oss-20b — baselining Goal G1 (PRE-REGISTERED 2026-07-21)
 **Pre-registration — written before any run.** G1 = ≤10 GB RSS, bit-exact,
 target ≥10 tok/s. Measurement only, no new features/levers.
@@ -1409,6 +1458,34 @@ CACHE_ROUTE wording, no strawmen), and a full `LLMSTREAM_*` env-var reference
 comment for Umar to supply. Docs only, no code. Prior detailed chapters remain in
 git history + `docs/findings-phase0.md`.
 
+### TTFT thread status — E41 / E41b, one place (updated 2026-07-21 15:15)
+The multi-turn TTFT arc has three entries and it is easy to read them as three
+attempts at the same thing. They are one chain:
+
+| | what | state |
+|---|---|---|
+| **E38** | Diagnosis. Turn-2 TTFT 20.5 s; `diverged_at=296`, 219 tokens re-prefilled | **CLOSED, gate green** |
+| **E39** | KV *persistence* across a server restart | **SHIPPED DARK, not bit-exact.** Identical text, differing `logits_hash`; iSWA hypothesis refuted from source; cause NOT established, stopped at 1 attempt per the standing rule. Does **not** help multi-turn TTFT (reuse unchanged at 296/79 either way) |
+| **E41** | Prefix-stable *rendering* (append-only history) | **STOPPED by its own escape clause.** The gpt-oss template drops CoT from history by explicit design; three token-level breaks proven. No code written |
+| **E41b** | KV *canonicalization* — path 2, owner-approved | **CODE WRITTEN, UNMEASURED.** Gate has not run |
+
+**Why E41b is not "in progress" in any useful sense**: it has never executed. The
+box has been between 4.9 and 7.3 GB avail all day against an 8.0 GB gate, so the
+launcher has correctly refused three times. It is armed on a 12-hour long poll and
+will run itself when the machine frees up. **Nothing about E41b — correctness or
+speed — may be quoted until `results/e41b/summary.txt` exists.** The README row for
+`LLMSTREAM_KV_CANON` says exactly that.
+
+**The one thing E39 and E41b now share, flagged before E41b runs so it cannot look
+like hindsight**: both depend on decoding a prefix in a different batch shape than a
+fresh full prefill would use, which changes GEMM blocking and therefore FP
+accumulation order. E39 already failed its hash gate for an unestablished reason.
+E41b's pre-registration therefore ships a **control leg** (stock partial prefill vs
+fresh full prefill) whose only job is to tell us whether a gate-1 failure is
+E41b's fault or a pre-existing property of KV reuse itself. If the control diverges
+too, the two entries collapse into one root-cause investigation, which is what the
+owner directed.
+
 ### E41. Prefix-stable history — STOPPED: the template forbids it (2026-07-21)
 **Task 1 of the G2 centerpiece. Outcome: the escape clause fired — reporting the
 exact breaking tokens and stopping, with no code written and no workaround applied.**
@@ -1486,6 +1563,86 @@ Docs/scripts only, no engine changes, run after the queue cleared. Drafted
   lowercase filename that **404s** (hit live during E37b). The corrected URL is
   recorded in the manifest's `known_issues` and `olmoe-7b.url`; fixing the CLI is a
   code change, deliberately not bundled here.
+
+### E41b. KV canonicalization at end of turn — path 2, approved (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before any code and before any run.** The approved
+continuation of E41: since the template forbids append-only *rendering*, make the
+*KV* match what the template will render next turn, instead of the other way round.
+
+- **Mechanism.** After a reply completes and before `<<<READY>>>` (i.e. while the
+  user is reading — off the TTFT critical path), rewrite the KV from what the model
+  actually generated
+  (`<|start|>assistant<|channel|>analysis<|message|>COT<|end|><|start|>assistant<|channel|>final<|message|>ANS<|return|>`)
+  to what the template will render for that same turn next time
+  (`<|start|>assistant<|channel|>final<|message|>ANS<|end|>`). Concretely: extract
+  the final-channel text from the generated span, re-apply the chat template with
+  the assistant turn appended and `add_generation_prompt=false`, tokenize, `seq_rm`
+  the divergent tail, decode the canonical suffix, and set `ctx_toks` to it.
+- **Env gate**: `LLMSTREAM_KV_CANON=1`. Unset ⇒ the block never runs ⇒ stock
+  behavior byte-identical (executable check on stdout, plus the bit-exact hash).
+- **Why this and not retain-CoT**: it keeps the model's context exactly what the
+  template says it should be, so no quality re-validation (protocol #6) is owed.
+
+**Predictions (falsifiable, written first).**
+1. **Faithfulness (gate 1, non-negotiable).** Turn-2 `logits_hash` on a canonicalized
+   KV == turn-2 `logits_hash` from a fresh full re-prefill of the *same* rendering.
+   *Falsifier*: any difference ⇒ RED regardless of speed; stop at diagnosis.
+   **Stated risk, on the record before the run**: partial prefill changes the decode
+   batch shape (25 tokens vs 515), which changes GEMM blocking and therefore FP
+   accumulation order. If the hashes differ, that mechanism — not KV corruption — is
+   the first suspect, and it is *the same suspect as E39's restore*. To separate the
+   two I pre-register a **control leg**: stock server mode (canon OFF, which already
+   reuses a 296-token prefix) vs the same fresh full re-prefill. If the control ALSO
+   diverges, the divergence is intrinsic to partial prefill and predates this feature.
+2. **Prefix match.** Turn-2 `reused` ≈ the full canonical history (~490 of 515
+   rendered), vs 296 measured in E38. *Falsifier*: `reused` < 400.
+3. **Re-prefill.** Turn-2 `reprefill` = the new user turn + generation prompt only,
+   ~20–30 tokens, vs 219 in E38. *Falsifier*: > 60.
+4. **TTFT collapse.** From E38's phase data: turn-2 prefilled 219 tokens in 20.49 s
+   (10.7 tok/s true rate, per the protocol-#7 fix). At ~25 tokens and the slow end of
+   the short-prefill curve (5–10 tok/s), predicted turn-2 TTFT ≈ **3–5 s**, down from
+   **20.5 s**. *Falsifier*: > 10 s.
+5. **Canonicalization cost.** One extra batch decode of the final block (~200 content
+   tokens + 3 marker tokens) at the 18–23 tok/s prefill rate ⇒ **~9–12 s**, spent
+   after `text:` is printed and before `<<<READY>>>`. *Falsifier*: it lands anywhere
+   on the critical path (i.e. any increase in turn-1 TTFT or turn-1 `decode` time).
+6. **Bit-exact gate** green with the flag unset: `fdf0f83dd70504c5`.
+
+**Labels**: clean only. One commit. Gate-1 failure ⇒ report the divergence and stop,
+for a single root-cause investigation covering E39 and E41b together.
+
+**Run status 2026-07-21 09:15 — HELD, protocol #2.** Code written and building.
+Measured avail 7.06 / 7.23 / 7.26 / 7.09 GB across four reads over a minute — steady,
+and below the declared 8.0 GB gate. Nothing was run and nothing was committed
+(protocol #4 forbids an engine commit before a green bit-exact gate, and the gate is
+a run). No process was killed to make room: the memory is spread across the editor
+and this session's own harness, not a stray. The box shows 1.65 GB swap in use and
+393 361 pages in the compressor, i.e. it is already paging — exactly the state
+protocol #2 names.
+
+**Armed 2026-07-21 09:2x — detached self-gating launcher, same pattern as E37b/c.**
+`results/e41b/run.sh`: stray check (protocol #1) → avail poll every 10 s for up to
+120 s against the 8.0 GB gate, `ABORTED` + `DONE` written and no run if it never
+opens → the three legs sequentially via `gate.py` → byte-identical-off executable
+check (pre-E41b binary vs new, canon unset, `cmp` on stdout) → bit-exact gate. Both
+the shell gate and `gate.py`'s own second-opinion check use the **same four vm_stat
+buckets and the same queried page size**, because a second opinion on a different
+yardstick would just abort runs the first gate had passed.
+
+**First arming ABORTED on the gate 2026-07-21 — avail ~4.9 GB**, correctly, with no
+run performed. The owner cannot free RAM during the workday, so the gate is not a
+transient condition to retry past; it is the machine's daytime steady state.
+
+**Re-armed 2026-07-21 14:31 — LONG POLL.** Identical legs and gates, only the wait
+changed: every 60 s for up to 12 h, firing when avail ≥ 8 GB holds for **3
+consecutive readings**. The hold requirement is the point of the redesign — a single
+passing reading catches the spike when an app closes a window, and that collapses
+again seconds later; a dip mid-leg is worse than never starting, because it produces
+a contaminated number instead of an honest abort. Every reading is logged with its
+streak count, so the morning artifact shows exactly when the box freed up and whether
+it stayed free. A second stray check runs after the poll, since up to 12 h can pass
+between the first one and the moment RAM is actually spent. Launched under
+`nohup caffeinate -i`, no `-t`, so it outlives the IDE and the terminal.
 
 ### E37d. Realistic-load leg — G2 task 4 (PRE-REGISTERED 2026-07-21)
 **Pre-registration — written before the run.** Goal: the "with your apps open"
@@ -1936,3 +2093,36 @@ Docs-only; no code.
 4. Bit-exact OLMoE gate before every commit touching fork or driver.
 5. Every experiment → lablog entry same day, prediction written before result.
 6. Quality claims only with agreement/NLL attached (eyeball is a smell test).
+
+### Doc/packaging entries — 2026-07-21 (non-engine queue, E41b waiting)
+- **Reasoning-effort control** (commit `600fcd5`). UI dropdown + `sluice run
+  --reasoning`, replacing a hand-edited "Reasoning:" line in the system prompt and a
+  hardcoded CLI string. Default Low is byte-identical to what shipped, asserted at
+  runtime and in static checks. **Hazard caught during the work**: `results/e38/legs.py`
+  and `results/e41b/gate.py` scrape `DEFAULT_SYSTEM` out of `ui/app.py` by regex and
+  fall back **silently** to "You are a helpful assistant." on a miss. Templating the
+  reasoning level into that literal would have quietly changed the system prompt of
+  the E41b run that is armed and waiting, destroying its comparability with E38. The
+  literal is left byte-identical and the level is stripped/re-appended at runtime.
+  Live smoke test PENDING until after E41b's window.
+- **Packaging pass 2** (commit `7072398`). `scripts/install.sh` now verifies its own
+  output without a model (driver runs, prints usage, proves libllama resolved via
+  rpath), checks each linked library by name, and aligns its cmake flags with
+  `cli/sluice`'s bootstrap. `patches/llmstream.patch` was confirmed to apply cleanly
+  to a **pristine b10064** via a local git worktree — no network, no model. New
+  `scripts/check_urls.py` HEAD-checks every model URL and stamps date+status into the
+  manifest.
+  **Two real defects found on its first run**, both invisible until a user pulls:
+  (a) `gpt-oss-120b` 404'd — the repo consolidated its 3-part split into one file, so
+  `url` and `file` had silently disagreed; (b) `bytes` were rounded, and since
+  `cli/sluice` treats `size < bytes*0.99` as a partial download, olmoe's true
+  4 213 512 192 sits below the rounded 4 300 000 000×0.99 — **a complete download
+  would have been re-pulled forever.** All sizes now come from Content-Length.
+  This is the same defect class as the olmoe 404, which is the argument for the
+  checker existing at all: nothing was checking, so nothing was found.
+- **Docs hygiene**. G1 close-out drafted above, marked awaiting owner metric sign-off.
+  TTFT thread status (E38/E39/E41/E41b) consolidated. README gains the
+  `LLMSTREAM_KV_CANON` row, marked UNMEASURED with its gate explicitly pending.
+- **No model process was launched for any of the three.** The armed E41b launcher
+  owns the next quiet window; every check above is static analysis, HEAD requests, a
+  local worktree, or one no-argument binary invocation that exits immediately.
