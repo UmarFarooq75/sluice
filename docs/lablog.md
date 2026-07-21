@@ -1409,6 +1409,54 @@ CACHE_ROUTE wording, no strawmen), and a full `LLMSTREAM_*` env-var reference
 comment for Umar to supply. Docs only, no code. Prior detailed chapters remain in
 git history + `docs/findings-phase0.md`.
 
+### E41. Prefix-stable history — STOPPED: the template forbids it (2026-07-21)
+**Task 1 of the G2 centerpiece. Outcome: the escape clause fired — reporting the
+exact breaking tokens and stopping, with no code written and no workaround applied.**
+
+- **Finding: template-conformant append-only rendering is IMPOSSIBLE for gpt-oss.**
+  Not an engine limitation — the chat template drops chain-of-thought from history
+  **by explicit design**. Its own comment, verbatim from the GGUF metadata
+  (`tokenizer.chat_template`, 16 714 chars):
+  > `{#- CoT is dropped during all previous turns, so we never render it for inference #}`
+  > `{{- "<|start|>assistant<|channel|>final<|message|>" + message.content + "<|end|>" }}`
+- **The exact tokens that break it** (via `llama-tokenize --ids`, not inferred):
+
+  | | token stream |
+  |---|---|
+  | template renders a past assistant turn | `[200006, 173781, 200005, `**`17196`**`, 200008, 160761, `**`200007`**`]` |
+  | what the model actually generates | `[200006, 173781, 200005, `**`35644`**`, 200008, 34, 2824, 200007, 200006, 173781, 200005, 17196, 200008, 160761, `**`200002`**`]` |
+
+  Mapping: `200006 <|start|>` · `173781 assistant` · `200005 <|channel|>` ·
+  **`17196 final`** vs **`35644 analysis`** · `200008 <|message|>` ·
+  **`200007 <|end|>`** vs **`200002 <|return|>`** (200002 is also the model's EOS).
+  **Three independent breaks**: (1) the channel token — `final` vs `analysis`;
+  (2) the **entire analysis block** (`<|message|>` + CoT + `<|end|>` +
+  `<|start|>assistant<|channel|>`) exists in KV and is absent from the re-render;
+  (3) the terminator — template `<|end|>` vs generated `<|return|>`.
+  This is the token-level root cause behind E38's `diverged_at=296`.
+- **Why no workaround was applied** (directive: *"no workarounds without a
+  directive"*). Both viable paths change something the owner must decide:
+  1. **Retain CoT in context** (never re-render the past; append only the new-turn
+     delta). Gives true append-only and full KV reuse — but the model then sees its
+     own chain-of-thought in history, which the template **explicitly forbids for
+     inference**. That is a change to model input semantics, i.e. a potential
+     quality change, and protocol #6 says quality claims need agreement/NLL attached.
+  2. **Canonicalise KV at end of turn** (after generating, drop the assistant span
+     from KV and re-decode the template's `final`-only rendering). This *is*
+     template-conformant and would make the next turn's prefix match fully — it
+     moves the re-prefill cost **off the TTFT critical path** to the end of the
+     previous turn, rather than eliminating it. Costs one extra decode of the answer
+     per turn and requires KV surgery.
+  Neither is "prefix-stable *rendering*" as specified; both are workarounds, so both
+  wait for a directive.
+- **Nothing was built**: no `LLMSTREAM_STABLE_HISTORY` flag, no engine edit, no
+  gate run — there is nothing to gate. The E38 telemetry that would have verified it
+  (`ttft: diverged_at / kv_had / rerender_has`) is already in place and ready.
+- **Recommendation**: path 2 (canonicalise KV) is the one I would take — it keeps
+  the model's input exactly what the template intends, so it needs no quality
+  re-validation, and it converts a blocking TTFT cost into a non-blocking one.
+  Path 1 is faster still but cannot ship without an NLL/agreement battery.
+
 ### Packaging. Install script + model-library manifest — G2 task 5 (2026-07-21)
 Docs/scripts only, no engine changes, run after the queue cleared. Drafted
 `scripts/install.sh` and `packaging/models.json`.
