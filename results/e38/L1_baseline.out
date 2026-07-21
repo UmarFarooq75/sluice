@@ -1,0 +1,20 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+ttft: total=16079 ms | template=0 tokenize=7 kv_match=0 prefill=16071 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+mode=streamed prompt_toks=296 reused=0 generated=200 n_ubatch=128
+prefill: 16.07 s (18.42 tok/s)
+decode:  27.30 s (7.33 tok/s)
+io: cb_calls=4872 decode_uses=19200 decode_misses=1780 (hit 0.907) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=9.18 s (pool 32 slots)
+io: prefetch_issued=269 prefetch_hits=76 prefetch_used=251 stall=14.82 s total_read=48349.7 MB avg_bw=1115 MB/s
+io: read_work=163.06 s preads=21888 per_stream_bw=297 MB/s
+mem: peak_rss=8.42 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=95bbde6ba90ae818
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth is habitable: distance from Sun, size, gravity, magnetic field, atmosphere, water, etc. Provide simple language.<|end|><|start|>assistant<|channel|>final<|message|>**How Earth Came to Be**
+
+| Stage | What Happened | Key Result |
+|-------|---------------|------------|
+| **Solar Nebula (≈4.6 billion yr ago)** | A rotating cloud of gas and dust collapsed under gravity, forming a protostar (the Sun) at the center. | Sun ignites; material flattens into a protoplanetary disk. |
+| **Planetesimal Formation** | Dust grains stuck together, grew into kilometer‑sized “planetes

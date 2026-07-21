@@ -1409,6 +1409,130 @@ CACHE_ROUTE wording, no strawmen), and a full `LLMSTREAM_*` env-var reference
 comment for Umar to supply. Docs only, no code. Prior detailed chapters remain in
 git history + `docs/findings-phase0.md`.
 
+### E38. First-token decomposition — G2 task 1 (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before the legs run.** G2 opens on TTFT, named in the
+README as our worst UX number. Target: explain the **47.6 s second-turn** TTFT seen
+in the live UI *from telemetry*, not inference.
+
+- **Instrumentation** (`LLMSTREAM_PHASE_TIMERS`, off by default): chrono reads only
+  — they cannot touch compute — around template render / tokenize / KV-prefix match
+  / prefill / first sample, plus the **divergence point** (which token the KV held
+  vs what the re-render produced). Printing is gated, so stock stdout is unchanged.
+  **Inertness gate ALREADY GREEN before any leg**: OFF emits 0 `ttft:` lines and
+  hashes `fdf0f83dd70504c5`; ON hashes **identically**; and OFF's line-shapes diff
+  clean against `results/warmpack_ab/gate_off.out`, an artifact produced by the
+  **pre-change** binary at the same config. Instrumentation provably inert.
+- **Legs** (sequential, one process at a time, SLOTS=16 guard ON, CLEAN):
+  L1 baseline single-turn · L2 server 2-turn (the anomaly) · L3 single-turn control
+  whose rendered length ≈ L2 turn-2 (isolates re-prefill volume from the reuse path).
+- **Hypothesis H1 (leading)**: the UI re-renders the whole chat each turn; gpt-oss
+  harmony keeps only *final* channels, but KV holds what was actually generated
+  (including `analysis`). The prefix match therefore breaks at the **assistant
+  content boundary**, so every turn re-prefills the entire assistant tail. TTFT then
+  grows with conversation length — a design consequence, not a slow kernel.
+- **Predictions:**
+  1. L2 turn-2 `reused` ≈ the system+user1 prefix (**not** ≈ rendered length);
+     `reprefill` ≈ the whole assistant tail + new user turn.
+  2. `diverged_at` lands at the assistant boundary: `kv_had` is a harmony
+     special/analysis token, `rerender_has` is ordinary final-answer text.
+  3. **prefill > 90 %** of turn-2 TTFT; template + tokenize + kv_match +
+     first_sample together **< 10 %** (i.e. the cost is re-prefill *volume*).
+  4. L3 (same rendered length, no reuse path) costs ≈ L2 turn-2's prefill → proves
+     volume, not a reuse pathology.
+- **Falsifier**: if turn-2 `reused` ≈ `rendered` (near-full reuse) yet TTFT is still
+  large, H1 is **wrong** and the cost lives in another phase — the decomposition must
+  then name that phase from the timers instead. Equally, if prefill is < 90 % of
+  TTFT, prediction 3 fails and I report the dominant phase as measured.
+- **Gate**: anomaly explained from telemetry + instrumentation provably inert.
+  *(measured numbers appended below the run.)*
+
+**colibri desk study (E38 deliverable — read-only, `raw/colibri/c/glm.c`):**
+They solve the same TTFT problem with on-disk KV (`.coli_kv`), and their design +
+their *documented failure* both transfer directly to E39:
+
+- **Format**: append-only — header (magic `COLIKV1` + dims + `nrec`) then one record
+  per position `[tok i32][Lc+Rc per layer][Ic per DSA layer]`. Only *new* positions
+  are appended each turn. Cost ~182 KB/token (MLA-compressed).
+- **Crash safety (worth copying verbatim)**: data is appended first and **`nrec` is
+  rewritten last**, so a crash mid-append leaves the old count → the file stays
+  coherent instead of half-written. Cheap, and it makes torn writes a non-event.
+- **Strict load validation**: magic + *every* dimension field (layers, kv_lora,
+  qk_rope, dsa, vocab) must match or it refuses — "ignoring .coli_kv from a
+  different model or version" — plus a guard when the saved conversation exceeds
+  the context window.
+- **Their measured failure, which is the real lesson**: resume was **silent**. A
+  chat silently inherited 670 tokens of an old Italian session; later replies came
+  back in Italian and "explain fibonacci" was answered about the number 7. It
+  "read as a quantization bug for a day." **Silent KV resume is a correctness
+  hazard, not a convenience** — the engine must announce a resume loudly, and our
+  off-by-default rule already puts us on the safe side of this.
+- **Our advantage to exploit**: we sit on llama.cpp, which ships maintained
+  sequence-state save/load APIs — so E39 should use those rather than hand-roll KV
+  serialization, and spend its effort on the *validation + visibility* that colibri
+  learned the hard way, and on the byte-identical resume gate.
+
+**Measured (from `results/e38/` — CLEAN, quiet box, SLOTS=16 guard ON, n_gen=200,
+system prompt 1457 chars):**
+
+| leg | rendered | reused | reprefill | TTFT | prefill | template | tokenize | kv_match | first_sample |
+|---|---|---|---|---|---|---|---|---|---|
+| L1 baseline | 296 | 0 | 296 | 16079 ms | 16071 | 0 | 7 | 0 | 1 |
+| L2 turn-1 | 296 | 0 | 296 | 16308 ms | 16305 | 0 | 2 | 0 | 1 |
+| **L2 turn-2 (anomaly)** | 515 | **296** | **219** | **20507 ms** | 20489 | 1 | 16 | **0** | 1 |
+| L3 control | 508 | 0 | 508 | 22409 ms | 22405 | 0 | 3 | 0 | 1 |
+
+- **ANOMALY EXPLAINED FROM TELEMETRY (gate met).** L2 turn-2:
+  `diverged_at=296`, `kv_had=200005 |<|channel|>|`, `rerender_has=200008`. The KV
+  held **496** tokens (296 prompt + 200 generated) but only the first **296** — exactly
+  the system+user1 prefix — matched. Divergence lands on the *first assistant token*:
+  KV holds the harmony **`<|channel|>`** marker the model actually generated, while
+  the re-render (which keeps only final channels) has something else there. So the
+  **entire assistant tail is discarded and re-prefilled every turn**, and TTFT grows
+  with conversation length. This is direct evidence, not inference.
+- **Predictions 1–3: CONFIRMED.** (1) reused=296 ≈ system+user1, not ≈ rendered.
+  (2) divergence at the assistant boundary on a harmony channel marker. (3) prefill
+  = **99.91 %** of TTFT (20489/20507); template+tokenize+kv_match+first_sample = **18 ms
+  (0.09 %)**. `kv_match` is literally **0 ms** — the prefix scan is free; all cost is
+  re-prefill.
+- **Scales to the field report**: our tail was 200 tokens → 20.5 s. The UI's turn-1
+  answer was ~800 tokens (~4×) → the observed **47.6 s**. Consistent.
+- **Prediction 4: NOT CONFIRMED — and the miss is informative.** I predicted L3
+  (same rendered length, no reuse) would cost ≈ L2 turn-2's prefill, "proving cost
+  scales with volume." Wall-clock was indeed similar (22.4 s vs 20.5 s) — but for
+  **2.3× more tokens** (508 vs 219). Effective suffix throughput: L1 **18.4**, L2
+  turn-2 **10.7**, L3 **22.7** tok/s. So prefill time is **not** proportional to
+  suffix length, and my stated reasoning was wrong.
+  - What differed: prefill pool fill was **73 %** of turn-2's prefill (14.88/20.49 s)
+    vs **48 %** for L3 (10.70/22.41 s), and per-expert fetch rate differed ~2.7×
+    (**79** vs **215** experts/s) despite turn-2 fetching *half* the experts
+    (1181 vs 2300 over 46 vs 92 pool calls).
+  - **Confound, stated rather than explained away**: L2 turn-2 runs in a *warm*
+    process still holding turn-1's full decode cache and a 496-token KV, while L3 is
+    a *fresh* process. Memory pressure and disk contention therefore differ. **This
+    comparison is confounded; I am not claiming a mechanism from it.** Isolating it
+    needs its own controlled leg — a separate directive, not an unattended debug
+    spiral (stopped at 1 attempt, per the standing rule).
+- **Defect found (telemetry honesty, logged not fixed)**: the engine prints
+  `prefill: <s> (<n>/dt tok/s)` using the **full rendered n**, not the actually
+  prefilled suffix. In server mode with reuse this overstates: turn-2 printed
+  **25.14 tok/s** when the true suffix rate was **10.7**. Single-shot runs (reused=0)
+  are unaffected. Left unfixed here to avoid bundling — **owner: worth a one-line
+  separate commit.**
+- **E40 precondition evaluated → NOT MET, E40 skipped.** The directive gates E40 on
+  "E38's data says startup expert-fill is a top-2 phase." TTFT is ~100 % *prefill*,
+  and prefill uses the **separate shared prefill pool**; the decode cache warmpack
+  targets is *not in the TTFT path at all* (it governs decode hit, 0.907 in L1). So
+  warm-start cannot be a top-2 TTFT phase. Skipping E40 as instructed — consistent
+  with E34/E35 having already retired the warmpack benefit claim.
+- **Instrumentation inertness (re-stated, green)**: OFF → 0 `ttft:` lines, hash
+  `fdf0f83dd70504c5`; ON → identical hash; OFF line-shapes diff clean vs the
+  **pre-change** binary artifact `results/warmpack_ab/gate_off.out`.
+- **Verdict: E38 GATE GREEN** — anomaly explained from telemetry, instrumentation
+  provably inert. **The fix is E39** (KV persistence / prefix stability), because the
+  cost is re-prefilling a tail the KV already had.
+- **Artifacts**: `results/e38/` — `summary.txt`, `legs.py`, `L1_baseline.*`,
+  `L2_twoturn.*`, `L3_control.*`, `L2_answer1.txt`, `inert_{off,on}.out`.
+
 ### Doc. README rewritten — colibri-class packaging, sluice-class honesty (2026-07-21)
 Full `README.md` rewrite (docs-only, no code). Structure studied from
 `raw/colibri/README.md` (quickstart-first, one demo, feature table, env reference)

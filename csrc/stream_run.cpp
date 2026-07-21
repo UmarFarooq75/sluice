@@ -1236,6 +1236,10 @@ int main(int argc, char ** argv) {
     // LLMSTREAM_CHAT=1: wrap the prompt in the model's own chat template
     // (gpt-oss is harmony-format trained; raw text prompts confound quality
     // reads with template mismatch). parse_special so template tokens survive.
+    // E38 TTFT phase timers. Chrono reads only — they cannot touch compute, and
+    // the breakdown prints ONLY when LLMSTREAM_PHASE_TIMERS is set, so the stock
+    // stdout stays byte-identical with the flag unset (executable check + hash).
+    auto tp_a = std::chrono::steady_clock::now();
     std::string ptext = req_prompt;
     bool chat = false;
     if (getenv("LLMSTREAM_CHAT")) {
@@ -1275,11 +1279,13 @@ int main(int argc, char ** argv) {
         }
         if (!chat) fprintf(stderr, "warn: LLMSTREAM_CHAT set but no usable template; raw prompt\n");
     }
+    auto tp_b = std::chrono::steady_clock::now();   // E38: end of template render
     std::vector<llama_token> toks(ptext.size() + 64);
     int n = llama_tokenize(vocab, ptext.c_str(), (int32_t) ptext.size(),
                            toks.data(), (int32_t) toks.size(), true, chat);
     if (n < 0) { fprintf(stderr, "tokenize failed\n"); return 1; }
     toks.resize(n);
+    auto tp_c = std::chrono::steady_clock::now();   // E38: end of tokenize
     const int n_vocab = llama_vocab_n_tokens(vocab);
 
     // LLMSTREAM_NLL=1: teacher-forced scoring of the prompt instead of
@@ -1356,14 +1362,23 @@ int main(int argc, char ** argv) {
 
     auto t0 = std::chrono::steady_clock::now();
     int reused = 0;
+    int div_prev = -1, div_new = -1, div_ctx_len = 0;  // E38: divergence evidence
     if (server_mode) {
         // multi-turn: reuse the KV prefix shared with the previous request.
         // history re-renders can diverge (harmony keeps only final channels),
         // so match tokens, drop the divergent tail, prefill only the suffix.
         while (reused < (int) ctx_toks.size() && reused < n - 1 && ctx_toks[reused] == toks[reused]) reused++;
+        // E38: capture WHERE the re-render diverged from what KV actually holds.
+        // This is the direct evidence for why a warm multi-turn chat still
+        // re-prefills its whole assistant tail (harmony drops analysis channels
+        // on re-render, so the match breaks at the assistant boundary).
+        if (reused < (int) ctx_toks.size()) div_prev = ctx_toks[reused];
+        if (reused < n)                     div_new  = toks[reused];
+        div_ctx_len = (int) ctx_toks.size();
         llama_memory_seq_rm(llama_get_memory(ctx), 0, reused, -1);
         ctx_toks.assign(toks.begin(), toks.begin() + reused);
     }
+    auto tp_kv = std::chrono::steady_clock::now();  // E38: end of KV prefix match
     llama_batch batch = llama_batch_get_one(toks.data() + reused, (int32_t) (n - reused));
     if (llama_decode(ctx, batch) != 0) { fprintf(stderr, "prefill decode failed\n"); return 1; }
     if (server_mode) ctx_toks.assign(toks.begin(), toks.end());
@@ -1411,10 +1426,27 @@ int main(int argc, char ** argv) {
         for (int i = 0; i < n_vocab; i++) if (logits[i] > best) { best = logits[i]; best_id = i; }
         return best_id;
     };
+    auto tp_s0 = std::chrono::steady_clock::now();  // E38: start of first sample
     {
         const float * logits = llama_get_logits_ith(ctx, -1);
         hash = fnv1a(logits, sizeof(float) * n_vocab, hash);
         cur = pick(logits);
+    }
+    auto tp_s1 = std::chrono::steady_clock::now();  // E38: first token in hand
+    if (getenv("LLMSTREAM_PHASE_TIMERS")) {
+        auto ms = [](auto a, auto b) { return std::chrono::duration<double>(b - a).count() * 1e3; };
+        char pp[128] = {0}, pn[128] = {0};
+        if (div_prev >= 0) llama_token_to_piece(vocab, div_prev, pp, sizeof pp, 0, true);
+        if (div_new  >= 0) llama_token_to_piece(vocab, div_new,  pn, sizeof pn, 0, true);
+        // ttft = template + tokenize + kv_match + prefill + first_sample
+        printf("ttft: total=%.0f ms | template=%.0f tokenize=%.0f kv_match=%.0f prefill=%.0f first_sample=%.0f\n",
+               ms(tp_a, tp_s1), ms(tp_a, tp_b), ms(tp_b, tp_c), ms(t0, tp_kv), ms(tp_kv, t1), ms(tp_s0, tp_s1));
+        printf("ttft: ctx_held=%d rendered=%d reused=%d reprefill=%d (%.1f%% of rendered)\n",
+               div_ctx_len, n, reused, n - reused, n ? 100.0 * (n - reused) / n : 0.0);
+        if (div_prev >= 0 || div_new >= 0)
+            printf("ttft: diverged_at=%d kv_had=%d|%s| rerender_has=%d|%s|\n",
+                   reused, div_prev, pp, div_new, pn);
+        fflush(stdout);
     }
     static const bool print_toks = getenv("LLMSTREAM_PRINT_TOKS") != nullptr;
     // LLMSTREAM_STREAM_OUT: emit pieces to stdout as they decode, bracketed by

@@ -1,0 +1,41 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=16308 ms | template=0 tokenize=2 kv_match=0 prefill=16305 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=296 reused=0 generated=200 n_ubatch=128
+prefill: 16.30 s (18.15 tok/s)
+decode:  27.66 s (7.23 tok/s)
+io: cb_calls=4872 decode_uses=19200 decode_misses=1782 (hit 0.907) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=9.44 s (pool 32 slots)
+io: prefetch_issued=267 prefetch_hits=83 prefetch_used=248 stall=15.56 s total_read=48349.7 MB avg_bw=1100 MB/s
+io: read_work=169.17 s preads=21888 per_stream_bw=286 MB/s
+mem: peak_rss=9.61 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=95bbde6ba90ae818
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth is habitable: distance from Sun, size, gravity, magnetic field, atmosphere, water, etc. Provide simple language.<|end|><|start|>assistant<|channel|>final<|message|>**How Earth Came to Be**
+
+| Stage | What Happened | Key Result |
+|-------|---------------|------------|
+| **Solar Nebula (≈4.6 billion yr ago)** | A rotating cloud of gas and dust collapsed under gravity, forming a protostar (the Sun) at the center. | Sun ignites; material flattens into a protoplanetary disk. |
+| **Planetesimal Formation** | Dust grains stuck together, grew into kilometer‑sized “planetes
+<<<READY>>>
+ttft: total=20507 ms | template=1 tokenize=16 kv_match=0 prefill=20489 first_sample=1
+ttft: ctx_held=496 rendered=515 reused=296 reprefill=219 (42.5% of rendered)
+ttft: diverged_at=296 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+mode=streamed prompt_toks=515 reused=296 generated=151 n_ubatch=128
+prefill: 20.49 s (25.14 tok/s)
+decode:  33.94 s (4.45 tok/s)
+io: cb_calls=3672 decode_uses=14496 decode_misses=3328 (hit 0.770) prefill_uses=20152 prefill_misses=1185
+io: pf_calls=46 pf_experts=1181 union avg=25.7 min=19 max=32 fill=14.88 s (pool 32 slots)
+io: prefetch_issued=4660 prefetch_hits=1378 prefetch_used=3571 stall=24.00 s total_read=121576.7 MB avg_bw=2234 MB/s
+io: read_work=363.28 s preads=55038 per_stream_bw=335 MB/s
+io: guard pressure_drops=6 cap_evictions=264 final_cap=6
+mem: peak_rss=9.61 GB phys_footprint=3.96 GB
+therm: nominal
+logits_hash=ffca279666d7c026
+text: <|channel|>analysis<|message|>We need to summarize in three bullet points. Provide concise.<|end|><|start|>assistant<|channel|>final<|message|>- **Accretion in a protoplanetary disk** – Dust and gas in the Sun’s disk clumped into planetesimals, which collided and merged to form the Earth.  
+- **Differentiation and cooling** – The hot, molten Earth separated into a dense core, a silicate mantle, and a crust, while its surface cooled enough for a solid crust to form.  
+- **Atmosphere, water, and magnetic field** – Volcanic outgassing created a breathable atmosphere, comet/asteroid impacts delivered water, and a molten iron core generated a magnetic field that shields the planet from solar wind.
+<<<READY>>>

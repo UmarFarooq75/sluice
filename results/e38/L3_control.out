@@ -1,0 +1,17 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+ttft: total=22409 ms | template=0 tokenize=3 kv_match=0 prefill=22405 first_sample=1
+ttft: ctx_held=0 rendered=508 reused=0 reprefill=508 (100.0% of rendered)
+mode=streamed prompt_toks=508 reused=0 generated=164 n_ubatch=128
+prefill: 22.41 s (22.67 tok/s)
+decode:  19.28 s (8.50 tok/s)
+io: cb_calls=4032 decode_uses=15744 decode_misses=1350 (hit 0.914) prefill_uses=46740 prefill_misses=2304
+io: pf_calls=92 pf_experts=2300 union avg=25.0 min=14 max=32 fill=10.70 s (pool 32 slots)
+io: prefetch_issued=290 prefetch_hits=105 prefetch_used=267 stall=9.64 s total_read=52272.8 MB avg_bw=1254 MB/s
+io: read_work=153.32 s preads=23664 per_stream_bw=341 MB/s
+mem: peak_rss=10.20 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=b2c207cb2aeeaba8
+text: <|channel|>analysis<|message|>User wants a summary in three bullet points. Provide concise.<|end|><|start|>assistant<|channel|>final<|message|>- **Accretion in the protoplanetary disk** – Dust and gas in the Sun’s disk clumped together, forming planetesimals that collided and merged into a growing Earth‑mass body.  
+- **Differentiation and cooling** – The hot, molten Earth separated into a dense core, a silicate mantle, and a crust, while its surface cooled enough to allow a stable atmosphere and oceans to form.  
+- **Habitable conditions established** – Earth’s size gives enough gravity to hold an atmosphere, its magnetic field shields life from solar radiation, and its distance from the Sun places it in the “Goldilocks” zone where liquid water—and thus life—can persist.

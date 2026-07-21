@@ -1,0 +1,24 @@
+E38 — first-token decomposition (2026-07-21 08:30)
+system prompt: 1457 chars | n_gen=200 | SLOTS=16 guard ON | CLEAN
+
+## L1 baseline (short prompt, no reuse)
+   ttft total=16079 ms | template=0 tokenize=7 kv_match=0 prefill=16071 first_sample=1
+   ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+   prefill=16.07 s (18.42 tok/s)
+
+## L2 turn-1 (cold, short prompt)
+   ttft total=16308 ms | template=0 tokenize=2 kv_match=0 prefill=16305 first_sample=1
+   ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+   diverged_at=0  kv_had=-1||  rerender_has=200006|<|
+   prefill=16.30 s (18.15 tok/s)
+
+## L2 turn-2 (THE ANOMALY: re-rendered history)
+   ttft total=20507 ms | template=1 tokenize=16 kv_match=0 prefill=20489 first_sample=1
+   ctx_held=496 rendered=515 reused=296 reprefill=219 (42.5% of rendered)
+   diverged_at=296  kv_had=200005|<|channel|>|  rerender_has=200008|<|
+   prefill=20.49 s (25.14 tok/s)
+
+## L3 control (same rendered length, no reuse path)
+   ttft total=22409 ms | template=0 tokenize=3 kv_match=0 prefill=22405 first_sample=1
+   ctx_held=0 rendered=508 reused=0 reprefill=508 (100.0% of rendered)
+   prefill=22.41 s (22.67 tok/s)

@@ -1,0 +1,6 @@
+<|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth is habitable: distance from Sun, size, gravity, magnetic field, atmosphere, water, etc. Provide simple language.<|end|><|start|>assistant<|channel|>final<|message|>**How Earth Came to Be**
+
+| Stage | What Happened | Key Result |
+|-------|---------------|------------|
+| **Solar Nebula (≈4.6 billion yr ago)** | A rotating cloud of gas and dust collapsed under gravity, forming a protostar (the Sun) at the center. | Sun ignites; material flattens into a protoplanetary disk. |
+| **Planetesimal Formation** | Dust grains stuck together, grew into kilometer‑sized “planetes
