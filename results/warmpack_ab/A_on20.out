@@ -1,0 +1,13 @@
+llmstream: 24 layers, 5 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+mode=streamed prompt_toks=23 reused=0 generated=20 n_ubatch=128
+prefill: 9.03 s (2.55 tok/s)
+decode:  10.46 s (1.91 tok/s)
+io: cb_calls=504 decode_uses=1920 decode_misses=545 (hit 0.716) prefill_uses=2120 prefill_misses=505
+io: pf_calls=23 pf_experts=502 union avg=21.8 min=17 max=27 fill=7.85 s (pool 32 slots)
+io: prefetch_issued=734 prefetch_hits=223 prefetch_used=513 stall=8.72 s total_read=25235.2 MB avg_bw=1295 MB/s
+io: read_work=151.88 s preads=11424 per_stream_bw=166 MB/s
+mem: peak_rss=6.71 GB phys_footprint=3.23 GB
+therm: nominal
+logits_hash=e3fa62923ee35254
+text: <|channel|>analysis<|message|>We need to write a Python function that merges two sorted lists into one sorted list without

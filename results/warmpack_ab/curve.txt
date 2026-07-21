@@ -1,0 +1,7 @@
+A_off1       N=1   hit=0.667  tok/s=1.40  
+A_on1        N=1   hit=0.656  tok/s=1.20  
+A_off8       N=8   hit=0.716  tok/s=1.81  
+A_on8        N=8   hit=0.727  tok/s=1.59  
+A_off20      N=20  hit=0.722  tok/s=2.04  
+A_on20       N=20  hit=0.716  tok/s=1.91  
+DONE

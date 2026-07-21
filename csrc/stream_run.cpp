@@ -456,6 +456,12 @@ static void warmpack_preload(stream_state & st) {
         if (!fgets(line, sizeof line, f)) break;
         layer_cache & lc = st.cache[l];
         for (char * tok = strtok(line, " \t\r\n"); tok; tok = strtok(nullptr, " \t\r\n")) {
+            // stop once this layer's cache is full: the pack is most-frequent
+            // first, so the hottest experts seat first. Without this, assign_slot
+            // (cap=n_slots) evicts-when-full and the loop churns, retaining the
+            // LAST (coldest) ids instead of the first (hottest) — a live A/B
+            // (E34) showed that seeded the wrong experts and killed the lift.
+            if ((int) lc.slot_of.size() >= lc.n_slots) break;
             const int e = atoi(tok);
             if (e < 0 || lc.slot_of.count(e)) continue;
             // guard a wrong-model pack: skip any expert whose read would run

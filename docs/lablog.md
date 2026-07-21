@@ -930,6 +930,104 @@ believe a reviewer).
   preloaded) → `logits_hash 0ec1c81919bbdafc` **IDENTICAL** — pre-warm is
   logit-neutral, proven live. warmpack.py now emits the engine-readable `.pack`.
 
+### E34. Warmpack hook — live engine A/B (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before any A/B run.**
+
+- **Why not a straight E33 replay**: E33's **+26.8 pt @ first-3-tok** is an OLMoE
+  8-of-64 *simulator* number (Python LRU-16, cold vs preseed-top-16, decode-only).
+  OLMoE is not loadable as a GGUF on this box; the only loadable MoE is
+  **gpt-oss-20b-MXFP4** (24 layers, MXFP4, ~3.6B active). So the live A/B *must*
+  run on a different model through the **real** engine cache — fixed slots +
+  router-lookahead prefetch — not the sim. Divergence from 26.8 pt is therefore
+  EXPECTED; quantifying and explaining it is the point.
+- **Real pack, not the fixture**: build a genuine gpt-oss working set from a live
+  decode id-dump (`LLMSTREAM_PRINT_IDS`, true expert ids, *decode rows only* —
+  n_tokens=1). The synthetic `gptoss20b_gate.pack` (experts 0–11) was only ever a
+  bit-exact safety fixture, never a real working set — it would show ~random lift.
+- **Measurement (engine telemetry only)**: `io: … decode … (hit X)` and
+  `decode: … tok/s`, **exact mode** (margin 0 → logit-neutral, gate stays
+  `0ec1c8…`), `LLMSTREAM_SLOTS` held **constant** across OFF/ON. Cumulative
+  decode-hit at `n_gen ∈ {3, 8, 20}`, warmpack OFF vs ON. Two legs:
+  **contaminated** (pack built from the test prompt = upper bound) and **clean**
+  (pack from prompt A applied to a different prompt B).
+- **Predictions (mine — I do NOT expect 26.8 pt):**
+  1. **Direction**: warm ON hit ≥ OFF hit at every N; lift strictly largest at
+     N=3, decaying toward ~0 by N≈20–50 (front-loaded — same *shape* as E33).
+  2. **Magnitude @ N=3**: positive but **smaller** than +26.8 pt — expect
+     single-digit to low-double-digit points — because (a) the engine's OFF
+     baseline already runs router-lookahead prefetch (the E33 pure-LRU sim did
+     not) → higher cold baseline, less headroom; (b) real slot count is chosen
+     ≥ sim's 16 → smaller cold penalty; (c) different model / expert count.
+     Contaminated ≥ clean.
+  3. **tok/s**: warm ON early decode tok/s ≥ OFF (fewer cold-miss stalls at
+     start), effect small and possibly within run-to-run I/O noise; I pre-commit
+     to reporting it as **directional-only** if the OFF↔ON gap is under the
+     observed run-to-run spread.
+- **Falsifier**: if warm ON does not lift N=3 decode hit above OFF beyond noise,
+  the hook buys nothing live and should be dropped from the product surface
+  (kept only as the gate fixture). *(measured numbers appended below the run.)*
+
+**Measured (appended after the run — gpt-oss-20b, exact greedy, GUARD=0 SLOTS=5,
+prompt A = pack source ⇒ CONTAMINATED upper bound):**
+
+| N (cum.) | OFF hit | ON hit | Δ hit | OFF tok/s | ON tok/s |
+|---|---|---|---|---|---|
+| 1  | .667 | .656 | −1.1 pt | 1.40 | 1.20 |
+| 3  | .670 | .678 | +0.7 pt | 1.96 | 1.75 |
+| 8  | .716 | .727 | +1.1 pt | 1.81 | 1.59 |
+| 20 | .722 | .716 | −0.6 pt | 2.04 | 1.91 |
+
+(N=3 = mean of 2 reps each; OFF↔OFF spread at N=3 was .667 vs .674 = 0.7 pt.)
+
+- **Result vs prediction**: Δ hit oscillates in **[−1.1, +1.1] pt** — i.e. within
+  the run-to-run noise floor at *every* horizon; **no lift**. Predicted direction
+  (ON ≥ OFF, front-loaded) is **NOT confirmed** — the sign flips with noise.
+  tok/s: ON ~0.15–0.22 lower at every N (preload reads 120 experts ≈1.6 GB at
+  init + seats slots the demand path then churns) — small, also ≈noise but
+  consistently negative. **My pre-registered falsifier TRIGGERED.**
+- **Investigation — why ≠ E33's +26.8 pt** (this is the whole point of the run):
+  1. **Cache ≈ top_k.** The memory-safe cache on this 16 GB M2 is 5 slots
+     (the guard's *own* verdict — it drops to 5 under pressure); top_k=4. A cache
+     that holds barely more than one token's experts has no room to *retain* a
+     cross-token working set for warm-start to seed. E33's sim had cap 16 vs a
+     38–47 working set — room to hold a meaningful fraction.
+  2. **Prefetch on.** The engine's router-lookahead already recovers cold misses,
+     so the OFF baseline is .67–.72; E33's pure-LRU sim had no prefetch → baseline
+     .33 → all the headroom lived there. Real engine has little left to recover.
+  3. **Model.** gpt-oss 32-expert/top-4 vs OLMoE 64-expert/top-8 — less working-
+     set dispersion, less to seed.
+  Contaminated (pack = test prompt) is the **upper bound**; it is already within
+  noise, so the clean (prompt-B) leg — necessarily ≤ upper bound — was **not run**.
+- **Bug found *by* the A/B, then fixed**: `warmpack_preload` over-filled past the
+  cap — `assign_slot(cap=n_slots)` *evicts-when-full* instead of returning −1, so
+  the loop churned and **retained the LAST (coldest) pack ids, evicting the first
+  (hottest)**. "preloaded 362" counted every assign; only ~5/layer survived, and
+  they were the wrong ones. One-line fix: stop the layer at `slot_of.size() >=
+  n_slots` (pack is most-frequent-first ⇒ hottest seat first). Post-fix preload =
+  120 = 5/layer exactly. **Gate re-verified bit-exact** (OFF = ON =
+  `fdf0f83dd70504c5`) — still logit-neutral.
+- **Verdict**: the hook is **correct** (bit-exact, now seeds the hottest experts)
+  but its live benefit is **gated on cache ≫ top_k**, which a 16 GB M2 cannot
+  provide for gpt-oss-20b (cache is pinned near top_k by the RSS guard). On this
+  hardware class it buys **nothing measurable** and slightly costs early tok/s.
+  Keep it gated + off by default; **do NOT advertise a live warm-start speedup on
+  small machines**. The +26.8 pt stays what it always was: an OLMoE *simulator*
+  number in a no-prefetch, cache=16 regime that does not exist on this box.
+  Pillar-2 "starts warm" is caveated in `techniques.md` accordingly.
+- **Artifacts**: `results/warmpack_ab/` — `profileA.{out,err}` (id-dump),
+  `gptossA.warmpack.{json,pack}` (real pack), `gate_{off,on}.out` (bit-exact),
+  `A_{off,on}{1,3,3b,8,20}.{out,err}`, `curve.txt`.
+
+### Doc fix. colibri CACHE_ROUTE wording corrected (2026-07-21)
+- Backfill of the doc-only honesty task committed in `8f3ff6c`. An earlier draft
+  in `docs/techniques.md` and `docs/findings-phase0.md` called colibri's
+  CACHE_ROUTE "blind / quality unquantified / never measured." Verified against
+  their code + docs: CACHE_ROUTE is **opt-in**, **always keeps the true top-J**,
+  follows **arXiv:2412.00099** max-rank selection, and self-reports **ROUTE_AGREE**
+  (overlap + KL vs true top-K). No mechanism claim of ours changed; our distinct
+  piece remains the *precomputed offline* expert-similarity map. Wording fixed;
+  no measurement was affected.
+
 ### Product arc 1: llmstream CLI + chat UI v2 + D10 closed (2026-07-20)
 - **Name decided**: llmstream ("virtual memory for LLMs"). CLI in
   cli/llmstream: list / estimate / run / ui / pull / rm. The estimator is
