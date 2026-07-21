@@ -922,9 +922,13 @@ believe a reviewer).
   decays as the cache self-warms. Honest: negligible beyond ~30 tokens.
 - **Pre-warm is logit-neutral** — changes residency-at-start, not which experts
   compute — so exact-mode hash must stay 0ec1c81919bbdafc when the hook lands.
-- **Go/no-go (deferred per "ONLY the sidecar")**: LLMSTREAM_WARMPACK engine hook
-  = pre-fill slots from the pack at init (assign_slot+fetch_one loop). Justified
-  by the +26.8 pt token-3 lift; cost = one hot-path C++ change + rebuild + gate.
+- **Engine hook LANDED + gated (2026-07-21)**: `LLMSTREAM_WARMPACK` pre-fills the
+  decode cache at init (assign_slot + fetch_one per pack expert, stream_run.cpp).
+  Off by default (unset → never entered, stock path byte-identical). Wrong-model
+  packs guarded by an EOF file-bounds check (skip out-of-range experts, no crash).
+  **Protocol #4 gate**: exact-mode slots12, warmpack OFF vs ON (288 experts
+  preloaded) → `logits_hash 0ec1c81919bbdafc` **IDENTICAL** — pre-warm is
+  logit-neutral, proven live. warmpack.py now emits the engine-readable `.pack`.
 
 ### Product arc 1: llmstream CLI + chat UI v2 + D10 closed (2026-07-20)
 - **Name decided**: llmstream ("virtual memory for LLMs"). CLI in

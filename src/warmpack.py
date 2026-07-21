@@ -62,9 +62,18 @@ def build_pack(indices, coverage=0.90, task="unknown", model="unknown"):
     }
 
 
+def pack_text(pack):
+    """Engine-readable format (LLMSTREAM_WARMPACK): header + one line of expert
+    ids per layer, most-frequent first."""
+    lines = [f"warmpack {PACK_VERSION} {pack['n_layers']}"]
+    lines += [" ".join(str(e) for e in layer) for layer in pack["hot"]]
+    return "\n".join(lines) + "\n"
+
+
 def save_pack(pack, path):
     path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(pack, separators=(",", ":")))
+    path.with_suffix(".pack").write_text(pack_text(pack))  # engine consumes this
     return path
 
 

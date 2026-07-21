@@ -64,6 +64,7 @@
 #include <poll.h>
 #include <string>
 #include <sys/mman.h>
+#include <sys/stat.h>
 #include <sys/resource.h>
 #include <sys/sysctl.h>
 #include <thread>
@@ -427,6 +428,61 @@ static uint64_t fnv1a(const void * data, size_t n, uint64_t h) {
     const uint8_t * p = (const uint8_t *) data;
     for (size_t i = 0; i < n; i++) { h ^= p[i]; h *= 0x100000001b3ULL; }
     return h;
+}
+
+// LLMSTREAM_WARMPACK: pre-fill the decode expert cache from a working-set
+// "warm-start pack" (src/warmpack.py) so a session starts warm instead of
+// discovering its working set cold over the first ~50 tokens (E33: +26.8 pt
+// hit-rate at token 3). OFF BY DEFAULT: unset -> never entered, stock path
+// byte-identical. Pre-warming only changes which experts are resident at t=0,
+// never which experts compute, so exact-mode logits are bit-identical (gate
+// stays green - protocol #4). Pack format (text, from warmpack.py):
+//   line 1:   "warmpack <version> <n_layers>"
+//   line l+1: space-separated expert ids for layer l, most-frequent first
+static void warmpack_preload(stream_state & st) {
+    const char * path = getenv("LLMSTREAM_WARMPACK");
+    if (!path || !*path) return;
+    FILE * f = fopen(path, "r");
+    if (!f) { fprintf(stderr, "warmpack: cannot open %s (skipping)\n", path); return; }
+    char line[1 << 16];
+    int version = 0, npl = 0;
+    if (!fgets(line, sizeof line, f) || sscanf(line, "warmpack %d %d", &version, &npl) != 2) {
+        fprintf(stderr, "warmpack: bad header in %s (skipping)\n", path); fclose(f); return;
+    }
+    struct stat sb;
+    const off_t fsize = (fstat(st.fd, &sb) == 0) ? sb.st_size : 0;
+    uint64_t loaded = 0, skipped = 0;
+    for (int l = 0; l < npl && l < st.n_layers; l++) {
+        if (!fgets(line, sizeof line, f)) break;
+        layer_cache & lc = st.cache[l];
+        for (char * tok = strtok(line, " \t\r\n"); tok; tok = strtok(nullptr, " \t\r\n")) {
+            const int e = atoi(tok);
+            if (e < 0 || lc.slot_of.count(e)) continue;
+            // guard a wrong-model pack: skip any expert whose read would run
+            // past EOF (out-of-file offset would make fetch_one pread exit(1))
+            bool in_file = true;
+            for (auto & ex : lc.ext) {
+                const size_t off = ex.file_off + (size_t) e * ex.stride;
+                if (fsize && off + ex.stride > (size_t) fsize) { in_file = false; break; }
+            }
+            if (!in_file) { skipped++; continue; }
+            const int slot = assign_slot(lc, e, nullptr, lc.n_slots);
+            if (slot < 0) break; // this layer's cache is full
+            for (size_t part = 0; part < lc.ext.size(); part++)
+                fetch_one(st, io_pool::job{l, e, slot, (int) part, false, false});
+            lc.slot_of[e] = slot;
+            lc.lru.push_front(e);
+            lc.lru_pos[e] = lc.lru.begin();
+            loaded++;
+        }
+    }
+    fclose(f);
+    if (skipped)
+        fprintf(stderr, "warmpack: preloaded %llu experts (%llu out-of-range skipped) from %s\n",
+                (unsigned long long) loaded, (unsigned long long) skipped, path);
+    else
+        fprintf(stderr, "warmpack: preloaded %llu experts from %s\n",
+                (unsigned long long) loaded, path);
 }
 
 static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
@@ -1103,6 +1159,8 @@ int main(int argc, char ** argv) {
         if (n_workers > 32) n_workers = 32;
         for (int w = 0; w < n_workers; w++) st.pool.workers.emplace_back(pool_worker, &st.pool);
     }
+
+    warmpack_preload(st); // LLMSTREAM_WARMPACK: warm-start the cache (off by default)
 
     const int n_ubatch = argc > 4 ? atoi(argv[4]) : 1;
     // LLMSTREAM_CTX: total context window (prompt + generated). Default 4096
