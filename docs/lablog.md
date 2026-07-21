@@ -1372,6 +1372,30 @@ SLOTS=16, PREFILL_SLOTS=64, ubatch=128, guard ON, exact greedy, prompt A):**
   force a pass. **No tuning applied.** Artifacts: `results/e37c/streamed.{out,err}`,
   `summary.txt`, `gate.log`.
 
+### Live-UI observation. Fast dial ~8.8 tok/s (non-bit-exact) (2026-07-21)
+Owner ran the playground (`ui/app.py`) on gpt-oss-20b and measured **8.79 tok/s**
+(and 8.58 on a follow-up) in the chat. **Logged as an OBSERVATION, not a
+pre-registered measurement** — uncontrolled UI session, temp 0.80 (sampling),
+growing conversation context, no fixed N. Config from the UI: **Fast mode**
+(`LLMSTREAM_AGREE_TARGET=0.90`), **slots 24**, temp 0.80, long (~800-tok) warm
+generation.
+
+- **Consistent with E37c, not a contradiction — a different rung.** The Fast dial
+  is **not bit-exact** (D3 adaptive-margin keeps the cached expert for ≤10% of
+  routing decisions + temp>0 samples), so it sits **outside G1's exact clause**.
+  Four factors explain 8.79 vs E37c's 6.14 exact: (1) Fast raises *effective* hit
+  via routing substitution; (2) slots 24 > 16; (3) a fully-warm long generation
+  (steady-state) vs E37c's N=64 *average* still carrying cold-start; (4) temp 0.80
+  (negligible speed effect).
+- **Both rungs honest**: Exact/bit-exact = **6.14 t/s @ 6.73 GB phys_footprint**
+  (G1's contract); Fast (quality-labeled "keep ≥90%", not bit-exact) = **~8.8 t/s**
+  — ~90% of the old ≥10 dream, on the relaxed contract.
+- **TTFT (21.7 s / 47.6 s)** is *prefill* of the growing conversation ("reused 430
+  ctx tokens"), a separate axis from the 8.79 decode number. Sidebar RSS 3.2 GB is
+  the idle-between-turns footprint; it climbs toward ~6.7 GB during active decode.
+- Does **not** change the open G1 call (the phys_footprint-vs-peak-RSS ruling on the
+  Exact rung stands).
+
 ### Gap logged. MTP-via-GGUF format ceiling (2026-07-21)
 Documented in `techniques.md` → "Format ceilings": colibri ships a native int8
 MTP head (their 2.2–2.8× throughput figure); MTP weights are **dropped in GGUF

@@ -36,3 +36,5 @@ ollama_models/
 csrc/stream_run_metal
 .agents/
 .claude/
+raw/
+ui_streamlit.log
