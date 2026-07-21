@@ -101,7 +101,15 @@ if [ "$can_run" -eq 1 ]; then
   # --- 5. bit-exact gate (protocol #4) ---------------------------------------
   out=$(env LLMSTREAM_CHAT=1 LLMSTREAM_SLOTS=5 "$BIN" "$MODEL" 8 "$PROMPT_A" 1 2>/dev/null)
   got=$(printf "%s" "$out" | sed -n 's/^logits_hash=\(.*\)$/\1/p')
-  if [ "$got" = "$EXPECT_HASH" ]; then say "$P" "bit-exact gate $got"
+  if [ "$got" = "$EXPECT_HASH" ]; then
+    say "$P" "bit-exact gate $got"
+    # Receipt, bound to the BINARY that earned it. A green gate is a fact about one
+    # build, so the md5 is the whole point: rebuild the engine and the receipt stops
+    # applying. This is what lets a commit happen in a later session without
+    # re-running a gate the machine may not have room for.
+    mkdir -p "$ROOT/.gate"
+    { echo "hash=$got"; echo "binary_md5=$(md5 -q "$BIN" 2>/dev/null || md5sum "$BIN" | cut -d" " -f1)";
+      echo "when=$(date -u +%Y-%m-%dT%H:%M:%SZ)"; } > "$ROOT/.gate/last-green"
   else bad "bit-exact gate: got '${got:-<none>}' expected $EXPECT_HASH"; fi
 
   # --- 6. byte-identical-off (protocol #3) -----------------------------------
@@ -129,8 +137,12 @@ fi
 printf "\n${B}staging${R}\n"
 staged_engine=$(git diff --cached --name-only 2>/dev/null | grep -E '^(csrc/|patches/)' || true)
 if [ -n "$staged_engine" ]; then
+  cur_md5=$(md5 -q "$BIN" 2>/dev/null || md5sum "$BIN" 2>/dev/null | cut -d" " -f1)
+  rec_md5=$(sed -n 's/^binary_md5=//p' "$ROOT/.gate/last-green" 2>/dev/null)
   if [ "$can_run" -eq 1 ] && [ "$fail" -eq 0 ]; then
     say "$P" "engine change staged, and the bit-exact gate is green this run"
+  elif [ -n "$rec_md5" ] && [ "$rec_md5" = "$cur_md5" ]; then
+    say "$P" "engine change staged; bit-exact receipt matches THIS binary ($(sed -n 's/^when=//p' "$ROOT/.gate/last-green"))"
   else
     bad "ENGINE CHANGE STAGED without a green bit-exact gate (protocol #4):
 $(printf '%s' "$staged_engine" | sed 's/^/      /')

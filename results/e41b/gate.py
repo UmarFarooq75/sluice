@@ -165,6 +165,16 @@ def main():
     # --- leg C: fresh full re-prefill of turn-2's rendering ---------------
     C = server("C_fresh", [turn2], canon=False)
 
+    # --- leg D: THE faithfulness test run 1 failed to be --------------------
+    # Run 1's leg A rendered 315 tokens (empty assistant turn) while B and C
+    # rendered 421, so A-vs-C compared two different prompts. D replays run 1's
+    # EXACT rendering as a fresh single-shot, so the only difference from run 1's
+    # leg A is the KV path: canonicalized-and-reused versus prefilled-from-cold.
+    # Same prompt, two paths — which is what gate 1 was always supposed to ask.
+    RUN1_A_HASH = "0101f7d30ad830a4"   # run1_void/A_canon_on.out, turn 2
+    empty_echo = hist([("user", P1), ("assistant", ""), ("user", P2)])
+    D = server("D_replay_fresh", [empty_echo], canon=False)
+
     def row(name, blk):
         return dict(
             leg=name,
@@ -197,6 +207,16 @@ def main():
         L.append(f"{r['leg']:<22} hash={r['hash']} rendered={r['rendered']} "
                  f"reused={r['reused']} reprefill={r['reprefill']} "
                  f"ttft={r['ttft_ms']} ms prefill={r['prefill_s']} s")
+    rD = row("D replay fresh", D[0])
+    L += ["", "GATE 1b — run 1's leg-A rendering, replayed cold (same prompt, other KV path)",
+          f"  D rendered={rD['rendered']} (run 1 leg A rendered 315) hash={rD['hash']}",
+          f"  run 1 leg A hash={RUN1_A_HASH}"]
+    if rD["rendered"] != 315:
+        L.append("  VOID — D did not reproduce run 1's 315-token rendering, so it is not "
+                 "the same prompt and the hashes cannot be compared.")
+    else:
+        L.append(f"  VERDICT: {'GREEN — canonicalized KV is bit-faithful to a cold prefill' if rD['hash'] == RUN1_A_HASH else 'RED — canonicalized KV diverges from a cold prefill of the same prompt'}")
+
     L.append("")
     L.append(f"PREMISE  identical renderings across legs: {renders} -> "
              f"{'OK' if premise_ok else 'VIOLATED'}")

@@ -2361,3 +2361,69 @@ and must not be quoted.**
 check, `require_field`, and the corrected inert comparison in place. Run 1's
 artifacts are preserved under `results/e41b/run1_void/` with `VOID.md` explaining
 why they must not be cited as a gate result.
+
+### E41b review follow-up — echo asymmetry, the control, and a TTFT correction (2026-07-21)
+Answers to the four review points. No re-runs: R0 owns the window.
+
+**(1) Echo asymmetry, in token ids** (engine telemetry, no model load):
+
+| leg | ctx_held | rendered | reused | reprefill | diverged_at | KV had → re-render has |
+|---|---|---|---|---|---|---|
+| A | 404 | **315** | 297 | 18 | 297 | `410 \|**\|` → `200002 \|<\|return\|>\|` |
+| B | 496 | **421** | 296 | 125 | 296 | `200005 \|<\|channel\|>\|` → `200008 \|<\|message\|>\|` |
+| C | 0 | **421** | 0 | 421 | 0 | — |
+
+At position 297 leg A's KV holds token **410 = `**`** — the first token of the reply
+body (`**How Earth Came to Be**`) — while its re-render has a special token, because
+the assistant turn was empty and the render jumps straight to the terminator. That
+is the empty-echo signature at token level. Leg B shows the ordinary E38 break:
+KV `<|channel|>` (analysis) vs re-render `<|message|>` (final only).
+
+**TTFT ACCEPTANCE MUST BE WITHDRAWN — the mechanism is NOT demonstrated.** The review
+accepted 6.7 s vs 12.2 s as "mechanism works". The same table refutes it:
+
+- Canonicalization moved the prefix match from **296 → 297 tokens. One token.** If the
+  mechanism had worked, leg A would have reused ≈ **404** (the full canonical KV);
+  it reused 297 and diverged at exactly the place stock diverges.
+- A's re-prefill of 18 tokens is `315 − 297`, i.e. **small because the prompt was 106
+  tokens shorter**, not because the KV matched further.
+- So the 6.7 s is a shorter-prompt artifact. **Predictions 2, 3 and 4 remain untested.**
+  What *is* established is that the canon machinery executes correctly and costs
+  13.23 s post-reply — mechanism *present*, benefit *unmeasured*.
+
+**(2) CONTROL verified — and it is stronger than the E39 signature.** B and C both
+rendered **421** tokens from the identical string; only `reused` differed (296 vs 0).
+Their **generated text is NOT byte-identical** — it diverges at character 101, inside
+the analysis channel:
+- B: `…They previously asked "Explain how the Earth formed and why it…`
+- C: `…They previously asked for explanation of Earth formation and w…`
+
+E39 had *identical text, different hash*. Here **stock partial prefill changes the
+answer itself.** Hashes `81e84aa667640f55` (B) vs `865919727c751b58` (C).
+**Quotable, with its confound named**: B and C differ in two ways at once — reused
+prefix vs cold, **and** prefill batch composition (B's 296 reused tokens were computed
+inside turn 1's 296-token prefill; C computed the same positions inside a 421-token
+prefill split into four 128-ubatches). **R0 separates exactly these.** Filed below as
+its own entry.
+
+**(3) Inert check re-scoped** to semantic lines (`mode=`, `logits_hash=`, `text:`,
+ttft/canon) in both `results/e41b/run.sh` and `scripts/gate.sh`. Re-checked against
+run 1's own artifacts: **IDENTICAL**. Tonight's DIFFERS was pure telemetry noise.
+
+**(4) Leg D added, not run.** Replays run 1's exact 315-token rendering as a fresh
+single-shot and compares against run 1's leg-A hash `0101f7d30ad830a4`. Same prompt,
+two KV paths — the faithfulness question gate 1 was meant to ask. Voids itself if it
+does not reproduce 315 tokens.
+
+### FINDING: stock KV reuse is not bit-faithful, and changes output (2026-07-21)
+Filed separately because it **outranks the feature that surfaced it** and is
+independent of it: canon was **OFF** in both legs.
+
+Identical 421-token prompt. Reuse a 296-token KV prefix → one answer; prefill all 421
+cold → a **different** answer. This is default, shipping behaviour on every multi-turn
+chat, and it means a conversation's replies depend on how the KV was assembled.
+Evidence: `results/e41b/run1_void/{B_canon_off,C_fresh}.out`.
+
+**Not yet root-caused, and two candidates are confounded** (reused-prefix vs batch
+composition). **PENDING R0**, which varies batch shape alone and is running now. Do
+not act on this until R0 lands; do not quote it without the confound.

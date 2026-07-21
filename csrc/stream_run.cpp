@@ -1262,18 +1262,21 @@ int main(int argc, char ** argv) {
     auto tp_a = std::chrono::steady_clock::now();
     std::string ptext = req_prompt;
     bool chat = false;
+    // hoisted out of the render block so the E41b canonicalization at end of
+    // turn can re-render from the *same* message list (parts owns the storage
+    // that msgs points into, so both must outlive the render).
+    std::vector<std::string> parts;
+    std::vector<llama_chat_message> msgs;
+    const char * tmpl = llama_model_chat_template(model, nullptr);
     if (getenv("LLMSTREAM_CHAT")) {
-        const char * tmpl = llama_model_chat_template(model, nullptr);
         if (tmpl) {
             // optional system message first (LLMSTREAM_SYSTEM); grounds chat
             // behavior - especially at high margins, where a contentless
             // prompt plus swapped routing invites confabulated tasks
             const char * sys = getenv("LLMSTREAM_SYSTEM");
-            std::vector<llama_chat_message> msgs;
             if (sys && sys[0]) msgs.push_back({ "system", sys });
             // history grammar: turns split on \x1e, each "role\x1f content".
             // a plain line (no separators) is a single user turn.
-            std::vector<std::string> parts;
             if (req_prompt.find('\x1f') != std::string::npos) {
                 size_t start = 0;
                 while (start <= req_prompt.size()) {
@@ -1553,6 +1556,98 @@ int main(int argc, char ** argv) {
     printf("text: %s\n", out.c_str());
 
     if (!server_mode) break;
+    // E41b: LLMSTREAM_KV_CANON — canonicalize the KV now that the reply is printed
+    // and before <<<READY>>>, i.e. while the user is reading, OFF the TTFT critical
+    // path. The model generates
+    //   <|start|>assistant<|channel|>analysis<|message|>COT<|end|>
+    //   <|start|>assistant<|channel|>final<|message|>ANS<|return|>
+    // but next turn the template will render that same turn as
+    //   <|start|>assistant<|channel|>final<|message|>ANS<|end|>
+    // and drop the CoT by explicit design (E41 diagnosis: the template says so in a
+    // comment). Those disagree at three tokens — channel, the whole analysis span,
+    // and the terminator — so the prefix match dies at the assistant boundary and
+    // the entire history re-prefills (E38: diverged_at=296, 219 tokens re-prefilled).
+    // Since we cannot make the rendering match the KV, make the KV match the
+    // rendering: re-render this turn canonically, drop the divergent tail, decode
+    // the canonical suffix. OFF by default => this block never runs => byte-identical.
+    if (getenv("LLMSTREAM_KV_CANON") && chat && tmpl && !ctx_toks.empty()) {
+        auto tc0 = std::chrono::steady_clock::now();
+        // find the final-channel marker in the GENERATED span. Tokenized from the
+        // literal rather than hard-coded ids, so this stays family-agnostic: a
+        // template without this marker simply yields no match and we skip.
+        llama_token mk[8];
+        const char * mark = "<|channel|>final<|message|>";
+        int nmk = llama_tokenize(vocab, mark, (int32_t) strlen(mark), mk, 8, false, true);
+        int at = -1;
+        if (nmk > 0)
+            for (int i = n; i + nmk <= (int) ctx_toks.size(); i++)
+                if (memcmp(&ctx_toks[i], mk, sizeof(llama_token) * (size_t) nmk) == 0) at = i;
+        if (at < 0) {
+            fprintf(stderr, "llmstream: KV canon skipped - no final-channel marker in this reply\n");
+        } else {
+            // detokenize the answer body (special=false: content only, no markers)
+            const int a0 = at + nmk, alen = (int) ctx_toks.size() - a0;
+            std::string ans;
+            if (alen > 0) {
+                ans.resize((size_t) alen * 16 + 64);
+                int r = llama_detokenize(vocab, &ctx_toks[a0], alen,
+                                         &ans[0], (int32_t) ans.size(), false, false);
+                ans.resize(r > 0 ? (size_t) r : 0);
+            }
+            // re-render THIS turn with the assistant reply appended and NO
+            // generation prompt: exactly the prefix next turn's render will open with
+            msgs.push_back({ "assistant", ans.c_str() });
+            std::vector<char> cbuf(ptext.size() + ans.size() * 2 + 8192);
+            int32_t cr = llama_chat_apply_template(tmpl, msgs.data(), msgs.size(), false,
+                                                   cbuf.data(), (int32_t) cbuf.size());
+            msgs.pop_back();
+            if (cr <= 0 || cr > (int32_t) cbuf.size()) {
+                fprintf(stderr, "llmstream: KV canon skipped - canonical render failed\n");
+            } else {
+                std::vector<llama_token> ctoks((size_t) cr + 64);
+                // same add_special/parse_special flags as the request path, or the
+                // BOS handling would differ and the match would die at token 0
+                int cn = llama_tokenize(vocab, cbuf.data(), cr,
+                                        ctoks.data(), (int32_t) ctoks.size(), true, true);
+                if (cn <= 0) {
+                    fprintf(stderr, "llmstream: KV canon skipped - canonical tokenize failed\n");
+                } else {
+                    ctoks.resize(cn);
+                    int keep = 0;
+                    while (keep < cn && keep < (int) ctx_toks.size() && ctoks[keep] == ctx_toks[keep]) keep++;
+                    llama_memory_seq_rm(llama_get_memory(ctx), 0, keep, -1);
+                    bool ok = true;
+                    if (keep < cn) {
+                        llama_batch cb = llama_batch_get_one(ctoks.data() + keep, (int32_t) (cn - keep));
+                        ok = llama_decode(ctx, cb) == 0;
+                    }
+                    if (!ok) {
+                        // the KV is now neither the old state nor the new one; the
+                        // only honest recovery is to drop it and let the next turn
+                        // re-prefill from scratch (slow, but correct)
+                        llama_memory_seq_rm(llama_get_memory(ctx), 0, 0, -1);
+                        ctx_toks.clear();
+                        fprintf(stderr, "llmstream: KV canon decode FAILED - context cleared, next turn is cold\n");
+                    } else {
+                        const int dropped = (int) ctx_toks.size() - keep;
+                        ctx_toks = ctoks;
+                        printf("canon: held=%d kept=%d dropped=%d decoded=%d canonical=%d (%.2f s, post-reply)\n",
+                               dropped + keep, keep, dropped, cn - keep, cn,
+                               std::chrono::duration<double>(std::chrono::steady_clock::now() - tc0).count());
+                        // the client MUST echo this exact string back as the assistant
+                        // turn next request, or the KV we just built stops being a
+                        // prefix of the next render and the saving evaporates.
+                        // `text:` cannot serve: it concatenates analysis and final
+                        // with no markers. Newlines escaped to keep it one line.
+                        std::string esc;
+                        for (char c : ans) { if (c == '\n') esc += "\\n"; else if (c == '\\') esc += "\\\\"; else esc += c; }
+                        printf("canon_reply: %s\n", esc.c_str());
+                        fflush(stdout);
+                    }
+                }
+            }
+        }
+    }
     // E39: checkpoint the conversation after each completed turn. Written to a
     // temp file then atomically renamed, so a crash mid-write can never leave a
     // torn checkpoint behind (colibri gets this via data-then-counter ordering).
