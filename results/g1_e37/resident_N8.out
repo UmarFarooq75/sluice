@@ -1,0 +1,7 @@
+mode=resident prompt_toks=23 reused=0 generated=8 n_ubatch=128
+prefill: 21.62 s (1.06 tok/s)
+decode:  2.74 s (2.92 tok/s)
+mem: peak_rss=6.79 GB phys_footprint=11.75 GB
+therm: nominal
+logits_hash=643e85ac43cceaa8
+text: <|channel|>analysis<|message|>We need to write a

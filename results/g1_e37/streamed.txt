@@ -1,0 +1,5 @@
+N=1   hit=0.677  tok/s=1.64   RSS=4.85  GB cap=full       avg_bw=940 MB/s    per_stream_bw=110 MB/s logits_hash=668335271c9efc31
+N=3   hit=0.747  tok/s=1.65   RSS=5.05  GB cap=full       avg_bw=964 MB/s    per_stream_bw=118 MB/s logits_hash=a40c8733ac673c3b
+N=8   hit=0.832  tok/s=1.38   RSS=5.88  GB final_cap=22   avg_bw=824 MB/s    per_stream_bw=120 MB/s logits_hash=fdf0f83dd70504c5
+N=20  hit=0.855  tok/s=1.57   RSS=6.21  GB final_cap=16   avg_bw=660 MB/s    per_stream_bw=123 MB/s logits_hash=e3fa62923ee35254
+DONE

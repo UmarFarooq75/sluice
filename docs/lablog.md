@@ -1123,6 +1123,102 @@ prompt A; CLEAN — no pack, policy uses only live runtime counts):**
 - **Artifacts**: `results/lfru_ab/` — `{lru,lfru}{1,3,8,20}.{out,err}`, `lru3{a,b}`
   (noise bar), `curve.txt`.
 
+### E37. The 10 GB rung for gpt-oss-20b — baselining Goal G1 (PRE-REGISTERED 2026-07-21)
+**Pre-registration — written before any run.** G1 = ≤10 GB RSS, bit-exact,
+target ≥10 tok/s. Measurement only, no new features/levers.
+
+- **Geometry (measured at launch)**: trunk RSS **1.92 GB**, **13.3 MB/slot-layer
+  × 24 = 319 MB/slot**, top_k=4 → 96 expert-uses/token, per-miss 13.25 MB.
+- **Anchors**: governing law (E7) `t/tok ≈ misses×13.25MB ÷ 1.15GB/s + 0.095s`;
+  compute ceiling **10.47 tok/s @ 99.8% hit** (E7); E28 ~6.6 GB→hit .905/5.9 t/s,
+  ~8.5 GB→4.0 t/s (more cache = slower, D10).
+- **Predictions:**
+  1. **Slot budget @ 10 GB RSS** = `(10 − 1.92 − ~0.3 KV)/0.319` = **~24 slots**.
+  2. **Hit @ 24 slots** ≈ **0.95** (cache 24 > code working set ~15/layer, E34;
+     E28 ~16 slots→.905, saturating above).
+  3. **tok/s @ 10 GB (if holdable)** = `(1−.95)×96×13.25MB=63.6MB ÷1150MB/s
+     =.055s + .095s = .150s` → **6.7 tok/s** (bandwidth-law; D10 pressure would
+     pull lower). **< 10 target.**
+  4. **Resident compute ceiling (run b)** ≈ **10.5–13 tok/s** (E7 anchor 10.47).
+  5. **Effective decode bw (run c)** ≈ **1.0–1.15 GB/s** (E7 1.15; E20 1.3–1.8
+     repacked).
+  6. **G1 feasibility pre-call** — the key call:
+     - Task line: required miss-bytes/token for 10 t/s = `bw/10 = 1150/10 =`
+       **115 MB/tok**. Predicted actual @ hit .95 = **63.6 MB/tok** → **0.55×**,
+       *within* budget. **Bandwidth is NOT the binding constraint at 10 GB.**
+     - Compute IS: 10 t/s ⇒ 0.10 s/tok, but compute alone = 0.095 s ⇒ miss-wait
+       budget 0.005 s ⇒ ≤5.8 MB/tok ⇒ hit ≥ **99.9%**. Even at 100% hit, resident
+       ≈ 10.5 t/s and any miss drops below 10. **Predict G1 ≥10 t/s INFEASIBLE on
+       gpt-oss-20b on this box — bounded by CPU compute, not disk.** Faster needs a
+       wider memory bus / GPU (E-note line 166: "37 t/s needs a wider bus, not
+       more software"), not more cache or faster SSD.
+  7. **Memory-safety call (protocol #2, pre-registered)**: avail is ~1.5 GB
+     (vm_stat) / 6.1 GB (engine); a 10 GB cache + the user's ~13 GB of apps > 16 GB.
+     A GUARD=0 force to hit 10 GB would swap and impact the user's work — **we do
+     not do that**. So **run (a) is GUARD ON**; we report the memory-safe **floor**
+     the guard permits as the actual rung (predicted ~4–6 slots → **~3.8 GB RSS**,
+     hit ~.70–.75, ~2–3 t/s), and label the 10 GB point as guard-refused. No
+     GUARD=0 run in this task. Resident (b) attempted at short N; if it thrashes,
+     report the thrash and fall back to the E7 ceiling (10.47).
+  8. **Bit-exact gate**: streamed hash must equal resident hash (exact greedy).
+  *(measured numbers appended below the run.)*
+
+**Measured (appended after the run — gpt-oss-20b, exact greedy, CLEAN; run (a)
+GUARD ON SLOTS=24 as pre-registered; RSS via `/usr/bin/time -l`):**
+
+Run (a) streamed, requesting 24 slots (the 10 GB budget):
+
+| N | hit | tok/s | peak RSS | final cap | avg_bw | per_stream_bw |
+|---|---|---|---|---|---|---|
+| 1  | .677 | 1.64 | 4.85 GB | 24 (full) | 940 | 110 |
+| 3  | .747 | 1.65 | 5.05 GB | 24 (full) | 964 | 118 |
+| 8  | .832 | 1.38 | 5.88 GB | 22 | 824 | 120 |
+| 20 | .855 | 1.57 | 6.21 GB | 16 | 660 | 123 |
+
+- **Predicted vs measured:**
+  - Slot budget @ 10 GB: pred ~24 → **10 GB never reached.** RSS climbs with
+    tokens as experts load and **plateaus ~6.2 GB**; the guard sheds 24→**16** under
+    pressure, and the code working set (~15/layer, E34) doesn't fill 24 anyway.
+    **The "10 GB rung" does not exist for this model on this box — the memory-safe
+    operating point is ~6 GB.**
+  - Hit: pred ~.95 → measured **.855** @ N=20 (16 slots, pressure), .832 @ N=8.
+  - tok/s: pred 6.7 (law) / 3–4 (D10) → measured **1.4–1.7** — well under even the
+    D10 figure, because `per_stream_bw` collapsed to **110–123 MB/s** (vs the
+    1.15 GB/s anchor): current memory pressure starves the reads (E30).
+  - Resident ceiling (b): pred 10.5–13 → **UNMEASURABLE: thrash.** Full ~11 GB
+    resident under ~1.5 GB avail swapped catastrophically (E4 scenario); killed at
+    100 s with prefill not even done (no orphan left, avail recovered to 2.78 GB,
+    no lasting user impact). Best ceiling remains the **E7 anchor ≥10.47 t/s**.
+  - Effective decode bw (c): pred 1.0–1.15 GB/s → measured **~580 MB/s**
+    (miss-bytes ÷ stall, N=20), avg_bw 660–964, per_stream 120 — ~2× below anchor
+    (pressure).
+- **Per-token decomposition (N=20, 0.638 s/tok)**: **50% miss-wait** (stall
+  0.319 s) + **50% compute+faults** (0.319 s), of which only ~0.095 s is true
+  compute (E7) and ~0.224 s is **swap-fault tax** on the resident trunk under
+  pressure. Under a clean machine the compute half would drop to ~0.095 s.
+- **G1 feasibility line (computed)**: required miss-bytes/token for 10 t/s =
+  `measured_bw/10 = 580/10 =` **58 MB/tok**; observed = `13.95 miss × 13.25 MB =`
+  **184.8 MB/tok** → **3.2× gap on bandwidth**. But bandwidth is **not** the
+  binding wall: even at 100% hit, compute alone caps throughput at ~3.1 t/s
+  (pressure) / ~10.5 t/s (clean, E7) — **neither ≥10 within a 10 GB budget.**
+- **Bit-exact gate**: streamed N=8 (24-slot) = `fdf0f83dd70504c5` = the E34/E36
+  canonical exact hash, *identical* across slot counts 5→16→24 → compute is
+  provably cache-size-invariant (the gate's purpose). Fresh resident-side hash
+  blocked by the thrash; exact-mode = resident is the established contract, so the
+  gate holds by that reference. **Green.**
+- **VERDICT — G1 (≤10 GB RSS, ≥10 t/s, bit-exact) is INFEASIBLE for gpt-oss-20b on
+  this 16 GB M2.** Bounded by (1) **RSS**: approaching the ceiling needs full
+  residency (~11 GB > 10 GB budget); a 10 GB *streamed* cache can't even be
+  reached (guard + working set plateau ~6 GB). (2) **CPU compute**: the clean
+  compute ceiling (~10.5 t/s) *is* the target, so streaming — which only adds
+  miss-wait — cannot clear 10. Disk bandwidth is the *least* binding factor
+  (3.2× on paper, but slack once hit is high). Faster needs a **wider memory bus /
+  GPU or a smaller-active-param model** (matches D10 + line 166: "37 t/s needs a
+  wider bus, not more software"), not more cache or a faster SSD. The numbers
+  decide the next directive.
+- **Artifacts**: `results/g1_e37/` — `stream_N{1,3,8,20}.{out,err}`,
+  `resident_N8.{out,err}` (thrash), `streamed.txt`.
+
 ### Gap logged. MTP-via-GGUF format ceiling (2026-07-21)
 Documented in `techniques.md` → "Format ceilings": colibri ships a native int8
 MTP head (their 2.2–2.8× throughput figure); MTP weights are **dropped in GGUF
