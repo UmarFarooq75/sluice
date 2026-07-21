@@ -47,6 +47,12 @@ Cold-miss policy (tunable): (a) wait for network fetch; (b) similarity-substitut
 - **No silent quality changes** — pruning, mixed precision, and substitution are explicit, labeled, user-chosen.
 - **No speed lies** — measure the user's disk at install, print the expected tok/s range from the governing formula *before* loading.
 
+## Format ceilings (honest gaps we cannot cross while GGUF-universal)
+
+These are properties of the serving format, not engineering TODOs. We choose GGUF universality; the cost is that a few model-native accelerations are simply unavailable to us, and we will not pretend otherwise.
+
+- **Native MTP (multi-token prediction) is lost in GGUF conversion.** colibri ships a native int8 MTP head and credits it with **2.2–2.8×** throughput (their figure). MTP modules (the extra prediction heads DeepSeek-V3 / GLM train) are **dropped when a model is converted to GGUF** — the conversion keeps the main transformer and discards the MTP weights, and the GGUF-served runtime has no tensors to run them. So on *any* GGUF-served MoE we cannot match a native-MTP engine's self-speculation, full stop. This is a **format ceiling**: closing it would mean abandoning GGUF universality (a custom per-family loader that preserves MTP weights), which is a different product, not a patch. Stated plainly so no benchmark against colibri reads as an engineering failure on our side — it is a deliberate format trade.
+
 ## The multiplication table (DeepSeek-V3-class, 671B, int4 = 336 GB)
 
 | Stack so far | ROM | RAM | Streamed/token |

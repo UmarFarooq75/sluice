@@ -1088,9 +1088,17 @@ prompt A; CLEAN — no pack, policy uses only live runtime counts):**
 | 8  | .715 | .712 | −0.3 pt | 1.86 | 1.58 |
 | 20 | .719 | .726 | +0.7 pt | 2.06 | 1.87 |
 
-- **Noise bar**: LRU↔LRU at N=3 = **.681 vs .681 = 0.000 pt** (hit is
-  deterministic in exact greedy — routing + LRU eviction are fully determined).
-  So the Δ's above are *signal, not noise* — but tiny and **mixed-sign**.
+- **Noise bar**: LRU↔LRU at N=3 = **.681 vs .681 = 0.000 pt**. **Reconciling with
+  E34's 0.7 pt spread (verified from code, not assumed)**: the reported hit counts
+  an expert resident iff it is in `slot_of` (stream_run.cpp:816), *not* on
+  `in_flight`; `slot_of` is written at prefetch-issue time deterministically — but
+  *which* experts prefetch seats is gated on `hit_ema` (~L498/L636), and `hit_ema`
+  folds in the timing-dependent `in_flight` term (~L789/L815). So the metric is
+  deterministic **except** at the margin where async-prefetch completion timing
+  flips a `hit_ema`-gated prefetch decision — a **0-to-~1 pt jitter**. E34 sampled
+  the high end (0.7), E36 the low end (0.000); same jitter band, not contradictory
+  constants. E34's ±1.1 pt swings sit inside this band, so that verdict stands.
+  The Δ's below are the same order as the jitter — hence "no systematic win."
 - **Gate**: OFF (unset) = LRU = lfru = `fdf0f83dd70504c5` = the committed stock
   hash. Byte-identical OFF confirmed; lfru changes residency only, never compute.
 - **Verdict: lfru does NOT beat LRU.** Δhit swings −2.1 → +0.7 pt across N —
@@ -1114,6 +1122,14 @@ prompt A; CLEAN — no pack, policy uses only live runtime counts):**
   lfu | lfru}, off by default, bit-exact, dark. No decay tuning, no follow-up.
 - **Artifacts**: `results/lfru_ab/` — `{lru,lfru}{1,3,8,20}.{out,err}`, `lru3{a,b}`
   (noise bar), `curve.txt`.
+
+### Gap logged. MTP-via-GGUF format ceiling (2026-07-21)
+Documented in `techniques.md` → "Format ceilings": colibri ships a native int8
+MTP head (their 2.2–2.8× throughput figure); MTP weights are **dropped in GGUF
+conversion**, so no GGUF-served MoE can match native-MTP self-speculation. Logged
+as a **format ceiling** (the cost of GGUF universality), not an engineering TODO —
+so a colibri throughput comparison never reads as a fixable miss on our side.
+Docs-only; no code.
 
 ### Doc fix. colibri CACHE_ROUTE wording corrected (2026-07-21)
 - Backfill of the doc-only honesty task committed in `8f3ff6c`. An earlier draft
