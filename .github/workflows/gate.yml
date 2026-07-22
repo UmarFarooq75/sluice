@@ -1,0 +1,18 @@
+name: gate
+
+on:
+  push: { branches: [main] }
+  pull_request:
+  workflow_dispatch:
+
+# Runs the STATIC half of the standing protocol. The model-dependent legs
+# (bit-exact hash, byte-identical-off) need a 12 GB GGUF and a quiet machine, so
+# they self-defer here and say so — a deferred gate is NOT a green gate, and the
+# script's own output makes that distinction rather than hiding it.
+jobs:
+  static:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: make static
+        run: bash scripts/gate.sh --static

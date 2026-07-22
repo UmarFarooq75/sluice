@@ -19,6 +19,14 @@
 
 *Big models through a small gate.*
 
+[![gate](https://github.com/UmarFarooq75/sluice/actions/workflows/gate.yml/badge.svg)](https://github.com/UmarFarooq75/sluice/actions/workflows/gate.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
+<img src="docs/media/ui.png" width="88%" alt="sluice playground answering, with per-turn physics">
+
+<sub>gpt-oss-20b · Light memory (~5.5 GB) · Fast quality · <b>4.4 GB RAM free</b> — a 21B
+model answering on a machine with less free RAM than the model file is large.</sub>
+
 </div>
 
 ---
@@ -36,9 +44,6 @@ tok/s  ≤  storage_bandwidth / ((1 − cache_hit_rate) × routed_bytes_per_toke
 ```
 
 Ollama solved *running a model that fits your machine*. sluice solves *the model that doesn't*.
-
-<!-- Screenshot: drop a UI capture at docs/media/ui.png, then uncomment the line below. -->
-<!-- ![The sluice playground — quality dial, live machine stats, per-turn physics](docs/media/ui.png) -->
 
 ---
 
@@ -90,8 +95,9 @@ bash scripts/install.sh                # one-time: fetches llama.cpp, applies ou
                                        # patch, builds the engine, creates the venv.
                                        # Downloads NO model.
 
-# See what THIS machine will actually do — before downloading anything.
-./cli/sluice estimate gpt-oss-20b      # probes your disk bandwidth, prints honest tok/s per mode
+# START HERE. Before any download, ask your machine what it can actually do:
+./cli/sluice doctor gpt-oss-20b        # RAM, swap, disk bandwidth, strays -> go / no-go
+                                       # plus the predicted tok/s for each mode
 
 ./cli/sluice pull gpt-oss-20b          # ~12 GB, only once you've seen the estimate
 ./cli/sluice ui                        # playground → http://localhost:8501

@@ -34,9 +34,33 @@ fi
   warn "Intel Mac detected; measurements in this repo are all Apple Silicon."
 
 # ------------------------------------------------------------ prerequisites ---
-for tool in git cmake python3; do
+for tool in git python3; do
   command -v "$tool" >/dev/null 2>&1 || die "missing prerequisite: $tool"
 done
+
+# cmake resolution. Bare `cmake` is NOT reliably on PATH: on this project's own
+# reference machine it lives inside the Python venv (pip-installed), which is how
+# vendor/ was originally built — so the quickstart's very first command failed on a
+# clean shell. Resolve it, and if it is genuinely absent, say how to get it rather
+# than dying on "command not found".
+CMAKE=""
+for cand in cmake \
+            "$PWD/.venv/lib/python3."*/site-packages/cmake/data/bin/cmake \
+            /opt/homebrew/bin/cmake /usr/local/bin/cmake \
+            /Applications/CMake.app/Contents/bin/cmake; do
+  if command -v "$cand" >/dev/null 2>&1; then CMAKE=$(command -v "$cand"); break
+  elif [ -x "$cand" ]; then CMAKE="$cand"; break; fi
+done
+if [ -z "$CMAKE" ]; then
+  # last resort: install it into the venv we are about to create anyway
+  say "cmake not found — installing it into .venv (pip)"
+  python3 -m venv .venv 2>/dev/null || true
+  ./.venv/bin/python3 -m pip install --quiet cmake 2>/dev/null || true
+  CMAKE=$(ls "$PWD"/.venv/lib/python3.*/site-packages/cmake/data/bin/cmake 2>/dev/null | head -1)
+fi
+[ -n "$CMAKE" ] && [ -x "$CMAKE" ] || die "cmake not found and could not be installed.
+     Install it with:  brew install cmake     (or)  pip install cmake"
+say "cmake: $CMAKE"
 command -v clang++ >/dev/null 2>&1 || command -v c++ >/dev/null 2>&1 || die "missing a C++ compiler"
 say "prerequisites ok (git, cmake, python3, c++)"
 
@@ -60,8 +84,8 @@ if [ ! -e vendor/llama.cpp/build/bin/libllama.dylib ] && [ ! -e vendor/llama.cpp
   # that disagree on a flag is how you get a "works for me" that isn't.
   CM_FLAGS=(-DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF)
   [ "$OS" = "Darwin" ] && CM_FLAGS+=(-DGGML_METAL=ON)
-  cmake -S vendor/llama.cpp -B vendor/llama.cpp/build "${CM_FLAGS[@]}" >/dev/null
-  cmake --build vendor/llama.cpp/build --config Release -j"$(sysctl -n hw.ncpu 2>/dev/null || nproc)"
+  "$CMAKE" -S vendor/llama.cpp -B vendor/llama.cpp/build "${CM_FLAGS[@]}" >/dev/null
+  "$CMAKE" --build vendor/llama.cpp/build --config Release -j"$(sysctl -n hw.ncpu 2>/dev/null || nproc)"
 else
   say "llama.cpp already built — skipping"
 fi
