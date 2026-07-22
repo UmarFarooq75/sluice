@@ -1,0 +1,28 @@
+ttft: total=7383 ms | template=0 tokenize=0 kv_match=0 prefill=7381 first_sample=1
+ttft: ctx_held=0 rendered=28 reused=0 reprefill=28 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=28 reused=0 generated=40 n_ubatch=1
+prefill: 7.38 s (3.79 tok/s)
+decode:  4.21 s (9.50 tok/s)
+io: cb_calls=1632 decode_uses=3840 decode_misses=353 (hit 0.908) prefill_uses=2580 prefill_misses=390
+io: prefetch_issued=283 prefetch_hits=91 prefetch_used=259 stall=7.52 s total_read=13598.4 MB avg_bw=1173 MB/s
+io: read_work=45.50 s preads=6156 per_stream_bw=299 MB/s
+mem: peak_rss=11.35 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=a902e2a17c45fc36
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide a concise but thorough explanation. Should cover: Solar system formation, accretion, differentiation, core, mantle,
+
+<<<TURN>>>
+ttft: total=5788 ms | template=0 tokenize=3 kv_match=0 prefill=5784 first_sample=1
+ttft: ctx_held=68 rendered=85 reused=28 reprefill=57 (67.1% of rendered)
+ttft: diverged_at=28 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+mode=streamed prompt_toks=85 reused=28 generated=40 n_ubatch=1
+prefill: 5.78 s (9.86 tok/s)
+decode:  4.24 s (9.44 tok/s)
+io: cb_calls=2328 decode_uses=3840 decode_misses=431 (hit 0.888) prefill_uses=5248 prefill_misses=615
+io: prefetch_issued=63 prefetch_hits=29 prefetch_used=45 stall=5.71 s total_read=14698.4 MB avg_bw=1467 MB/s
+io: read_work=28.46 s preads=6654 per_stream_bw=516 MB/s
+mem: peak_rss=11.35 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=401564b12dcf5a76
+text: <|channel|>analysis<|message|>We need to summarize the explanation in three bullet points. The user wants a summary. So we need to produce three bullet points summarizing Earth's formation and why it can support life. Let's

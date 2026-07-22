@@ -39,7 +39,8 @@ from harness import Leg, compare, void_banner, verdict_line  # noqa: E402
 
 BIN = str(ROOT / "csrc" / "stream_run")
 MODEL = str(ROOT / "models" / "gpt-oss-20b-MXFP4.gguf")
-OUT = ROOT / "results" / "rc2"
+PLAN_NAME = sys.argv[1] if len(sys.argv) > 1 else "rc2"
+OUT = ROOT / "results" / PLAN_NAME
 OUT.mkdir(parents=True, exist_ok=True)
 SWA = 128  # gpt-oss.attention.sliding_window, read from GGUF metadata
 
@@ -171,7 +172,7 @@ def main():
         sys.exit("ABORT (protocol #1): a stream_run is already running")
 
     # name, system, ngen, ubatch, pool, expectation
-    plan = [
+    PLANS = {"rc2": [
         # S1a — cross 128 via GENERATION length, prompt fixed short
         ("S1a_under", SHORT_SYS, 40, 1, False, "PASS (ctx well under 128)"),
         ("S1a_over", SHORT_SYS, 200, 1, False, "DIVERGE (ctx far over 128)"),
@@ -182,7 +183,19 @@ def main():
         ("S2_pool_on", SHORT_SYS, 200, 128, True, "isolates the prefill pool"),
         # S3 — ubatch != sliding_window, breaking the 128/128 confound
         ("S3_ub64", SHORT_SYS, 200, 64, True, "ubatch 64 vs window 128"),
-    ]
+    ],
+    # RC3 — separate the two dimensions RC2 could not: pool engagement and
+    # multi-token batching are perfectly correlated in RC2's data, because the pool
+    # only engages at ne[1] > 1. ubatch 2 and 4 keep the per-layer union under the
+    # 16-slot cap (R0 ran them cleanly), so they are the cells where a multi-token
+    # batch can run with the pool OFF. That is the whole question.
+    "rc3": [
+        ("T1_ub4_nopool", SHORT_SYS, 200, 4, False, "DIFFER => multi-token batch, not the pool"),
+        ("T2_ub2_nopool", SHORT_SYS, 200, 2, False, "DIFFER => same, at the smallest batch"),
+        ("T3_ub64_pool_ngen20", SHORT_SYS, 20, 64, True, "shrink the known-failing config"),
+        ("T4_ub64_pool_replicate", SHORT_SYS, 200, 64, True, "replicate RC2 S3 (must DIFFER)"),
+    ]}
+    plan = PLANS[PLAN_NAME]
     rows, all_legs = [], []
     for name, sysmsg, ngen, ub, pool, expect in plan:
         t0 = time.time()
@@ -233,8 +246,27 @@ def main():
         L.append("reported rather than forced into a winner. Next step is to add back")
         L.append("dimensions together rather than shrink further.")
     else:
-        L.append("MIXED — no single dimension explains the split; see the table. Not")
-        L.append("forcing a winner.")
+        # RC2 run 2 exposed this gap: the S1a/S1b patterns did not match, so the old
+        # logic said MIXED while the table showed a perfectly clean split on pool /
+        # ubatch. Test every dimension for separation rather than only the two routes.
+        dims = {"crosses_swa": lambda r: (r[6]["ctx_turn1"] or 0) > SWA,
+                "ngen": lambda r: r[1], "ubatch>1": lambda r: r[2] > 1,
+                "pool": lambda r: r[3], "reused": lambda r: r[6]["reused"],
+                "rendered": lambda r: r[6]["rendered_reused"]}
+        eqr = [r for r in rows if r[4] == "EQUAL"]
+        dfr = [r for r in rows if r[4] == "DIFFER"]
+        clean = [n for n, f in dims.items()
+                 if eqr and dfr and {f(r) for r in eqr}.isdisjoint({f(r) for r in dfr})]
+        if clean:
+            L.append(f"CLEAN SEPARATION on: {', '.join(clean)}")
+            L.append(f"EXONERATED (values appear on both sides): "
+                     f"{', '.join(n for n in dims if n not in clean)}")
+            if len(clean) > 1:
+                L.append("NOTE: these dimensions are mutually confounded in this plan —")
+                L.append("a follow-up must vary them independently before naming one.")
+        else:
+            L.append("MIXED — no single dimension separates EQUAL from DIFFER. Not")
+            L.append("forcing a winner.")
     L.append("=" * 72)
     txt = "\n".join(L)
     (OUT / "summary.txt").write_text(txt + "\n")

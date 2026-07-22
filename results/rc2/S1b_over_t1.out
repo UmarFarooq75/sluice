@@ -1,0 +1,13 @@
+ttft: total=26195 ms | template=0 tokenize=1 kv_match=0 prefill=26192 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=296 reused=0 generated=20 n_ubatch=1
+prefill: 26.19 s (11.30 tok/s)
+decode:  2.72 s (7.36 tok/s)
+io: cb_calls=7584 decode_uses=1920 decode_misses=229 (hit 0.881) prefill_uses=27236 prefill_misses=2462
+io: prefetch_issued=252 prefetch_hits=86 prefetch_used=228 stall=15.73 s total_read=39005.8 MB avg_bw=1349 MB/s
+io: read_work=77.46 s preads=17658 per_stream_bw=504 MB/s
+mem: peak_rss=11.81 GB phys_footprint=6.73 GB
+therm: nominal
+logits_hash=28ca9124c6663e6b
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough

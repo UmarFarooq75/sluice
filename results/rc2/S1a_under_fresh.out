@@ -1,0 +1,13 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+ttft: total=13448 ms | template=0 tokenize=1 kv_match=0 prefill=13446 first_sample=1
+ttft: ctx_held=0 rendered=85 reused=0 reprefill=85 (100.0% of rendered)
+mode=streamed prompt_toks=85 reused=0 generated=40 n_ubatch=1
+prefill: 13.45 s (6.32 tok/s)
+decode:  4.21 s (9.49 tok/s)
+io: cb_calls=3000 decode_uses=3840 decode_misses=428 (hit 0.889) prefill_uses=7824 prefill_misses=1008
+io: prefetch_issued=329 prefetch_hits=102 prefetch_used=292 stall=11.35 s total_read=23392.9 MB avg_bw=1325 MB/s
+io: read_work=64.57 s preads=10590 per_stream_bw=362 MB/s
+mem: peak_rss=11.40 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=401564b12dcf5a76
+text: <|channel|>analysis<|message|>We need to summarize the explanation in three bullet points. The user wants a summary. So we need to produce three bullet points summarizing Earth's formation and why it can support life. Let's

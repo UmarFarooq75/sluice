@@ -2761,3 +2761,73 @@ generation. **There is no evidence here about SWA, ironic or otherwise** — tha
 the flattering interpretation and it would have been wrong.
 
 RC2 re-armed unchanged in design; window discipline unchanged.
+
+### RC2 RESULT — SWA REFUTED. The discriminator is the prefill pool / multi-token
+### batch, and only in combination with reuse. (2026-07-22)
+CLEAN, `VOID_LEGS: none`, all six pairs produced comparisons.
+
+| leg | ngen | ub | pool | ctx | rendered | reused | crosses 128 | verdict |
+|---|---|---|---|---|---|---|---|---|
+| S1a_under | 40 | 1 | 0 | 68 | 85 | 28 | no | EQUAL |
+| S1a_over | 200 | 1 | 0 | **228** | 245 | 28 | **YES** | **EQUAL** |
+| S1b_under | 20 | 1 | 0 | 48 | 65 | 28 | no | EQUAL |
+| S1b_over | 20 | 1 | 0 | **316** | 333 | **296** | **YES** | **EQUAL** |
+| S2_pool_on | 200 | 128 | **1** | 228 | 245 | 28 | YES | **DIFFER** |
+| S3_ub64 | 200 | **64** | **1** | 228 | 245 | 28 | YES | **DIFFER** |
+
+**My top-ranked hypothesis is dead.** Both routes crossed the 128-token sliding
+window — 228 via generation, 316 via prompt — and **both were EQUAL**. S1b_over is
+the strongest single refutation: it crossed the window *and* carried
+**reused=296, exactly E41b's reused length**, and still matched a cold prefill.
+
+**Every dimension tested for separation** (a value appearing on both sides exonerates):
+
+| dimension | EQUAL side | DIFFER side | |
+|---|---|---|---|
+| crosses SWA 128 | YES, no | YES | **exonerated** |
+| ngen | 20, 40, 200 | 200 | **exonerated** |
+| reused length | 28, 296 | 28 | **exonerated** |
+| rendered | 65, 85, 245, 333 | 245 | **exonerated** |
+| **ubatch > 1** | False | True | **SEPARATES CLEANLY** |
+| **pool on** | 0 | 1 | **SEPARATES CLEANLY** |
+
+**S3 also kills the 128/128 coincidence**: ubatch 64 against a 128 window still
+diverges, so nothing here depends on those numbers matching.
+
+**Combined with R0**, the mechanism is now bounded from both sides:
+- R0: multi-token batching **without reuse** (single-shot, ubatch 1/2/4/128, pool on
+  and off) → **always identical**.
+- RC2 S1a/S1b: reuse **without multi-token batching** (ubatch=1, pool off), including
+  over the window and at reused=296 → **always identical**.
+- RC2 S2/S3: **reuse + multi-token batch/pool** → **diverges**.
+⇒ **Neither alone. The bug requires the combination.** The "full-combination-only"
+outcome I pre-registered as legitimate is *partly* what happened — but it is a
+two-factor combination, not the five-way one, which is a far tighter result.
+
+**The one confound left, stated rather than papered over**: `pool on` and `ubatch > 1`
+are **perfectly correlated in this data**, because the pool only engages at
+`ne[1] > 1` (`stream_run.cpp`: `if (st->pf_on && t->ne[1] > 1 && !is_slots) return true;`).
+RC2 cannot say which of the two is the mechanism. **Not naming a winner.**
+
+**Harness note**: the auto-verdict printed "MIXED — no single dimension explains the
+split" while the table showed a clean split. The logic only tested the S1a/S1b route
+patterns. It now tests **every** dimension for separation and reports which are
+exonerated — and warns when the separating dimensions are mutually confounded, which
+is exactly this case.
+
+### RC3. Separate pool engagement from multi-token batching (PRE-REGISTERED 2026-07-22)
+The only cells that can separate them are **small multi-token batches with the pool
+OFF** — ubatch 2 and 4 keep the per-layer union under the 16-slot cap (R0 ran both
+cleanly; ubatch 8 hits D12 at union 18). Localize only, no fixes.
+
+| leg | ngen | ub | pool | prediction |
+|---|---|---|---|---|
+| T1_ub4_nopool | 200 | 4 | 0 | **DIFFER ⇒ multi-token batching is the mechanism, pool exonerated** |
+| T2_ub2_nopool | 200 | 2 | 0 | as T1 at the smallest possible batch |
+| T3_ub64_pool_ngen20 | 20 | 64 | 1 | shrink the failing config — does it still fail at ngen=20? |
+| T4_ub64_pool_replicate | 200 | 64 | 1 | **must DIFFER**; if it does not, RC2 was not reproducible and everything above is void |
+
+**Falsifiers**: T1/T2 EQUAL ⇒ the **pool** is the mechanism (D14 territory), not
+batching. T1/T2 DIFFER ⇒ the pool is exonerated and multi-token prefill in the reuse
+path is the mechanism. T4 EQUAL ⇒ stop, nothing is reproducible.
+Then the DEBUG_HASH localization runs at the **smallest still-failing** config.

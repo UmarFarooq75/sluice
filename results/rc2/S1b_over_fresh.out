@@ -1,0 +1,13 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+ttft: total=30067 ms | template=0 tokenize=2 kv_match=0 prefill=30064 first_sample=1
+ttft: ctx_held=0 rendered=333 reused=0 reprefill=333 (100.0% of rendered)
+mode=streamed prompt_toks=333 reused=0 generated=20 n_ubatch=1
+prefill: 30.06 s (11.08 tok/s)
+decode:  2.61 s (7.65 tok/s)
+io: cb_calls=8472 decode_uses=1920 decode_misses=264 (hit 0.863) prefill_uses=30640 prefill_misses=2941
+io: prefetch_issued=332 prefetch_hits=94 prefetch_used=285 stall=18.00 s total_read=46878.5 MB avg_bw=1435 MB/s
+io: read_work=91.18 s preads=21222 per_stream_bw=514 MB/s
+mem: peak_rss=11.75 GB phys_footprint=6.73 GB
+therm: nominal
+logits_hash=5fae959343850977
+text: <|channel|>analysis<|message|>We need to summarize in three bullet points. Provide concise bullet points.<|end|><|start|>assistant

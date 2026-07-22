@@ -1,0 +1,28 @@
+ttft: total=7115 ms | template=0 tokenize=0 kv_match=0 prefill=7113 first_sample=1
+ttft: ctx_held=0 rendered=28 reused=0 reprefill=28 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=28 reused=0 generated=20 n_ubatch=1
+prefill: 7.11 s (3.94 tok/s)
+decode:  2.67 s (7.49 tok/s)
+io: cb_calls=1152 decode_uses=1920 decode_misses=228 (hit 0.881) prefill_uses=2580 prefill_misses=393
+io: prefetch_issued=280 prefetch_hits=85 prefetch_used=258 stall=6.93 s total_read=11941.6 MB avg_bw=1220 MB/s
+io: read_work=42.12 s preads=5406 per_stream_bw=284 MB/s
+mem: peak_rss=11.54 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=b63ee0e2613b9736
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide a concise but
+
+<<<TURN>>>
+ttft: total=4032 ms | template=0 tokenize=4 kv_match=0 prefill=4027 first_sample=1
+ttft: ctx_held=48 rendered=65 reused=28 reprefill=37 (56.9% of rendered)
+ttft: diverged_at=28 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+mode=streamed prompt_toks=65 reused=28 generated=20 n_ubatch=1
+prefill: 4.03 s (9.19 tok/s)
+decode:  2.27 s (8.80 tok/s)
+io: cb_calls=1368 decode_uses=1920 decode_misses=252 (hit 0.869) prefill_uses=3408 prefill_misses=468
+io: prefetch_issued=52 prefetch_hits=22 prefetch_used=36 stall=3.83 s total_read=10231.9 MB avg_bw=1624 MB/s
+io: read_work=18.71 s preads=4632 per_stream_bw=547 MB/s
+mem: peak_rss=11.54 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=60196b6c1632ee12
+text: <|channel|>analysis<|message|>We need to summarize in three bullet points. Provide concise bullet points.<|end|><|start|>assistant

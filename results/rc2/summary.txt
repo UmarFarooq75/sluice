@@ -1,0 +1,27 @@
+RC2 — bisect to the minimal failing reproducer (2026-07-22 09:17)
+avail at start 9.38 GB | SLOTS=16 greedy | sliding_window=128 | CLEAN
+LOCALIZE ONLY. Unit = (reused-prefix turn 2) vs (fresh single-shot of the
+IDENTICAL rendering). DIFFER = the bug reproduces at that config.
+
+VOID_LEGS: none
+
+  leg           ngen   ub  pool  ctx_t1  rend  reused  crosses  verdict
+  S1a_under       40    1     0      68    85      28       no  EQUAL
+  S1a_over       200    1     0     228   245      28      YES  EQUAL
+  S1b_under       20    1     0      48    65      28       no  EQUAL
+  S1b_over        20    1     0     316   333     296      YES  EQUAL
+  S2_pool_on     200  128     1     228   245      28      YES  DIFFER
+  S3_ub64        200   64     1     228   245      28      YES  DIFFER
+
+expectations vs measured
+  S1a_under    expected PASS (ctx well under 128)                        got EQUAL
+  S1a_over     expected DIVERGE (ctx far over 128)                       got EQUAL
+  S1b_under    expected PASS (ctx under 128)                             got EQUAL
+  S1b_over     expected DIVERGE (long system pushes ctx over 128)        got EQUAL
+  S2_pool_on   expected isolates the prefill pool                        got DIFFER
+  S3_ub64      expected ubatch 64 vs window 128                          got DIFFER
+
+========================================================================
+MIXED — no single dimension explains the split; see the table. Not
+forcing a winner.
+========================================================================

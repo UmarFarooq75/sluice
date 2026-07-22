@@ -1,0 +1,33 @@
+ttft: total=4270 ms | template=0 tokenize=0 kv_match=0 prefill=4268 first_sample=1
+ttft: ctx_held=0 rendered=28 reused=0 reprefill=28 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=28 reused=0 generated=200 n_ubatch=64
+prefill: 4.27 s (6.56 tok/s)
+decode:  16.99 s (11.77 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=1241 (hit 0.935) prefill_uses=2580 prefill_misses=518
+io: pf_calls=23 pf_experts=514 union avg=22.3 min=16 max=29 fill=3.44 s (pool 32 slots)
+io: prefetch_issued=243 prefetch_hits=76 prefetch_used=230 stall=6.58 s total_read=26534.0 MB avg_bw=1248 MB/s
+io: read_work=65.58 s preads=12012 per_stream_bw=405 MB/s
+mem: peak_rss=11.81 GB phys_footprint=6.73 GB
+therm: nominal
+logits_hash=8517e287b49ca26a
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide a concise but thorough explanation. Should cover: Solar system formation, accretion, differentiation, core, mantle, crust, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth is in habitable zone, has right composition, etc. Provide reasons: distance from Sun, size, gravity, magnetic field, atmosphere composition, presence of water, plate tectonics, etc. Also mention that Earth formed from protoplanetary disk, accreted from planetesimals, differentiation into core, mantle, crust, etc. Provide timeline: 4.6 billion years ago, formation, early heavy bombardment, magma ocean, differentiation, cooling, formation of crust, atmosphere, water. Then mention why Earth can support life: stable environment, moderate temperature, presence of water, protective magnetic field, atmosphere with oxygen, nitrogen, etc. Also mention that Earth is
+
+<<<TURN>>>
+ttft: total=16226 ms | template=0 tokenize=9 kv_match=0 prefill=16215 first_sample=1
+ttft: ctx_held=228 rendered=245 reused=28 reprefill=217 (88.6% of rendered)
+ttft: diverged_at=28 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+mode=streamed prompt_toks=245 reused=28 generated=200 n_ubatch=64
+prefill: 16.22 s (13.38 tok/s)
+decode:  42.51 s (4.70 tok/s)
+io: cb_calls=4896 decode_uses=19200 decode_misses=4327 (hit 0.775) prefill_uses=19968 prefill_misses=1932
+io: pf_calls=92 pf_experts=1930 union avg=21.0 min=13 max=32 fill=10.72 s (pool 32 slots)
+io: prefetch_issued=6346 prefetch_hits=1801 prefetch_used=4847 stall=29.64 s total_read=167063.6 MB avg_bw=2845 MB/s
+io: read_work=370.93 s preads=75630 per_stream_bw=450 MB/s
+io: guard pressure_drops=6 cap_evictions=264 final_cap=6
+mem: peak_rss=11.81 GB phys_footprint=3.94 GB
+therm: nominal
+logits_hash=c77ea9bd2360af2a
+text: <|channel|>analysis<|message|>We need to summarize the explanation in three bullet points. Provide concise bullet points covering formation and why Earth can support life. Let's produce three bullet points.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation** – About 4.6 billion years ago, the Sun’s protoplanetary disk collapsed; dust and gas coalesced into planetesimals that accreted into the Earth, then differentiated into a dense iron core, silicate mantle, and thin crust, while a magma ocean and early atmosphere formed.  
+- **Key life‑supporting features** – Earth’s size gives enough gravity to hold a stable, oxygen‑rich atmosphere; its magnetic field shields the surface from solar wind; its distance from the Sun places it in the habitable zone where temperatures allow liquid water.  
+- **Long‑term stability** – Plate tectonics recycle carbon and regulate the climate, while volcanic outgassing and cometary delivery supplied water and volatiles,
