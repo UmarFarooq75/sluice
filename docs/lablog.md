@@ -3151,3 +3151,37 @@ half they prefer. It now prints only the branch that matches the result.
 
 **5. Artifact bug fixed**: on the early-return path `p1`/`p3` wrote no `.out` at all, so
 the evidence lived only in stderr. Artifacts are now written before bailing.
+
+### S1v2. Canon ship gate 1v2 — non-inferiority (PRE-REGISTERED 2026-07-22)
+Gate 1 re-specified by the lead after my objection was sustained: identity-vs-cold is
+unachievable, so the question becomes **does canon ADD divergence beyond stock**.
+
+**Three arms per prompt, identical rendering, N=6**: `canon` (server, KV_CANON on),
+`stock` (server, canon off), `cold` (single-shot, reuse 0). The stock arm echoes the
+canon arm's `canon_reply` so all three render the same tokens.
+
+- **(a) Non-inferiority**: canon-vs-cold divergences ≤ stock-vs-cold, summed over the set.
+- **(b) Every flip classified**: position, token pair, tie-class
+  (`case/whitespace` / `word-substitution` / `whitespace` / `OTHER`), and
+  **re-convergence** (do the next 20 tokens realign?). **Any flip that is `OTHER` or does
+  not re-converge ⇒ hard RED** — that is the signature of derailment rather than a
+  near-tie.
+- **(c) Unconditional hard REDs**, independent of flip counts: canon produced no
+  `canon_reply`; reuse telemetry inconsistent (canon claims a canonical KV it did not
+  then reuse); degenerate repetition in the reply.
+- **Gate 2** unchanged; **rapid-fire** still recorded, never gated.
+
+**Classifier validated before the run against the real S1 flip** (`1753 "every"` vs
+`9312 "Every"` at position 73): correctly located, classified `case/whitespace`, and
+detected as re-converging. A synthetic derailment (streams that never realign) is
+correctly flagged not-reconverged, and identical streams yield zero flips. So the
+instrument distinguishes the tie-class we expect to tolerate from the failure we must
+not.
+
+**`Reasoning: low` is load-bearing in the system prompt** and now carries a comment
+saying so — without it the 200-token budget is consumed inside the analysis channel and
+canon never fires (S1 run 1's VOID).
+
+**Docs owed on the result**: the measured flip rate goes into the README sentence, and
+the truncation no-op gets documented as a product condition plus a UI hint
+("max tokens reached mid-reasoning: reuse lost this turn").
