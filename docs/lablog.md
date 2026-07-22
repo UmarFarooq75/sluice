@@ -2585,3 +2585,56 @@ Guard note: `scripts/gate.sh`'s staging check matched all of `csrc/`, which woul
 flagged `csrc/tmpl_probe.cpp` — a standalone probe that never links into the engine.
 Narrowed to `csrc/stream_run.cpp|patches/`. A guard that cannot tell those apart trains
 people to ignore it.
+
+### RC1. Reuse-path divergence — localization rung (PRE-REGISTERED 2026-07-22)
+**Named RC1, not R1, to avoid collision with E42's build-plan R1 (union measurement).**
+Root-cause rung owed after R0. **Localize only — no fixes in this rung.**
+
+**What is established, and what is left.**
+- **R0**: batch shape is INVARIANT. ubatch 1/2/4/128, pool off and on, all produced
+  `7fff2b7b9461da2a`. Batch composition is exonerated.
+- **E41b runs 1 and 2**: identical 421-token renderings give different results when a
+  KV prefix is reused. Run 2 with a corrected echo: **A (canon, reused 404) =
+  `330ca6d9d9f48613`**, **B (stock, reused 296) = `81e84aa667640f55`**, **C (fresh,
+  reused 0) = `865919727c751b58`** — three paths, three hashes, one prompt.
+  **B and C reproduced run 1's hashes exactly**, so the divergence is deterministic
+  and repeatable, not a race.
+- ⇒ the surviving suspect is the **reuse path itself**: `llama_memory_seq_rm` plus
+  partial re-prefill, i.e. what the KV holds and how it is continued — *not* how a
+  batch is shaped.
+
+**Instrument**: `LLMSTREAM_DEBUG_HASH`, which prints a per-tensor FNV of every
+`ffn_moe_*` intermediate with its name (layer index included). Diffing two runs'
+streams gives the **first differing (layer, node)** — the propagation origin.
+
+**Smallest reproducer**: two turns, `n_gen=1`, short prompts. The final forward pass
+is a **1-token decode in both legs**, so those dbg lines align one-to-one; the prefill
+lines do not align (different batch composition) and are excluded by construction.
+
+**Legs**
+- **RC1-R** — server, turn 1, then turn 2 reusing the prefix. dbg on. `n_gen=1`.
+- **RC1-F** — single-shot of the *identical* turn-2 rendering, `reused=0`. dbg on.
+- **RC1-C (control, cheap and mandatory)** — RC1-F with dbg **off**. If its
+  `logits_hash` differs from dbg-on RC1-F, then **DEBUG_HASH is not numerically
+  inert** and every localization below is suspect. This must be checked, not assumed:
+  the flag changes which nodes `cb_eval` is asked about.
+- **RC1-E39** — the same instrument on E39's path: restore KV from a
+  `LLMSTREAM_KV_PERSIST` file, then continue, vs fresh. Cheap because it reuses the
+  whole harness. **Pre-registered expectation: E39 is the SAME bug** and will localize
+  to the same (layer, node) class as RC1-R.
+
+**Pre-registered outcomes**
+1. **First divergence at layer 0's earliest `ffn_moe_*` node** ⇒ the hidden state is
+   already wrong on entry, so the fault is in the **KV contents / attention over
+   reused positions**, not in accumulation through the stack. This is the outcome I
+   expect.
+2. **First divergence at a middle layer** ⇒ the reused prefix is fine and something
+   **accumulates**; the layer index names where.
+3. **No divergence in any `ffn_moe_*` tensor, yet the hashes differ** ⇒ the fault is
+   entirely outside the MoE path (attention/norm/output head), and `DEBUG_HASH`'s
+   coverage is the limit. That is itself a finding and bounds the next instrument.
+4. **RC1-E39 localizes elsewhere than RC1-R** ⇒ they are two bugs, not one, and the
+   "one root cause" reading is wrong. *Falsifier for the expectation stated above.*
+
+**Not in this rung**: any fix, any product change, any change to `LLMSTREAM_KV_CANON`
+(stays dark). Standing gates apply; window-gated behind the usual ≥8 GB self-poll.
