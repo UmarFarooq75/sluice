@@ -1,0 +1,18 @@
+E41b — KV canonicalization (2026-07-22 08:26)
+avail at start 8.68 GB | NGEN=200 SLOTS=16 guard ON | CLEAN
+total wall 279 s
+
+turn-1 canonicalization: canon: held=496 kept=296 dropped=200 decoded=108 canonical=404 (7.29 s, post-reply)
+
+A turn2 (canon ON)     hash=330ca6d9d9f48613 rendered=421 reused=404 reprefill=17 ttft=3041 ms prefill=3.03 s
+B turn2 (canon OFF)    hash=81e84aa667640f55 rendered=421 reused=296 reprefill=125 ttft=8220 ms prefill=8.2 s
+C fresh                hash=865919727c751b58 rendered=421 reused=0 reprefill=421 ttft=16218 ms prefill=16.21 s
+
+GATE 1b — run 1's leg-A rendering, replayed cold (same prompt, other KV path)
+  D rendered=315 (run 1 leg A rendered 315) hash=b690930c7e790f53
+  run 1 leg A hash=0101f7d30ad830a4
+  VERDICT: RED — canonicalized KV diverges from a cold prefill of the same prompt
+
+PREMISE  identical renderings across legs: {'A turn2 (canon ON)': 421, 'B turn2 (canon OFF)': 421, 'C fresh': 421} -> OK
+GATE 1 faithfulness  A == C : RED
+CONTROL              B == C : DIFFER   (stock KV reuse vs fresh full prefill, identical rendering)

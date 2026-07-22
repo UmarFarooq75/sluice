@@ -1,0 +1,48 @@
+R0 — batch-shape invariance probe (2026-07-22 08:19)
+avail at start 8.91 GB | SLOTS=16 greedy prompt A | CLEAN
+
+VALIDITY: B128 hash 7fff2b7b9461da2a vs E37c 7fff2b7b9461da2a -> MATCH (harness reproduces the published artifact)
+CONSISTENCY: A1 vs B1 (pool inert at ne=1) -> identical
+
+legs
+  A1        ubatch=1    n_gen=64  pool=0 rc=0 hash=7fff2b7b9461da2a hit=0.858 tok/s=6.53 toks=64
+  A2        ubatch=2    n_gen=64  pool=0 rc=0 hash=7fff2b7b9461da2a hit=0.858 tok/s=6.40 toks=64
+  A4        ubatch=4    n_gen=64  pool=0 rc=0 hash=7fff2b7b9461da2a hit=0.859 tok/s=6.28 toks=64
+  A8        ubatch=8    n_gen=64  pool=0 rc=1 hash=None hit=None tok/s=None toks=0
+  B1        ubatch=1    n_gen=64  pool=1 rc=0 hash=7fff2b7b9461da2a hit=0.858 tok/s=6.66 toks=64
+  B128      ubatch=128  n_gen=64  pool=1 rc=0 hash=7fff2b7b9461da2a hit=0.861 tok/s=5.62 toks=64
+  A1_g1     ubatch=1    n_gen=1   pool=0 rc=0 hash=668335271c9efc31 hit=0.938 tok/s=9.60 toks=1
+  A8_g1     ubatch=8    n_gen=1   pool=0 rc=1 hash=None hit=None tok/s=None toks=0
+  B128_g1   ubatch=128  n_gen=1   pool=1 rc=0 hash=668335271c9efc31 hit=0.677 tok/s=2.47 toks=1
+
+vs A1 (ubatch=1, pool off) — the reference shape
+  leg        bit-equal  argmax-stable  first token divergence
+  A2               yes            yes  -
+  A4               yes            yes  -
+  A8                NO             NO  step 0: A1 emitted None, A8 emitted None
+  B1               yes            yes  -
+  B128             yes            yes  -
+
+first-step legs (n_gen=1): does the very first sampled logit already differ?
+  A1_g1=668335271c9efc31  A8_g1=None  B128_g1=668335271c9efc31
+  -> DIFFER at step 1: prefill shape perturbs logits immediately, as expected if this is a batch-shape effect
+
+========================================================================
+ARGMAX STABLE ACROSS SHAPES : NO   (what spec-dec needs)
+BIT-EQUAL ACROSS SHAPES     : NO   (what our gate demands)
+========================================================================
+
+CONSEQUENCE (pre-registered): ARGMAX FLIPS with batch shape.
+ - Bit-exact speculative decoding is IMPOSSIBLE on this backend.
+ - E42 re-scopes to Balanced-tier pending owner call.
+ - E39/E41b inherit the same verdict; one root cause covers all three.
+
+INSTRUMENTATION GAP (stated, not worked around):
+ max |delta logit| was requested and is NOT obtainable from this harness.
+ The engine emits logits_hash (a digest) and token ids, never raw logits, so
+ magnitude cannot be recovered without an engine change. What IS available
+ and was not used here: LLMSTREAM_DEBUG_HASH prints a per-tensor FNV of every
+ ffn_moe_* intermediate, which would localise a divergence to the first
+ differing (layer, node) — arguably more actionable than a magnitude. It is
+ left for a follow-up because enabling it changes which nodes the callback
+ is asked about, and that is a perturbation this probe should not carry.

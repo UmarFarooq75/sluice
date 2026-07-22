@@ -69,6 +69,18 @@ PY
 if [ -z "$und" ]; then say "$P" "all engine LLMSTREAM_* flags documented in README"
 else bad "undocumented engine flags: $und"; fi
 
+# --- 3b. no summary compares against a VOID leg ------------------------------
+# "A missing value is not a data point", enforced rather than remembered. This
+# class produced a confident wrong verdict twice: E41b run 1 (silent empty echo ->
+# "GATE 1: RED" from two different prompts) and R0 (rc=1 legs scored as
+# divergences -> "ARGMAX STABLE: NO", the exact opposite of the truth).
+if out=$(/usr/bin/python3 scripts/check_void.py 2>&1); then
+  say "$P" "no summary compares against a VOID leg"
+else
+  bad "summary compares against a VOID leg:
+$out"
+fi
+
 # --- 4. the engine compiles --------------------------------------------------
 # compiled to a temp path on purpose: a detached experiment may be armed against
 # csrc/stream_run right now, and rewriting that file underneath it could hand the

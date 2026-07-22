@@ -1,0 +1,42 @@
+ttft: total=13240 ms | template=0 tokenize=1 kv_match=0 prefill=13237 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=296 reused=0 generated=200 n_ubatch=128
+prefill: 13.24 s (22.36 tok/s)
+decode:  23.11 s (8.65 tok/s)
+io: cb_calls=4872 decode_uses=19200 decode_misses=1778 (hit 0.907) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=6.53 s (pool 32 slots)
+io: prefetch_issued=271 prefetch_hits=93 prefetch_used=255 stall=11.76 s total_read=48349.7 MB avg_bw=1330 MB/s
+io: read_work=123.39 s preads=21888 per_stream_bw=392 MB/s
+mem: peak_rss=10.33 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=95bbde6ba90ae818
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth is habitable: distance from Sun, size, gravity, magnetic field, atmosphere, water, etc. Provide simple language.<|end|><|start|>assistant<|channel|>final<|message|>**How Earth Came to Be**
+
+| Stage | What Happened | Key Result |
+|-------|---------------|------------|
+| **Solar Nebula (≈4.6 billion yr ago)** | A rotating cloud of gas and dust collapsed under gravity, forming a protostar (the Sun) at the center. | Sun ignites; material flattens into a protoplanetary disk. |
+| **Planetesimal Formation** | Dust grains stuck together, grew into kilometer‑sized “planetes
+canon: held=496 kept=296 dropped=200 decoded=108 canonical=404 (7.29 s, post-reply)
+canon_reply: **How Earth Came to Be**\n\n| Stage | What Happened | Key Result |\n|-------|---------------|------------|\n| **Solar Nebula (≈4.6 billion yr ago)** | A rotating cloud of gas and dust collapsed under gravity, forming a protostar (the Sun) at the center. | Sun ignites; material flattens into a protoplanetary disk. |\n| **Planetesimal Formation** | Dust grains stuck together, grew into kilometer‑sized “planetes
+
+<<<TURN>>>
+ttft: total=3041 ms | template=0 tokenize=7 kv_match=0 prefill=3032 first_sample=1
+ttft: ctx_held=404 rendered=421 reused=404 reprefill=17 (4.0% of rendered)
+ttft: diverged_at=404 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=421 reused=404 generated=200 n_ubatch=128
+prefill: 3.03 s (5.61 tok/s)
+decode:  28.56 s (7.00 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=3044 (hit 0.841) prefill_uses=1568 prefill_misses=404
+io: pf_calls=23 pf_experts=400 union avg=17.4 min=11 max=26 fill=2.38 s (pool 32 slots)
+io: prefetch_issued=2291 prefetch_hits=951 prefetch_used=1824 stall=16.92 s total_read=76063.3 MB avg_bw=2408 MB/s
+io: read_work=150.09 s preads=34434 per_stream_bw=507 MB/s
+io: guard pressure_drops=3 cap_evictions=144 final_cap=10
+mem: peak_rss=10.33 GB phys_footprint=4.85 GB
+therm: nominal
+logits_hash=330ca6d9d9f48613
+text: <|channel|>analysis<|message|>The user wants a summary in three bullet points. They previously asked for explanation of Earth formation and why it can support life. The assistant gave a table. Now they want a summary in three bullet points. We should provide concise bullet points summarizing Earth formation and why it can support life. Ensure clarity.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation**: About 4.6 billion years ago, a rotating cloud of gas and dust collapsed under gravity, forming the Sun and a surrounding disk; dust grains in that disk coalesced into planetesimals, which accreted into the Earth.  
+- **Early Atmosphere & Oceans**: Volcanic outgassing released water vapor, CO₂, and other gases; as the planet cooled, water condensed into oceans, creating a stable liquid‑water environment.  
+- **Life‑supporting conditions**: The Earth’s distance from the Sun places it in the habitable zone, its magnetic field
+canon: held=621 kept=421 dropped=200 decoded=132 canonical=553 (6.86 s, post-reply)
+canon_reply: - **Formation**: About 4.6 billion years ago, a rotating cloud of gas and dust collapsed under gravity, forming the Sun and a surrounding disk; dust grains in that disk coalesced into planetesimals, which accreted into the Earth.  \n- **Early Atmosphere & Oceans**: Volcanic outgassing released water vapor, CO₂, and other gases; as the planet cooled, water condensed into oceans, creating a stable liquid‑water environment.  \n- **Life‑supporting conditions**: The Earth’s distance from the Sun places it in the habitable zone, its magnetic field

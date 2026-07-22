@@ -1,0 +1,16 @@
+ttft: total=12803 ms | template=0 tokenize=3 kv_match=0 prefill=12798 first_sample=1
+ttft: ctx_held=0 rendered=315 reused=0 reprefill=315 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=315 reused=0 generated=200 n_ubatch=128
+prefill: 12.80 s (24.61 tok/s)
+decode:  22.59 s (8.85 tok/s)
+io: cb_calls=4872 decode_uses=19200 decode_misses=1851 (hit 0.904) prefill_uses=28984 prefill_misses=1643
+io: pf_calls=69 pf_experts=1639 union avg=23.8 min=14 max=31 fill=5.55 s (pool 32 slots)
+io: prefetch_issued=307 prefetch_hits=120 prefetch_used=276 stall=11.24 s total_read=50377.5 MB avg_bw=1423 MB/s
+io: read_work=110.33 s preads=22806 per_stream_bw=457 MB/s
+mem: peak_rss=11.83 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=b690930c7e790f53
+text: <|channel|>analysis<|message|>The user wants a summary in three bullet points. They previously asked "Explain how the Earth formed and why it can support life." The assistant gave a long answer. Now they want a summary in three bullet points. So we need to produce three bullet points summarizing the formation of Earth and why it can support life. Should be concise. Let's do that.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation**: Earth formed ~4.5 billion years ago from a rotating protoplanetary disk around the young Sun, accreting dust and gas into a molten body that differentiated into core, mantle, and crust.  
+- **Stable environment**: Its distance from the Sun places it in the habitable zone, giving a temperate climate; a magnetic field shields the surface from solar wind, and a thick atmosphere retains heat and protects against radiation.  
+- **Essential ingredients**: The planet’s liquid water, a balanced carbon‑based chemistry, and

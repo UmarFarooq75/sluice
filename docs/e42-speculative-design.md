@@ -140,6 +140,22 @@ points, one prompt, and the measured point comes from the *prefill* regime rathe
 than mid-generation decode. Its exponent is a pre-registered prediction to falsify
 (§6, P1), not an established constant.
 
+> **MEASURED CAVEAT — added 2026-07-22 from R0, and it goes the wrong way.**
+> R0's leg A8 (ubatch=8, 16 slots, no pool) aborted with the engine's own message:
+> `ubatch expert union 18 > n_slots 16 at layer 1`.
+> **A layer reached a union of 18 at K=8**, against this fit's predicted **mean of
+> 12.3** and its claim that overflow starts near K=16.
+>
+> *Directional, not a clean refutation of P1*: 18 is a per-layer value at the first
+> violating layer, which is an upper-tail observation, while the fit predicts a mean.
+> The engine aborts on the first violation, so it never reports the distribution.
+> But the direction is unambiguous and unfavourable: **the union grows faster than
+> fitted.** Every payoff figure in §3.4 is therefore optimistic, the break-even
+> acceptance rates in §3.5 are too generous, and the optimal draft length is pushed
+> **shorter than K=2**, not longer. It also means D12's boundary is reachable at
+> K=8 rather than K=16 — verification must use the prefill pool from the very
+> smallest useful draft, not only for long ones.
+
 ### 3.3 Cost per committed token
 
 With draft length K and per-token acceptance probability a, the target commits
@@ -365,7 +381,7 @@ line of it. That ordering is deliberate.
 | rung | what | changes engine? | kills the idea if |
 |---|---|---|---|
 | **R0** | **Batch-shape determinism probe.** Same prompt, same prefix, decode the next token as part of a K-token batch vs a 1-token batch; compare logits bitwise. Answers §5.2 for E39, E41b **and** E42 at once | no (uses existing NLL/prefill paths) | argmax flips ⇒ **bit-exact spec-dec is impossible**; re-scope to Balanced tier |
-| **R1** | **Union measurement (P1, P2).** Instrument the existing prefill-pool union counter to report per-K unions mid-generation. We already print `union avg/min/max` — this extends where it is emitted | telemetry only, gated | U(K) grows near-independently ⇒ payoff collapses |
+| **R1** | **Union measurement (P1, P2) — now a NAMED, MANDATORY leg.** Instrument the existing prefill-pool union counter to report per-K unions mid-generation. We already print `union avg/min/max` — this extends where it is emitted. **Log the union whenever it is measurable, not only when it overflows**: R0 learned U(8)≥18 only because the engine crashed, which is a terrible way to acquire a number and gives an upper-tail sample instead of a distribution. Every future spec-dec rung carries this leg | telemetry only, gated | U(K) grows near-independently ⇒ payoff collapses |
 | **R2** | **GEMM efficiency probe (P5).** Time a K-token batched forward pass vs K single-token passes at fixed prefix. Pure timing | no | g < 1.1 and P4 says a<0.9 ⇒ cannot reach 10 |
 | **R3** | **Rebase decision.** Our fork is pinned at `b10064`; the `--spec-type` overhaul and EAGLE-3 support are newer (b10075+). Assess whether `patches/llmstream.patch` applies to a base that has speculation, or whether we implement verification inside our own decode loop | no (assessment) | patch conflicts are unbounded ⇒ implement in-house instead |
 | **R4** | **Hash redefinition** (§5.3): `logits_hash` over committed positions in commit order. Required before any gate can run | yes, small | — |
@@ -415,7 +431,9 @@ like every other experimental feature here.
 Stated so nothing here gets quoted as more than it is:
 
 - **U(K) is a two-point fit** from one prompt, and its measured anchor is a prefill
-  batch, not mid-generation decode. P1 exists to test it.
+  batch, not mid-generation decode. P1 exists to test it. **It is already known to be
+  optimistic**: R0 observed a per-layer union of 18 at K=8 where the fit predicts a
+  mean of 12.3 (see §3.2). Treat every payoff number here as an upper bound.
 - **`g` has never been measured** on this backend. Every table with a `g` column is a
   projection across a parameter we do not know.
 - **Acceptance rates are from model cards and papers, not from our hardware, our

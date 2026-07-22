@@ -1,0 +1,11 @@
+llmstream: 24 layers, 5 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+mode=streamed prompt_toks=23 reused=0 generated=8 n_ubatch=1
+prefill: 4.95 s (4.64 tok/s)
+decode:  1.52 s (5.26 tok/s)
+io: cb_calls=744 decode_uses=768 decode_misses=205 (hit 0.733) prefill_uses=2120 prefill_misses=604
+io: prefetch_issued=1122 prefetch_hits=169 prefetch_used=865 stall=4.58 s total_read=25593.0 MB avg_bw=3952 MB/s
+io: read_work=39.14 s preads=11586 per_stream_bw=654 MB/s
+mem: peak_rss=11.65 GB phys_footprint=3.22 GB
+therm: nominal
+logits_hash=fdf0f83dd70504c5
+text: <|channel|>analysis<|message|>We need to write a

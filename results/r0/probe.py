@@ -144,8 +144,13 @@ def main():
     L += ["", "vs A1 (ubatch=1, pool off) — the reference shape"]
     L.append(f"  {'leg':9} {'bit-equal':>10} {'argmax-stable':>14}  first token divergence")
     argmax_all, bits_all = True, True
+    crashed = [k for k, r in res.items() if r["rc"] != 0 or not r["hash"]]
     for k in ("A2", "A4", "A8", "B1", "B128"):
         r = res[k]
+        if r["rc"] != 0 or not r["hash"]:
+            L.append(f"  {k:9} {'CRASHED':>10} {'—':>14}  rc={r['rc']}, no hash produced — "
+                     f"excluded from the verdict (a crash is not a divergence)")
+            continue
         be = r["hash"] == ref["hash"]
         i, x, y = first_diff(ref["toks"], r["toks"])
         st = i is None
@@ -155,11 +160,14 @@ def main():
         L.append(f"  {k:9} {('yes' if be else 'NO'):>10} {('yes' if st else 'NO'):>14}  {where}")
 
     L += ["", "first-step legs (n_gen=1): does the very first sampled logit already differ?"]
-    g1 = {k: res[k]["hash"] for k in ("A1_g1", "A8_g1", "B128_g1")}
+    g1 = {k: res[k]["hash"] for k in ("A1_g1", "A8_g1", "B128_g1") if res[k]["rc"] == 0 and res[k]["hash"]}
     L.append(f"  A1_g1={g1['A1_g1']}  A8_g1={g1['A8_g1']}  B128_g1={g1['B128_g1']}")
     same_g1 = len(set(g1.values())) == 1
     L.append(f"  -> {'identical: prefill shape does NOT perturb the first logits'if same_g1 else 'DIFFER at step 1: prefill shape perturbs logits immediately, as expected if this is a batch-shape effect'}")
 
+    if crashed:
+        L += ["", f"LEGS THAT DID NOT RUN: {', '.join(crashed)} — excluded from the verdict below.",
+              "  These are findings in their own right (see the .err files), not divergences."]
     L += ["", "=" * 72,
           f"ARGMAX STABLE ACROSS SHAPES : {'YES' if argmax_all else 'NO'}   (what spec-dec needs)",
           f"BIT-EQUAL ACROSS SHAPES     : {'YES' if bits_all else 'NO'}   (what our gate demands)",

@@ -1,0 +1,61 @@
+R0 — batch-shape invariance probe (2026-07-22 08:19)  [CORRECTED]
+avail at start 8.91 GB | SLOTS=16 greedy prompt A | CLEAN | swap 0 (fresh boot)
+
+The auto-generated verdict (kept at summary_AUTO_WRONG.txt) said ARGMAX FLIPS.
+That was a HARNESS BUG, not a result: legs A8 and A8_g1 exited rc=1 and produced
+no hash, and the summary logic compared None against a hash ("not equal") and
+diffed an empty token list ("diverges at step 0"). A crash was scored as a
+divergence and the verdict inverted. Same failure class as E41b run 1 — a missing
+value treated as a data point. probe.py now excludes non-zero-rc legs.
+
+VALIDITY   B128 hash 7fff2b7b9461da2a == E37c 7fff2b7b9461da2a -> MATCH
+           (also confirms, as pre-registered, that LLMSTREAM_PRINT_TOKS is
+            numerically inert: E37c ran without it, these legs ran with it)
+CONSISTENCY A1 == B1 -> identical (pool provably inert at ne=1)
+
+legs that RAN
+  A1        ubatch=1   pool=0  hash=7fff2b7b9461da2a  hit=0.858  6.53 tok/s
+  A2        ubatch=2   pool=0  hash=7fff2b7b9461da2a  hit=0.858  6.40 tok/s
+  A4        ubatch=4   pool=0  hash=7fff2b7b9461da2a  hit=0.859  6.28 tok/s
+  B1        ubatch=1   pool=1  hash=7fff2b7b9461da2a  hit=0.858  6.66 tok/s
+  B128      ubatch=128 pool=1  hash=7fff2b7b9461da2a  hit=0.861  5.62 tok/s
+  A1_g1     ubatch=1   pool=0  hash=668335271c9efc31   (n_gen=1)
+  B128_g1   ubatch=128 pool=1  hash=668335271c9efc31   (n_gen=1)
+
+legs that DID NOT RUN — a finding, not a divergence
+  A8        ubatch=8   pool=0  rc=1  "ubatch expert union 18 > n_slots 16 at layer 1"
+  A8_g1     ubatch=8   pool=0  rc=1  same
+
+========================================================================
+ARGMAX STABLE ACROSS BATCH SHAPES : YES
+BIT-EQUAL ACROSS BATCH SHAPES     : YES
+========================================================================
+Every leg that produced a hash produced the IDENTICAL hash, across ubatch
+1 / 2 / 4 / 128, with the prefill pool both off and on. The n_gen=1 legs agree
+too (668335271c9efc31), so the very first sampled logits are unperturbed.
+
+CONSEQUENCE — pre-registered outcome 1 (batch shape is INVARIANT):
+ - E39's hash failure is NOT explained by batch shape. It is a real restore bug
+   and REOPENS as one. The comfortable explanation is gone.
+ - E42 speculative decoding keeps its Exact-tier claim; gate 1(b) is expected to
+   pass, since K-token verification is the same batched-prefill mechanism proven
+   invariant here.
+ - E41b's pending gate has one fewer excuse available to it.
+
+WHAT R0 DID NOT TEST, and now carries the whole question:
+ Every leg here was a SINGLE-SHOT with reused=0. R0 varied batch COMPOSITION only.
+ It did NOT test cross-request KV PREFIX REUSE (llama_memory_seq_rm + partial
+ re-prefill). E41b run 1's control showed identical 421-token renderings producing
+ DIFFERENT TEXT at reused=296 vs reused=0. Batch shape is now exonerated, so that
+ divergence must originate in the reuse path itself. That is the sole surviving
+ suspect and it needs its own probe.
+
+SIDE FINDING — D12 confirmed live, and it contradicts an E42 assumption:
+ A8 aborted with "ubatch expert union 18 > n_slots 16 at layer 1". D12's boundary
+ is real and reachable at ubatch=8 with 16 slots. But the E42 design study fitted
+ U(K) = 4*K^0.541, predicting a MEAN union of 12.3 at K=8 with overflow starting
+ near K=16. A layer hit 18 at K=8. The fit is optimistic (caveat: 18 is a
+ per-layer value at the first violating layer, not the mean, so this is directional
+ rather than a clean refutation of P1). Direction is unfavourable: a faster-growing
+ union makes speculative decoding's economics WORSE than the study projected, and
+ pushes the optimal draft length even shorter than K=2.

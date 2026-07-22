@@ -1,0 +1,16 @@
+ttft: total=16218 ms | template=0 tokenize=3 kv_match=0 prefill=16214 first_sample=1
+ttft: ctx_held=0 rendered=421 reused=0 reprefill=421 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=421 reused=0 generated=200 n_ubatch=128
+prefill: 16.21 s (25.96 tok/s)
+decode:  21.64 s (9.24 tok/s)
+io: cb_calls=4896 decode_uses=19200 decode_misses=1712 (hit 0.911) prefill_uses=38736 prefill_misses=2184
+io: pf_calls=92 pf_experts=2180 union avg=23.7 min=14 max=32 fill=6.56 s (pool 32 slots)
+io: prefetch_issued=292 prefetch_hits=128 prefetch_used=258 stall=10.60 s total_read=55506.7 MB avg_bw=1466 MB/s
+io: read_work=117.51 s preads=25128 per_stream_bw=472 MB/s
+mem: peak_rss=11.58 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=865919727c751b58
+text: <|channel|>analysis<|message|>The user wants a summary in three bullet points. They previously asked for explanation of Earth formation and why it can support life. The assistant gave a table. Now they want a summary in three bullet points. We should provide concise bullet points summarizing Earth formation and why it can support life. Ensure clarity.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation**: About 4.6 billion years ago, a rotating cloud of gas and dust collapsed under gravity, forming the Sun and a surrounding disk. Dust grains in that disk stuck together, grew into planetesimals, and through collisions and accretion coalesced into the Earth.  
+- **Early Atmosphere & Oceans**: Volcanic outgassing released water vapor, carbon dioxide, nitrogen, and other gases. As the planet cooled, water condensed into oceans, creating a stable liquid‑water environment.  
+- **Life‑supporting conditions**: The Earth’s distance from the Sun places it

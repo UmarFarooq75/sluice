@@ -1,0 +1,4 @@
+E41b gate checks (Wed Jul 22 08:27:54 PKT 2026)
+expected bit-exact hash: fdf0f83dd70504c5
+logits_hash=fdf0f83dd70504c5
+inert (canon unset), old vs new stdout: IDENTICAL
