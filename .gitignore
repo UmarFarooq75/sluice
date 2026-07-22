@@ -54,3 +54,5 @@ ui/.debug/
 # Role And State files (never tracked, even by accident)
 ./ROLES-AND-STATE.md
 ROLES-AND-STATE.md
+# G5-1 KV checkpoints are run artifacts, not history (E39 tracking its 50MB chat.kv was a mistake we do not repeat)
+results/g5kv/*.kv
