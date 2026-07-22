@@ -45,3 +45,4 @@ csrc/tmpl_probe
 
 # project-local Ollama for E43 (never installed globally)
 vendor/ollama/
+.relay/

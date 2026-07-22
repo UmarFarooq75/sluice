@@ -1,0 +1,15 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+ttft: total=20378 ms | template=0 tokenize=2 kv_match=0 prefill=20375 first_sample=1
+ttft: ctx_held=0 rendered=245 reused=0 reprefill=245 (100.0% of rendered)
+mode=streamed prompt_toks=245 reused=0 generated=200 n_ubatch=4
+prefill: 20.38 s (12.02 tok/s)
+decode:  18.65 s (10.72 tok/s)
+io: cb_calls=6288 decode_uses=19200 decode_misses=1658 (hit 0.914) prefill_uses=12813 prefill_misses=1640
+io: prefetch_issued=485 prefetch_hits=107 prefetch_used=426 stall=20.87 s total_read=50139.0 MB avg_bw=1285 MB/s
+io: read_work=136.78 s preads=22698 per_stream_bw=367 MB/s
+mem: peak_rss=11.46 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=cc517698f9f346a6
+text: <|channel|>analysis<|message|>We need to summarize the explanation in three bullet points. Provide concise bullet points covering formation and why Earth supports life. Let's produce three bullet points.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation** – About 4.6 billion years ago, the Sun’s protoplanetary disk collapsed; dust and gas coalesced into planetesimals that accreted into the Earth, then differentiated into a dense iron core, silicate mantle, and thin crust, while a magma ocean and early atmosphere formed.  
+- **Key life‑supporting features** – Earth’s size gives enough gravity to hold a stable, oxygen‑rich atmosphere; its magnetic field shields the surface from solar wind; its distance from the Sun places it in the habitable zone where temperatures allow liquid water.  
+- **Long‑term stability** – Plate tectonics recycle carbon and regulate the climate, while volcanic outgassing replenishes gases; together these processes maintain a relatively constant,

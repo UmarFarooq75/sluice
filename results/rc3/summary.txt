@@ -1,0 +1,28 @@
+RC3 — chunk alignment with ZERO reuse (2026-07-22 09:38)
+avail at start 8.98 GB | SLOTS=16 greedy | rendered=245 | CLEAN
+All A_*/B_* legs are FRESH single-shots of the SAME tokens. Only the chunk
+boundaries differ. If these split, reuse is not involved at all.
+
+VOID_LEGS: none
+
+  leg              ub  pool  chunks                       verdict vs A_ref
+  A_ref           512     1  [245]                        (reference) 350563b993670f0f
+  A_128           128     1  [128, 117]                   EQUAL
+  A_123           123     1  [123, 122]                   EQUAL
+  A_64             64     1  [64, 64, 64, 53]             DIFFER
+  A_61             61     1  [61, 61, 61, 61, 1]          DIFFER
+  B_ub4_nopool      4     0  [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1] DIFFER
+
+  T4_replicate (RC2 S3 pair, must DIFFER): DIFFER  T4_replicate_reused=c77ea9bd2360af2a T4_replicate_fresh=438c17afe487b1b8
+
+========================================================================
+ALIGNMENT ALONE SPLITS THE HASHES, WITH ZERO REUSE.
+  differing: A_64, A_61, B_ub4_nopool
+=> REUSE IS FULLY EXONERATED. The bug is prefill-pool chunk-boundary
+   numerics: the same tokens produce different logits depending only on
+   where the ubatch boundaries fall. Every reuse-vs-fresh divergence
+   measured so far (E41b B!=C, RC2 S2/S3) is explained by the two arms
+   prefilling different token counts and therefore different chunks.
+   NOTE: the pool-OFF leg ALSO split -> chunking alone does it, pool
+   not required. That widens the blast radius.
+========================================================================

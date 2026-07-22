@@ -1,0 +1,17 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+ttft: total=9922 ms | template=0 tokenize=1 kv_match=0 prefill=9919 first_sample=1
+ttft: ctx_held=0 rendered=245 reused=0 reprefill=245 (100.0% of rendered)
+mode=streamed prompt_toks=245 reused=0 generated=200 n_ubatch=512
+prefill: 9.92 s (24.70 tok/s)
+decode:  21.21 s (9.43 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=1654 (hit 0.914) prefill_uses=22544 prefill_misses=625
+io: pf_calls=23 pf_experts=621 union avg=27.0 min=20 max=32 fill=4.37 s (pool 32 slots)
+io: prefetch_issued=278 prefetch_hits=105 prefetch_used=255 stall=10.33 s total_read=33889.9 MB avg_bw=1089 MB/s
+io: read_work=94.97 s preads=15342 per_stream_bw=357 MB/s
+mem: peak_rss=11.69 GB phys_footprint=6.77 GB
+therm: nominal
+logits_hash=350563b993670f0f
+text: <|channel|>analysis<|message|>We need to summarize the explanation in three bullet points. Provide concise bullet points covering formation and why Earth can support life. Let's produce three bullet points.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation** – About 4.6 billion years ago, the Sun’s protoplanetary disk collapsed; dust and gas coalesced into planetesimals that accreted into a molten Earth, which differentiated into a dense iron core, silicate mantle, and thin crust.  
+- **Key life‑supporting features** – Earth’s size gives enough gravity to hold a stable atmosphere, its magnetic field shields the surface from solar wind, and its distance from the Sun places it in the “habitable zone” where temperatures allow liquid water.  
+- **Long‑term stability** – Plate tectonics recycle carbon and regulate the climate, while a nitrogen‑oxygen atmosphere and abundant water create a chemically rich, energy‑permitting environment that has nurtured life for

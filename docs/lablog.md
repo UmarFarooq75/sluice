@@ -2883,3 +2883,52 @@ from "how many chunks there are".
 
 Then DEBUG_HASH localization at the minimal DIFFER config for the first divergent
 (layer, node). Localize only; no fixes.
+
+### RC3 RESULT — chunk ALIGNMENT splits logits with ZERO reuse. Reuse exonerated.
+### The prefill pool is NOT required either. (2026-07-22)
+CLEAN, `VOID_LEGS: none`. `T4_replicate` DIFFERed, so RC2 reproduces and the run is
+interpretable (that anchor was wired as a hard stop, not a footnote).
+
+All legs below are **fresh single-shots of the same 245 tokens**. Only the ubatch
+boundaries differ. **There is no reuse anywhere in this experiment.**
+
+| leg | ub | pool | chunks | vs A_ref |
+|---|---|---|---|---|
+| A_ref | 512 | 1 | `[245]` | reference `350563b993670f0f` |
+| A_128 | 128 | 1 | `[128, 117]` | **EQUAL** |
+| A_123 | 123 | 1 | `[123, 122]` | **EQUAL** |
+| A_64 | 64 | 1 | `[64,64,64,53]` | **DIFFER** |
+| A_61 | 61 | 1 | `[61,61,61,61,1]` | **DIFFER** |
+| B_ub4_nopool | 4 | **0** | 62 | **DIFFER** |
+
+- **Pre-registered outcome 1 fires**: the same tokens produce different logits
+  depending only on where the chunk boundaries fall. **REUSE IS FULLY EXONERATED.**
+  E41b's B≠C, RC2's S2/S3 and E39 are all consistent with the two arms prefilling
+  different token counts and therefore different chunk splits — the confound
+  identified before this run, now measured.
+- **Outcome 2 also fires**: `B_ub4_nopool` had the pool **OFF** and still split. **The
+  pool is not required.** My narrowing to "pool multi-chunk" after RC2 was wrong, and
+  the senior lead's instinct to remove reuse from the experiment is what exposed it.
+
+**Three qualifications the headline hides, and they matter more than it does:**
+1. **Not "multi-chunk vs single".** 1 chunk, `[128,117]` and `[123,122]` **all agree**;
+   divergence begins at 4 chunks. The discriminator sits between 2 and 4 chunks — or
+   equivalently between chunk size 117 and 64 — and **RC3 cannot separate those two
+   readings**, because at a fixed 245 tokens chunk size and chunk count are inverses.
+   Separating them needs a second token length (RC4).
+2. **R0 saw none of this**: at 23 tokens, ubatch 1/2/4/128 with pool on and off were
+   all identical. So chunk count alone is not sufficient — **length interacts**.
+3. **RC3 has no `ub=1` leg**, so whether the ubatch=1 path agrees with ub=512 is
+   **unknown**. That gap is mine.
+
+**Consequence flagged before any fix work: "bit-exact" is only defined at a fixed
+`n_ubatch`.** Our canonical gate runs `ubatch=1`; the UI runs `ubatch=128`. Those have
+never been compared. No past gate is invalidated — each was self-consistent — but the
+guarantee is narrower than the word implies, and the README states it without that
+qualifier. **Doc fix owed once RC4 characterises the boundary.**
+
+**Next (proposed, awaiting senior review):** `B_ub4_nopool` is the smallest failing
+config yet — single-shot, **no reuse, no pool, no canon**. Run the RC1 DEBUG_HASH
+instrument on it vs `A_ref`, comparing the **first decode pass** (1-token in both, so
+the streams align; prefill streams cannot align by construction), plus an `A_ub1` leg
+to close gap 3. Localize only; no fixes.

@@ -1,0 +1,13 @@
+ttft: total=7066 ms | template=0 tokenize=1 kv_match=0 prefill=7064 first_sample=1
+ttft: ctx_held=0 rendered=28 reused=0 reprefill=28 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=28 reused=0 generated=200 n_ubatch=1
+prefill: 7.06 s (3.96 tok/s)
+decode:  16.22 s (12.33 tok/s)
+io: cb_calls=5472 decode_uses=19200 decode_misses=1245 (hit 0.935) prefill_uses=2580 prefill_misses=392
+io: prefetch_issued=281 prefetch_hits=87 prefetch_used=257 stall=11.54 s total_read=25420.7 MB avg_bw=1092 MB/s
+io: read_work=61.47 s preads=11508 per_stream_bw=414 MB/s
+mem: peak_rss=10.52 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=8517e287b49ca26a
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide a concise but thorough explanation. Should cover: Solar system formation, accretion, differentiation, core, mantle, crust, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth is in habitable zone, has right composition, etc. Provide reasons: distance from Sun, size, gravity, magnetic field, atmosphere composition, presence of water, plate tectonics, etc. Also mention that Earth formed from protoplanetary disk, accreted from planetesimals, differentiation into core, mantle, crust, etc. Provide timeline: 4.6 billion years ago, formation, early heavy bombardment, magma ocean, differentiation, cooling, formation of crust, atmosphere, water. Then mention why Earth can support life: stable environment, moderate temperature, presence of water, protective magnetic field, atmosphere with oxygen, nitrogen, etc. Also mention that Earth is
