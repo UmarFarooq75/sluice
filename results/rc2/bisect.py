@@ -89,16 +89,17 @@ def parse(label, rc, text):
     rend = re.findall(r"rendered=(\d+)", text)
     reus = re.findall(r"ctx_held=\d+ rendered=\d+ reused=(\d+)", text)
     return Leg(label, rc=rc, hash=(h[-1] if h else None),
-               extra={"rendered": int(rend[-1]) if rend else None,
+               extra={"txt": text,
+                      "rendered": int(rend[-1]) if rend else None,
                       "reused": int(reus[-1]) if reus else None,
                       "ttft": (m.group(1) if (m := re.search(r"ttft: total=(\d+)", text)) else None)})
 
 
-def single(label, prompt, ngen, system, ubatch, pool):
+def single(label, prompt, ngen, system, ubatch, pool, extra=None):
     with open(OUT / f"{label}.err", "w") as fe:
         p = subprocess.run([BIN, MODEL, str(ngen), prompt, str(ubatch)],
                            stdout=subprocess.PIPE, stderr=fe, text=True,
-                           env=env_for(system, ubatch, pool, server_mode=False))
+                           env=env_for(system, ubatch, pool, server_mode=False, extra=extra))
     return parse(label, p.returncode, p.stdout)
 
 

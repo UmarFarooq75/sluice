@@ -2932,3 +2932,48 @@ config yet — single-shot, **no reuse, no pool, no canon**. Run the RC1 DEBUG_H
 instrument on it vs `A_ref`, comparing the **first decode pass** (1-token in both, so
 the streams align; prefill streams cannot align by construction), plus an `A_ub1` leg
 to close gap 3. Localize only; no fixes.
+
+### RC4. Confound cleanup, length reconciliation, attribution (PRE-REGISTERED 2026-07-22)
+Localize only. Three groups, one window. `results/rc4/`.
+
+**G1 — cross-shape at three lengths, POOL OFF.** RC3's "pool not required" rested on
+`B_ub4(pool0)` vs `A_ref(pool1)`, which moves two things. Per the lead's qualifier, that
+claim is restated as: **"chunking sufficient WITH pool off in the divergent arm; clean
+pool-off reference unavailable (D12 exits)."** G1 fixes it by comparing the pool-off
+family (ub 1/2/4, all pool-off by construction) **against itself**. `ub=1` doubles as the
+**gate-path vs UI-path** leg — never compared before.
+
+**Length hypotheses** (why R0's 23 tokens survived cross-shape and RC3's 245 did not):
+- **H1 sliding-window threshold (128)** — under it every chunk sees full context; over
+  it, tokens attend to a window whose contents depend on chunking. Predicts short EQUAL,
+  mid EQUAL, long DIFFER. *Top candidate.* **Third SWA appearance but a different claim:
+  RC2 refuted _reuse across the window_; this is _chunking under vs over the window with
+  no reuse at all_, which nothing has tested.**
+- **H2 chunk-count threshold (~>10)** — length-independent.
+- **H3 kernel-path switch by chunk size.**
+**Discriminator cell: MID length at ub=4** — 25 chunks but under the window. H1 ⇒ EQUAL,
+H2 ⇒ DIFFER.
+
+**G2 — localization.** DEBUG_HASH, smallest failing config vs reference, **first decode
+pass only** (1-token in both, so blocks align; prefill blocks cannot, by construction).
+
+**G3 — attribution.** `csrc/stock_probe.cpp` built against **pristine b10064** (worktree
+verified clean), plain CPU, zero streaming, same FNV digest as `stream_run.cpp`; prints
+`argmax` separately from `logits_hash`. Branches: **pristine splits ⇒ inherited upstream
+numerics**, E39 / E41b-gate-1 reclassify as a **backend property** and our gates stay
+sound as **config-pinned**; **pristine does not split ⇒ ours**, localize within
+`patches/llmstream.patch`.
+
+**Corroboration prediction (lead, 10:40):** SWA is upstream machinery, so **H1 predicts
+G3 also splits.** G1 and G3 check each other. **H1 supported AND pristine NOT splitting
+is the surprising combination — flagged hard if it occurs.**
+
+**README "bit-exact" qualifier HELD** until G1+G3 land; language to be written from data.
+
+**Packaging defect recorded, not fixed here**: `cmake` is not on PATH — it lives in the
+project venv (`.venv/.../cmake/data/bin/cmake`), which is how `vendor/` was originally
+built. **`scripts/install.sh` calls bare `cmake` and would fail on a fresh shell.**
+
+**Two defects found in my own harness before it ran**: `prompts()` re-ran the engine on
+every call (three wasted loads, risk of mismatched prompts across groups); G2 was still a
+placeholder with dead branches. Both fixed pre-run.
