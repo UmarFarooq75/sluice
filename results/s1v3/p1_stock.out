@@ -1,0 +1,1157 @@
+ttft: total=12871 ms | template=0 tokenize=2 kv_match=0 prefill=12868 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok 146677 | Earth's|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok    480 | it|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok    889 | but|
+tok  21182 | thorough|
+tok  30547 | explanation|
+tok     13 |.|
+tok   7649 | Use|
+tok 118908 | headings|
+tok     11 |,|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok  18057 | Should|
+tok   4321 | cover|
+tok     25 |:|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok     11 |,|
+tok   1259 | acc|
+tok    264 |re|
+tok   1141 |tion|
+tok     11 |,|
+tok  94550 | differentiation|
+tok     11 |,|
+tok  34328 | cooling|
+tok     11 |,|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   3411 | water|
+tok     11 |,|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  14651 | plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok     11 |,|
+tok  22105 | stable|
+tok  16721 | climate|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok   4436 | why|
+tok  16464 | Earth|
+tok    382 | is|
+tok   2844 | hab|
+tok   8375 |itable|
+tok     25 |:|
+tok   9324 | distance|
+tok    591 | from|
+tok  11628 | Sun|
+tok     11 |,|
+tok   2349 | size|
+tok     11 |,|
+tok  44967 | gravity|
+tok     11 |,|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   3411 | water|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  51441 | Provide|
+tok   4705 | simple|
+tok   6439 | language|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok   5299 |How|
+tok  16464 | Earth|
+tok 127448 | Came|
+tok    316 | to|
+tok   2439 | Be|
+tok  91587 |**
+
+|
+tok     91 |||
+tok  35677 | Stage|
+tok   1022 | ||
+tok   4614 | What|
+tok  55373 | Happ|
+tok  12848 |ened|
+tok   1022 | ||
+tok   7926 | Key|
+tok   9112 | Result|
+tok  15972 | |
+|
+tok     91 |||
+tok  39028 |-------|
+tok     91 |||
+tok  60846 |---------------|
+tok     91 |||
+tok  10793 |------------|
+tok  14876 ||
+|
+tok     91 |||
+tok   6240 | **|
+tok  88453 |Solar|
+tok  38507 | Neb|
+tok   3419 |ula|
+tok    350 | (|
+tok 171441 |≈|
+tok     19 |4|
+tok     13 |.|
+tok     21 |6|
+tok  35971 | |
+tok     65 |b|
+tok  27032 |illion|
+tok  35971 | |
+tok   3866 |yr|
+tok   5288 | ago|
+tok  80066 |)**|
+tok   1022 | ||
+tok    355 | A|
+tok  65441 | rotating|
+tok  12095 | cloud|
+tok    328 | of|
+tok   7322 | gas|
+tok    326 | and|
+tok  22163 | dust|
+tok  63282 | collapsed|
+tok   1641 | under|
+tok  44967 | gravity|
+tok     11 |,|
+tok  44860 | forming|
+tok    261 | a|
+tok  16292 | prot|
+tok 195677 |ostar|
+tok    350 | (|
+tok   3086 |the|
+tok  11628 | Sun|
+tok      8 |)|
+tok    540 | at|
+tok    290 | the|
+tok   6170 | center|
+tok     13 |.|
+tok   1022 | ||
+tok  11628 | Sun|
+tok   8769 | ign|
+tok   3915 |ites|
+tok     26 |;|
+tok   3785 | material|
+tok   1548 | fl|
+tok   2002 |att|
+tok    696 |ens|
+tok   1511 | into|
+tok    261 | a|
+tok    440 | pro|
+tok   8169 |top|
+tok   8068 |lan|
+tok    292 |et|
+tok    815 |ary|
+tok  18044 | disk|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  15274 |Plan|
+tok  30200 |etes|
+tok   3882 |imal|
+tok  95985 | Formation|
+tok    410 |**|
+tok   1022 | ||
+tok  74592 | Dust|
+tok  57948 | grains|
+tok  24327 | stuck|
+tok   4717 | together|
+tok     11 |,|
+tok  22839 | grew|
+tok   1511 | into|
+tok  67546 | kilometer|
+tok  50005 |‑|
+tok     82 |s|
+tok   2110 |ized|
+tok    966 | “|
+tok  10838 |plan|
+tok  30200 |etes|
+tok  54879 |imals|
+tok   2517 |.”|
+tok   1022 | ||
+tok  19743 | Small|
+tok  22410 | bodies|
+tok  61353 | orbit|
+tok    290 | the|
+tok  11628 | Sun|
+tok     11 |,|
+tok  10526 | beginning|
+tok    316 | to|
+tok 133533 | collide|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok   4945 |Acc|
+tok    264 |re|
+tok   1141 |tion|
+tok   1511 | into|
+tok   1258 | Pro|
+tok   8169 |top|
+tok   8068 |lan|
+tok   1719 |ets|
+tok    410 |**|
+tok   1022 | ||
+tok  10867 | Plan|
+tok  30200 |etes|
+tok  54879 |imals|
+tok 171749 | collided|
+tok    326 | and|
+tok  49536 | merged|
+tok     11 |,|
+tok   6282 | building|
+tok  12384 | larger|
+tok  22410 | bodies|
+tok     13 |.|
+tok   1022 | ||
+tok  16464 | Earth|
+tok  50005 |‑|
+tok     82 |s|
+tok   2110 |ized|
+tok    440 | pro|
+tok   8169 |top|
+tok   8068 |lan|
+tok    292 |et|
+tok  11526 | forms|
+tok    306 | in|
+tok    290 | the|
+tok    966 | “|
+tok  14747 |hab|
+tok   8375 |itable|
+tok  15070 | zone|
+tok   2517 |.”|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 168540 |Differ|
+tok  14989 |enti|
+tok    387 |ation|
+tok    410 |**|
+tok   1022 | ||
+tok    623 | The|
+tok   3648 | hot|
+tok     11 |,|
+tok 181091 | molten|
+tok    440 | pro|
+tok   8169 |top|
+tok   8068 |lan|
+tok    292 |et|
+tok  33930 | separated|
+tok    656 | by|
+tok  27591 | density|
+tok     25 |:|
+tok  12914 | heavy|
+tok   8632 | elements|
+tok  90157 | sank|
+tok    316 | to|
+tok    290 | the|
+tok  10089 | core|
+tok     11 |,|
+tok  44854 | lighter|
+tok   7875 | materials|
+tok  23103 | rose|
+tok    316 | to|
+tok    290 | the|
+tok   9753 | surface|
+tok     13 |.|
+tok   1022 | ||
+tok  16309 | Core|
+tok    350 | (|
+tok  58333 |iron|
+tok  50005 |‑|
+tok  39673 |nick|
+tok    296 |el|
+tok    936 |),|
+tok 138580 | mantle|
+tok    350 | (|
+tok  46135 |sil|
+tok  46360 |icates|
+tok    936 |),|
+tok  55814 | crust|
+tok    350 | (|
+tok 174500 |rocks|
+tok    741 |).|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  77156 |Late|
+tok  51499 | Heavy|
+tok  53305 | Bomb|
+tok    597 |ard|
+tok    508 |ment|
+tok    410 |**|
+tok   1022 | ||
+tok  11048 | Many|
+tok   4410 | large|
+tok  33761 | impacts|
+tok  14942 | delivered|
+tok   3411 | water|
+tok     11 |,|
+tok   2681 | organ|
+tok   1541 |ics|
+tok     11 |,|
+tok    326 | and|
+tok  34106 | volatile|
+tok  59246 | gases|
+tok     13 |.|
+tok   1022 | ||
+tok  16464 | Earth|
+tok    802 |’s|
+tok 101882 | oceans|
+tok    326 | and|
+tok  22137 | atmosphere|
+tok   4252 | begin|
+tok    316 | to|
+tok   1625 | form|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 175307 |Cooling|
+tok    827 | &|
+tok  65089 | Atmos|
+tok  11842 |phere|
+tok  13724 | Development|
+tok    410 |**|
+tok   1022 | ||
+tok  46665 | Surface|
+tok 100217 | cooled|
+tok     11 |,|
+tok 112014 | volcanic|
+tok    842 | out|
+tok     70 |g|
+tok  31297 |assing|
+tok   9917 | released|
+tok  10271 | CO|
+tok 153435 |₂|
+tok     11 |,|
+tok    487 | H|
+tok 153435 |₂|
+tok     46 |O|
+tok     11 |,|
+tok    478 | N|
+tok 153435 |₂|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   1022 | ||
+tok  38094 | Primary|
+tok  22137 | atmosphere|
+tok  11526 | forms|
+tok     26 |;|
+tok   3411 | water|
+tok  46102 | vapor|
+tok   4664 | cond|
+tok   6694 |enses|
+tok   1511 | into|
+tok 101882 | oceans|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  20101 |Mag|
+tok  42950 |netic|
+tok  14788 | Field|
+tok  32476 | Generation|
+tok    410 |**|
+tok   1022 | ||
+tok  52133 | Conv|
+tok 148179 |ective|
+tok  17869 | motion|
+tok    306 | in|
+tok    290 | the|
+tok  20032 | liquid|
+tok  25982 | outer|
+tok  10089 | core|
+tok  18518 | creates|
+tok    261 | a|
+tok  21417 | dynam|
+tok     78 |o|
+tok     13 |.|
+tok   1022 | ||
+tok  90872 | Magnet|
+tok 118216 |osphere|
+tok  52652 | protects|
+tok    290 | the|
+tok  17921 | planet|
+tok    591 | from|
+tok  17624 | solar|
+tok  11215 | wind|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  70432 |Plate|
+tok    353 | T|
+tok    534 |ect|
+tok 121926 |onics|
+tok    410 |**|
+tok   1022 | ||
+tok  71895 | Mant|
+tok    282 |le|
+tok 173858 | convection|
+tok  30826 | drives|
+tok    290 | the|
+tok  12772 | movement|
+tok    328 | of|
+tok  50396 | lith|
+tok    365 |os|
+tok  50926 |pheric|
+tok  36206 | plates|
+tok     13 |.|
+tok   1022 | ||
+tok 104311 | Recycling|
+tok    328 | of|
+tok  15883 | carbon|
+tok     11 |,|
+tok  32370 | regulation|
+tok    328 | of|
+tok  16721 | climate|
+tok     11 |,|
+tok  15609 | creation|
+tok    328 | of|
+tok  15174 | diverse|
+tok 110538 | habitats|
+tok     13 |.|
+tok  47459 | |
+
+|
+tok 103995 |---
+
+|
+tok    410 |**|
+tok  13903 |Why|
+tok  16464 | Earth|
+tok   4101 | Can|
+tok  12947 | Support|
+tok  11714 | Life|
+tok  91587 |**
+
+|
+tok     91 |||
+tok  63743 | Factor|
+tok   1022 | ||
+tok  12587 | Why|
+tok    480 | it|
+tok  19854 | matters|
+tok   1022 | ||
+tok   3253 | How|
+tok  16464 | Earth|
+tok  26427 | meets|
+tok    480 | it|
+tok  15972 | |
+|
+tok     91 |||
+tok    763 |--------|
+tok     91 |||
+tok   1297 |----------------|
+tok     91 |||
+tok   1297 |----------------|
+tok    518 |----|
+tok  14876 ||
+|
+tok     91 |||
+tok   6240 | **|
+tok   8627 |Right|
+tok   9324 | distance|
+tok    591 | from|
+tok    290 | the|
+tok  11628 | Sun|
+tok    410 |**|
+tok   1022 | ||
+tok 158339 | Keeps|
+tok   9753 | surface|
+tok  28295 | temperatures|
+tok  13127 | suitable|
+tok    395 | for|
+tok  20032 | liquid|
+tok   3411 | water|
+tok     13 |.|
+tok   1022 | ||
+tok    220 | |
+tok     16 |1|
+tok  35971 | |
+tok  47490 |AU|
+tok    350 | (|
+tok 171441 |≈|
+tok   5215 |150|
+tok  35971 | |
+tok 124427 |million|
+tok  35971 | |
+tok  15284 |km|
+tok      8 |)|
+tok   1127 | –|
+tok    290 | the|
+tok    966 | “|
+tok  30717 |Gold|
+tok    311 |il|
+tok  14622 |ocks|
+tok  15070 | zone|
+tok   2517 |.”|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok     50 |S|
+tok  43934 |ufficient|
+tok   4842 | mass|
+tok    827 | &|
+tok  44967 | gravity|
+tok    410 |**|
+tok   1022 | ||
+tok 140402 | Holds|
+tok    448 | an|
+tok  22137 | atmosphere|
+tok    326 | and|
+tok 101882 | oceans|
+tok     26 |;|
+tok  46396 | prevents|
+tok  12379 | rapid|
+tok   6266 | loss|
+tok    328 | of|
+tok  59246 | gases|
+tok     13 |.|
+tok   1022 | ||
+tok   6574 | ~|
+tok     20 |5|
+tok     13 |.|
+tok   5170 |97|
+tok  35971 | |
+tok  12378 |×|
+tok  35971 | |
+tok    702 |10|
+tok  13848 |²|
+tok  37127 |�|
+tok    112 |�|
+tok  35971 | |
+tok  10570 |kg|
+tok     11 |,|
+tok   9874 | giving|
+tok   6574 | ~|
+tok     16 |1|
+tok  35971 | |
+tok     70 |g|
+tok   9753 | surface|
+tok  44967 | gravity|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  20101 |Mag|
+tok  42950 |netic|
+tok   3259 | field|
+tok    410 |**|
+tok   1022 | ||
+tok 181316 | Shields|
+tok   2615 | life|
+tok  50005 |‑|
+tok  44859 |support|
+tok    289 |ing|
+tok  22137 | atmosphere|
+tok    591 | from|
+tok  17624 | solar|
+tok  11215 | wind|
+tok  94243 | erosion|
+tok     13 |.|
+tok   1022 | ||
+tok 143946 | Dynamo|
+tok    306 | in|
+tok  20032 | liquid|
+tok  25982 | outer|
+tok  10089 | core|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 129551 |Stable|
+tok     11 |,|
+tok  96325 | breathable|
+tok  22137 | atmosphere|
+tok    410 |**|
+tok   1022 | ||
+tok  61049 | Provides|
+tok  34398 | oxygen|
+tok     11 |,|
+tok  68141 | nitrogen|
+tok     11 |,|
+tok    326 | and|
+tok    261 | a|
+tok   8573 | buffer|
+tok   4372 | against|
+tok  23700 | extreme|
+tok  28295 | temperatures|
+tok     13 |.|
+tok   1022 | ||
+tok   6574 | ~|
+tok   4388 |78|
+tok  35971 | |
+tok      4 |%|
+tok    478 | N|
+tok 153435 |₂|
+tok     11 |,|
+tok   6574 | ~|
+tok   2040 |21|
+tok  35971 | |
+tok      4 |%|
+tok    532 | O|
+tok 153435 |₂|
+tok     11 |,|
+tok  21523 | trace|
+tok  59246 | gases|
+tok     26 |;|
+tok   9890 | pressure|
+tok   6574 | ~|
+tok     16 |1|
+tok  35971 | |
+tok 148619 |atm|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 109031 |Liquid|
+tok   3411 | water|
+tok    410 |**|
+tok   1022 | ||
+tok   6615 | Sol|
+tok    818 |vent|
+tok    395 | for|
+tok 145923 | biochemical|
+tok  38133 | reactions|
+tok     26 |;|
+tok   8731 | essential|
+tok    395 | for|
+tok    722 | all|
+tok   5542 | known|
+tok   2615 | life|
+tok     13 |.|
+tok   1022 | ||
+tok 180154 | Oceans|
+tok   4321 | cover|
+tok   6574 | ~|
+tok   2789 |70|
+tok  35971 | |
+tok      4 |%|
+tok    328 | of|
+tok   9753 | surface|
+tok     26 |;|
+tok   3411 | water|
+tok  46102 | vapor|
+tok    306 | in|
+tok  22137 | atmosphere|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  70432 |Plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok    410 |**|
+tok   1022 | ||
+tok   3955 | Reg|
+tok  52494 |ulates|
+tok  10271 | CO|
+tok 153435 |₂|
+tok   4493 | via|
+tok    290 | the|
+tok  15883 | carbon|
+tok  50005 |‑|
+tok  46135 |sil|
+tok   8091 |icate|
+tok  15839 | cycle|
+tok     26 |;|
+tok  18518 | creates|
+tok  36419 | varied|
+tok  97966 | ecosystems|
+tok     13 |.|
+tok   1022 | ||
+tok  41259 | Contin|
+tok   1094 |ents|
+tok     11 |,|
+tok  32429 | mountains|
+tok     11 |,|
+tok  25472 | ocean|
+tok 195165 | trenches|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 190460 |Chemical|
+tok  28955 | diversity|
+tok    410 |**|
+tok   1022 | ||
+tok  70011 | Availability|
+tok    328 | of|
+tok  15883 | carbon|
+tok     11 |,|
+tok  47612 | hydrogen|
+tok     11 |,|
+tok  68141 | nitrogen|
+tok     11 |,|
+tok  34398 | oxygen|
+tok     11 |,|
+tok 165321 | phosphorus|
+tok     11 |,|
+tok 101145 | sulfur|
+tok     13 |.|
+tok   1022 | ||
+tok  12436 | Rich|
+tok   1741 | ge|
+tok  79560 |ochemical|
+tok  41478 | cycles|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 129551 |Stable|
+tok  16721 | climate|
+tok    410 |**|
+tok   1022 | ||
+tok   7790 | Long|
+tok  50005 |‑|
+tok   8044 |term|
+tok  13260 | habit|
+tok   3563 |ability|
+tok     26 |;|
+tok    860 | no|
+tok 198075 | runaway|
+tok  63521 | greenhouse|
+tok    503 | or|
+tok  14821 | ice|
+tok  50005 |‑|
+tok   9983 |house|
+tok 137517 | extremes|
+tok     13 |.|
+tok   1022 | ||
+tok  48940 | Feedback|
+tok     82 |s|
+tok    350 | (|
+tok     68 |e|
+tok   1940 |.g|
+tok   4213 |.,|
+tok    434 | al|
+tok 137684 |bedo|
+tok     11 |,|
+tok  11122 | weather|
+tok    289 |ing|
+tok      8 |)|
+tok  12930 | maintain|
+tok   7409 | temper|
+tok    379 |ate|
+tok   6409 | conditions|
+tok     13 |.|
+tok  47459 | |
+
+|
+tok 103995 |---
+
+|
+tok  31639 |###|
+tok  44368 | Bottom|
+tok  11342 | Line|
+tok    279 |
+
+|
+tok  82865 |Earth|
+tok  20680 | formed|
+tok    591 | from|
+tok    261 | a|
+tok  58477 | spinning|
+tok  12095 | cloud|
+tok    328 | of|
+tok   7322 | gas|
+tok    326 | and|
+tok  22163 | dust|
+tok    484 | that|
+tok  63282 | collapsed|
+tok   1511 | into|
+tok    290 | the|
+tok  11628 | Sun|
+tok    326 | and|
+tok    261 | a|
+tok  18044 | disk|
+tok    328 | of|
+tok  17921 | planet|
+tok  50005 |‑|
+tok  93882 |forming|
+tok   3785 | material|
+tok     13 |.|
+tok  20684 | Through|
+tok 100572 | collisions|
+tok     11 |,|
+tok  94550 | differentiation|
+tok     11 |,|
+tok    326 | and|
+tok 112014 | volcanic|
+tok    842 | out|
+tok     70 |g|
+tok  31297 |assing|
+tok     11 |,|
+tok    480 | it|
+tok   9742 | developed|
+tok    261 | a|
+tok  89098 | layered|
+tok  13878 | interior|
+tok     11 |,|
+tok    261 | a|
+tok  41030 | protective|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok    261 | a|
+tok  96325 | breathable|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok    326 | and|
+tok  59897 | abundant|
+tok  20032 | liquid|
+tok   3411 | water|
+tok     13 |.|
+tok  13974 | Its|
+tok   2349 | size|
+tok     11 |,|
+tok   9324 | distance|
+tok    591 | from|
+tok    290 | the|
+tok  11628 | Sun|
+tok     11 |,|
+tok    326 | and|
+tok  14012 | dynamic|
+tok 160489 | geology|
+tok   3357 | keep|
+tok    290 | the|
+tok  16721 | climate|
+tok  22105 | stable|
+tok     11 |,|
+tok   4137 | making|
+tok    480 | it|
+tok    261 | a|
+tok  24397 | hosp|
+tok   8375 |itable|
+tok   5870 | environment|
+tok    395 | for|
+tok   2615 | life|
+tok    472 | as|
+tok    581 | we|
+tok   1761 | know|
+tok    480 | it|
+tok     13 |.|
+mode=streamed prompt_toks=296 reused=0 generated=854 n_ubatch=128
+prefill: 12.87 s (23.00 tok/s)
+decode:  83.55 s (10.22 tok/s)
+io: cb_calls=20568 decode_uses=81984 decode_misses=7349 (hit 0.910) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=5.88 s (pool 32 slots)
+io: prefetch_issued=310 prefetch_hits=93 prefetch_used=287 stall=35.82 s total_read=122703.3 MB avg_bw=1273 MB/s
+io: read_work=225.82 s preads=55548 per_stream_bw=543 MB/s
+mem: peak_rss=11.28 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=6b9c6cdb0c154034
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth is habitable: distance from Sun, size, gravity, magnetic field, atmosphere, water, etc. Provide simple language.<|end|><|start|>assistant<|channel|>final<|message|>**How Earth Came to Be**
+
+| Stage | What Happened | Key Result |
+|-------|---------------|------------|
+| **Solar Nebula (≈4.6 billion yr ago)** | A rotating cloud of gas and dust collapsed under gravity, forming a protostar (the Sun) at the center. | Sun ignites; material flattens into a protoplanetary disk. |
+| **Planetesimal Formation** | Dust grains stuck together, grew into kilometer‑sized “planetesimals.” | Small bodies orbit the Sun, beginning to collide. |
+| **Accretion into Protoplanets** | Planetesimals collided and merged, building larger bodies. | Earth‑sized protoplanet forms in the “habitable zone.” |
+| **Differentiation** | The hot, molten protoplanet separated by density: heavy elements sank to the core, lighter materials rose to the surface. | Core (iron‑nickel), mantle (silicates), crust (rocks). |
+| **Late Heavy Bombardment** | Many large impacts delivered water, organics, and volatile gases. | Earth’s oceans and atmosphere begin to form. |
+| **Cooling & Atmosphere Development** | Surface cooled, volcanic outgassing released CO₂, H₂O, N₂, etc. | Primary atmosphere forms; water vapor condenses into oceans. |
+| **Magnetic Field Generation** | Convective motion in the liquid outer core creates a dynamo. | Magnetosphere protects the planet from solar wind. |
+| **Plate Tectonics** | Mantle convection drives the movement of lithospheric plates. | Recycling of carbon, regulation of climate, creation of diverse habitats. |
+
+---
+
+**Why Earth Can Support Life**
+
+| Factor | Why it matters | How Earth meets it |
+|--------|----------------|--------------------|
+| **Right distance from the Sun** | Keeps surface temperatures suitable for liquid water. | 1 AU (≈150 million km) – the “Goldilocks zone.” |
+| **Sufficient mass & gravity** | Holds an atmosphere and oceans; prevents rapid loss of gases. | ~5.97 × 10²⁴ kg, giving ~1 g surface gravity. |
+| **Magnetic field** | Shields life‑supporting atmosphere from solar wind erosion. | Dynamo in liquid outer core. |
+| **Stable, breathable atmosphere** | Provides oxygen, nitrogen, and a buffer against extreme temperatures. | ~78 % N₂, ~21 % O₂, trace gases; pressure ~1 atm. |
+| **Liquid water** | Solvent for biochemical reactions; essential for all known life. | Oceans cover ~70 % of surface; water vapor in atmosphere. |
+| **Plate tectonics** | Regulates CO₂ via the carbon‑silicate cycle; creates varied ecosystems. | Continents, mountains, ocean trenches. |
+| **Chemical diversity** | Availability of carbon, hydrogen, nitrogen, oxygen, phosphorus, sulfur. | Rich geochemical cycles. |
+| **Stable climate** | Long‑term habitability; no runaway greenhouse or ice‑house extremes. | Feedbacks (e.g., albedo, weathering) maintain temperate conditions. |
+
+---
+
+### Bottom Line
+
+Earth formed from a spinning cloud of gas and dust that collapsed into the Sun and a disk of planet‑forming material. Through collisions, differentiation, and volcanic outgassing, it developed a layered interior, a protective magnetic field, a breathable atmosphere, and abundant liquid water. Its size, distance from the Sun, and dynamic geology keep the climate stable, making it a hospitable environment for life as we know it.
+
+<<<TURN>>>
+ttft: total=7774 ms | template=0 tokenize=16 kv_match=0 prefill=7756 first_sample=1
+ttft: ctx_held=1150 rendered=414 reused=296 reprefill=118 (28.5% of rendered)
+ttft: diverged_at=296 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok 104833 | summarize|
+tok    290 | the|
+tok  30547 | explanation|
+tok    306 | in|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok  31926 | bullet|
+tok   5571 | points|
+tok  24878 | covering|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok    480 | it|
+tok  17203 | supports|
+tok   2615 | life|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok     12 |-|
+tok   6240 | **|
+tok  44324 |Birth|
+tok    591 | from|
+tok    261 | a|
+tok    440 | pro|
+tok   8169 |top|
+tok   8068 |lan|
+tok    292 |et|
+tok    815 |ary|
+tok  18044 | disk|
+tok    410 |**|
+tok   1127 | –|
+tok  12958 | About|
+tok    220 | |
+tok     19 |4|
+tok     13 |.|
+tok     21 |6|
+tok  35971 | |
+tok     65 |b|
+tok  27032 |illion|
+tok  35971 | |
+tok  75629 |years|
+tok   5288 | ago|
+tok     11 |,|
+tok  22163 | dust|
+tok    326 | and|
+tok   7322 | gas|
+tok    306 | in|
+tok    290 | the|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok   1407 | co|
+tok   3459 |ales|
+tok   2050 |ced|
+tok   1511 | into|
+tok  17921 | planet|
+tok    268 |es|
+tok  54879 |imals|
+tok    484 | that|
+tok 171749 | collided|
+tok    326 | and|
+tok  49536 | merged|
+tok     11 |,|
+tok  44860 | forming|
+tok    261 | a|
+tok 181091 | molten|
+tok  16464 | Earth|
+tok    484 | that|
+tok   4849 | later|
+tok 100217 | cooled|
+tok    326 | and|
+tok 142663 | differentiated|
+tok   1511 | into|
+tok  10089 | core|
+tok     11 |,|
+tok 138580 | mantle|
+tok     11 |,|
+tok    326 | and|
+tok  55814 | crust|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok  68709 |Development|
+tok    328 | of|
+tok    261 | a|
+tok  41030 | protective|
+tok   5870 | environment|
+tok    410 |**|
+tok   1127 | –|
+tok   6042 | Out|
+tok     70 |g|
+tok  31297 |assing|
+tok    326 | and|
+tok 112014 | volcanic|
+tok   8110 | activity|
+tok   8113 | built|
+tok    261 | a|
+tok  68141 | nitrogen|
+tok  50005 |‑|
+tok 152599 |oxygen|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok    290 | the|
+tok  17921 | planet|
+tok    802 |’s|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok  41055 | shield|
+tok    295 |ed|
+tok    480 | it|
+tok    591 | from|
+tok  17624 | solar|
+tok  11215 | wind|
+tok     11 |,|
+tok    326 | and|
+tok  14651 | plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok  55421 | recycled|
+tok  15883 | carbon|
+tok    326 | and|
+tok  26871 | maintained|
+tok    261 | a|
+tok  22105 | stable|
+tok  16721 | climate|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok 180416 |Optimal|
+tok   6409 | conditions|
+tok    395 | for|
+tok   2615 | life|
+tok    410 |**|
+tok   1127 | –|
+tok  16464 | Earth|
+tok    802 |’s|
+tok   2349 | size|
+tok   8967 | gives|
+tok   4951 | enough|
+tok  44967 | gravity|
+tok    316 | to|
+tok   5060 | hold|
+tok    448 | an|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   1617 | its|
+tok   9324 | distance|
+tok    591 | from|
+tok    290 | the|
+tok  11628 | Sun|
+tok   9610 | places|
+tok    480 | it|
+tok    306 | in|
+tok    290 | the|
+tok    966 | “|
+tok  14747 |hab|
+tok   8375 |itable|
+tok  15070 | zone|
+tok    693 |”|
+tok   1919 | where|
+tok  20032 | liquid|
+tok   3411 | water|
+tok    665 | can|
+tok   4310 | exist|
+tok     11 |,|
+tok    326 | and|
+tok   1617 | its|
+tok  15174 | diverse|
+tok  38395 | chemistry|
+tok    350 | (|
+tok  15373 |water|
+tok     11 |,|
+tok  19448 | organic|
+tok  53785 | molecules|
+tok     11 |,|
+tok   5954 | energy|
+tok  11525 | sources|
+tok      8 |)|
+tok   6008 | provides|
+tok    290 | the|
+tok  15838 | ingredients|
+tok    395 | for|
+tok   2615 | life|
+tok    316 | to|
+tok  46435 | arise|
+tok    326 | and|
+tok  54337 | thrive|
+tok     13 |.|
+mode=streamed prompt_toks=414 reused=296 generated=204 n_ubatch=128
+prefill: 7.76 s (15.21 tok/s)
+decode:  21.30 s (9.58 tok/s)
+io: cb_calls=4920 decode_uses=19584 decode_misses=2269 (hit 0.884) prefill_uses=10860 prefill_misses=585
+io: pf_calls=23 pf_experts=583 union avg=25.3 min=20 max=32 fill=4.81 s (pool 32 slots)
+io: prefetch_issued=221 prefetch_hits=88 prefetch_used=180 stall=9.86 s total_read=40755.3 MB avg_bw=1403 MB/s
+io: read_work=97.23 s preads=18450 per_stream_bw=419 MB/s
+io: guard pressure_drops=1 cap_evictions=48 final_cap=14
+mem: peak_rss=11.28 GB phys_footprint=6.12 GB
+therm: fair
+logits_hash=0e6ac0b29748adb2
+text: <|channel|>analysis<|message|>We need to summarize the explanation in three bullet points. Provide concise bullet points covering formation and why it supports life.<|end|><|start|>assistant<|channel|>final<|message|>- **Birth from a protoplanetary disk** – About 4.6 billion years ago, dust and gas in the solar nebula coalesced into planetesimals that collided and merged, forming a molten Earth that later cooled and differentiated into core, mantle, and crust.  
+- **Development of a protective environment** – Outgassing and volcanic activity built a nitrogen‑oxygen atmosphere, the planet’s magnetic field shielded it from solar wind, and plate tectonics recycled carbon and maintained a stable climate.  
+- **Optimal conditions for life** – Earth’s size gives enough gravity to hold an atmosphere, its distance from the Sun places it in the “habitable zone” where liquid water can exist, and its diverse chemistry (water, organic molecules, energy sources) provides the ingredients for life to arise and thrive.

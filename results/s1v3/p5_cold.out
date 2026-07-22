@@ -1,0 +1,727 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+ttft: total=22402 ms | template=0 tokenize=3 kv_match=0 prefill=22397 first_sample=1
+ttft: ctx_held=0 rendered=588 reused=0 reprefill=588 (100.0% of rendered)
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok    976 |The|
+tok   1825 | user|
+tok  31064 | asks|
+tok     25 |:|
+tok    392 | "|
+tok  13903 |Why|
+tok    382 | is|
+tok    290 | the|
+tok  30910 | southern|
+tok 143971 | hemisphere|
+tok  23821 | opposite|
+tok  16842 |?"|
+tok   3164 | They|
+tok   6960 | likely|
+tok   6716 | refer|
+tok    316 | to|
+tok  28089 | seasons|
+tok   2447 | being|
+tok  23821 | opposite|
+tok   2870 | between|
+tok 185815 | hemis|
+tok 120056 |pheres|
+tok     13 |.|
+tok   3164 | They|
+tok   1682 | want|
+tok  30547 | explanation|
+tok     25 |:|
+tok   2236 | because|
+tok 146677 | Earth's|
+tok  16300 | axis|
+tok  68195 | tilt|
+tok  16431 | causes|
+tok  23821 | opposite|
+tok  29546 | orientation|
+tok  15001 | relative|
+tok    316 | to|
+tok  11628 | Sun|
+tok     13 |.|
+tok   2632 | So|
+tok   1261 | when|
+tok  33426 | northern|
+tok 143971 | hemisphere|
+tok 186352 | tilted|
+tok  15256 | toward|
+tok  11628 | Sun|
+tok     11 |,|
+tok  30910 | southern|
+tok    382 | is|
+tok 186352 | tilted|
+tok   4194 | away|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  28089 | seasons|
+tok    553 | are|
+tok  23821 | opposite|
+tok   2236 | because|
+tok    328 | of|
+tok  68195 | tilt|
+tok    326 | and|
+tok 146677 | Earth's|
+tok  61353 | orbit|
+tok     13 |.|
+tok  51441 | Provide|
+tok   4878 | details|
+tok     25 |:|
+tok    540 | at|
+tok   1887 | sol|
+tok    302 |st|
+tok   1386 |ices|
+tok     11 |,|
+tok   1001 | one|
+tok 143971 | hemisphere|
+tok  35399 | receives|
+tok    945 | more|
+tok   2823 | direct|
+tok  55414 | sunlight|
+tok     11 |,|
+tok    290 | the|
+tok   1273 | other|
+tok   3760 | less|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   4436 | why|
+tok   4275 | it's|
+tok  23821 | opposite|
+tok     25 |:|
+tok   2236 | because|
+tok  68195 | tilt|
+tok    382 | is|
+tok  13213 | fixed|
+tok  15001 | relative|
+tok    316 | to|
+tok  13701 | stars|
+tok     11 |,|
+tok    813 | so|
+tok    472 | as|
+tok  16464 | Earth|
+tok    503 | or|
+tok  24043 |bits|
+tok     11 |,|
+tok    290 | the|
+tok 143971 | hemisphere|
+tok    484 | that|
+tok    382 | is|
+tok 186352 | tilted|
+tok  15256 | toward|
+tok  11628 | Sun|
+tok   6629 | changes|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok   2801 | equ|
+tok 136110 |inox|
+tok    268 |es|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  68195 | tilt|
+tok    382 | is|
+tok    220 | |
+tok   1860 |23|
+tok     13 |.|
+tok     20 |5|
+tok 148177 |°,|
+tok    813 | so|
+tok    540 | at|
+tok   1062 | any|
+tok   4335 | given|
+tok   1058 | time|
+tok     11 |,|
+tok   1001 | one|
+tok 143971 | hemisphere|
+tok    382 | is|
+tok 186352 | tilted|
+tok  15256 | toward|
+tok  11628 | Sun|
+tok     11 |,|
+tok    290 | the|
+tok   1273 | other|
+tok   4194 | away|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   4436 | why|
+tok  28089 | seasons|
+tok    553 | are|
+tok  23821 | opposite|
+tok     25 |:|
+tok   2236 | because|
+tok    328 | of|
+tok  33209 | geometry|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  68195 | tilt|
+tok    382 | is|
+tok    625 | not|
+tok  57184 | reversed|
+tok     26 |;|
+tok   4275 | it's|
+tok    290 | the|
+tok   2684 | same|
+tok  68195 | tilt|
+tok    889 | but|
+tok  29546 | orientation|
+tok   6629 | changes|
+tok  15001 | relative|
+tok    316 | to|
+tok  11628 | Sun|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   4436 | why|
+tok    290 | the|
+tok  30910 | southern|
+tok 143971 | hemisphere|
+tok  13189 | experiences|
+tok  23821 | opposite|
+tok  28089 | seasons|
+tok     25 |:|
+tok   2236 | because|
+tok    328 | of|
+tok 146677 | Earth's|
+tok  68195 | tilt|
+tok    326 | and|
+tok  61353 | orbit|
+tok     13 |.|
+tok  51441 | Provide|
+tok   4878 | details|
+tok     25 |:|
+tok    540 | at|
+tok   7843 | June|
+tok   1887 | sol|
+tok 159432 |stice|
+tok     11 |,|
+tok  33426 | northern|
+tok 143971 | hemisphere|
+tok  35399 | receives|
+tok    945 | more|
+tok   2823 | direct|
+tok  55414 | sunlight|
+tok     11 |,|
+tok  30910 | southern|
+tok  35399 | receives|
+tok   3760 | less|
+tok     13 |.|
+tok   3604 | At|
+tok   9207 | December|
+tok   1887 | sol|
+tok 159432 |stice|
+tok     11 |,|
+tok  57184 | reversed|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok   2801 | equ|
+tok 136110 |inox|
+tok    268 |es|
+tok     25 |:|
+tok  12629 | equal|
+tok   2163 | day|
+tok   5517 | length|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok   4436 | why|
+tok    290 | the|
+tok  68195 | tilt|
+tok    382 | is|
+tok    220 | |
+tok   1860 |23|
+tok     13 |.|
+tok     20 |5|
+tok 148177 |°,|
+tok    625 | not|
+tok    220 | |
+tok     15 |0|
+tok 148177 |°,|
+tok    326 | and|
+tok   4436 | why|
+tok   4275 | it's|
+tok  22105 | stable|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok    876 | pre|
+tok  36438 |cession|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok   4436 | why|
+tok  28089 | seasons|
+tok    553 | are|
+tok  23821 | opposite|
+tok     25 |:|
+tok   2236 | because|
+tok    328 | of|
+tok  68195 | tilt|
+tok  29546 | orientation|
+tok  15001 | relative|
+tok    316 | to|
+tok  11628 | Sun|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   4436 | why|
+tok    290 | the|
+tok  68195 | tilt|
+tok    382 | is|
+tok    625 | not|
+tok  57184 | reversed|
+tok     25 |:|
+tok   2236 | because|
+tok  16464 | Earth|
+tok 155086 | rotates|
+tok   2846 | around|
+tok  11628 | Sun|
+tok     11 |,|
+tok    625 | not|
+tok   2846 | around|
+tok  16300 | axis|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok   4436 | why|
+tok    290 | the|
+tok  68195 | tilt|
+tok    382 | is|
+tok  22105 | stable|
+tok     25 |:|
+tok   5192 | due|
+tok    316 | to|
+tok  38962 | angular|
+tok  41184 | momentum|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok   4436 | why|
+tok  28089 | seasons|
+tok    553 | are|
+tok  23821 | opposite|
+tok     25 |:|
+tok   2236 | because|
+tok    328 | of|
+tok  33209 | geometry|
+tok     13 |.|
+tok  51441 | Provide|
+tok   6052 | answer|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok  30105 |Because|
+tok    290 | the|
+tok  16464 | Earth|
+tok    802 |’s|
+tok  16300 | axis|
+tok    382 | is|
+tok 186352 | tilted|
+tok     11 |,|
+tok    290 | the|
+tok   1920 | two|
+tok 185815 | hemis|
+tok 120056 |pheres|
+tok   2438 | point|
+tok    306 | in|
+tok  23821 | opposite|
+tok  24921 | directions|
+tok  15001 | relative|
+tok    316 | to|
+tok    290 | the|
+tok  11628 | Sun|
+tok    540 | at|
+tok   1062 | any|
+tok   4335 | given|
+tok   1058 | time|
+tok     13 |.|
+tok    410 |**|
+tok  11691 |  
+
+|
+tok 103995 |---
+
+|
+tok  31639 |###|
+tok    220 | |
+tok     16 |1|
+tok     13 |.|
+tok    220 | |
+tok    623 | The|
+tok  68195 | tilt|
+tok    382 | is|
+tok  13213 | fixed|
+tok    306 | in|
+tok   4918 | space|
+tok   4066 |  
+|
+tok     12 |-|
+tok  16464 | Earth|
+tok    802 |’s|
+tok  23769 | rotation|
+tok  16300 | axis|
+tok    382 | is|
+tok  72136 | inclined|
+tok   1078 | about|
+tok   6240 | **|
+tok   1860 |23|
+tok     13 |.|
+tok     20 |5|
+tok   6793 |°|
+tok    410 |**|
+tok    316 | to|
+tok    290 | the|
+tok  16499 | plane|
+tok    328 | of|
+tok   1617 | its|
+tok  61353 | orbit|
+tok    350 | (|
+tok   3086 |the|
+tok    319 | e|
+tok  11945 |clip|
+tok  64647 |tic|
+tok    741 |).|
+tok   4066 |  
+|
+tok     12 |-|
+tok   4569 | That|
+tok  68195 | tilt|
+tok   2226 | does|
+tok   6240 | **|
+tok   2878 |not|
+tok    410 |**|
+tok  29130 | flip|
+tok    591 | from|
+tok  16173 | north|
+tok  50005 |‑|
+tok    935 |to|
+tok  50005 |‑|
+tok 145118 |south|
+tok     26 |;|
+tok    480 | it|
+tok  35239 | stays|
+tok    290 | the|
+tok   2684 | same|
+tok  29546 | orientation|
+tok  15001 | relative|
+tok    316 | to|
+tok    290 | the|
+tok  51041 | distant|
+tok  13701 | stars|
+tok    364 |.
+
+|
+tok  31639 |###|
+tok    220 | |
+tok     17 |2|
+tok     13 |.|
+tok    220 | |
+tok  16464 | Earth|
+tok  19523 | moves|
+tok   2846 | around|
+tok    290 | the|
+tok  11628 | Sun|
+tok   4066 |  
+|
+tok     12 |-|
+tok   1877 | As|
+tok  16464 | Earth|
+tok  50316 | travels|
+tok   4251 | along|
+tok   1617 | its|
+tok  61353 | orbit|
+tok     11 |,|
+tok    290 | the|
+tok  11628 | Sun|
+tok    802 |’s|
+tok  36582 | apparent|
+tok   4010 | position|
+tok    306 | in|
+tok    290 | the|
+tok  17307 | sky|
+tok   6629 | changes|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok    623 | The|
+tok 143971 | hemisphere|
+tok    484 | that|
+tok    382 | is|
+tok 186352 | tilted|
+tok   6240 | **|
+tok 191417 |tow|
+tok    597 |ard|
+tok    410 |**|
+tok    290 | the|
+tok  11628 | Sun|
+tok  35399 | receives|
+tok    945 | more|
+tok   2823 | direct|
+tok     11 |,|
+tok   7411 | longer|
+tok  50005 |‑|
+tok  93368 |lasting|
+tok  55414 | sunlight|
+tok  15155 | →|
+tok   6240 | **|
+tok 163133 |summer|
+tok    410 |**|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok    623 | The|
+tok  23821 | opposite|
+tok 143971 | hemisphere|
+tok     11 |,|
+tok 186352 | tilted|
+tok   6240 | **|
+tok  17550 |away|
+tok 191888 |**,|
+tok   8625 | gets|
+tok   3760 | less|
+tok   2823 | direct|
+tok     11 |,|
+tok  37168 | shorter|
+tok  50005 |‑|
+tok  93368 |lasting|
+tok  55414 | sunlight|
+tok  15155 | →|
+tok   6240 | **|
+tok 170685 |winter|
+tok    410 |**|
+tok    364 |.
+
+|
+tok  31639 |###|
+tok    220 | |
+tok     18 |3|
+tok     13 |.|
+tok    220 | |
+tok  12587 | Why|
+tok    290 | the|
+tok  28089 | seasons|
+tok    553 | are|
+tok  23821 | opposite|
+tok   4066 |  
+|
+tok     12 |-|
+tok   4296 | When|
+tok    290 | the|
+tok  33426 | northern|
+tok 143971 | hemisphere|
+tok    382 | is|
+tok 186352 | tilted|
+tok  15256 | toward|
+tok    290 | the|
+tok  11628 | Sun|
+tok    350 | (|
+tok     68 |e|
+tok   1940 |.g|
+tok   4213 |.,|
+tok   7843 | June|
+tok   1887 | sol|
+tok 159432 |stice|
+tok    936 |),|
+tok    290 | the|
+tok  30910 | southern|
+tok 143971 | hemisphere|
+tok    382 | is|
+tok 186352 | tilted|
+tok   4194 | away|
+tok     11 |,|
+tok    813 | so|
+tok    480 | it|
+tok    382 | is|
+tok  13655 | winter|
+tok   1354 | there|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok  32004 | Six|
+tok   5503 | months|
+tok   4849 | later|
+tok     11 |,|
+tok    290 | the|
+tok  16464 | Earth|
+tok    853 | has|
+tok  12183 | moved|
+tok    316 | to|
+tok    290 | the|
+tok   1273 | other|
+tok   4307 | side|
+tok    328 | of|
+tok   1617 | its|
+tok  61353 | orbit|
+tok     26 |;|
+tok    290 | the|
+tok  68195 | tilt|
+tok   1954 | now|
+tok   5571 | points|
+tok    290 | the|
+tok  30910 | southern|
+tok 143971 | hemisphere|
+tok  15256 | toward|
+tok    290 | the|
+tok  11628 | Sun|
+tok    350 | (|
+tok  34309 |December|
+tok   1887 | sol|
+tok 159432 |stice|
+tok    936 |),|
+tok   4137 | making|
+tok    480 | it|
+tok   9333 | summer|
+tok   1354 | there|
+tok   2049 | while|
+tok    290 | the|
+tok  16173 | north|
+tok    382 | is|
+tok    306 | in|
+tok  13655 | winter|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok  17081 | During|
+tok    290 | the|
+tok   2801 | equ|
+tok 136110 |inox|
+tok    268 |es|
+tok     11 |,|
+tok    290 | the|
+tok  16300 | axis|
+tok    382 | is|
+tok  36144 | roughly|
+tok 137754 | perpendicular|
+tok    316 | to|
+tok    290 | the|
+tok  11628 | Sun|
+tok    802 |’s|
+tok  66477 | rays|
+tok     11 |,|
+tok    813 | so|
+tok   2973 | both|
+tok 185815 | hemis|
+tok 120056 |pheres|
+tok   6442 | receive|
+tok  36144 | roughly|
+tok  12629 | equal|
+tok  87478 | daylight|
+tok    326 | and|
+tok  12088 | temperature|
+tok    364 |.
+
+|
+tok 103995 |---
+
+|
+tok    410 |**|
+tok  14913 |Bottom|
+tok   2543 | line|
+tok 142760 |:**|
+tok    623 | The|
+tok  28089 | seasons|
+tok    553 | are|
+tok  23821 | opposite|
+tok   2236 | because|
+tok    290 | the|
+tok  16464 | Earth|
+tok    802 |’s|
+tok   4590 | single|
+tok     11 |,|
+tok  13213 | fixed|
+tok 123167 | axial|
+tok  68195 | tilt|
+tok  16431 | causes|
+tok   1001 | one|
+tok 143971 | hemisphere|
+tok    316 | to|
+tok   4950 | face|
+tok    290 | the|
+tok  11628 | Sun|
+tok   2049 | while|
+tok    290 | the|
+tok   1273 | other|
+tok  22060 | faces|
+tok   4194 | away|
+tok     11 |,|
+tok    326 | and|
+tok    495 | this|
+tok  29546 | orientation|
+tok 150699 | swaps|
+tok    472 | as|
+tok    290 | the|
+tok  17921 | planet|
+tok    503 | or|
+tok  24043 |bits|
+tok    290 | the|
+tok  11628 | Sun|
+tok     13 |.|
+mode=streamed prompt_toks=588 reused=0 generated=672 n_ubatch=128
+prefill: 22.40 s (26.25 tok/s)
+decode:  64.11 s (10.48 tok/s)
+io: cb_calls=16248 decode_uses=64512 decode_misses=5800 (hit 0.910) prefill_uses=54100 prefill_misses=2736
+io: pf_calls=115 pf_experts=2732 union avg=23.8 min=14 max=32 fill=7.57 s (pool 32 slots)
+io: prefetch_issued=310 prefetch_hits=91 prefetch_used=280 stall=24.12 s total_read=117242.8 MB avg_bw=1355 MB/s
+io: read_work=186.41 s preads=53076 per_stream_bw=629 MB/s
+mem: peak_rss=12.20 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=c10767d05f079bb8
+text: <|channel|>analysis<|message|>The user asks: "Why is the southern hemisphere opposite?" They likely refer to seasons being opposite between hemispheres. They want explanation: because Earth's axis tilt causes opposite orientation relative to Sun. So when northern hemisphere tilted toward Sun, southern is tilted away, etc. Provide explanation. Also mention that seasons are opposite because of tilt and Earth's orbit. Provide details: at solstices, one hemisphere receives more direct sunlight, the other less. Provide explanation of why it's opposite: because tilt is fixed relative to stars, so as Earth orbits, the hemisphere that is tilted toward Sun changes. Provide mention of equinoxes. Also mention that the tilt is 23.5°, so at any given time, one hemisphere is tilted toward Sun, the other away. Provide explanation of why seasons are opposite: because of geometry. Also mention that the tilt is not reversed; it's the same tilt but orientation changes relative to Sun. Provide explanation of why the southern hemisphere experiences opposite seasons: because of Earth's tilt and orbit. Provide details: at June solstice, northern hemisphere receives more direct sunlight, southern receives less. At December solstice, reversed. Provide mention of equinoxes: equal day length. Provide mention of why the tilt is 23.5°, not 0°, and why it's stable. Provide mention of precession. Provide mention of why seasons are opposite: because of tilt orientation relative to Sun. Provide explanation of why the tilt is not reversed: because Earth rotates around Sun, not around axis. Provide mention of why the tilt is stable: due to angular momentum. Provide mention of why seasons are opposite: because of geometry. Provide answer.<|end|><|start|>assistant<|channel|>final<|message|>**Because the Earth’s axis is tilted, the two hemispheres point in opposite directions relative to the Sun at any given time.**  
+
+---
+
+### 1.  The tilt is fixed in space  
+- Earth’s rotation axis is inclined about **23.5°** to the plane of its orbit (the ecliptic).  
+- That tilt does **not** flip from north‑to‑south; it stays the same orientation relative to the distant stars.
+
+### 2.  Earth moves around the Sun  
+- As Earth travels along its orbit, the Sun’s apparent position in the sky changes.  
+- The hemisphere that is tilted **toward** the Sun receives more direct, longer‑lasting sunlight → **summer**.  
+- The opposite hemisphere, tilted **away**, gets less direct, shorter‑lasting sunlight → **winter**.
+
+### 3.  Why the seasons are opposite  
+- When the northern hemisphere is tilted toward the Sun (e.g., June solstice), the southern hemisphere is tilted away, so it is winter there.  
+- Six months later, the Earth has moved to the other side of its orbit; the tilt now points the southern hemisphere toward the Sun (December solstice), making it summer there while the north is in winter.  
+- During the equinoxes, the axis is roughly perpendicular to the Sun’s rays, so both hemispheres receive roughly equal daylight and temperature.
+
+---
+
+**Bottom line:** The seasons are opposite because the Earth’s single, fixed axial tilt causes one hemisphere to face the Sun while the other faces away, and this orientation swaps as the planet orbits the Sun.

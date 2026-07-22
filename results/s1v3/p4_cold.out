@@ -1,0 +1,438 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+ttft: total=35629 ms | template=0 tokenize=4 kv_match=0 prefill=35623 first_sample=2
+ttft: ctx_held=0 rendered=997 reused=0 reprefill=997 (100.0% of rendered)
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok    976 |The|
+tok   1825 | user|
+tok  31064 | asks|
+tok     25 |:|
+tok    392 | "|
+tok  34405 |Which|
+tok    997 | part|
+tok   8844 | uses|
+tok    290 | the|
+tok   1645 | most|
+tok   5954 | energy|
+tok  16842 |?"|
+tok   3164 | They|
+tok   6716 | refer|
+tok    316 | to|
+tok  55063 | refrigerator|
+tok   7881 | parts|
+tok     13 |.|
+tok   3164 | They|
+tok   1682 | want|
+tok    316 | to|
+tok   1761 | know|
+tok   1118 | which|
+tok    997 | part|
+tok   8844 | uses|
+tok   1645 | most|
+tok   5954 | energy|
+tok     13 |.|
+tok   1416 | We|
+tok   1309 | need|
+tok    316 | to|
+tok   6052 | answer|
+tok     25 |:|
+tok  78102 | compressor|
+tok   8844 | uses|
+tok   1645 | most|
+tok   5954 | energy|
+tok     11 |,|
+tok    889 | but|
+tok   1217 | also|
+tok 192921 | condenser|
+tok    326 | and|
+tok  84074 | evapor|
+tok   1246 |ator|
+tok     13 |.|
+tok    623 | The|
+tok  78102 | compressor|
+tok    382 | is|
+tok    290 | the|
+tok   2758 | main|
+tok   5954 | energy|
+tok  15318 | consumer|
+tok     13 |.|
+tok    623 | The|
+tok 192921 | condenser|
+tok    326 | and|
+tok  84074 | evapor|
+tok   1246 |ator|
+tok    553 | are|
+tok  45487 | passive|
+tok     13 |.|
+tok    623 | The|
+tok  78102 | compressor|
+tok   2226 | does|
+tok   1101 | work|
+tok    316 | to|
+tok  34112 | compress|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     13 |.|
+tok    623 | The|
+tok  78102 | compressor|
+tok    382 | is|
+tok    290 | the|
+tok   2758 | main|
+tok   5954 | energy|
+tok  15318 | consumer|
+tok     13 |.|
+tok    623 | The|
+tok 192921 | condenser|
+tok    326 | and|
+tok  84074 | evapor|
+tok   1246 |ator|
+tok    553 | are|
+tok  10609 | heat|
+tok  76908 | exch|
+tok  17646 |angers|
+tok     13 |.|
+tok    623 | The|
+tok  78102 | compressor|
+tok   8844 | uses|
+tok   1645 | most|
+tok   5954 | energy|
+tok     13 |.|
+tok    623 | The|
+tok  78102 | compressor|
+tok    382 | is|
+tok    290 | the|
+tok   9771 | motor|
+tok     13 |.|
+tok    623 | The|
+tok  78102 | compressor|
+tok   8844 | uses|
+tok    290 | the|
+tok   1645 | most|
+tok   5954 | energy|
+tok     13 |.|
+tok    623 | The|
+tok 192921 | condenser|
+tok   8844 | uses|
+tok   1236 | some|
+tok   5954 | energy|
+tok    316 | to|
+tok 105792 | dissip|
+tok    379 |ate|
+tok  10609 | heat|
+tok    889 | but|
+tok    625 | not|
+tok    472 | as|
+tok   2009 | much|
+tok     13 |.|
+tok    623 | The|
+tok  84074 | evapor|
+tok   1246 |ator|
+tok   8844 | uses|
+tok    860 | no|
+tok   5954 | energy|
+tok     13 |.|
+tok    623 | The|
+tok  24603 | expansion|
+tok  39077 | valve|
+tok   8844 | uses|
+tok 175463 | negligible|
+tok   5954 | energy|
+tok     13 |.|
+tok   2632 | So|
+tok   6052 | answer|
+tok     25 |:|
+tok  78102 | compressor|
+tok   8844 | uses|
+tok   1645 | most|
+tok   5954 | energy|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  78102 | compressor|
+tok    885 |'s|
+tok   5954 | energy|
+tok  23818 | consumption|
+tok  20102 | depends|
+tok    402 | on|
+tok   4700 | load|
+tok     11 |,|
+tok  29341 | ambient|
+tok  12088 | temperature|
+tok     11 |,|
+tok    326 | and|
+tok  17456 | efficiency|
+tok     13 |.|
+tok  51441 | Provide|
+tok  21561 | suggestions|
+tok    316 | to|
+tok  10389 | reduce|
+tok   5954 | energy|
+tok  23818 | consumption|
+tok     25 |:|
+tok   3357 | keep|
+tok  44820 | fridge|
+tok   1775 | well|
+tok 109879 | insulated|
+tok     11 |,|
+tok   3357 | keep|
+tok   4121 | door|
+tok  12412 | closed|
+tok     11 |,|
+tok   3357 | keep|
+tok  78102 | compressor|
+tok   6788 | running|
+tok    540 | at|
+tok  24174 | optimal|
+tok  12088 | temperature|
+tok     11 |,|
+tok  12930 | maintain|
+tok  94160 | coils|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  51441 | Provide|
+tok    261 | a|
+tok   4022 | short|
+tok   6052 | answer|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok    976 |The|
+tok  78102 | compressor|
+tok    382 | is|
+tok    290 | the|
+tok  13385 | biggest|
+tok   5954 | energy|
+tok  50005 |‑|
+tok  72837 |consumer|
+tok    306 | in|
+tok    261 | a|
+tok  55063 | refrigerator|
+tok     13 |.|
+tok  91587 |**
+
+|
+tok     12 |-|
+tok   6240 | **|
+tok  13903 |Why|
+tok     30 |?|
+tok    410 |**|
+tok   4066 |  
+|
+tok    220 | |
+tok    533 | -|
+tok    623 | The|
+tok  78102 | compressor|
+tok    382 | is|
+tok    448 | an|
+tok  11194 | electric|
+tok   9771 | motor|
+tok    484 | that|
+tok   2226 | does|
+tok    290 | the|
+tok  29532 | mechanical|
+tok   1101 | work|
+tok    328 | of|
+tok  34112 | compress|
+tok    289 |ing|
+tok    290 | the|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     13 |.|
+tok   4066 |  
+|
+tok    220 | |
+tok    533 | -|
+tok   4569 | That|
+tok   1101 | work|
+tok    382 | is|
+tok    290 | the|
+tok   1606 | only|
+tok    997 | part|
+tok    328 | of|
+tok    290 | the|
+tok  15839 | cycle|
+tok    484 | that|
+tok   4771 | actually|
+tok 109297 | consumes|
+tok  25093 | electricity|
+tok     26 |;|
+tok    290 | the|
+tok 192921 | condenser|
+tok     11 |,|
+tok  24603 | expansion|
+tok  39077 | valve|
+tok     11 |,|
+tok    326 | and|
+tok  84074 | evapor|
+tok   1246 |ator|
+tok    553 | are|
+tok  45487 | passive|
+tok  10609 | heat|
+tok  50005 |‑|
+tok  77020 |exchange|
+tok  10674 | components|
+tok    484 | that|
+tok   1700 | don|
+tok   1573 |’t|
+tok   6174 | draw|
+tok   3470 | power|
+tok    364 |.
+
+|
+tok     12 |-|
+tok   6240 | **|
+tok   4827 |What|
+tok  49166 | influences|
+tok   1617 | its|
+tok   6174 | draw|
+tok     30 |?|
+tok    410 |**|
+tok   4066 |  
+|
+tok    220 | |
+tok    533 | -|
+tok  87510 | Ambient|
+tok  12088 | temperature|
+tok    350 | (|
+tok  15303 |hot|
+tok  11348 | rooms|
+tok  15155 | →|
+tok    945 | more|
+tok  78102 | compressor|
+tok   1101 | work|
+tok    741 |).|
+tok   4066 |  
+|
+tok    220 | |
+tok    533 | -|
+tok  13471 | Load|
+tok    350 | (|
+tok  15393 |full|
+tok  44820 | fridge|
+tok  15155 | →|
+tok    945 | more|
+tok  34328 | cooling|
+tok   8492 | demand|
+tok    741 |).|
+tok   4066 |  
+|
+tok    220 | |
+tok    533 | -|
+tok 186511 | Compressor|
+tok  17456 | efficiency|
+tok    350 | (|
+tok   2992 |older|
+tok   7015 | models|
+tok    503 | or|
+tok  55585 | poorly|
+tok  26871 | maintained|
+tok  13306 | units|
+tok   1199 | use|
+tok    945 | more|
+tok   3470 | power|
+tok   3991 |).
+
+|
+tok     12 |-|
+tok   6240 | **|
+tok   5299 |How|
+tok    316 | to|
+tok   3357 | keep|
+tok    480 | it|
+tok    591 | from|
+tok   2360 | using|
+tok   3101 | too|
+tok   2009 | much|
+tok 142760 |:**|
+tok   4066 |  
+|
+tok    220 | |
+tok    533 | -|
+tok  16835 | Keep|
+tok    290 | the|
+tok  44820 | fridge|
+tok   1775 | well|
+tok 109879 | insulated|
+tok    326 | and|
+tok    290 | the|
+tok   4121 | door|
+tok  12412 | closed|
+tok     13 |.|
+tok   4066 |  
+|
+tok    220 | |
+tok    533 | -|
+tok  16230 | Clean|
+tok    290 | the|
+tok 192921 | condenser|
+tok  94160 | coils|
+tok    813 | so|
+tok    290 | the|
+tok  78102 | compressor|
+tok   8894 | doesn|
+tok   1573 |’t|
+tok   1072 | over|
+tok  50005 |‑|
+tok   1596 |work|
+tok     13 |.|
+tok   4066 |  
+|
+tok    220 | |
+tok    533 | -|
+tok   7649 | Use|
+tok    261 | a|
+tok  44820 | fridge|
+tok    483 | with|
+tok    261 | a|
+tok   1932 | high|
+tok  50005 |‑|
+tok  13933 |eff|
+tok  12895 |iciency|
+tok  78102 | compressor|
+tok    350 | (|
+tok   9001 |look|
+tok    395 | for|
+tok  16394 | Energy|
+tok  11307 | Star|
+tok    503 | or|
+tok   6771 | similar|
+tok  25013 | ratings|
+tok    741 |).|
+mode=streamed prompt_toks=997 reused=0 generated=395 n_ubatch=128
+prefill: 35.62 s (27.99 tok/s)
+decode:  38.64 s (10.22 tok/s)
+io: cb_calls=9672 decode_uses=37920 decode_misses=3246 (hit 0.914) prefill_uses=91728 prefill_misses=4520
+io: pf_calls=184 pf_experts=4516 union avg=24.5 min=14 max=32 fill=10.24 s (pool 32 slots)
+io: prefetch_issued=282 prefetch_hits=97 prefetch_used=258 stall=14.97 s total_read=106666.3 MB avg_bw=1436 MB/s
+io: read_work=174.36 s preads=48288 per_stream_bw=612 MB/s
+mem: peak_rss=12.36 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=6fa7d051f7fccd88
+text: <|channel|>analysis<|message|>The user asks: "Which part uses the most energy?" They refer to refrigerator parts. They want to know which part uses most energy. We need to answer: compressor uses most energy, but also condenser and evaporator. The compressor is the main energy consumer. The condenser and evaporator are passive. The compressor does work to compress refrigerant. The compressor is the main energy consumer. The condenser and evaporator are heat exchangers. The compressor uses most energy. The compressor is the motor. The compressor uses the most energy. The condenser uses some energy to dissipate heat but not as much. The evaporator uses no energy. The expansion valve uses negligible energy. So answer: compressor uses most energy. Provide explanation. Also mention that the compressor's energy consumption depends on load, ambient temperature, and efficiency. Provide suggestions to reduce energy consumption: keep fridge well insulated, keep door closed, keep compressor running at optimal temperature, maintain coils, etc. Provide a short answer.<|end|><|start|>assistant<|channel|>final<|message|>**The compressor is the biggest energy‑consumer in a refrigerator.**
+
+- **Why?**  
+  - The compressor is an electric motor that does the mechanical work of compressing the refrigerant.  
+  - That work is the only part of the cycle that actually consumes electricity; the condenser, expansion valve, and evaporator are passive heat‑exchange components that don’t draw power.
+
+- **What influences its draw?**  
+  - Ambient temperature (hot rooms → more compressor work).  
+  - Load (full fridge → more cooling demand).  
+  - Compressor efficiency (older models or poorly maintained units use more power).
+
+- **How to keep it from using too much:**  
+  - Keep the fridge well insulated and the door closed.  
+  - Clean the condenser coils so the compressor doesn’t over‑work.  
+  - Use a fridge with a high‑efficiency compressor (look for Energy Star or similar ratings).

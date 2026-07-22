@@ -1,0 +1,500 @@
+ttft: total=13055 ms | template=0 tokenize=1 kv_match=0 prefill=13053 first_sample=1
+ttft: ctx_held=0 rendered=295 reused=0 reprefill=295 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok   6052 | answer|
+tok   9809 | difference|
+tok   2870 | between|
+tok  10825 | stack|
+tok    326 | and|
+tok  13661 | queue|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok  30547 | explanation|
+tok     13 |.|
+tok   7649 | Use|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok   5622 |Stack|
+tok  10217 | vs|
+tok     13 |.|
+tok  35581 | Queue|
+tok   1127 | –|
+tok    290 | the|
+tok   2140 | key|
+tok   9809 | difference|
+tok  91587 |**
+
+|
+tok     91 |||
+tok  29261 | Feature|
+tok   1022 | ||
+tok  25134 | Stack|
+tok   1022 | ||
+tok  35581 | Queue|
+tok  15972 | |
+|
+tok     91 |||
+tok  55446 |---------|
+tok     91 |||
+tok  39028 |-------|
+tok     91 |||
+tok  39028 |-------|
+tok  14876 ||
+|
+tok     91 |||
+tok   6240 | **|
+tok   4861 |Order|
+tok    328 | of|
+tok   3158 | access|
+tok    410 |**|
+tok   1022 | ||
+tok  12246 | Last|
+tok  50005 |‑|
+tok    258 |in|
+tok     11 |,|
+tok   1577 | first|
+tok  50005 |‑|
+tok    468 |out|
+tok    350 | (|
+tok     43 |L|
+tok  79012 |IFO|
+tok      8 |)|
+tok   1022 | ||
+tok   8338 | First|
+tok  50005 |‑|
+tok    258 |in|
+tok     11 |,|
+tok   1577 | first|
+tok  50005 |‑|
+tok    468 |out|
+tok    350 | (|
+tok 196867 |FIFO|
+tok      8 |)|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  21536 |Primary|
+tok  12084 | operations|
+tok    410 |**|
+tok   1022 | ||
+tok   2700 | `|
+tok  18873 |push|
+tok     63 |`|
+tok    350 | (|
+tok    964 |add|
+tok    316 | to|
+tok   2344 | top|
+tok    936 |),|
+tok   2700 | `|
+tok  15042 |pop|
+tok     63 |`|
+tok    350 | (|
+tok   4942 |remove|
+tok    591 | from|
+tok   2344 | top|
+tok      8 |)|
+tok   1022 | ||
+tok   2700 | `|
+tok 133113 |enqueue|
+tok     63 |`|
+tok    350 | (|
+tok    964 |add|
+tok    316 | to|
+tok  20749 | rear|
+tok    936 |),|
+tok   2700 | `|
+tok    613 |de|
+tok   9409 |queue|
+tok     63 |`|
+tok    350 | (|
+tok   4942 |remove|
+tok    591 | from|
+tok   5567 | front|
+tok      8 |)|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 164657 |Typical|
+tok   1199 | use|
+tok  50005 |‑|
+tok  39373 |cases|
+tok    410 |**|
+tok   1022 | ||
+tok  11035 | Function|
+tok   2421 | call|
+tok  10825 | stack|
+tok     11 |,|
+tok  59427 | undo|
+tok     14 |/|
+tok  69380 |redo|
+tok   5678 | history|
+tok     11 |,|
+tok  13636 | depth|
+tok  50005 |‑|
+tok   7743 |first|
+tok   3684 | search|
+tok   1022 | ||
+tok   9178 | Message|
+tok 101913 | queues|
+tok     11 |,|
+tok  76853 | breadth|
+tok  50005 |‑|
+tok   7743 |first|
+tok   3684 | search|
+tok     11 |,|
+tok  28923 | printer|
+tok   3349 | job|
+tok   1562 | list|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok   1186 |Data|
+tok   8866 | structure|
+tok    410 |**|
+tok   1022 | ||
+tok  50680 | Often|
+tok  20681 | implemented|
+tok    483 | with|
+tok    448 | an|
+tok   2644 | array|
+tok    503 | or|
+tok  17002 | linked|
+tok   1562 | list|
+tok   1919 | where|
+tok    290 | the|
+tok    966 | “|
+tok   8169 |top|
+tok    693 |”|
+tok    382 | is|
+tok    261 | a|
+tok   4590 | single|
+tok   1268 | end|
+tok   1022 | ||
+tok  50680 | Often|
+tok  20681 | implemented|
+tok    483 | with|
+tok    448 | an|
+tok   2644 | array|
+tok    503 | or|
+tok  17002 | linked|
+tok   1562 | list|
+tok   1919 | where|
+tok    966 | “|
+tok  10313 |front|
+tok    693 |”|
+tok    326 | and|
+tok    966 | “|
+tok 108863 |rear|
+tok    693 |”|
+tok    553 | are|
+tok   1920 | two|
+tok  17095 | ends|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok   7324 |Access|
+tok   8302 | pattern|
+tok    410 |**|
+tok   1022 | ||
+tok  12817 | Only|
+tok    290 | the|
+tok   1645 | most|
+tok   8422 | recently|
+tok   5768 | added|
+tok   3577 | element|
+tok    382 | is|
+tok  18240 | accessible|
+tok   1022 | ||
+tok  12817 | Only|
+tok    290 | the|
+tok  34331 | oldest|
+tok   3577 | element|
+tok    382 | is|
+tok  18240 | accessible|
+tok  47459 | |
+
+|
+tok    637 |In|
+tok   4022 | short|
+tok     25 |:|
+tok    261 | a|
+tok   6240 | **|
+tok  15145 |stack|
+tok    410 |**|
+tok  19733 | lets|
+tok    481 | you|
+tok   1101 | work|
+tok    483 | with|
+tok    290 | the|
+tok  29442 | newest|
+tok   2169 | item|
+tok   1577 | first|
+tok     11 |,|
+tok   2049 | while|
+tok    261 | a|
+tok   6240 | **|
+tok   9409 |queue|
+tok    410 |**|
+tok  14340 | processes|
+tok   4732 | items|
+tok    306 | in|
+tok    290 | the|
+tok   2569 | order|
+tok   1023 | they|
+tok  18157 | arrived|
+tok     13 |.|
+mode=streamed prompt_toks=295 reused=0 generated=251 n_ubatch=128
+prefill: 13.05 s (22.60 tok/s)
+decode:  38.93 s (6.45 tok/s)
+io: cb_calls=6096 decode_uses=24096 decode_misses=3186 (hit 0.868) prefill_uses=27144 prefill_misses=1605
+io: pf_calls=69 pf_experts=1601 union avg=23.2 min=14 max=31 fill=6.11 s (pool 32 slots)
+io: prefetch_issued=544 prefetch_hits=208 prefetch_used=465 stall=22.62 s total_read=70708.8 MB avg_bw=1360 MB/s
+io: read_work=173.77 s preads=32010 per_stream_bw=407 MB/s
+mem: peak_rss=12.12 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=4f785aaf06881efb
+text: <|channel|>analysis<|message|>We need to answer difference between stack and queue. Provide concise explanation. Use bullet points.<|end|><|start|>assistant<|channel|>final<|message|>**Stack vs. Queue – the key difference**
+
+| Feature | Stack | Queue |
+|---------|-------|-------|
+| **Order of access** | Last‑in, first‑out (LIFO) | First‑in, first‑out (FIFO) |
+| **Primary operations** | `push` (add to top), `pop` (remove from top) | `enqueue` (add to rear), `dequeue` (remove from front) |
+| **Typical use‑cases** | Function call stack, undo/redo history, depth‑first search | Message queues, breadth‑first search, printer job list |
+| **Data structure** | Often implemented with an array or linked list where the “top” is a single end | Often implemented with an array or linked list where “front” and “rear” are two ends |
+| **Access pattern** | Only the most recently added element is accessible | Only the oldest element is accessible |
+
+In short: a **stack** lets you work with the newest item first, while a **queue** processes items in the order they arrived.
+
+<<<TURN>>>
+ttft: total=7013 ms | template=0 tokenize=16 kv_match=0 prefill=6995 first_sample=1
+ttft: ctx_held=546 rendered=349 reused=295 reprefill=54 (15.5% of rendered)
+ttft: diverged_at=295 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok  94272 |Provide|
+tok   1001 | one|
+tok   1374 | real|
+tok   1199 | use|
+tok   1890 | case|
+tok    395 | for|
+tok  10825 | stack|
+tok    326 | and|
+tok   1001 | one|
+tok    395 | for|
+tok  13661 | queue|
+tok     13 |.|
+tok   7649 | Use|
+tok  82463 | concise|
+tok  15652 | examples|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok   5622 |Stack|
+tok   1127 | –|
+tok   1001 | one|
+tok   1374 | real|
+tok   1199 | use|
+tok   1890 | case|
+tok  91587 |**
+
+|
+tok     12 |-|
+tok   6240 | **|
+tok  70762 |Undo|
+tok     14 |/|
+tok 139578 |Redo|
+tok    306 | in|
+tok   2201 | text|
+tok  44290 | editors|
+tok    410 |**|
+tok   4066 |  
+|
+tok    220 | |
+tok  11555 | Each|
+tok   1825 | user|
+tok   3736 | action|
+tok    350 | (|
+tok 157110 |typing|
+tok     11 |,|
+tok  61348 | formatting|
+tok     11 |,|
+tok   5178 | etc|
+tok   8476 |.)|
+tok    382 | is|
+tok  31155 | pushed|
+tok  13291 | onto|
+tok    261 | a|
+tok  10825 | stack|
+tok     13 |.|
+tok   4066 |  
+|
+tok    220 | |
+tok   4296 | When|
+tok    290 | the|
+tok   1825 | user|
+tok 102313 | presses|
+tok    425 | *|
+tok  70762 |Undo|
+tok  24077 |*,|
+tok    290 | the|
+tok   9836 | editor|
+tok  76042 | pops|
+tok    290 | the|
+tok   1645 | most|
+tok   7178 | recent|
+tok   3736 | action|
+tok    326 | and|
+tok  29518 | revers|
+tok    268 |es|
+tok    480 | it|
+tok     13 |.|
+tok   4066 |  
+|
+tok    220 | |
+tok    623 | The|
+tok  10825 | stack|
+tok  24752 | naturally|
+tok  18295 | keeps|
+tok    290 | the|
+tok  10370 | actions|
+tok    306 | in|
+tok  18199 | reverse|
+tok  50005 |‑|
+tok  12214 |chron|
+tok   8339 |ological|
+tok   2569 | order|
+tok     11 |,|
+tok    813 | so|
+tok    290 | the|
+tok   2174 | last|
+tok   3343 | change|
+tok    382 | is|
+tok 178433 | undone|
+tok   1577 | first|
+tok    364 |.
+
+|
+tok    410 |**|
+tok   9801 |Queue|
+tok   1127 | –|
+tok   1001 | one|
+tok   1374 | real|
+tok   1199 | use|
+tok   1890 | case|
+tok  91587 |**
+
+|
+tok     12 |-|
+tok   6240 | **|
+tok  13302 |Print|
+tok  50005 |‑|
+tok   1148 |sp|
+tok    971 |ool|
+tok    259 |er|
+tok    410 |**|
+tok   4066 |  
+|
+tok    220 | |
+tok  13103 | Print|
+tok  10420 | jobs|
+tok  18338 | arrive|
+tok    306 | in|
+tok    290 | the|
+tok   2569 | order|
+tok    290 | the|
+tok   1825 | user|
+tok  40246 | sends|
+tok   1373 | them|
+tok     13 |.|
+tok   4066 |  
+|
+tok    220 | |
+tok    623 | The|
+tok 199454 | spool|
+tok    259 |er|
+tok   9610 | places|
+tok   2454 | each|
+tok   3349 | job|
+tok    540 | at|
+tok    290 | the|
+tok   1602 | back|
+tok    328 | of|
+tok    261 | a|
+tok  13661 | queue|
+tok     13 |.|
+tok   4066 |  
+|
+tok    220 | |
+tok    623 | The|
+tok  28923 | printer|
+tok  14340 | processes|
+tok  10420 | jobs|
+tok    656 | by|
+tok  90347 | deque|
+tok  23147 |uing|
+tok    591 | from|
+tok    290 | the|
+tok   5567 | front|
+tok     11 |,|
+tok  26386 | ensuring|
+tok    484 | that|
+tok  10420 | jobs|
+tok    553 | are|
+tok  22774 | printed|
+tok    306 | in|
+tok    290 | the|
+tok   6354 | exact|
+tok   2569 | order|
+tok   1023 | they|
+tok   1504 | were|
+tok  19847 | submitted|
+tok     13 |.|
+mode=streamed prompt_toks=349 reused=295 generated=174 n_ubatch=128
+prefill: 7.00 s (7.72 tok/s)
+decode:  26.72 s (6.51 tok/s)
+io: cb_calls=4200 decode_uses=16704 decode_misses=2627 (hit 0.843) prefill_uses=4972 prefill_misses=558
+io: pf_calls=23 pf_experts=557 union avg=24.2 min=18 max=31 fill=5.46 s (pool 32 slots)
+io: prefetch_issued=1017 prefetch_hits=423 prefetch_used=788 stall=16.12 s total_read=55692.3 MB avg_bw=1652 MB/s
+io: read_work=153.50 s preads=25212 per_stream_bw=363 MB/s
+io: guard pressure_drops=1 cap_evictions=48 final_cap=14
+mem: peak_rss=12.12 GB phys_footprint=6.12 GB
+therm: fair
+logits_hash=246f4915bec0f7af
+text: <|channel|>analysis<|message|>Provide one real use case for stack and one for queue. Use concise examples.<|end|><|start|>assistant<|channel|>final<|message|>**Stack – one real use case**
+
+- **Undo/Redo in text editors**  
+  Each user action (typing, formatting, etc.) is pushed onto a stack.  
+  When the user presses *Undo*, the editor pops the most recent action and reverses it.  
+  The stack naturally keeps the actions in reverse‑chronological order, so the last change is undone first.
+
+**Queue – one real use case**
+
+- **Print‑spooler**  
+  Print jobs arrive in the order the user sends them.  
+  The spooler places each job at the back of a queue.  
+  The printer processes jobs by dequeuing from the front, ensuring that jobs are printed in the exact order they were submitted.

@@ -1,0 +1,1520 @@
+ttft: total=13635 ms | template=0 tokenize=1 kv_match=0 prefill=13632 first_sample=1
+ttft: ctx_held=0 rendered=293 reused=0 reprefill=293 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok    290 | the|
+tok   2273 | process|
+tok     25 |:|
+tok  64016 | yeast|
+tok 120397 | fermentation|
+tok     11 |,|
+tok  10271 | CO|
+tok     17 |2|
+tok   7142 | production|
+tok     11 |,|
+tok  45397 | gluten|
+tok   5402 | network|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  51441 | Provide|
+tok   5364 | clear|
+tok  30547 | explanation|
+tok     13 |.|
+tok  63659 | Probably|
+tok   8633 | mention|
+tok  64016 | yeast|
+tok  51685 | metabolism|
+tok     11 |,|
+tok  15338 | sugar|
+tok  22165 | conversion|
+tok    316 | to|
+tok  10271 | CO|
+tok     17 |2|
+tok    326 | and|
+tok  98947 | ethanol|
+tok     11 |,|
+tok  45397 | gluten|
+tok   5402 | network|
+tok 183271 | trapping|
+tok   7322 | gas|
+tok     11 |,|
+tok  26555 | rising|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  64016 | yeast|
+tok    382 | is|
+tok    261 | a|
+tok   6405 | living|
+tok  45843 | organism|
+tok     11 |,|
+tok 120397 | fermentation|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  51441 | Provide|
+tok   4878 | details|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  64016 | yeast|
+tok    382 | is|
+tok    261 | a|
+tok 116545 | fungus|
+tok     11 |,|
+tok    625 | not|
+tok  32829 | bacteria|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok  64016 | yeast|
+tok    885 |'s|
+tok   5430 | role|
+tok    306 | in|
+tok  19544 | bread|
+tok   4137 | making|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  64016 | yeast|
+tok    382 | is|
+tok    261 | a|
+tok   4590 | single|
+tok   3452 |-c|
+tok  36681 |elled|
+tok  45843 | organism|
+tok    484 | that|
+tok 109297 | consumes|
+tok 109680 | sugars|
+tok    326 | and|
+tok  28135 | produces|
+tok  10271 | CO|
+tok     17 |2|
+tok    326 | and|
+tok  16589 | alcohol|
+tok     13 |.|
+tok    623 | The|
+tok  10271 | CO|
+tok     17 |2|
+tok   8625 | gets|
+tok  58304 | trapped|
+tok    306 | in|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok  45397 | gluten|
+tok   5402 | network|
+tok     11 |,|
+tok  24297 | causing|
+tok    290 | the|
+tok  41613 | dough|
+tok    316 | to|
+tok  16601 | rise|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok   8866 | structure|
+tok    382 | is|
+tok  20680 | formed|
+tok    656 | by|
+tok  45397 | gluten|
+tok  37394 | proteins|
+tok    350 | (|
+tok  73300 |gli|
+tok  38800 |adin|
+tok    326 | and|
+tok  45397 | gluten|
+tok    258 |in|
+tok      8 |)|
+tok    484 | that|
+tok   1625 | form|
+tok    261 | a|
+tok   5402 | network|
+tok    484 | that|
+tok    665 | can|
+tok  34270 | trap|
+tok   7322 | gas|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok   1217 | also|
+tok  28135 | produces|
+tok  23341 | flavor|
+tok  43556 | compounds|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  41613 | dough|
+tok    382 | is|
+tok  55669 | baked|
+tok     11 |,|
+tok    290 | the|
+tok  64016 | yeast|
+tok   4487 | dies|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  10271 | CO|
+tok     17 |2|
+tok  14777 | remains|
+tok  58304 | trapped|
+tok     11 |,|
+tok   9874 | giving|
+tok    290 | the|
+tok  19544 | bread|
+tok   1617 | its|
+tok 123806 | airy|
+tok   8866 | structure|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok   8110 | activity|
+tok    382 | is|
+tok  12088 | temperature|
+tok  29719 | dependent|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok  26555 | rising|
+tok    382 | is|
+tok   5192 | due|
+tok    316 | to|
+tok    290 | the|
+tok  24603 | expansion|
+tok    328 | of|
+tok    290 | the|
+tok   7322 | gas|
+tok    326 | and|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok 134809 | elasticity|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok 168866 | anaer|
+tok  53561 |obic|
+tok     11 |,|
+tok  24168 | producing|
+tok  98947 | ethanol|
+tok    326 | and|
+tok  10271 | CO|
+tok     17 |2|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok  26555 | rising|
+tok    382 | is|
+tok   5192 | due|
+tok    316 | to|
+tok    290 | the|
+tok   7322 | gas|
+tok  24603 | expansion|
+tok    326 | and|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok   8285 | ability|
+tok    316 | to|
+tok   5060 | hold|
+tok    480 | it|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok   8266 | growth|
+tok    326 | and|
+tok 120397 | fermentation|
+tok  10635 | produce|
+tok  10271 | CO|
+tok     17 |2|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok  26555 | rising|
+tok    382 | is|
+tok   5192 | due|
+tok    316 | to|
+tok    290 | the|
+tok   7322 | gas|
+tok   2447 | being|
+tok  58304 | trapped|
+tok    306 | in|
+tok    290 | the|
+tok  45397 | gluten|
+tok   5402 | network|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok  26555 | rising|
+tok    382 | is|
+tok   5192 | due|
+tok    316 | to|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok   1008 |...|
+tok    350 | (|
+tok  16743 |stop|
+tok  74481 | repeating|
+tok    741 |).|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok  30547 | explanation|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  43270 | triggered|
+tok    656 | by|
+tok    290 | the|
+tok  14324 | presence|
+tok    328 | of|
+tok  15338 | sugar|
+tok    326 | and|
+tok   3411 | water|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok   1008 |...|
+tok    350 | (|
+tok  16743 |stop|
+tok    741 |).|
+tok  51441 | Provide|
+tok   1721 | final|
+tok   6052 | answer|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok  13903 |Why|
+tok  19544 | bread|
+tok  67628 | rises|
+tok   1261 | when|
+tok    481 | you|
+tok   1147 | add|
+tok  64016 | yeast|
+tok  91587 |**
+
+|
+tok     16 |1|
+tok     13 |.|
+tok   6240 | **|
+tok  37343 |Ye|
+tok    629 |ast|
+tok    382 | is|
+tok    261 | a|
+tok   6405 | living|
+tok  45843 | organism|
+tok    410 |**|
+tok   4066 |  
+|
+tok    256 |  |
+tok    533 | -|
+tok  25884 | Ye|
+tok    629 |ast|
+tok    350 | (|
+tok  77091 |usually|
+tok    425 | *|
+tok 119125 |Sac|
+tok   3257 |char|
+tok  35927 |omy|
+tok   1622 |ces|
+tok  29404 | cere|
+tok   2083 |vis|
+tok  57593 |iae|
+tok   8162 |*)|
+tok    382 | is|
+tok    261 | a|
+tok   4590 | single|
+tok  50005 |‑|
+tok  10936 |cell|
+tok 116545 | fungus|
+tok    484 | that|
+tok  52667 | feeds|
+tok    402 | on|
+tok 109680 | sugars|
+tok     13 |.|
+tok   4066 |  
+|
+tok    256 |  |
+tok    533 | -|
+tok    730 | In|
+tok  41613 | dough|
+tok     11 |,|
+tok    480 | it|
+tok 109297 | consumes|
+tok    290 | the|
+tok   2839 | available|
+tok 109680 | sugars|
+tok    350 | (|
+tok   3607 |gl|
+tok 143201 |ucose|
+tok     11 |,|
+tok  71122 | malt|
+tok    918 |ose|
+tok     11 |,|
+tok   5178 | etc|
+tok   8476 |.)|
+tok    326 | and|
+tok     11 |,|
+tok   1641 | under|
+tok   9144 | warm|
+tok     11 |,|
+tok  23364 | moist|
+tok   6409 | conditions|
+tok     11 |,|
+tok    480 | it|
+tok   8510 | fer|
+tok   1626 |ments|
+tok   1373 | them|
+tok    364 |.
+
+|
+tok     17 |2|
+tok     13 |.|
+tok   6240 | **|
+tok  99106 |Fer|
+tok  20004 |mentation|
+tok  28135 | produces|
+tok   7322 | gas|
+tok    326 | and|
+tok  16589 | alcohol|
+tok    410 |**|
+tok   4066 |  
+|
+tok    256 |  |
+tok    533 | -|
+tok    623 | The|
+tok  63392 | metabolic|
+tok  58578 | pathway|
+tok    382 | is|
+tok 168866 | anaer|
+tok  53561 |obic|
+tok     25 |:|
+tok   4066 |  
+|
+tok    257 |    |
+tok   2381 | \|
+tok  20070 |[
+|
+tok    257 |    |
+tok   2381 | \|
+tok    919 |text|
+tok     90 |{|
+tok     34 |C|
+tok  44153 |}_|
+tok     21 |6|
+tok     59 |\|
+tok    919 |text|
+tok     90 |{|
+tok     39 |H|
+tok  74399 |}_{|
+tok    899 |12|
+tok  21170 |}\|
+tok    919 |text|
+tok     90 |{|
+tok     46 |O|
+tok  44153 |}_|
+tok     21 |6|
+tok   2381 | \|
+tok  36556 |;\|
+tok     87 |x|
+tok 153790 |rightarrow|
+tok  57575 |{\|
+tok    919 |text|
+tok     90 |{|
+tok   2422 |ye|
+tok    629 |ast|
+tok 199421 |}}\|
+tok     26 |;|
+tok    220 | |
+tok     17 |2|
+tok  40037 |\,|
+tok     59 |\|
+tok    919 |text|
+tok     90 |{|
+tok   8310 |CO|
+tok  44153 |}_|
+tok     17 |2|
+tok    659 | +|
+tok    220 | |
+tok     17 |2|
+tok  40037 |\,|
+tok     59 |\|
+tok    919 |text|
+tok     90 |{|
+tok   1068 |eth|
+tok  64398 |anol|
+tok    739 |}
+|
+tok    257 |    |
+tok   2381 | \|
+tok   1592 |]
+|
+tok    256 |  |
+tok    533 | -|
+tok  36897 | Carbon|
+tok  70513 | dioxide|
+tok    350 | (|
+tok   8310 |CO|
+tok 153435 |₂|
+tok      8 |)|
+tok    382 | is|
+tok    261 | a|
+tok   7322 | gas|
+tok    484 | that|
+tok  88023 | expands|
+tok     11 |,|
+tok   2049 | while|
+tok  98947 | ethanol|
+tok    382 | is|
+tok    261 | a|
+tok  20032 | liquid|
+tok    484 | that|
+tok   4849 | later|
+tok  84074 | evapor|
+tok   1381 |ates|
+tok   3354 | during|
+tok  32976 | baking|
+tok    364 |.
+
+|
+tok     18 |3|
+tok     13 |.|
+tok   6240 | **|
+tok   8394 |Gl|
+tok   9627 |uten|
+tok   5402 | network|
+tok  88055 | traps|
+tok    290 | the|
+tok   7322 | gas|
+tok    410 |**|
+tok   4066 |  
+|
+tok    256 |  |
+tok    533 | -|
+tok 160780 | Flour|
+tok   8895 | contains|
+tok  45397 | gluten|
+tok  37394 | proteins|
+tok    350 | (|
+tok  73300 |gli|
+tok  38800 |adin|
+tok    326 | and|
+tok  45397 | gluten|
+tok    258 |in|
+tok    741 |).|
+tok   4296 | When|
+tok   3411 | water|
+tok    382 | is|
+tok   5768 | added|
+tok    326 | and|
+tok    290 | the|
+tok  41613 | dough|
+tok    382 | is|
+tok  38009 | kne|
+tok  25132 |aded|
+tok     11 |,|
+tok   1879 | these|
+tok  37394 | proteins|
+tok   1625 | form|
+tok    261 | a|
+tok 186679 | stretchy|
+tok     11 |,|
+tok  40265 | elastic|
+tok   5402 | network|
+tok     13 |.|
+tok   4066 |  
+|
+tok    256 |  |
+tok    533 | -|
+tok   1877 | As|
+tok  64016 | yeast|
+tok  30979 | releases|
+tok  10271 | CO|
+tok 153435 |₂|
+tok     11 |,|
+tok    290 | the|
+tok  72184 | bubbles|
+tok    717 | get|
+tok  58304 | trapped|
+tok   6772 | inside|
+tok    495 | this|
+tok   5402 | network|
+tok     11 |,|
+tok  24297 | causing|
+tok    290 | the|
+tok  41613 | dough|
+tok    316 | to|
+tok  10791 | expand|
+tok    364 |.
+
+|
+tok     19 |4|
+tok     13 |.|
+tok   6240 | **|
+tok    976 |The|
+tok  41613 | dough|
+tok    802 |’s|
+tok 134809 | elasticity|
+tok   7927 | allows|
+tok    480 | it|
+tok    316 | to|
+tok   5060 | hold|
+tok    290 | the|
+tok   7322 | gas|
+tok    410 |**|
+tok   4066 |  
+|
+tok    256 |  |
+tok    533 | -|
+tok    623 | The|
+tok  45397 | gluten|
+tok   5402 | network|
+tok    382 | is|
+tok   5532 | strong|
+tok   4951 | enough|
+tok    316 | to|
+tok   3357 | keep|
+tok    290 | the|
+tok  72184 | bubbles|
+tok    591 | from|
+tok  82678 | popping|
+tok     11 |,|
+tok    889 | but|
+tok  40265 | elastic|
+tok   4951 | enough|
+tok    316 | to|
+tok  21638 | stretch|
+tok    472 | as|
+tok    290 | the|
+tok   7322 | gas|
+tok  10945 | volume|
+tok  21073 | increases|
+tok     13 |.|
+tok   4066 |  
+|
+tok    256 |  |
+tok    533 | -|
+tok   1328 | This|
+tok  14083 | combination|
+tok    328 | of|
+tok 134809 | elasticity|
+tok    326 | and|
+tok   7322 | gas|
+tok   7142 | production|
+tok    382 | is|
+tok   1412 | what|
+tok   8967 | gives|
+tok  19544 | bread|
+tok   1617 | its|
+tok 123806 | airy|
+tok     11 |,|
+tok 132932 | porous|
+tok   8866 | structure|
+tok    364 |.
+
+|
+tok     20 |5|
+tok     13 |.|
+tok   6240 | **|
+tok     33 |B|
+tok   5016 |aking|
+tok   1721 | final|
+tok   6370 |izes|
+tok    290 | the|
+tok  16601 | rise|
+tok    410 |**|
+tok   4066 |  
+|
+tok    256 |  |
+tok    533 | -|
+tok   4296 | When|
+tok    290 | the|
+tok  41613 | dough|
+tok    382 | is|
+tok  55669 | baked|
+tok     11 |,|
+tok    290 | the|
+tok  64016 | yeast|
+tok   4487 | dies|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  10271 | CO|
+tok 153435 |₂|
+tok    484 | that|
+tok    853 | has|
+tok   1339 | been|
+tok  58304 | trapped|
+tok  14777 | remains|
+tok     13 |.|
+tok   4066 |  
+|
+tok    256 |  |
+tok    533 | -|
+tok  41998 | Heat|
+tok   1217 | also|
+tok  16431 | causes|
+tok    290 | the|
+tok  15448 | remaining|
+tok  36036 | moisture|
+tok    316 | to|
+tok  84074 | evapor|
+tok    379 |ate|
+tok     11 |,|
+tok  35479 | expanding|
+tok    290 | the|
+tok   7322 | gas|
+tok   6544 | further|
+tok    326 | and|
+tok   9258 | setting|
+tok    290 | the|
+tok 180352 | crumb|
+tok   8866 | structure|
+tok    364 |.
+
+|
+tok    410 |**|
+tok  14913 |Bottom|
+tok   2543 | line|
+tok 142760 |:**|
+tok  25884 | Ye|
+tok    629 |ast|
+tok   8510 | fer|
+tok   1626 |ments|
+tok 109680 | sugars|
+tok    316 | to|
+tok  10635 | produce|
+tok  10271 | CO|
+tok 153435 |₂|
+tok     11 |,|
+tok    326 | and|
+tok    290 | the|
+tok  41613 | dough|
+tok    802 |’s|
+tok  45397 | gluten|
+tok   5402 | network|
+tok  88055 | traps|
+tok    484 | that|
+tok   7322 | gas|
+tok     11 |,|
+tok   4137 | making|
+tok    290 | the|
+tok  41613 | dough|
+tok  16601 | rise|
+tok     13 |.|
+tok    623 | The|
+tok   2273 | process|
+tok   1217 | also|
+tok  18518 | creates|
+tok  23341 | flavor|
+tok  43556 | compounds|
+tok    484 | that|
+tok   3644 | give|
+tok  19544 | bread|
+tok   1617 | its|
+tok  44596 | characteristic|
+tok  14673 | taste|
+tok     13 |.|
+mode=streamed prompt_toks=293 reused=0 generated=951 n_ubatch=128
+prefill: 13.63 s (21.49 tok/s)
+decode:  89.35 s (10.64 tok/s)
+io: cb_calls=22896 decode_uses=91296 decode_misses=8050 (hit 0.912) prefill_uses=26960 prefill_misses=1586
+io: pf_calls=69 pf_experts=1582 union avg=22.9 min=14 max=31 fill=6.36 s (pool 32 slots)
+io: prefetch_issued=297 prefetch_hits=107 prefetch_used=270 stall=34.00 s total_read=131649.6 MB avg_bw=1278 MB/s
+io: read_work=216.40 s preads=59598 per_stream_bw=608 MB/s
+mem: peak_rss=12.16 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=26a4601c8e89944b
+text: <|channel|>analysis<|message|>We need to explain the process: yeast fermentation, CO2 production, gluten network, etc. Provide clear explanation. Probably mention yeast metabolism, sugar conversion to CO2 and ethanol, gluten network trapping gas, rising. Also mention that yeast is a living organism, fermentation, etc. Provide details. Also mention that yeast is a fungus, not bacteria. Provide explanation of yeast's role in bread making. Also mention that yeast is a single-celled organism that consumes sugars and produces CO2 and alcohol. The CO2 gets trapped in the dough's gluten network, causing the dough to rise. Also mention that the dough's structure is formed by gluten proteins (gliadin and glutenin) that form a network that can trap gas. Also mention that the yeast also produces flavor compounds. Also mention that the dough is baked, the yeast dies, but the CO2 remains trapped, giving the bread its airy structure. Also mention that the yeast's activity is temperature dependent. Also mention that the dough's rising is due to the expansion of the gas and the dough's elasticity. Also mention that the yeast's metabolism is anaerobic, producing ethanol and CO2. Also mention that the dough's rising is due to the gas expansion and the dough's ability to hold it. Also mention that the yeast's growth and fermentation produce CO2. Also mention that the dough's rising is due to the gas being trapped in the gluten network. Also mention that the dough's rising is due to the yeast's metabolism. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism... (stop repeating). Provide concise explanation. Also mention that the yeast's metabolism is triggered by the presence of sugar and water. Also mention that the yeast's metabolism... (stop). Provide final answer.<|end|><|start|>assistant<|channel|>final<|message|>**Why bread rises when you add yeast**
+
+1. **Yeast is a living organism**  
+   - Yeast (usually *Saccharomyces cerevisiae*) is a single‑cell fungus that feeds on sugars.  
+   - In dough, it consumes the available sugars (glucose, maltose, etc.) and, under warm, moist conditions, it ferments them.
+
+2. **Fermentation produces gas and alcohol**  
+   - The metabolic pathway is anaerobic:  
+     \[
+     \text{C}_6\text{H}_{12}\text{O}_6 \;\xrightarrow{\text{yeast}}\; 2\,\text{CO}_2 + 2\,\text{ethanol}
+     \]
+   - Carbon dioxide (CO₂) is a gas that expands, while ethanol is a liquid that later evaporates during baking.
+
+3. **Gluten network traps the gas**  
+   - Flour contains gluten proteins (gliadin and glutenin). When water is added and the dough is kneaded, these proteins form a stretchy, elastic network.  
+   - As yeast releases CO₂, the bubbles get trapped inside this network, causing the dough to expand.
+
+4. **The dough’s elasticity allows it to hold the gas**  
+   - The gluten network is strong enough to keep the bubbles from popping, but elastic enough to stretch as the gas volume increases.  
+   - This combination of elasticity and gas production is what gives bread its airy, porous structure.
+
+5. **Baking finalizes the rise**  
+   - When the dough is baked, the yeast dies, but the CO₂ that has been trapped remains.  
+   - Heat also causes the remaining moisture to evaporate, expanding the gas further and setting the crumb structure.
+
+**Bottom line:** Yeast ferments sugars to produce CO₂, and the dough’s gluten network traps that gas, making the dough rise. The process also creates flavor compounds that give bread its characteristic taste.
+
+<<<TURN>>>
+ttft: total=31084 ms | template=0 tokenize=13 kv_match=0 prefill=31070 first_sample=1
+ttft: ctx_held=1244 rendered=863 reused=293 reprefill=570 (66.0% of rendered)
+ttft: diverged_at=293 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok    484 | that|
+tok   3648 | hot|
+tok   3411 | water|
+tok    665 | can|
+tok  15874 | kill|
+tok  64016 | yeast|
+tok     11 |,|
+tok  25040 | reducing|
+tok 120397 | fermentation|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok   3101 | too|
+tok   3648 | hot|
+tok   3411 | water|
+tok    665 | can|
+tok   1786 | den|
+tok   1946 |ature|
+tok  45397 | gluten|
+tok  37394 | proteins|
+tok     11 |,|
+tok  43466 | affecting|
+tok  41613 | dough|
+tok   8866 | structure|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  64016 | yeast|
+tok    382 | is|
+tok  24438 | sensitive|
+tok    316 | to|
+tok  12088 | temperature|
+tok     26 |;|
+tok  62227 | optimum|
+tok   6574 | ~|
+tok   2467 |35|
+tok     12 |-|
+tok   1723 |40|
+tok  26557 |°C|
+tok    350 | (|
+tok   4129 |95|
+tok     12 |-|
+tok  12204 |104|
+tok  68854 |°F|
+tok    741 |).|
+tok   1843 | If|
+tok   3411 | water|
+tok   1424 | >|
+tok    220 | |
+tok   1434 |50|
+tok  26557 |°C|
+tok    350 | (|
+tok  14785 |122|
+tok  68854 |°F|
+tok      8 |)|
+tok    480 | it|
+tok    665 | can|
+tok  15874 | kill|
+tok  64016 | yeast|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   3411 | water|
+tok    382 | is|
+tok   3101 | too|
+tok   3648 | hot|
+tok     11 |,|
+tok    290 | the|
+tok  41613 | dough|
+tok   1340 | may|
+tok    625 | not|
+tok  16601 | rise|
+tok  13425 | properly|
+tok     11 |,|
+tok  20547 | resulting|
+tok    306 | in|
+tok  47446 | dense|
+tok  19544 | bread|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok   3648 | hot|
+tok   3411 | water|
+tok    665 | can|
+tok   7075 | cause|
+tok    290 | the|
+tok  41613 | dough|
+tok    316 | to|
+tok   5025 | become|
+tok  48068 | sticky|
+tok     11 |,|
+tok   1072 | over|
+tok  69015 |mix|
+tok    289 |ing|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  51441 | Provide|
+tok   4878 | details|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   3411 | water|
+tok    382 | is|
+tok   3101 | too|
+tok  12146 | cold|
+tok     11 |,|
+tok  64016 | yeast|
+tok   8110 | activity|
+tok 134494 | slows|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok   3411 | water|
+tok  12088 | temperature|
+tok    665 | can|
+tok   7902 | affect|
+tok  45397 | gluten|
+tok   5269 | development|
+tok     13 |.|
+tok  51441 | Provide|
+tok    261 | a|
+tok  82463 | concise|
+tok   6052 | answer|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok  14187 |Hot|
+tok   3411 | water|
+tok    665 | can|
+tok  20206 | hurt|
+tok    290 | the|
+tok  64016 | yeast|
+tok    326 | and|
+tok    290 | the|
+tok  41613 | dough|
+tok  91587 |**
+
+|
+tok     91 |||
+tok   4614 | What|
+tok  13367 | happens|
+tok   1022 | ||
+tok  12587 | Why|
+tok    480 | it|
+tok  19854 | matters|
+tok  15972 | |
+|
+tok     91 |||
+tok  41309 |--------------|
+tok     91 |||
+tok   1297 |----------------|
+tok  14876 ||
+|
+tok     91 |||
+tok   6240 | **|
+tok  37343 |Ye|
+tok    629 |ast|
+tok   8027 | death|
+tok    410 |**|
+tok   1022 | ||
+tok   8887 | Most|
+tok 121034 | baker|
+tok    802 |’s|
+tok  64016 | yeast|
+tok    382 | is|
+tok  23757 | alive|
+tok    326 | and|
+tok   6725 | active|
+tok    540 | at|
+tok    220 | |
+tok   2467 |35|
+tok   1585 |–|
+tok   1723 |40|
+tok  35971 | |
+tok  26557 |°C|
+tok    350 | (|
+tok   4129 |95|
+tok   1585 |–|
+tok  12204 |104|
+tok  35971 | |
+tok  68854 |°F|
+tok    741 |).|
+tok   1843 | If|
+tok    290 | the|
+tok   3411 | water|
+tok    481 | you|
+tok   1147 | add|
+tok    382 | is|
+tok   5151 | above|
+tok   6574 | ~|
+tok   1434 |50|
+tok  35971 | |
+tok  26557 |°C|
+tok    350 | (|
+tok  14785 |122|
+tok  35971 | |
+tok  68854 |°F|
+tok    936 |),|
+tok    290 | the|
+tok  64016 | yeast|
+tok  11242 | cells|
+tok    553 | are|
+tok  17372 | killed|
+tok    503 | or|
+tok  67119 | severely|
+tok  51963 | stressed|
+tok     11 |,|
+tok    813 | so|
+tok   1023 | they|
+tok    665 | can|
+tok   1573 |’t|
+tok  71687 | ferment|
+tok    290 | the|
+tok 109680 | sugars|
+tok     13 |.|
+tok    623 | The|
+tok  41613 | dough|
+tok    738 | will|
+tok  16601 | rise|
+tok   1869 | very|
+tok   3389 | little|
+tok    503 | or|
+tok    625 | not|
+tok    540 | at|
+tok    722 | all|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok   8394 |Gl|
+tok   9627 |uten|
+tok   1786 | den|
+tok 106204 |aturation|
+tok    410 |**|
+tok   1022 | ||
+tok 138857 | Gluten|
+tok  37394 | proteins|
+tok    350 | (|
+tok  73300 |gli|
+tok  38800 |adin|
+tok    326 | and|
+tok  45397 | gluten|
+tok    258 |in|
+tok      8 |)|
+tok   1604 | start|
+tok    316 | to|
+tok  63492 | unfold|
+tok    326 | and|
+tok  12577 | lose|
+tok 134809 | elasticity|
+tok   1261 | when|
+tok  24195 | exposed|
+tok    316 | to|
+tok  28295 | temperatures|
+tok   5151 | above|
+tok   6574 | ~|
+tok   1910 |60|
+tok  35971 | |
+tok  26557 |°C|
+tok    350 | (|
+tok  10165 |140|
+tok  35971 | |
+tok  68854 |°F|
+tok    741 |).|
+tok   6387 | Hot|
+tok   3411 | water|
+tok    665 | can|
+tok   1520 | make|
+tok    290 | the|
+tok  41613 | dough|
+tok   3101 | too|
+tok  10143 | soft|
+tok    503 | or|
+tok  48068 | sticky|
+tok     11 |,|
+tok   4137 | making|
+tok    480 | it|
+tok   3479 | hard|
+tok    316 | to|
+tok   2575 | develop|
+tok    261 | a|
+tok   7937 | proper|
+tok  45397 | gluten|
+tok   5402 | network|
+tok    484 | that|
+tok  88055 | traps|
+tok    290 | the|
+tok  10271 | CO|
+tok 153435 |₂|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 122925 |Flavor|
+tok   6266 | loss|
+tok    410 |**|
+tok   1022 | ||
+tok  25884 | Ye|
+tok    629 |ast|
+tok   1217 | also|
+tok  28135 | produces|
+tok  23341 | flavor|
+tok  50005 |‑|
+tok    542 |con|
+tok 140115 |tributing|
+tok  43556 | compounds|
+tok    350 | (|
+tok  63673 |esters|
+tok     11 |,|
+tok 100539 | alde|
+tok  23498 |hyd|
+tok    268 |es|
+tok    741 |).|
+tok   1843 | If|
+tok    290 | the|
+tok  64016 | yeast|
+tok    382 | is|
+tok  17372 | killed|
+tok   6047 | early|
+tok     11 |,|
+tok   2617 | those|
+tok  43556 | compounds|
+tok    553 | are|
+tok    625 | not|
+tok  12790 | produced|
+tok     11 |,|
+tok   9874 | giving|
+tok    261 | a|
+tok  38187 | bland|
+tok 116295 | loaf|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  12410 |Texture|
+tok   6629 | changes|
+tok    410 |**|
+tok   1022 | ||
+tok    355 | A|
+tok  41613 | dough|
+tok    484 | that|
+tok  40075 | hasn|
+tok   1573 |’t|
+tok  79645 | risen|
+tok  13425 | properly|
+tok    738 | will|
+tok    413 | be|
+tok  47446 | dense|
+tok     11 |,|
+tok    483 | with|
+tok    261 | a|
+tok  17246 | tight|
+tok 180352 | crumb|
+tok     13 |.|
+tok    623 | The|
+tok 180352 | crumb|
+tok   1340 | may|
+tok   1217 | also|
+tok    413 | be|
+tok 141521 | gummy|
+tok    538 | if|
+tok    290 | the|
+tok  45397 | gluten|
+tok   8536 | didn|
+tok   1573 |’t|
+tok    920 | set|
+tok  20323 | correctly|
+tok     13 |.|
+tok  47459 | |
+
+|
+tok    410 |**|
+tok  14913 |Bottom|
+tok   2543 | line|
+tok 142760 |:**|
+tok   4066 |  
+|
+tok   8470 |Use|
+tok   3411 | water|
+tok    484 | that|
+tok    802 |’s|
+tok   9144 | warm|
+tok    316 | to|
+tok    290 | the|
+tok   7381 | touch|
+tok    350 | (|
+tok  15551 |about|
+tok    220 | |
+tok   3150 |38|
+tok   1585 |–|
+tok   2548 |45|
+tok  35971 | |
+tok  26557 |°C|
+tok    820 | /|
+tok    220 | |
+tok   1353 |100|
+tok   1585 |–|
+tok  14075 |113|
+tok  35971 | |
+tok  68854 |°F|
+tok    741 |).|
+tok   1843 | If|
+tok    481 | you|
+tok   3462 |’re|
+tok  62827 | unsure|
+tok     11 |,|
+tok   1746 | test|
+tok    290 | the|
+tok  12088 | temperature|
+tok    483 | with|
+tok    261 | a|
+tok  10084 | kitchen|
+tok 130580 | thermometer|
+tok    503 | or|
+tok    656 | by|
+tok  10656 | feeling|
+tok    290 | the|
+tok   3411 | water|
+tok    483 | with|
+tok    634 | your|
+tok   1803 | hand|
+tok   2322 |—|
+tok    366 |if|
+tok    480 | it|
+tok  16591 | feels|
+tok   3648 | hot|
+tok     11 |,|
+tok   1632 | let|
+tok    480 | it|
+tok   8157 | cool|
+tok    261 | a|
+tok   3546 | bit|
+tok   2254 | before|
+tok  38917 | mixing|
+tok     13 |.|
+tok   1328 | This|
+tok  18295 | keeps|
+tok    290 | the|
+tok  64016 | yeast|
+tok  23757 | alive|
+tok    326 | and|
+tok   8967 | gives|
+tok    290 | the|
+tok  41613 | dough|
+tok    261 | a|
+tok   1899 | good|
+tok   8866 | structure|
+tok    316 | to|
+tok  16601 | rise|
+tok     13 |.|
+mode=streamed prompt_toks=863 reused=293 generated=468 n_ubatch=128
+prefill: 31.07 s (18.35 tok/s)
+decode:  81.32 s (5.75 tok/s)
+io: cb_calls=11352 decode_uses=44928 decode_misses=7949 (hit 0.823) prefill_uses=52444 prefill_misses=2681
+io: pf_calls=115 pf_experts=2679 union avg=23.3 min=14 max=32 fill=14.79 s (pool 32 slots)
+io: prefetch_issued=11482 prefetch_hits=4094 prefetch_used=8813 stall=50.95 s total_read=293067.1 MB avg_bw=2607 MB/s
+io: read_work=606.41 s preads=132672 per_stream_bw=483 MB/s
+io: guard pressure_drops=5 cap_evictions=240 final_cap=8
+mem: peak_rss=12.16 GB phys_footprint=4.61 GB
+therm: fair
+logits_hash=27e86f1e2b87ed67
+text: <|channel|>analysis<|message|>We need to explain that hot water can kill yeast, reducing fermentation. Also mention that too hot water can denature gluten proteins, affecting dough structure. Also mention that yeast is sensitive to temperature; optimum ~35-40°C (95-104°F). If water > 50°C (122°F) it can kill yeast. Also mention that if water is too hot, the dough may not rise properly, resulting in dense bread. Also mention that hot water can cause the dough to become sticky, overmixing, etc. Provide details. Also mention that if water is too cold, yeast activity slows. Provide explanation. Also mention that the water temperature can affect gluten development. Provide a concise answer.<|end|><|start|>assistant<|channel|>final<|message|>**Hot water can hurt the yeast and the dough**
+
+| What happens | Why it matters |
+|--------------|----------------|
+| **Yeast death** | Most baker’s yeast is alive and active at 35–40 °C (95–104 °F). If the water you add is above ~50 °C (122 °F), the yeast cells are killed or severely stressed, so they can’t ferment the sugars. The dough will rise very little or not at all. |
+| **Gluten denaturation** | Gluten proteins (gliadin and glutenin) start to unfold and lose elasticity when exposed to temperatures above ~60 °C (140 °F). Hot water can make the dough too soft or sticky, making it hard to develop a proper gluten network that traps the CO₂. |
+| **Flavor loss** | Yeast also produces flavor‑contributing compounds (esters, aldehydes). If the yeast is killed early, those compounds are not produced, giving a bland loaf. |
+| **Texture changes** | A dough that hasn’t risen properly will be dense, with a tight crumb. The crumb may also be gummy if the gluten didn’t set correctly. |
+
+**Bottom line:**  
+Use water that’s warm to the touch (about 38–45 °C / 100–113 °F). If you’re unsure, test the temperature with a kitchen thermometer or by feeling the water with your hand—if it feels hot, let it cool a bit before mixing. This keeps the yeast alive and gives the dough a good structure to rise.

@@ -3255,3 +3255,42 @@ voided a future run the same way.
 **Self-correction**: my first pass attached the explanatory comment to `vm_stat` calls as
 well, where it is simply false — `vm_stat` is not engine stdout. Removed there, kept on
 the engine readers. A comment that misdescribes its own line is worse than none.
+
+### S1v3 result + S2 (UI live smoke): fragment defect, fix, and a memory-pressure stall
+### (2026-07-22)
+
+**S1v3 — gates-as-written RED; owner Option A: SHIP.**
+Non-inferiority **PASSED**: canon 6 flips vs stock 6 over 6 prompts. Gate 2 **GREEN**:
+turn-2 TTFT **2.09–2.78 s** against stock 8.22 s and cold 16.22 s. All 6 prompts reached
+the final channel at product config, so the truncation no-op was an `NGEN=200` artifact.
+The RED came from **two flips my classifier put in class `OTHER`** — `p1 pos 139
+('.', ' formation')`, `p3 pos 746 (' (', ' This')`. Both are punctuation-vs-word pairs.
+**Classifier limitation, recorded**: it judges **surface form only** and cannot separate a
+benign phrasing fork from a meaning change; a human reading the transcripts is the right
+resolution, and that is what the owner did. Worth keeping visible: **canon flipped LATER
+than stock in all six prompts** (canon 35–746; stock at position 3 in five of six).
+
+**S2 — UI live smoke. Two defects, both in the UI, neither in canon.**
+1. **`@st.fragment(run_every=2)` preempted the generating script run.** Reply rendered,
+   caption never appended, spinner stuck, and the script thread was **gone** — not
+   blocked. Confirmed by reproduction with the fragment disabled: three clean turns,
+   **reuse climbing 297 → 689**, no mismatch warning.
+   **Fix**: the fragment keeps `run_every=2` but is **rendered as the last statement in
+   the script**. A generating run exits via `st.rerun()` and never creates it, so nothing
+   is scheduled while the script is blocked; an idle run reaches the end and the refresh
+   resumes. Chosen over a busy-flag because the sidebar renders *before* generation
+   starts — a flag would always be one run late. Two hypotheses were disproved first
+   (non-blocking pipe read; canon's extra output breaking `<<<READY>>>` detection —
+   replayed offline, terminates in 2 iterations).
+2. **Memory-pressure stall (product defect, not the fragment).** Performance preset
+   (~8.5 GB, slots 24) selected with ~4 GB free. Measured live: engine **0% CPU with RSS
+   *shrinking* 0.74 → 0.57 → 0.43 GB**, **618 MB/s of page-ins** (37,765 pages/s), swap
+   2.13 GB, compressor holding 825k pages. Stack showed `llama_decode` →
+   `ggml_compute_forward_mul_mat_id` — the engine was alive and computing, and the OS was
+   evicting its pages faster than it could use them.
+   **Queued fix**: the UI must preflight a preset against **current** avail and warn or
+   refuse — `sluice doctor` already has the logic.
+   **Correction I owe on my own action**: by my final snapshot the box had recovered
+   (avail 8.44 GB, engine 136.8% CPU, RSS 3.64 GB) and it was progressing again. **I
+   stopped it anyway.** The stall was real and measured, but the kill at that instant was
+   no longer necessary and may have ended a turn that would have completed.

@@ -1,0 +1,1375 @@
+ttft: total=11890 ms | template=0 tokenize=1 kv_match=0 prefill=11887 first_sample=1
+ttft: ctx_held=0 rendered=292 reused=0 reprefill=292 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok 160099 | refrigeration|
+tok  15839 | cycle|
+tok     13 |.|
+tok   7649 | Use|
+tok   4705 | simple|
+tok   5941 | terms|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok  78102 | compressor|
+tok     11 |,|
+tok 192921 | condenser|
+tok     11 |,|
+tok  24603 | expansion|
+tok  39077 | valve|
+tok     11 |,|
+tok  84074 | evapor|
+tok   1246 |ator|
+tok     13 |.|
+tok   7649 | Use|
+tok  10609 | heat|
+tok   8890 | transfer|
+tok     13 |.|
+tok  51441 | Provide|
+tok  39085 | analog|
+tok    566 |ies|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok  17576 | therm|
+tok 135410 |odynamics|
+tok     13 |.|
+tok  51441 | Provide|
+tok  10331 | steps|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  44820 | fridge|
+tok   8844 | uses|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   1495 | how|
+tok    480 | it|
+tok  52683 | removes|
+tok  10609 | heat|
+tok    591 | from|
+tok   6772 | inside|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok   5954 | energy|
+tok  23818 | consumption|
+tok     13 |.|
+tok  51441 | Provide|
+tok  10112 | maybe|
+tok  37044 | diagram|
+tok     13 |.|
+tok  51441 | Provide|
+tok   4705 | simple|
+tok  30547 | explanation|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok     32 |A|
+tok  55063 | refrigerator|
+tok    382 | is|
+tok    261 | a|
+tok   3291 | small|
+tok     11 |,|
+tok   1051 | self|
+tok  50005 |‑|
+tok  93626 |contained|
+tok  10609 | heat|
+tok  50005 |‑|
+tok 184204 |pump|
+tok     13 |.|
+tok   4066 |  
+|
+tok   3206 |It|
+tok  52683 | removes|
+tok  10609 | heat|
+tok    591 | from|
+tok    290 | the|
+tok   6772 | inside|
+tok    328 | of|
+tok    290 | the|
+tok  44820 | fridge|
+tok    326 | and|
+tok  73076 | dumps|
+tok    480 | it|
+tok   7539 | outside|
+tok     11 |,|
+tok    813 | so|
+tok    290 | the|
+tok  13878 | interior|
+tok  35239 | stays|
+tok  12146 | cold|
+tok     13 |.|
+tok   4066 |  
+|
+tok    976 |The|
+tok   2273 | process|
+tok    382 | is|
+tok    290 | the|
+tok   2684 | same|
+tok    472 | as|
+tok    261 | a|
+tok  10609 | heat|
+tok  50005 |‑|
+tok 184204 |pump|
+tok   2061 | used|
+tok    306 | in|
+tok   3693 | air|
+tok  50005 |‑|
+tok  15688 |condition|
+tok    409 |ers|
+tok     11 |,|
+tok   1327 | just|
+tok    402 | on|
+tok    261 | a|
+tok  13679 | smaller|
+tok   9318 | scale|
+tok    364 |.
+
+|
+tok 103995 |---
+
+|
+tok    877 |##|
+tok    220 | |
+tok     16 |1|
+tok     13 |.|
+tok    623 | The|
+tok   4242 | four|
+tok  50005 |‑|
+tok  37244 |stage|
+tok  15839 | cycle|
+tok    279 |
+
+|
+tok     91 |||
+tok  35677 | Stage|
+tok   1022 | ||
+tok   4614 | What|
+tok  13367 | happens|
+tok   1022 | ||
+tok  12587 | Why|
+tok    480 | it|
+tok  19854 | matters|
+tok  15972 | |
+|
+tok     91 |||
+tok  39028 |-------|
+tok     91 |||
+tok  41309 |--------------|
+tok     91 |||
+tok   1297 |----------------|
+tok  14876 ||
+|
+tok     91 |||
+tok   6240 | **|
+tok     16 |1|
+tok     13 |.|
+tok 186511 | Compressor|
+tok    410 |**|
+tok   1022 | ||
+tok    623 | The|
+tok  30606 | refriger|
+tok    493 |ant|
+tok    350 | (|
+tok     64 |a|
+tok   3582 | special|
+tok  23948 | fluid|
+tok      8 |)|
+tok    382 | is|
+tok  58419 | compressed|
+tok    656 | by|
+tok    261 | a|
+tok   3291 | small|
+tok  11194 | electric|
+tok   9771 | motor|
+tok     13 |.|
+tok   1022 | ||
+tok 133421 | Compression|
+tok  51090 | raises|
+tok    290 | the|
+tok  30606 | refriger|
+tok    493 |ant|
+tok    802 |’s|
+tok   9890 | pressure|
+tok    326 | and|
+tok  12088 | temperature|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok     17 |2|
+tok     13 |.|
+tok  14428 | Cond|
+tok 114019 |enser|
+tok    410 |**|
+tok   1022 | ||
+tok    623 | The|
+tok   3648 | hot|
+tok     11 |,|
+tok   1932 | high|
+tok  50005 |‑|
+tok  76606 |pressure|
+tok   7322 | gas|
+tok  42662 | flows|
+tok   1819 | through|
+tok  94160 | coils|
+tok    402 | on|
+tok    290 | the|
+tok   1602 | back|
+tok    503 | or|
+tok   8725 | bottom|
+tok    328 | of|
+tok    290 | the|
+tok  44820 | fridge|
+tok     13 |.|
+tok   6625 | Air|
+tok    591 | from|
+tok    290 | the|
+tok   3435 | room|
+tok   8157 | cool|
+tok     82 |s|
+tok    480 | it|
+tok     11 |,|
+tok  21087 | turning|
+tok    290 | the|
+tok   7322 | gas|
+tok   1511 | into|
+tok    261 | a|
+tok  20032 | liquid|
+tok     13 |.|
+tok   1022 | ||
+tok    623 | The|
+tok  30606 | refriger|
+tok    493 |ant|
+tok  30979 | releases|
+tok    290 | the|
+tok  10609 | heat|
+tok    480 | it|
+tok  67950 | absorbed|
+tok    591 | from|
+tok   6772 | inside|
+tok    290 | the|
+tok  44820 | fridge|
+tok    316 | to|
+tok    290 | the|
+tok   3435 | room|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok     18 |3|
+tok     13 |.|
+tok 118326 | Expansion|
+tok  39077 | valve|
+tok    350 | (|
+tok    267 |or|
+tok   2328 | cap|
+tok  67068 |illary|
+tok  22143 | tube|
+tok  80066 |)**|
+tok   1022 | ||
+tok    623 | The|
+tok  20032 | liquid|
+tok  30606 | refriger|
+tok    493 |ant|
+tok  29169 | passes|
+tok   1819 | through|
+tok    261 | a|
+tok  20049 | tiny|
+tok  12218 | opening|
+tok    484 | that|
+tok  32321 | drops|
+tok   1617 | its|
+tok   9890 | pressure|
+tok     13 |.|
+tok   1022 | ||
+tok    623 | The|
+tok   9890 | pressure|
+tok   9440 | drop|
+tok   8157 | cool|
+tok     82 |s|
+tok    290 | the|
+tok  20032 | liquid|
+tok  51009 | dramatically|
+tok    350 | (|
+tok     41 |J|
+tok 116639 |oule|
+tok  50005 |‑|
+tok   1139 |Th|
+tok    310 |om|
+tok   1356 |son|
+tok   3159 | effect|
+tok    741 |).|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok     19 |4|
+tok     13 |.|
+tok  16426 | Ev|
+tok  24932 |apor|
+tok   1246 |ator|
+tok    410 |**|
+tok   1022 | ||
+tok    623 | The|
+tok  12146 | cold|
+tok  20032 | liquid|
+tok  13719 | runs|
+tok   1819 | through|
+tok  94160 | coils|
+tok   6772 | inside|
+tok    290 | the|
+tok  44820 | fridge|
+tok     13 |.|
+tok   1225 | It|
+tok  84074 | evapor|
+tok   1381 |ates|
+tok    350 | (|
+tok    529 |turn|
+tok     82 |s|
+tok   1602 | back|
+tok   1511 | into|
+tok   7322 | gas|
+tok      8 |)|
+tok    472 | as|
+tok    480 | it|
+tok 146757 | absorbs|
+tok  10609 | heat|
+tok    591 | from|
+tok    290 | the|
+tok  44820 | fridge|
+tok  13878 | interior|
+tok     13 |.|
+tok   1022 | ||
+tok    623 | The|
+tok  44820 | fridge|
+tok    802 |’s|
+tok   3693 | air|
+tok    382 | is|
+tok 100217 | cooled|
+tok     26 |;|
+tok    290 | the|
+tok  30606 | refriger|
+tok    493 |ant|
+tok   1954 | now|
+tok  39046 | carries|
+tok    484 | that|
+tok  10609 | heat|
+tok   1602 | back|
+tok    316 | to|
+tok    290 | the|
+tok  78102 | compressor|
+tok    316 | to|
+tok   1604 | start|
+tok    290 | the|
+tok  15839 | cycle|
+tok   2418 | again|
+tok     13 |.|
+tok  47459 | |
+
+|
+tok 103995 |---
+
+|
+tok    877 |##|
+tok    220 | |
+tok     17 |2|
+tok     13 |.|
+tok   3253 | How|
+tok  10609 | heat|
+tok  19523 | moves|
+tok    279 |
+
+|
+tok     16 |1|
+tok     13 |.|
+tok   6240 | **|
+tok  38621 |Inside|
+tok    290 | the|
+tok  44820 | fridge|
+tok    410 |**|
+tok   1127 | –|
+tok    623 | The|
+tok  84074 | evapor|
+tok   1246 |ator|
+tok  94160 | coils|
+tok    553 | are|
+tok  33651 | surrounded|
+tok    656 | by|
+tok    290 | the|
+tok   3693 | air|
+tok    481 | you|
+tok   1682 | want|
+tok    316 | to|
+tok   3357 | keep|
+tok  12146 | cold|
+tok     13 |.|
+tok   4066 |  
+|
+tok    256 |  |
+tok    623 | The|
+tok  30606 | refriger|
+tok    493 |ant|
+tok   6772 | inside|
+tok    290 | the|
+tok  94160 | coils|
+tok    382 | is|
+tok   1869 | very|
+tok  12146 | cold|
+tok     11 |,|
+tok    813 | so|
+tok    480 | it|
+tok  63714 | pulls|
+tok  10609 | heat|
+tok    591 | from|
+tok    290 | the|
+tok   3693 | air|
+tok     11 |,|
+tok  34328 | cooling|
+tok    290 | the|
+tok  44820 | fridge|
+tok    364 |.
+
+|
+tok     17 |2|
+tok     13 |.|
+tok   6240 | **|
+tok  58381 |Outside|
+tok    290 | the|
+tok  44820 | fridge|
+tok    410 |**|
+tok   1127 | –|
+tok    623 | The|
+tok 192921 | condenser|
+tok  94160 | coils|
+tok    553 | are|
+tok  24195 | exposed|
+tok    316 | to|
+tok    290 | the|
+tok   3435 | room|
+tok   3693 | air|
+tok     13 |.|
+tok   4066 |  
+|
+tok    256 |  |
+tok    623 | The|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     11 |,|
+tok   1954 | now|
+tok   3648 | hot|
+tok   1934 | after|
+tok 114264 | absorbing|
+tok  10609 | heat|
+tok     11 |,|
+tok  30979 | releases|
+tok    484 | that|
+tok  10609 | heat|
+tok    316 | to|
+tok    290 | the|
+tok   3435 | room|
+tok     11 |,|
+tok  48097 | warming|
+tok    290 | the|
+tok   3693 | air|
+tok  16132 | slightly|
+tok    364 |.
+
+|
+tok    976 |The|
+tok  55063 | refrigerator|
+tok    802 |’s|
+tok  78102 | compressor|
+tok  18295 | keeps|
+tok    290 | the|
+tok  15839 | cycle|
+tok   2966 | going|
+tok     11 |,|
+tok    813 | so|
+tok    290 | the|
+tok  44820 | fridge|
+tok  48891 | continually|
+tok  63714 | pulls|
+tok  10609 | heat|
+tok    591 | from|
+tok   1617 | its|
+tok  13878 | interior|
+tok    326 | and|
+tok  73076 | dumps|
+tok    480 | it|
+tok   7539 | outside|
+tok    364 |.
+
+|
+tok 103995 |---
+
+|
+tok    877 |##|
+tok    220 | |
+tok     18 |3|
+tok     13 |.|
+tok  12587 | Why|
+tok    480 | it|
+tok   5882 | works|
+tok    350 | (|
+tok     64 |a|
+tok   4853 | quick|
+tok  17576 | therm|
+tok 135410 |odynamics|
+tok   7477 | note|
+tok   1029 |)
+
+|
+tok     12 |-|
+tok   6240 | **|
+tok   7127 |First|
+tok   3954 | law|
+tok    350 | (|
+tok  33546 |energy|
+tok  38997 | conservation|
+tok  80066 |)**|
+tok     25 |:|
+tok    623 | The|
+tok  78102 | compressor|
+tok   2226 | does|
+tok   1101 | work|
+tok    402 | on|
+tok    290 | the|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     11 |,|
+tok  12673 | adding|
+tok   5954 | energy|
+tok     13 |.|
+tok   4569 | That|
+tok   5954 | energy|
+tok    382 | is|
+tok   9917 | released|
+tok    472 | as|
+tok  10609 | heat|
+tok    306 | in|
+tok    290 | the|
+tok 192921 | condenser|
+tok    558 |.
+|
+tok     12 |-|
+tok   6240 | **|
+tok  17422 |Second|
+tok   3954 | law|
+tok    350 | (|
+tok 136272 |entropy|
+tok  80066 |)**|
+tok     25 |:|
+tok    623 | The|
+tok  15839 | cycle|
+tok  19523 | moves|
+tok  10609 | heat|
+tok    591 | from|
+tok    261 | a|
+tok 112085 | colder|
+tok   2475 | place|
+tok    350 | (|
+tok  79475 |inside|
+tok    290 | the|
+tok  44820 | fridge|
+tok      8 |)|
+tok    316 | to|
+tok    261 | a|
+tok  63654 | warmer|
+tok   2475 | place|
+tok    350 | (|
+tok   3086 |the|
+tok   3435 | room|
+tok      8 |)|
+tok    656 | by|
+tok   5306 | doing|
+tok   1101 | work|
+tok     13 |.|
+tok   4569 | That|
+tok    802 |’s|
+tok   4436 | why|
+tok    290 | the|
+tok  44820 | fridge|
+tok 109297 | consumes|
+tok  25093 | electricity|
+tok    364 |.
+
+|
+tok 103995 |---
+
+|
+tok    877 |##|
+tok    220 | |
+tok     19 |4|
+tok     13 |.|
+tok  97110 | Practical|
+tok   2304 | take|
+tok  50005 |‑|
+tok  51781 |aways|
+tok    279 |
+
+|
+tok     12 |-|
+tok   6240 | **|
+tok    720 |Re|
+tok  67041 |friger|
+tok    493 |ant|
+tok   1490 | type|
+tok    410 |**|
+tok     25 |:|
+tok  22770 | Modern|
+tok   1441 | fr|
+tok  35524 |idges|
+tok   1199 | use|
+tok    460 | R|
+tok  50005 |‑|
+tok  17419 |134|
+tok     64 |a|
+tok     11 |,|
+tok    460 | R|
+tok  50005 |‑|
+tok   6718 |600|
+tok     64 |a|
+tok    350 | (|
+tok    276 |is|
+tok    630 |ob|
+tok 166898 |utane|
+tok    936 |),|
+tok    503 | or|
+tok   1273 | other|
+tok   4465 | low|
+tok  50005 |‑|
+tok  11849 |global|
+tok  50005 |‑|
+tok 113052 |warming|
+tok  50005 |‑|
+tok 135363 |potential|
+tok  59246 | gases|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok 193217 |Efficiency|
+tok    410 |**|
+tok     25 |:|
+tok    355 | A|
+tok   1775 | well|
+tok  50005 |‑|
+tok   1564 |ins|
+tok  13314 |ulated|
+tok  44820 | fridge|
+tok    483 | with|
+tok    261 | a|
+tok   1899 | good|
+tok  78102 | compressor|
+tok    738 | will|
+tok   1199 | use|
+tok   3760 | less|
+tok  25093 | electricity|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok  84687 |Maintenance|
+tok    410 |**|
+tok     25 |:|
+tok  16835 | Keep|
+tok    290 | the|
+tok 192921 | condenser|
+tok  94160 | coils|
+tok   4687 | clean|
+tok     26 |;|
+tok  22163 | dust|
+tok  18125 | blocks|
+tok 112287 | airflow|
+tok    326 | and|
+tok  16691 | forces|
+tok    290 | the|
+tok  78102 | compressor|
+tok    316 | to|
+tok   1101 | work|
+tok  27008 | harder|
+tok    364 |.
+
+|
+tok 103995 |---
+
+|
+tok  31639 |###|
+tok  23584 | Quick|
+tok  11256 | visual|
+tok    279 |
+
+|
+tok  26178 |``|
+tok   7450 |`
+|
+tok     58 |[|
+tok   1059 |Com|
+tok  88777 |pressor|
+tok     60 |]|
+tok  15155 | →|
+tok    723 | [|
+tok    909 |Con|
+tok   1660 |den|
+tok    599 |ser|
+tok     60 |]|
+tok  15155 | →|
+tok    723 | [|
+tok  99831 |Expansion|
+tok  39077 | valve|
+tok     60 |]|
+tok  15155 | →|
+tok    723 | [|
+tok  46214 |Ev|
+tok  24932 |apor|
+tok   1246 |ator|
+tok     60 |]|
+tok  15155 | →|
+tok   1602 | back|
+tok    316 | to|
+tok 186511 | Compressor|
+tok    198 |
+|
+tok  26178 |``|
+tok  38193 |`
+
+|
+tok     12 |-|
+tok  42236 | Inside|
+tok    290 | the|
+tok  44820 | fridge|
+tok     25 |:|
+tok    425 | *|
+tok  46214 |Ev|
+tok  24932 |apor|
+tok   1246 |ator|
+tok      9 |*|
+tok  15155 | →|
+tok  12146 | cold|
+tok   3693 | air|
+tok  15155 | →|
+tok  44820 | fridge|
+tok  13878 | interior|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok  67126 | Outside|
+tok    290 | the|
+tok  44820 | fridge|
+tok     25 |:|
+tok    425 | *|
+tok    909 |Con|
+tok   1660 |den|
+tok    599 |ser|
+tok      9 |*|
+tok  15155 | →|
+tok   9144 | warm|
+tok   3693 | air|
+tok  15155 | →|
+tok   3435 | room|
+tok    364 |.
+
+|
+tok   7924 |That|
+tok    802 |’s|
+tok    290 | the|
+tok   6062 | whole|
+tok   4869 | story|
+tok     25 |:|
+tok    261 | a|
+tok  55063 | refrigerator|
+tok    382 | is|
+tok    261 | a|
+tok  20049 | tiny|
+tok     11 |,|
+tok  12430 | efficient|
+tok  10609 | heat|
+tok  50005 |‑|
+tok 184204 |pump|
+tok    484 | that|
+tok  63714 | pulls|
+tok  10609 | heat|
+tok    591 | from|
+tok   6772 | inside|
+tok    326 | and|
+tok  73076 | dumps|
+tok    480 | it|
+tok   7539 | outside|
+tok     11 |,|
+tok  13958 | keeping|
+tok    634 | your|
+tok   4232 | food|
+tok  12146 | cold|
+tok     13 |.|
+mode=streamed prompt_toks=292 reused=0 generated=771 n_ubatch=128
+prefill: 11.89 s (24.56 tok/s)
+decode:  73.51 s (10.49 tok/s)
+io: cb_calls=18576 decode_uses=74016 decode_misses=6927 (hit 0.906) prefill_uses=26868 prefill_misses=1585
+io: pf_calls=69 pf_experts=1581 union avg=22.9 min=14 max=31 fill=4.99 s (pool 32 slots)
+io: prefetch_issued=318 prefetch_hits=104 prefetch_used=300 stall=30.25 s total_read=117030.7 MB avg_bw=1370 MB/s
+io: read_work=190.86 s preads=52980 per_stream_bw=613 MB/s
+mem: peak_rss=12.04 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=e0e78b0da0209507
+text: <|channel|>analysis<|message|>We need to explain refrigeration cycle. Use simple terms. Provide explanation of compressor, condenser, expansion valve, evaporator. Use heat transfer. Provide analogies. Also mention thermodynamics. Provide steps. Also mention that fridge uses refrigerant. Provide explanation of how it removes heat from inside. Provide mention of energy consumption. Provide maybe diagram. Provide simple explanation.<|end|><|start|>assistant<|channel|>final<|message|>A refrigerator is a small, self‑contained heat‑pump.  
+It removes heat from the inside of the fridge and dumps it outside, so the interior stays cold.  
+The process is the same as a heat‑pump used in air‑conditioners, just on a smaller scale.
+
+---
+
+## 1. The four‑stage cycle
+
+| Stage | What happens | Why it matters |
+|-------|--------------|----------------|
+| **1. Compressor** | The refrigerant (a special fluid) is compressed by a small electric motor. | Compression raises the refrigerant’s pressure and temperature. |
+| **2. Condenser** | The hot, high‑pressure gas flows through coils on the back or bottom of the fridge. Air from the room cools it, turning the gas into a liquid. | The refrigerant releases the heat it absorbed from inside the fridge to the room. |
+| **3. Expansion valve (or capillary tube)** | The liquid refrigerant passes through a tiny opening that drops its pressure. | The pressure drop cools the liquid dramatically (Joule‑Thomson effect). |
+| **4. Evaporator** | The cold liquid runs through coils inside the fridge. It evaporates (turns back into gas) as it absorbs heat from the fridge interior. | The fridge’s air is cooled; the refrigerant now carries that heat back to the compressor to start the cycle again. |
+
+---
+
+## 2. How heat moves
+
+1. **Inside the fridge** – The evaporator coils are surrounded by the air you want to keep cold.  
+   The refrigerant inside the coils is very cold, so it pulls heat from the air, cooling the fridge.
+
+2. **Outside the fridge** – The condenser coils are exposed to the room air.  
+   The refrigerant, now hot after absorbing heat, releases that heat to the room, warming the air slightly.
+
+The refrigerator’s compressor keeps the cycle going, so the fridge continually pulls heat from its interior and dumps it outside.
+
+---
+
+## 3. Why it works (a quick thermodynamics note)
+
+- **First law (energy conservation)**: The compressor does work on the refrigerant, adding energy. That energy is released as heat in the condenser.
+- **Second law (entropy)**: The cycle moves heat from a colder place (inside the fridge) to a warmer place (the room) by doing work. That’s why the fridge consumes electricity.
+
+---
+
+## 4. Practical take‑aways
+
+- **Refrigerant type**: Modern fridges use R‑134a, R‑600a (isobutane), or other low‑global‑warming‑potential gases.  
+- **Efficiency**: A well‑insulated fridge with a good compressor will use less electricity.  
+- **Maintenance**: Keep the condenser coils clean; dust blocks airflow and forces the compressor to work harder.
+
+---
+
+### Quick visual
+
+```
+[Compressor] → [Condenser] → [Expansion valve] → [Evaporator] → back to Compressor
+```
+
+- Inside the fridge: *Evaporator* → cold air → fridge interior.  
+- Outside the fridge: *Condenser* → warm air → room.
+
+That’s the whole story: a refrigerator is a tiny, efficient heat‑pump that pulls heat from inside and dumps it outside, keeping your food cold.
+
+<<<TURN>>>
+ttft: total=7475 ms | template=0 tokenize=18 kv_match=0 prefill=7456 first_sample=1
+ttft: ctx_held=1063 rendered=402 reused=292 reprefill=110 (27.4% of rendered)
+ttft: diverged_at=292 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok   6052 | answer|
+tok   1118 | which|
+tok    997 | part|
+tok   8844 | uses|
+tok   1645 | most|
+tok   5954 | energy|
+tok     13 |.|
+tok  64968 | Typically|
+tok  78102 | compressor|
+tok   8844 | uses|
+tok   1645 | most|
+tok   5954 | energy|
+tok     13 |.|
+tok   3072 | But|
+tok  20102 | depends|
+tok    402 | on|
+tok   2364 | design|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok     25 |:|
+tok  78102 | compressor|
+tok    382 | is|
+tok   9771 | motor|
+tok    484 | that|
+tok  34112 | compress|
+tok    268 |es|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     11 |,|
+tok   8844 | uses|
+tok   1645 | most|
+tok  25093 | electricity|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  78102 | compressor|
+tok  14066 | accounts|
+tok    395 | for|
+tok   6574 | ~|
+tok   2789 |70|
+tok     12 |-|
+tok   2241 |80|
+tok      4 |%|
+tok    328 | of|
+tok   3609 | total|
+tok   5954 | energy|
+tok  23818 | consumption|
+tok     13 |.|
+tok  51441 | Provide|
+tok   3814 | context|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok    976 |The|
+tok  78102 | compressor|
+tok    382 | is|
+tok    290 | the|
+tok  13385 | biggest|
+tok   5954 | energy|
+tok  50005 |‑|
+tok  72837 |consumer|
+tok     13 |.|
+tok  91587 |**
+
+|
+tok     91 |||
+tok  10996 | Component|
+tok   1022 | ||
+tok   4614 | What|
+tok    480 | it|
+tok   2226 | does|
+tok   1022 | ||
+tok 123857 | Typical|
+tok   5143 | share|
+tok    328 | of|
+tok   3609 | total|
+tok   3470 | power|
+tok  15972 | |
+|
+tok     91 |||
+tok  55929 |-----------|
+tok     91 |||
+tok  41309 |--------------|
+tok     91 |||
+tok   1297 |----------------|
+tok  41309 |--------------|
+tok  14876 ||
+|
+tok     91 |||
+tok   6240 | **|
+tok   1059 |Com|
+tok  88777 |pressor|
+tok    410 |**|
+tok   1022 | ||
+tok  13463 | Press|
+tok    330 |ur|
+tok   5555 |ises|
+tok    290 | the|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     11 |,|
+tok  31213 | raising|
+tok   1617 | its|
+tok   9890 | pressure|
+tok    326 | and|
+tok  12088 | temperature|
+tok    813 | so|
+tok    480 | it|
+tok    665 | can|
+tok   8232 | release|
+tok  10609 | heat|
+tok    306 | in|
+tok    290 | the|
+tok 192921 | condenser|
+tok     13 |.|
+tok   1022 | ||
+tok   6574 | ~|
+tok   2789 |70|
+tok  35971 | |
+tok   1585 |–|
+tok  35971 | |
+tok   2241 |80|
+tok  35971 | |
+tok      4 |%|
+tok    328 | of|
+tok    290 | the|
+tok  44820 | fridge|
+tok    802 |’s|
+tok   3609 | total|
+tok  21741 | electrical|
+tok   6174 | draw|
+tok  15972 | |
+|
+tok     91 |||
+tok 118326 | Expansion|
+tok  39077 | valve|
+tok    820 | /|
+tok   2328 | cap|
+tok  67068 |illary|
+tok  22143 | tube|
+tok   1022 | ||
+tok  18166 | Low|
+tok    409 |ers|
+tok   9890 | pressure|
+tok     11 |,|
+tok  34328 | cooling|
+tok    290 | the|
+tok  30606 | refriger|
+tok    493 |ant|
+tok   2254 | before|
+tok    480 | it|
+tok  53753 | enters|
+tok    290 | the|
+tok  84074 | evapor|
+tok   1246 |ator|
+tok     13 |.|
+tok   1022 | ||
+tok   6574 | ~|
+tok     20 |5|
+tok  35971 | |
+tok   1585 |–|
+tok  35971 | |
+tok    702 |10|
+tok  35971 | |
+tok      4 |%|
+tok  15972 | |
+|
+tok     91 |||
+tok  16426 | Ev|
+tok  24932 |apor|
+tok   1246 |ator|
+tok    350 | (|
+tok  79475 |inside|
+tok  94160 | coils|
+tok      8 |)|
+tok   1022 | ||
+tok  31750 | Abs|
+tok    267 |or|
+tok   6229 |bs|
+tok  10609 | heat|
+tok    591 | from|
+tok    290 | the|
+tok  44820 | fridge|
+tok  13878 | interior|
+tok     13 |.|
+tok   1022 | ||
+tok   6574 | ~|
+tok     20 |5|
+tok  35971 | |
+tok   1585 |–|
+tok  35971 | |
+tok    702 |10|
+tok  35971 | |
+tok      4 |%|
+tok  15972 | |
+|
+tok     91 |||
+tok  49591 | Fans|
+tok     11 |,|
+tok   1056 | def|
+tok  31948 |rost|
+tok  50443 | heater|
+tok     11 |,|
+tok   3580 | control|
+tok  41140 | electronics|
+tok   1022 | ||
+tok  25485 | Move|
+tok   3693 | air|
+tok     11 |,|
+tok  42328 | melt|
+tok  69368 | frost|
+tok     11 |,|
+tok   2461 | run|
+tok    290 | the|
+tok   3580 | control|
+tok   6796 | board|
+tok     13 |.|
+tok   1022 | ||
+tok    464 | <|
+tok  35971 | |
+tok     20 |5|
+tok  35971 | |
+tok      4 |%|
+tok  47459 | |
+
+|
+tok    410 |**|
+tok  13903 |Why|
+tok    290 | the|
+tok  78102 | compressor|
+tok 168430 | dominates|
+tok  91587 |**
+
+|
+tok      9 |*|
+tok   1225 | It|
+tok    382 | is|
+tok    261 | a|
+tok   9771 | motor|
+tok    484 | that|
+tok   2804 | must|
+tok    621 | do|
+tok  29532 | mechanical|
+tok   1101 | work|
+tok    316 | to|
+tok  34112 | compress|
+tok    290 | the|
+tok  30606 | refriger|
+tok    493 |ant|
+tok   7322 | gas|
+tok     13 |.|
+tok   4066 |  
+|
+tok      9 |*|
+tok    623 | The|
+tok  78102 | compressor|
+tok    802 |’s|
+tok   3470 | power|
+tok  13632 | rating|
+tok    382 | is|
+tok   6971 | usually|
+tok    220 | |
+tok     16 |1|
+tok   1585 |–|
+tok     18 |3|
+tok  35971 | |
+tok     54 |W|
+tok    395 | for|
+tok    261 | a|
+tok   3291 | small|
+tok  44820 | fridge|
+tok     11 |,|
+tok    889 | but|
+tok    480 | it|
+tok  13719 | runs|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok  33763 | fraction|
+tok    328 | of|
+tok    290 | the|
+tok   1058 | time|
+tok    350 | (|
+tok 119288 |often|
+tok    220 | |
+tok   1130 |30|
+tok   1585 |–|
+tok   1434 |50|
+tok  35971 | |
+tok      4 |%|
+tok    328 | of|
+tok    290 | the|
+tok   2163 | day|
+tok    741 |).|
+tok   4066 |  
+|
+tok      9 |*|
+tok    623 | The|
+tok   1273 | other|
+tok   7881 | parts|
+tok    553 | are|
+tok  15646 | mostly|
+tok  45487 | passive|
+tok    350 | (|
+tok   1191 |co|
+tok   5879 |ils|
+tok     11 |,|
+tok  85074 | valves|
+tok      8 |)|
+tok    503 | or|
+tok   4465 | low|
+tok  50005 |‑|
+tok  22295 |power|
+tok  23940 | accessories|
+tok    364 |.
+
+|
+tok   5808 |So|
+tok     11 |,|
+tok    538 | if|
+tok    481 | you|
+tok   3462 |’re|
+tok   3778 | looking|
+tok    316 | to|
+tok   6092 | cut|
+tok   5954 | energy|
+tok   1199 | use|
+tok     11 |,|
+tok    290 | the|
+tok   1645 | most|
+tok   8488 | effective|
+tok   6629 | changes|
+tok    553 | are|
+tok   1402 |:
+
+|
+tok     16 |1|
+tok     13 |.|
+tok   6240 | **|
+tok  25627 |Keep|
+tok    290 | the|
+tok  78102 | compressor|
+tok   6788 | running|
+tok  34229 | efficiently|
+tok    410 |**|
+tok   1127 | –|
+tok   4687 | clean|
+tok 192921 | condenser|
+tok  94160 | coils|
+tok     11 |,|
+tok  12930 | maintain|
+tok   7937 | proper|
+tok  30606 | refriger|
+tok    493 |ant|
+tok   8363 | charge|
+tok     11 |,|
+tok    326 | and|
+tok   8397 | avoid|
+tok  26836 | frequent|
+tok   4121 | door|
+tok  60935 | openings|
+tok     13 |.|
+tok   4066 |  
+|
+tok     17 |2|
+tok     13 |.|
+tok   6240 | **|
+tok   8470 |Use|
+tok    261 | a|
+tok  78102 | compressor|
+tok  50005 |‑|
+tok  76593 |efficient|
+tok   2359 | model|
+tok    410 |**|
+tok   1127 | –|
+tok  41292 | newer|
+tok   7015 | models|
+tok   1199 | use|
+tok  11076 | variable|
+tok  50005 |‑|
+tok  42880 |speed|
+tok 189192 | compressors|
+tok    484 | that|
+tok   2461 | run|
+tok   1606 | only|
+tok    472 | as|
+tok   3479 | hard|
+tok    472 | as|
+tok   6118 | needed|
+tok     13 |.|
+tok   4066 |  
+|
+tok     18 |3|
+tok     13 |.|
+tok   6240 | **|
+tok 177615 |Improve|
+tok  56411 | insulation|
+tok    326 | and|
+tok 112287 | airflow|
+tok    410 |**|
+tok   1127 | –|
+tok  38566 | reduces|
+tok    290 | the|
+tok   4700 | load|
+tok    402 | on|
+tok    290 | the|
+tok  78102 | compressor|
+tok    364 |.
+
+|
+tok    637 |In|
+tok   4022 | short|
+tok     11 |,|
+tok    290 | the|
+tok  78102 | compressor|
+tok    382 | is|
+tok    290 | the|
+tok    966 | “|
+tok  27031 |heart|
+tok    693 |”|
+tok    328 | of|
+tok    290 | the|
+tok  44820 | fridge|
+tok    326 | and|
+tok    290 | the|
+tok    997 | part|
+tok    484 | that|
+tok 109297 | consumes|
+tok    290 | the|
+tok  29247 | bulk|
+tok    328 | of|
+tok   1617 | its|
+tok  25093 | electricity|
+tok     13 |.|
+mode=streamed prompt_toks=402 reused=292 generated=426 n_ubatch=128
+prefill: 7.46 s (14.75 tok/s)
+decode:  42.44 s (10.04 tok/s)
+io: cb_calls=10248 decode_uses=40896 decode_misses=4335 (hit 0.894) prefill_uses=10124 prefill_misses=578
+io: pf_calls=23 pf_experts=576 union avg=25.0 min=20 max=32 fill=4.32 s (pool 32 slots)
+io: prefetch_issued=201 prefetch_hits=80 prefetch_used=175 stall=17.56 s total_read=67779.7 MB avg_bw=1359 MB/s
+io: read_work=128.51 s preads=30684 per_stream_bw=527 MB/s
+mem: peak_rss=12.04 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=a88c6757d2ec92e1
+text: <|channel|>analysis<|message|>We need to answer which part uses most energy. Typically compressor uses most energy. But depends on design. Provide explanation: compressor is motor that compresses refrigerant, uses most electricity. Also mention that compressor accounts for ~70-80% of total energy consumption. Provide context.<|end|><|start|>assistant<|channel|>final<|message|>**The compressor is the biggest energy‑consumer.**
+
+| Component | What it does | Typical share of total power |
+|-----------|--------------|------------------------------|
+| **Compressor** | Pressurises the refrigerant, raising its pressure and temperature so it can release heat in the condenser. | ~70 – 80 % of the fridge’s total electrical draw |
+| Expansion valve / capillary tube | Lowers pressure, cooling the refrigerant before it enters the evaporator. | ~5 – 10 % |
+| Evaporator (inside coils) | Absorbs heat from the fridge interior. | ~5 – 10 % |
+| Fans, defrost heater, control electronics | Move air, melt frost, run the control board. | < 5 % |
+
+**Why the compressor dominates**
+
+* It is a motor that must do mechanical work to compress the refrigerant gas.  
+* The compressor’s power rating is usually 1–3 W for a small fridge, but it runs for a large fraction of the time (often 30–50 % of the day).  
+* The other parts are mostly passive (coils, valves) or low‑power accessories.
+
+So, if you’re looking to cut energy use, the most effective changes are:
+
+1. **Keep the compressor running efficiently** – clean condenser coils, maintain proper refrigerant charge, and avoid frequent door openings.  
+2. **Use a compressor‑efficient model** – newer models use variable‑speed compressors that run only as hard as needed.  
+3. **Improve insulation and airflow** – reduces the load on the compressor.
+
+In short, the compressor is the “heart” of the fridge and the part that consumes the bulk of its electricity.

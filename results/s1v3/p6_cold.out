@@ -1,0 +1,1895 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+ttft: total=28249 ms | template=0 tokenize=4 kv_match=0 prefill=28242 first_sample=1
+ttft: ctx_held=0 rendered=707 reused=0 reprefill=707 (100.0% of rendered)
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok   1261 | when|
+tok  10691 | hash|
+tok   3293 | table|
+tok   1631 | look|
+tok  14409 |ups|
+tok    717 | get|
+tok   9800 | slow|
+tok     13 |.|
+tok  51441 | Provide|
+tok   4878 | details|
+tok     25 |:|
+tok 100572 | collisions|
+tok     11 |,|
+tok   4700 | load|
+tok  12332 | factor|
+tok     11 |,|
+tok  12530 | poor|
+tok  10691 | hash|
+tok   1114 | function|
+tok     11 |,|
+tok 194550 | resizing|
+tok     11 |,|
+tok   8197 | memory|
+tok 169971 | fragmentation|
+tok     11 |,|
+tok  11956 | cache|
+tok 100918 | misses|
+tok     11 |,|
+tok 166438 | chaining|
+tok  10217 | vs|
+tok   2494 | open|
+tok  43729 | addressing|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok  20486 | worst|
+tok  83130 |-case|
+tok    532 | O|
+tok   2406 |(n|
+tok    741 |).|
+tok  51441 | Provide|
+tok  15652 | examples|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   1991 | many|
+tok 100572 | collisions|
+tok     11 |,|
+tok  28257 | bucket|
+tok  14081 | becomes|
+tok   1701 | long|
+tok  13464 | chain|
+tok    503 | or|
+tok 186002 | probing|
+tok  16281 | sequence|
+tok   1701 | long|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok  10691 | hash|
+tok   1114 | function|
+tok    625 | not|
+tok  21219 | uniform|
+tok     11 |,|
+tok    503 | or|
+tok  12994 | keys|
+tok    553 | are|
+tok   6771 | similar|
+tok     11 |,|
+tok 100572 | collisions|
+tok   1932 | high|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok 194550 | resizing|
+tok    665 | can|
+tok   7075 | cause|
+tok  23005 | temporary|
+tok 160855 | slowdown|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   3293 | table|
+tok    382 | is|
+tok   3101 | too|
+tok   3291 | small|
+tok  15001 | relative|
+tok    316 | to|
+tok   2086 | number|
+tok    328 | of|
+tok   8632 | elements|
+tok     11 |,|
+tok   4700 | load|
+tok  12332 | factor|
+tok   1932 | high|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok  12994 | keys|
+tok    553 | are|
+tok   4410 | large|
+tok  11736 | objects|
+tok     11 |,|
+tok  34349 | computing|
+tok  10691 | hash|
+tok   1340 | may|
+tok    413 | be|
+tok  14818 | expensive|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   2360 | using|
+tok   2494 | open|
+tok  43729 | addressing|
+tok     11 |,|
+tok 114338 | clustering|
+tok    665 | can|
+tok 179125 | degrade|
+tok   6198 | performance|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   2360 | using|
+tok  14012 | dynamic|
+tok 194550 | resizing|
+tok     11 |,|
+tok    322 | re|
+tok  16909 |hash|
+tok    289 |ing|
+tok   3097 | cost|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   2360 | using|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    306 | in|
+tok    261 | a|
+tok  47517 | concurrent|
+tok   5870 | environment|
+tok     11 |,|
+tok  67321 | locking|
+tok    665 | can|
+tok   7075 | cause|
+tok 160855 | slowdown|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   8197 | memory|
+tok    382 | is|
+tok    625 | not|
+tok 130997 | contiguous|
+tok     11 |,|
+tok  11956 | cache|
+tok 100918 | misses|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok  12994 | keys|
+tok    553 | are|
+tok    625 | not|
+tok 111711 | immutable|
+tok     11 |,|
+tok  10691 | hash|
+tok   1340 | may|
+tok   3343 | change|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   2360 | using|
+tok    261 | a|
+tok  12530 | poor|
+tok  10691 | hash|
+tok   1114 | function|
+tok     11 |,|
+tok 100572 | collisions|
+tok   1932 | high|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok   2360 | using|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok  20099 | sorted|
+tok   1238 | data|
+tok     11 |,|
+tok    481 | you|
+tok  12577 | lose|
+tok  30931 | ordering|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1309 | need|
+tok    316 | to|
+tok  63166 | iterate|
+tok   1072 | over|
+tok    722 | all|
+tok  12994 | keys|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok   1309 | need|
+tok    316 | to|
+tok  66957 | traverse|
+tok    722 | all|
+tok  83230 | buckets|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1309 | need|
+tok    316 | to|
+tok  12930 | maintain|
+tok   2569 | order|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok   1309 | need|
+tok    316 | to|
+tok   1199 | use|
+tok   1273 | other|
+tok  21207 | structures|
+tok    364 |.
+
+|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok   6052 | answer|
+tok     25 |:|
+tok    392 | "|
+tok   5958 |When|
+tok   2226 | does|
+tok    480 | it|
+tok    717 | get|
+tok   9800 | slow|
+tok  16842 |?"|
+tok  51441 | Provide|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  20486 | worst|
+tok  83130 |-case|
+tok    532 | O|
+tok   2406 |(n|
+tok    741 |).|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   4700 | load|
+tok  12332 | factor|
+tok     11 |,|
+tok 100572 | collisions|
+tok     11 |,|
+tok    322 | re|
+tok  16909 |hash|
+tok    289 |ing|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok    679 | have|
+tok   1991 | many|
+tok 100572 | collisions|
+tok     11 |,|
+tok    290 | the|
+tok   1058 | time|
+tok    316 | to|
+tok   3684 | search|
+tok    261 | a|
+tok  28257 | bucket|
+tok  21073 | increases|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok    679 | have|
+tok   1991 | many|
+tok  12994 | keys|
+tok     11 |,|
+tok    290 | the|
+tok   3293 | table|
+tok   1340 | may|
+tok   1309 | need|
+tok    316 | to|
+tok  40625 | resize|
+tok     11 |,|
+tok  24297 | causing|
+tok    322 | re|
+tok  16909 |hash|
+tok    289 |ing|
+tok  52558 | overhead|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  12530 | poor|
+tok  10691 | hash|
+tok   1114 | function|
+tok     11 |,|
+tok 100572 | collisions|
+tok   7064 | increase|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok   2494 | open|
+tok  43729 | addressing|
+tok     11 |,|
+tok 114338 | clustering|
+tok    665 | can|
+tok 179125 | degrade|
+tok   6198 | performance|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    306 | in|
+tok    261 | a|
+tok  12151 | multi|
+tok 156104 |-thread|
+tok    295 |ed|
+tok   5870 | environment|
+tok     11 |,|
+tok  67321 | locking|
+tok    665 | can|
+tok   7075 | cause|
+tok 160855 | slowdown|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok   4410 | large|
+tok  12994 | keys|
+tok     11 |,|
+tok  34349 | computing|
+tok  10691 | hash|
+tok   1340 | may|
+tok    413 | be|
+tok  14818 | expensive|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok   3291 | small|
+tok  12994 | keys|
+tok    889 | but|
+tok   1991 | many|
+tok 100572 | collisions|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok 179125 | degrade|
+tok    316 | to|
+tok    532 | O|
+tok   2406 |(n|
+tok    741 |).|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   3291 | small|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok  52558 | overhead|
+tok   1340 | may|
+tok    413 | be|
+tok   1932 | high|
+tok  15001 | relative|
+tok    316 | to|
+tok   2644 | array|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   3291 | small|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    290 | the|
+tok  52558 | overhead|
+tok    328 | of|
+tok 185245 | hashing|
+tok   1340 | may|
+tok    413 | be|
+tok    945 | more|
+tok   1572 | than|
+tok   1327 | just|
+tok   2360 | using|
+tok    448 | an|
+tok   2644 | array|
+tok     13 |.|
+tok   3072 | But|
+tok    290 | the|
+tok   4928 | question|
+tok    382 | is|
+tok   1078 | about|
+tok   1631 | look|
+tok  14409 |ups|
+tok   2447 | being|
+tok   9800 | slow|
+tok     13 |.|
+tok   2632 | So|
+tok    581 | we|
+tok    665 | can|
+tok   8633 | mention|
+tok    484 | that|
+tok   1631 | look|
+tok  14409 |ups|
+tok    665 | can|
+tok    413 | be|
+tok   9800 | slow|
+tok   1261 | when|
+tok   1402 |:
+
+|
+tok     12 |-|
+tok    623 | The|
+tok  10691 | hash|
+tok   1114 | function|
+tok    382 | is|
+tok  12530 | poor|
+tok     11 |,|
+tok  24297 | causing|
+tok   1991 | many|
+tok 100572 | collisions|
+tok    558 |.
+|
+tok     12 |-|
+tok    623 | The|
+tok   4700 | load|
+tok  12332 | factor|
+tok    382 | is|
+tok   1932 | high|
+tok     11 |,|
+tok  24297 | causing|
+tok   1701 | long|
+tok  42636 | chains|
+tok    503 | or|
+tok 186002 | probing|
+tok  45665 | sequences|
+tok    558 |.
+|
+tok     12 |-|
+tok    623 | The|
+tok   3293 | table|
+tok    382 | is|
+tok 130296 | resized|
+tok     11 |,|
+tok  24297 | causing|
+tok    322 | re|
+tok  16909 |hash|
+tok    289 |ing|
+tok  52558 | overhead|
+tok    558 |.
+|
+tok     12 |-|
+tok    623 | The|
+tok  12994 | keys|
+tok    553 | are|
+tok   4410 | large|
+tok    503 | or|
+tok  14818 | expensive|
+tok    316 | to|
+tok  10691 | hash|
+tok    558 |.
+|
+tok     12 |-|
+tok    623 | The|
+tok   3293 | table|
+tok    382 | is|
+tok    625 | not|
+tok 130997 | contiguous|
+tok    306 | in|
+tok   8197 | memory|
+tok     11 |,|
+tok  24297 | causing|
+tok  11956 | cache|
+tok 100918 | misses|
+tok    558 |.
+|
+tok     12 |-|
+tok    623 | The|
+tok   3293 | table|
+tok    382 | is|
+tok   2061 | used|
+tok    306 | in|
+tok    261 | a|
+tok  47517 | concurrent|
+tok   5870 | environment|
+tok    483 | with|
+tok  50098 | locks|
+tok    558 |.
+|
+tok     12 |-|
+tok    623 | The|
+tok   3293 | table|
+tok    382 | is|
+tok   2061 | used|
+tok    395 | for|
+tok  20099 | sorted|
+tok   1238 | data|
+tok     11 |,|
+tok  39241 | requiring|
+tok   6623 | additional|
+tok  12084 | operations|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  20486 | worst|
+tok  83130 |-case|
+tok  25697 | scenario|
+tok     25 |:|
+tok    722 | all|
+tok  12994 | keys|
+tok  10691 | hash|
+tok    316 | to|
+tok   2684 | same|
+tok  28257 | bucket|
+tok     11 |,|
+tok   4137 | making|
+tok  37342 | lookup|
+tok    532 | O|
+tok   2406 |(n|
+tok    741 |).|
+tok  51441 | Provide|
+tok   4994 | example|
+tok     25 |:|
+tok   2360 | using|
+tok    261 | a|
+tok  10691 | hash|
+tok   1114 | function|
+tok    484 | that|
+tok   7377 | returns|
+tok   9594 | constant|
+tok   1432 | value|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   3291 | small|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    290 | the|
+tok  52558 | overhead|
+tok    328 | of|
+tok 185245 | hashing|
+tok   1340 | may|
+tok    413 | be|
+tok    945 | more|
+tok   1572 | than|
+tok   1327 | just|
+tok   2360 | using|
+tok    448 | an|
+tok   2644 | array|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok   3293 | table|
+tok    382 | is|
+tok    625 | not|
+tok 130296 | resized|
+tok  13425 | properly|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok   1932 | high|
+tok   4700 | load|
+tok  12332 | factor|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  10691 | hash|
+tok   1114 | function|
+tok    382 | is|
+tok    625 | not|
+tok  21219 | uniform|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok 114338 | clustering|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  12994 | keys|
+tok    553 | are|
+tok    625 | not|
+tok 111711 | immutable|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok   8201 | wrong|
+tok   4376 | results|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  12994 | keys|
+tok    553 | are|
+tok    625 | not|
+tok  38899 | comparable|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok 100572 | collisions|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  12994 | keys|
+tok    553 | are|
+tok    625 | not|
+tok 104474 | hashed|
+tok  13425 | properly|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok 100572 | collisions|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  12994 | keys|
+tok    553 | are|
+tok    625 | not|
+tok 104474 | hashed|
+tok  13425 | properly|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok 100572 | collisions|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  12994 | keys|
+tok    553 | are|
+tok    625 | not|
+tok 104474 | hashed|
+tok  13425 | properly|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok 100572 | collisions|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  12994 | keys|
+tok    553 | are|
+tok    625 | not|
+tok 104474 | hashed|
+tok  13425 | properly|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok 100572 | collisions|
+tok    364 |.
+
+|
+tok  13523 |Stop|
+tok  74481 | repeating|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  12994 | keys|
+tok    553 | are|
+tok    625 | not|
+tok 104474 | hashed|
+tok  13425 | properly|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok 100572 | collisions|
+tok    364 |.
+
+|
+tok  13523 |Stop|
+tok    364 |.
+
+|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  10635 | produce|
+tok    261 | a|
+tok  82463 | concise|
+tok   6052 | answer|
+tok    483 | with|
+tok  31926 | bullet|
+tok   5571 | points|
+tok    326 | and|
+tok  30547 | explanation|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  20486 | worst|
+tok  83130 |-case|
+tok    382 | is|
+tok    532 | O|
+tok   2406 |(n|
+tok    741 |).|
+tok  51441 | Provide|
+tok   4994 | example|
+tok    328 | of|
+tok  12530 | poor|
+tok  10691 | hash|
+tok   1114 | function|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   4700 | load|
+tok  12332 | factor|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok    322 | re|
+tok  16909 |hash|
+tok    289 |ing|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   2494 | open|
+tok  43729 | addressing|
+tok  10217 | vs|
+tok 166438 | chaining|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok 193379 | concurrency|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   8197 | memory|
+tok  10557 | layout|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   3291 | small|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    290 | the|
+tok  52558 | overhead|
+tok   1340 | may|
+tok    413 | be|
+tok   1932 | high|
+tok  15001 | relative|
+tok    316 | to|
+tok   2644 | array|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok   3293 | table|
+tok    382 | is|
+tok    625 | not|
+tok 130296 | resized|
+tok  13425 | properly|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok   1932 | high|
+tok   4700 | load|
+tok  12332 | factor|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  10691 | hash|
+tok   1114 | function|
+tok    382 | is|
+tok    625 | not|
+tok  21219 | uniform|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok 114338 | clustering|
+tok    364 |.
+
+|
+tok  19734 |Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    538 | if|
+tok    481 | you|
+tok   1199 | use|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    395 | for|
+tok    261 | a|
+tok   4410 | large|
+tok   2086 | number|
+tok    328 | of|
+tok  12994 | keys|
+tok     11 |,|
+tok    889 | but|
+tok    290 | the|
+tok  12994 | keys|
+tok    553 | are|
+tok    625 | not|
+tok 104474 | hashed|
+tok  13425 | properly|
+tok     11 |,|
+tok    481 | you|
+tok   1340 | may|
+tok    717 | get|
+tok 100572 | collisions|
+tok    364 |.
+
+|
+tok  13523 |Stop|
+tok    364 |.
+
+|
+tok  14999 |Ok|
+tok    364 |.
+
+|
+tok  58369 |Let's|
+tok  10635 | produce|
+tok   1721 | final|
+tok   6052 | answer|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok  31639 |###|
+tok   4296 | When|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok    802 |’s|
+tok   1631 | look|
+tok  50005 |‑|
+tok  14409 |ups|
+tok   5025 | become|
+tok   9800 | slow|
+tok    279 |
+
+|
+tok     91 |||
+tok  70131 | Cause|
+tok   1022 | ||
+tok  12587 | Why|
+tok    480 | it|
+tok  74891 | hurts|
+tok   6198 | performance|
+tok   1022 | ||
+tok 123857 | Typical|
+tok  57816 | symptom|
+tok  15972 | |
+|
+tok     91 |||
+tok  39028 |-------|
+tok     91 |||
+tok   1297 |----------------|
+tok  26444 |----------|
+tok     91 |||
+tok   1297 |----------------|
+tok     12 |-|
+tok  14876 ||
+|
+tok     91 |||
+tok   6240 | **|
+tok  12664 |High|
+tok   4700 | load|
+tok  12332 | factor|
+tok    410 |**|
+tok    350 | (|
+tok  74032 |many|
+tok   4732 | items|
+tok    777 | per|
+tok  28257 | bucket|
+tok      8 |)|
+tok   1022 | ||
+tok  11555 | Each|
+tok  28257 | bucket|
+tok   8895 | contains|
+tok    261 | a|
+tok   1701 | long|
+tok  13464 | chain|
+tok    503 | or|
+tok    261 | a|
+tok   1701 | long|
+tok 186002 | probing|
+tok  16281 | sequence|
+tok     13 |.|
+tok   1022 | ||
+tok  87964 | Lookup|
+tok   1058 | time|
+tok  42326 | grows|
+tok   2543 | line|
+tok   3489 |arly|
+tok    483 | with|
+tok    290 | the|
+tok   2086 | number|
+tok    328 | of|
+tok   4732 | items|
+tok    306 | in|
+tok    484 | that|
+tok  28257 | bucket|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 123747 |Poor|
+tok  10691 | hash|
+tok   1114 | function|
+tok    410 |**|
+tok   1022 | ||
+tok    623 | The|
+tok  10691 | hash|
+tok   4824 | values|
+tok    553 | are|
+tok    625 | not|
+tok  65116 | evenly|
+tok   7581 | distributed|
+tok     11 |,|
+tok    813 | so|
+tok   1991 | many|
+tok  12994 | keys|
+tok 133533 | collide|
+tok    306 | in|
+tok    290 | the|
+tok   2684 | same|
+tok  28257 | bucket|
+tok     13 |.|
+tok   1022 | ||
+tok   5108 | One|
+tok  28257 | bucket|
+tok  14081 | becomes|
+tok    261 | a|
+tok    966 | “|
+tok  15303 |hot|
+tok  10021 | spot|
+tok  83577 |”;|
+tok   1631 | look|
+tok  50005 |‑|
+tok  14409 |ups|
+tok    306 | in|
+tok    484 | that|
+tok  28257 | bucket|
+tok    553 | are|
+tok    532 | O|
+tok   2406 |(n|
+tok    741 |).|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok   1204 |Res|
+tok   6396 |izing|
+tok    820 | /|
+tok    322 | re|
+tok  16909 |hash|
+tok    289 |ing|
+tok    410 |**|
+tok   1022 | ||
+tok   4296 | When|
+tok    290 | the|
+tok   3293 | table|
+tok  42326 | grows|
+tok     11 |,|
+tok   1753 | every|
+tok   9595 | existing|
+tok   2140 | key|
+tok   2804 | must|
+tok    413 | be|
+tok    322 | re|
+tok 192232 |hashed|
+tok    326 | and|
+tok  12183 | moved|
+tok     13 |.|
+tok   1022 | ||
+tok    355 | A|
+tok   4590 | single|
+tok  37342 | lookup|
+tok    665 | can|
+tok  14699 | trigger|
+tok    261 | a|
+tok  44091 | costly|
+tok  40625 | resize|
+tok     11 |,|
+tok    503 | or|
+tok    290 | the|
+tok   3293 | table|
+tok    382 | is|
+tok  48722 | temporarily|
+tok    306 | in|
+tok    448 | an|
+tok  85596 | inconsistent|
+tok   2608 | state|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok   6447 |Open|
+tok  50005 |‑|
+tok   6104 |address|
+tok    289 |ing|
+tok 114338 | clustering|
+tok    410 |**|
+tok   1022 | ||
+tok    730 | In|
+tok  23876 | linear|
+tok     14 |/|
+tok 178997 | quadratic|
+tok 186002 | probing|
+tok     11 |,|
+tok    261 | a|
+tok   1701 | long|
+tok   2461 | run|
+tok    328 | of|
+tok  46186 | occupied|
+tok  15340 | slots|
+tok  16691 | forces|
+tok   1991 | many|
+tok 127387 | probes|
+tok     13 |.|
+tok   1022 | ||
+tok  11555 | Each|
+tok  37342 | lookup|
+tok   1340 | may|
+tok  28035 | examine|
+tok  42203 | dozens|
+tok    328 | of|
+tok  15340 | slots|
+tok   2254 | before|
+tok  12129 | finding|
+tok    290 | the|
+tok   2140 | key|
+tok    503 | or|
+tok    448 | an|
+tok   8213 | empty|
+tok   8215 | slot|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  42565 |Large|
+tok    503 | or|
+tok  14818 | expensive|
+tok  12994 | keys|
+tok    410 |**|
+tok   1022 | ||
+tok  76688 | Computing|
+tok    290 | the|
+tok  10691 | hash|
+tok    328 | of|
+tok    261 | a|
+tok   3464 | big|
+tok   2817 | object|
+tok    350 | (|
+tok     68 |e|
+tok   1940 |.g|
+tok   4213 |.,|
+tok    261 | a|
+tok   1701 | long|
+tok   1621 | string|
+tok    503 | or|
+tok    261 | a|
+tok   8012 | complex|
+tok   3539 | struct|
+tok      8 |)|
+tok   6948 | takes|
+tok   1058 | time|
+tok     13 |.|
+tok   1022 | ||
+tok    623 | The|
+tok  10691 | hash|
+tok  50005 |‑|
+tok    639 |com|
+tok  47913 |putation|
+tok   3097 | cost|
+tok 168430 | dominates|
+tok    290 | the|
+tok  37342 | lookup|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok   8865 |Cache|
+tok 100918 | misses|
+tok    410 |**|
+tok   1022 | ||
+tok    623 | The|
+tok   3293 | table|
+tok    382 | is|
+tok   3101 | too|
+tok   4410 | large|
+tok    316 | to|
+tok   5769 | fit|
+tok    306 | in|
+tok  11956 | cache|
+tok     11 |,|
+tok    503 | or|
+tok    290 | the|
+tok  28257 | bucket|
+tok  10557 | layout|
+tok    382 | is|
+tok 166038 | fragmented|
+tok     13 |.|
+tok   1022 | ||
+tok  11555 | Each|
+tok  31925 | probe|
+tok   1340 | may|
+tok  13843 | jump|
+tok    316 | to|
+tok    261 | a|
+tok   2647 | different|
+tok  11956 | cache|
+tok   2543 | line|
+tok     11 |,|
+tok  24297 | causing|
+tok   1991 | many|
+tok   8197 | memory|
+tok 119838 | stalls|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok 117620 |Concurrent|
+tok   3158 | access|
+tok    483 | with|
+tok  50098 | locks|
+tok    410 |**|
+tok   1022 | ||
+tok 135634 | Threads|
+tok 104610 | contend|
+tok    395 | for|
+tok    261 | a|
+tok   5466 | global|
+tok   8109 | lock|
+tok    503 | or|
+tok    777 | per|
+tok  50005 |‑|
+tok  64345 |bucket|
+tok   8109 | lock|
+tok     13 |.|
+tok   1022 | ||
+tok  11889 | Look|
+tok  50005 |‑|
+tok  14409 |ups|
+tok   5025 | become|
+tok  64147 | serialized|
+tok     11 |,|
+tok    326 | and|
+tok    290 | the|
+tok   8109 | lock|
+tok  52558 | overhead|
+tok 168430 | dominates|
+tok     13 |.|
+tok  15972 | |
+|
+tok     91 |||
+tok   6240 | **|
+tok  25288 |Mutable|
+tok  12994 | keys|
+tok    410 |**|
+tok   1022 | ||
+tok   1843 | If|
+tok    261 | a|
+tok   2140 | key|
+tok    802 |’s|
+tok  10691 | hash|
+tok   6629 | changes|
+tok   1934 | after|
+tok  68881 | insertion|
+tok     11 |,|
+tok    290 | the|
+tok   3293 | table|
+tok    665 | can|
+tok   1573 |’t|
+tok   1646 | find|
+tok    480 | it|
+tok     13 |.|
+tok   1022 | ||
+tok  11889 | Look|
+tok  50005 |‑|
+tok  14409 |ups|
+tok   7111 | fail|
+tok    503 | or|
+tok   5025 | become|
+tok   1869 | very|
+tok   9800 | slow|
+tok   2236 | because|
+tok    290 | the|
+tok   2140 | key|
+tok    382 | is|
+tok    306 | in|
+tok    290 | the|
+tok   8201 | wrong|
+tok  28257 | bucket|
+tok     13 |.|
+tok  47459 | |
+
+|
+tok   1509 |####|
+tok 133417 | Worst|
+tok  50005 |‑|
+tok   9994 |case|
+tok  25697 | scenario|
+tok    198 |
+|
+tok   3335 |If|
+tok   6240 | **|
+tok    586 |all|
+tok  12994 | keys|
+tok  10691 | hash|
+tok    316 | to|
+tok    290 | the|
+tok   2684 | same|
+tok  28257 | bucket|
+tok    410 |**|
+tok    350 | (|
+tok     68 |e|
+tok   1940 |.g|
+tok   4213 |.,|
+tok    261 | a|
+tok  10691 | hash|
+tok   1114 | function|
+tok    484 | that|
+tok   3324 | always|
+tok   7377 | returns|
+tok    220 | |
+tok     15 |0|
+tok    936 |),|
+tok    261 | a|
+tok  37342 | lookup|
+tok 104507 | degener|
+tok   1381 |ates|
+tok    316 | to|
+tok    261 | a|
+tok  23876 | linear|
+tok  14659 | scan|
+tok    328 | of|
+tok    722 | all|
+tok   2700 | `|
+tok     77 |n|
+tok     63 |`|
+tok  18614 | entries|
+tok     25 |:|
+tok   6240 | **|
+tok     46 |O|
+tok   2406 |(n|
+tok  80066 |)**|
+tok   1058 | time|
+tok    364 |.
+
+|
+tok   1509 |####|
+tok  97110 | Practical|
+tok   9858 | tips|
+tok    316 | to|
+tok   3357 | keep|
+tok   1631 | look|
+tok  50005 |‑|
+tok  14409 |ups|
+tok   5661 | fast|
+tok    198 |
+|
+tok     12 |-|
+tok  16835 | Keep|
+tok    290 | the|
+tok   4700 | load|
+tok  12332 | factor|
+tok   4895 | below|
+tok    261 | a|
+tok  24313 | threshold|
+tok    350 | (|
+tok 119288 |often|
+tok    220 | |
+tok     15 |0|
+tok     13 |.|
+tok     22 |7|
+tok   1585 |–|
+tok     15 |0|
+tok     13 |.|
+tok   3384 |75|
+tok    741 |).|
+tok   4066 |  
+|
+tok     12 |-|
+tok   7649 | Use|
+tok    261 | a|
+tok   1932 | high|
+tok  50005 |‑|
+tok  14761 |quality|
+tok  10691 | hash|
+tok   1114 | function|
+tok    484 | that|
+tok 163118 | distributes|
+tok  12994 | keys|
+tok 161240 | uniformly|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok 109672 | Prefer|
+tok 166438 | chaining|
+tok    350 | (|
+tok  78492 |linked|
+tok  19471 | lists|
+tok    503 | or|
+tok  14012 | dynamic|
+tok  38774 | arrays|
+tok      8 |)|
+tok   1072 | over|
+tok   2494 | open|
+tok  50005 |‑|
+tok   6104 |address|
+tok    289 |ing|
+tok   1261 | when|
+tok    290 | the|
+tok   4700 | load|
+tok  12332 | factor|
+tok   1340 | may|
+tok   5025 | become|
+tok   1932 | high|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok    907 | Re|
+tok  16909 |hash|
+tok   1606 | only|
+tok   1261 | when|
+tok   8155 | necessary|
+tok     26 |;|
+tok   1991 | many|
+tok  34098 | libraries|
+tok   3503 | double|
+tok    290 | the|
+tok   3293 | table|
+tok   2349 | size|
+tok    316 | to|
+tok   3357 | keep|
+tok    290 | the|
+tok   4700 | load|
+tok  12332 | factor|
+tok   4465 | low|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   2214 | For|
+tok   3291 | small|
+tok  16584 | tables|
+tok     11 |,|
+tok    261 | a|
+tok   4705 | simple|
+tok   2644 | array|
+tok    503 | or|
+tok  20099 | sorted|
+tok   1562 | list|
+tok   1340 | may|
+tok    413 | be|
+tok  16107 | faster|
+tok   1572 | than|
+tok    261 | a|
+tok  10691 | hash|
+tok   3293 | table|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok  46613 | Avoid|
+tok   6505 | mut|
+tok   1365 |ating|
+tok  12994 | keys|
+tok   1934 | after|
+tok  68881 | insertion|
+tok     26 |;|
+tok   1199 | use|
+tok 111711 | immutable|
+tok  11736 | objects|
+tok    472 | as|
+tok  12994 | keys|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok    730 | In|
+tok   3469 | mult|
+tok    437 |ith|
+tok   1293 |read|
+tok    295 |ed|
+tok   3490 | code|
+tok     11 |,|
+tok   3331 | consider|
+tok   8109 | lock|
+tok  50005 |‑|
+tok  18847 |free|
+tok    503 | or|
+tok   8975 | fine|
+tok  50005 |‑|
+tok    896 |gr|
+tok   3883 |ained|
+tok  67321 | locking|
+tok  15744 | designs|
+tok    364 |.
+
+|
+tok    637 |In|
+tok   4022 | short|
+tok     11 |,|
+tok   1631 | look|
+tok  50005 |‑|
+tok  14409 |ups|
+tok   5092 | stay|
+tok   5661 | fast|
+tok    472 | as|
+tok   1701 | long|
+tok    472 | as|
+tok    290 | the|
+tok  10691 | hash|
+tok   1114 | function|
+tok    382 | is|
+tok   1899 | good|
+tok     11 |,|
+tok    290 | the|
+tok   3293 | table|
+tok  11092 | isn|
+tok   1573 |’t|
+tok 164811 | overloaded|
+tok     11 |,|
+tok    326 | and|
+tok    290 | the|
+tok  13847 | implementation|
+tok 111062 | avoids|
+tok  42963 | unnecessary|
+tok 115778 | contention|
+tok    503 | or|
+tok   8197 | memory|
+tok  52558 | overhead|
+tok     13 |.|
+tok   4296 | When|
+tok   1062 | any|
+tok    328 | of|
+tok   2617 | those|
+tok   6409 | conditions|
+tok   2338 | break|
+tok     11 |,|
+tok    290 | the|
+tok   3097 | cost|
+tok    328 | of|
+tok    261 | a|
+tok  37342 | lookup|
+tok    665 | can|
+tok  16601 | rise|
+tok    591 | from|
+tok   9594 | constant|
+tok  50005 |‑|
+tok   4580 |time|
+tok    316 | to|
+tok  23876 | linear|
+tok  50005 |‑|
+tok   4580 |time|
+tok     13 |.|
+mode=streamed prompt_toks=707 reused=0 generated=1722 n_ubatch=128
+prefill: 28.24 s (25.03 tok/s)
+decode:  189.24 s (9.10 tok/s)
+io: cb_calls=41472 decode_uses=165312 decode_misses=18615 (hit 0.887) prefill_uses=65048 prefill_misses=3492
+io: pf_calls=138 pf_experts=3488 union avg=25.3 min=13 max=32 fill=8.15 s (pool 32 slots)
+io: prefetch_issued=1442 prefetch_hits=535 prefetch_used=1197 stall=82.92 s total_read=312112.8 MB avg_bw=1435 MB/s
+io: read_work=491.74 s preads=141294 per_stream_bw=635 MB/s
+mem: peak_rss=12.27 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=1e786c31986a8e18
+text: <|channel|>analysis<|message|>We need to explain when hash table lookups get slow. Provide details: collisions, load factor, poor hash function, resizing, memory fragmentation, cache misses, chaining vs open addressing, etc. Also mention worst-case O(n). Provide examples. Also mention that if many collisions, bucket becomes long chain or probing sequence long. Also mention that if hash function not uniform, or keys are similar, collisions high. Also mention that resizing can cause temporary slowdown. Also mention that if table is too small relative to number of elements, load factor high. Also mention that if keys are large objects, computing hash may be expensive. Also mention that if using open addressing, clustering can degrade performance. Also mention that if using dynamic resizing, rehashing cost. Also mention that if using a hash table in a concurrent environment, locking can cause slowdown. Also mention that if memory is not contiguous, cache misses. Also mention that if keys are not immutable, hash may change. Also mention that if using a poor hash function, collisions high. Also mention that if using a hash table for sorted data, you lose ordering. Also mention that if you need to iterate over all keys, you may need to traverse all buckets. Also mention that if you need to maintain order, you may need to use other structures.
+
+We need to answer: "When does it get slow?" Provide bullet points. Also mention that worst-case O(n). Provide explanation of load factor, collisions, rehashing, etc. Also mention that if you have many collisions, the time to search a bucket increases. Also mention that if you have many keys, the table may need to resize, causing rehashing overhead. Also mention that if you use a poor hash function, collisions increase. Also mention that if you use open addressing, clustering can degrade performance. Also mention that if you use a hash table in a multi-threaded environment, locking can cause slowdown. Also mention that if you use a hash table for large keys, computing hash may be expensive. Also mention that if you use a hash table for small keys but many collisions, you may degrade to O(n). Also mention that if you use a hash table for a small number of keys, overhead may be high relative to array.
+
+Also mention that if you use a hash table for a small number of keys, the overhead of hashing may be more than just using an array. But the question is about lookups being slow. So we can mention that lookups can be slow when:
+
+- The hash function is poor, causing many collisions.
+- The load factor is high, causing long chains or probing sequences.
+- The table is resized, causing rehashing overhead.
+- The keys are large or expensive to hash.
+- The table is not contiguous in memory, causing cache misses.
+- The table is used in a concurrent environment with locks.
+- The table is used for sorted data, requiring additional operations.
+
+Also mention that worst-case scenario: all keys hash to same bucket, making lookup O(n). Provide example: using a hash function that returns constant value.
+
+Also mention that if you use a hash table for a small number of keys, the overhead of hashing may be more than just using an array.
+
+Also mention that if you use a hash table for a large number of keys, but the table is not resized properly, you may get high load factor.
+
+Also mention that if you use a hash table for a large number of keys, but the hash function is not uniform, you may get clustering.
+
+Also mention that if you use a hash table for a large number of keys, but the keys are not immutable, you may get wrong results.
+
+Also mention that if you use a hash table for a large number of keys, but the keys are not comparable, you may get collisions.
+
+Also mention that if you use a hash table for a large number of keys, but the keys are not hashed properly, you may get collisions.
+
+Also mention that if you use a hash table for a large number of keys, but the keys are not hashed properly, you may get collisions.
+
+Also mention that if you use a hash table for a large number of keys, but the keys are not hashed properly, you may get collisions.
+
+Also mention that if you use a hash table for a large number of keys, but the keys are not hashed properly, you may get collisions.
+
+Stop repeating.
+
+Also mention that if you use a hash table for a large number of keys, but the keys are not hashed properly, you may get collisions.
+
+Stop.
+
+We need to produce a concise answer with bullet points and explanation. Also mention that the worst-case is O(n). Provide example of poor hash function. Provide explanation of load factor. Provide explanation of rehashing. Provide explanation of open addressing vs chaining. Provide explanation of concurrency. Provide explanation of memory layout.
+
+Also mention that if you use a hash table for a small number of keys, the overhead may be high relative to array.
+
+Also mention that if you use a hash table for a large number of keys, but the table is not resized properly, you may get high load factor.
+
+Also mention that if you use a hash table for a large number of keys, but the hash function is not uniform, you may get clustering.
+
+Also mention that if you use a hash table for a large number of keys, but the keys are not hashed properly, you may get collisions.
+
+Stop.
+
+Ok.
+
+Let's produce final answer.<|end|><|start|>assistant<|channel|>final<|message|>### When a hash table’s look‑ups become slow
+
+| Cause | Why it hurts performance | Typical symptom |
+|-------|--------------------------|-----------------|
+| **High load factor** (many items per bucket) | Each bucket contains a long chain or a long probing sequence. | Lookup time grows linearly with the number of items in that bucket. |
+| **Poor hash function** | The hash values are not evenly distributed, so many keys collide in the same bucket. | One bucket becomes a “hot spot”; look‑ups in that bucket are O(n). |
+| **Resizing / rehashing** | When the table grows, every existing key must be rehashed and moved. | A single lookup can trigger a costly resize, or the table is temporarily in an inconsistent state. |
+| **Open‑addressing clustering** | In linear/ quadratic probing, a long run of occupied slots forces many probes. | Each lookup may examine dozens of slots before finding the key or an empty slot. |
+| **Large or expensive keys** | Computing the hash of a big object (e.g., a long string or a complex struct) takes time. | The hash‑computation cost dominates the lookup. |
+| **Cache misses** | The table is too large to fit in cache, or the bucket layout is fragmented. | Each probe may jump to a different cache line, causing many memory stalls. |
+| **Concurrent access with locks** | Threads contend for a global lock or per‑bucket lock. | Look‑ups become serialized, and the lock overhead dominates. |
+| **Mutable keys** | If a key’s hash changes after insertion, the table can’t find it. | Look‑ups fail or become very slow because the key is in the wrong bucket. |
+
+#### Worst‑case scenario
+If **all keys hash to the same bucket** (e.g., a hash function that always returns 0), a lookup degenerates to a linear scan of all `n` entries: **O(n)** time.
+
+#### Practical tips to keep look‑ups fast
+- Keep the load factor below a threshold (often 0.7–0.75).  
+- Use a high‑quality hash function that distributes keys uniformly.  
+- Prefer chaining (linked lists or dynamic arrays) over open‑addressing when the load factor may become high.  
+- Rehash only when necessary; many libraries double the table size to keep the load factor low.  
+- For small tables, a simple array or sorted list may be faster than a hash table.  
+- Avoid mutating keys after insertion; use immutable objects as keys.  
+- In multithreaded code, consider lock‑free or fine‑grained locking designs.
+
+In short, look‑ups stay fast as long as the hash function is good, the table isn’t overloaded, and the implementation avoids unnecessary contention or memory overhead. When any of those conditions break, the cost of a lookup can rise from constant‑time to linear‑time.

@@ -1,0 +1,56 @@
+S1v3 — canon ship gates, product config (2026-07-22 11:04)
+avail 8.16 GB | SLOTS=16 | NGEN=2048 | N=6 prompts
+VOID_LEGS: none
+
+GATE 1v2 — NON-INFERIORITY: canon may not ADD divergence beyond stock.
+
+  prompt   canon flips  stock flips  ttft_s
+  p1                 1            1   2.776
+  p2                 1            1    2.53
+  p3                 1            1    2.14
+  p4                 1            1   2.189
+  p5                 1            1   2.223
+  p6                 1            1   2.088
+
+  TOTAL canon flips 6 vs stock flips 6
+  (a) non-inferiority (canon <= stock): PASS
+
+  (b) flip classification — every divergence
+    p1 canon pos=139  ('13', '18704') ('.', ' formation') class=OTHER reconverged=False
+    p1 stock pos=3    ('2167', '976') ('We', 'The') class=word-substitution reconverged=False
+    p2 canon pos=3    ('976', '1844') ('The', 'User') class=word-substitution reconverged=False
+    p2 stock pos=3    ('94272', '1844') ('Provide', 'User') class=word-substitution reconverged=False
+    p3 canon pos=746  ('350', '1328') (' (', ' This') class=OTHER reconverged=False
+    p3 stock pos=3    ('2167', '976') ('We', 'The') class=word-substitution reconverged=False
+    p4 canon pos=58   ('8844', '326') (' uses', ' and') class=word-substitution reconverged=False
+    p4 stock pos=3    ('2167', '976') ('We', 'The') class=word-substitution reconverged=False
+    p5 canon pos=50   ('186352', '382') (' tilted', ' is') class=word-substitution reconverged=False
+    p5 stock pos=3    ('1844', '976') ('User', 'The') class=word-substitution reconverged=False
+    p6 canon pos=35   ('5178', '166438') (' etc', ' chaining') class=word-substitution reconverged=False
+    p6 stock pos=3    ('176289', '2167') ('Explain', 'We') class=word-substitution reconverged=False
+
+  (c) unconditional hard REDs
+    p1: flip at pos 139 is class OTHER ('.', ' formation') — not tie-shaped
+    p3: flip at pos 746 is class OTHER (' (', ' This') — not tie-shaped
+
+  GATE 1v2: RED
+  CONSEQUENCE: canon STAYS DARK. Report to owner. No partial ship.
+
+GATE 2 — worst turn-2 TTFT 2.78s -> GREEN (stock 8.22 s, cold 16.22 s)
+
+RAPID-FIRE (recorded, NOT a gate)
+  canon window (text: -> READY) is the delay a user queues behind.
+
+MEASURED FLIP RATE for the README: canon 6 divergences over 6 prompts (stock 6).
+
+REASONING LENGTH (analysis-channel tokens; the truncation-frequency question)
+  p1: 143 tokens, final channel REACHED
+  p2: 30 tokens, final channel REACHED
+  p3: 757 tokens, final channel REACHED
+  p4: 105 tokens, final channel REACHED
+  p5: 198 tokens, final channel REACHED
+  p6: 232 tokens, final channel REACHED
+  min 30 / median 198 / max 757 — NGEN was 2048
+  >500 tokens on 1/6 prompts: PRODUCT-FREQUENCY problem, ships only with UI warning + docs
+
+TRANSCRIPTS for human coherence review: /Users/umarfarooq/Desktop/research/results/s1v3/transcripts.txt

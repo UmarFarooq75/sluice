@@ -485,8 +485,20 @@ with st.sidebar:
         st.caption(f":material/timer: auto-stops after {IDLE_EXIT_S // 60} min idle "
                    "(driver-side - survives a UI crash)")
 
-    # live machine stats: fragment reruns itself, not the whole app
-    @st.fragment(run_every=2)
+    # Live machine stats. The fragment is DEFINED here but RENDERED at the very END
+    # of the script — see the call after the chat block.
+    #
+    # Why: run_every=2 schedules an auto-rerun, and a rerun that fires while the main
+    # script is blocked in the generation read loop PREEMPTS that run. The script
+    # thread dies mid-turn, so the reply renders but its stats caption never gets
+    # appended and the spinner sticks forever (S2 live defect; reproduced and
+    # confirmed by disabling the fragment). Rendering last means a generating run ends
+    # in st.rerun() before the fragment is ever created, so nothing is scheduled while
+    # we are blocked. On an idle run we reach the end normally and the 2 s refresh
+    # resumes. SLUICE_UI_LIVE_STATS=0 disables it entirely (kept as an escape hatch).
+    _live = os.environ.get("SLUICE_UI_LIVE_STATS", "1") != "0"
+
+    @st.fragment(run_every=2 if _live else None)
     def live_stats():
         vm = psutil.virtual_memory()
         c1, c2 = st.columns(2)
@@ -502,8 +514,7 @@ with st.sidebar:
             except psutil.NoSuchProcess:
                 pass
 
-    with st.container(border=True):
-        live_stats()
+    stats_ph = st.empty()
 
     if st.button("Clear chat", icon=":material/mop:", width="stretch"):
         st.session_state.chat_log = []
@@ -723,3 +734,10 @@ if prompt:
             turn["canon"] = canon
         st.session_state.chat_log.append(turn)
         st.rerun()
+
+# ---------------- live stats, rendered LAST ----------------
+# A generating run exits via st.rerun() above and never reaches this line, so the
+# run_every fragment is never scheduled while the script is blocked. See the comment
+# at its definition.
+with stats_ph.container(border=True):
+    live_stats()

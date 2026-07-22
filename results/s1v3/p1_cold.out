@@ -1,0 +1,289 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+ttft: total=36968 ms | template=0 tokenize=5 kv_match=0 prefill=36962 first_sample=1
+ttft: ctx_held=0 rendered=1073 reused=0 reprefill=1073 (100.0% of rendered)
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok    976 |The|
+tok   1825 | user|
+tok  10648 | wants|
+tok    261 | a|
+tok  18522 | summary|
+tok    306 | in|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok   3164 | They|
+tok  14380 | previously|
+tok   7747 | asked|
+tok    395 | for|
+tok  30547 | explanation|
+tok    328 | of|
+tok  16464 | Earth|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok    480 | it|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+tok   3164 | They|
+tok   1682 | want|
+tok    261 | a|
+tok  82463 | concise|
+tok  18522 | summary|
+tok     13 |.|
+tok   2632 | So|
+tok    581 | we|
+tok   1309 | need|
+tok    316 | to|
+tok  10635 | produce|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok  43991 | summar|
+tok   6396 |izing|
+tok    290 | the|
+tok  18704 | formation|
+tok    326 | and|
+tok  13260 | habit|
+tok   3563 |ability|
+tok     13 |.|
+tok  18057 | Should|
+tok    413 | be|
+tok  82463 | concise|
+tok     13 |.|
+tok  41021 | Let's|
+tok  10635 | produce|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     25 |:|
+tok    220 | |
+tok     16 |1|
+tok      8 |)|
+tok  16464 | Earth|
+tok  20680 | formed|
+tok    591 | from|
+tok    261 | a|
+tok    440 | pro|
+tok   8169 |top|
+tok   8068 |lan|
+tok    292 |et|
+tok    815 |ary|
+tok  18044 | disk|
+tok   4493 | via|
+tok   1259 | acc|
+tok    264 |re|
+tok   1141 |tion|
+tok     11 |,|
+tok  94550 | differentiation|
+tok     11 |,|
+tok    326 | and|
+tok    842 | out|
+tok     70 |g|
+tok  31297 |assing|
+tok     11 |,|
+tok   8117 | leading|
+tok    316 | to|
+tok    261 | a|
+tok  89098 | layered|
+tok  13878 | interior|
+tok    326 | and|
+tok  22137 | atmosphere|
+tok     13 |.|
+tok    220 | |
+tok     17 |2|
+tok      8 |)|
+tok  13974 | Its|
+tok   2349 | size|
+tok     11 |,|
+tok   9324 | distance|
+tok    591 | from|
+tok    290 | the|
+tok  11628 | Sun|
+tok     11 |,|
+tok    326 | and|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok   3763 | allow|
+tok    480 | it|
+tok    316 | to|
+tok  25561 | retain|
+tok    448 | an|
+tok  22137 | atmosphere|
+tok    326 | and|
+tok  20032 | liquid|
+tok   3411 | water|
+tok     13 |.|
+tok    220 | |
+tok     18 |3|
+tok      8 |)|
+tok  52171 | Plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok    326 | and|
+tok  15377 | chemical|
+tok  41478 | cycles|
+tok  12930 | maintain|
+tok    261 | a|
+tok  22105 | stable|
+tok  16721 | climate|
+tok    326 | and|
+tok   3587 | provide|
+tok   8731 | essential|
+tok   8632 | elements|
+tok    395 | for|
+tok   2615 | life|
+tok     13 |.|
+tok   4569 | That|
+tok  17804 | covers|
+tok  18704 | formation|
+tok    326 | and|
+tok  13260 | habit|
+tok   3563 |ability|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok     12 |-|
+tok   6240 | **|
+tok  87981 |Formation|
+tok    410 |**|
+tok   1127 | –|
+tok  16464 | Earth|
+tok   1259 | acc|
+tok   3431 |ret|
+tok    295 |ed|
+tok    591 | from|
+tok    261 | a|
+tok  65441 | rotating|
+tok    440 | pro|
+tok   8169 |top|
+tok   8068 |lan|
+tok    292 |et|
+tok    815 |ary|
+tok  18044 | disk|
+tok     11 |,|
+tok 142663 | differentiated|
+tok   1511 | into|
+tok  10089 | core|
+tok  50005 |‑|
+tok  51937 |mant|
+tok    282 |le|
+tok  50005 |‑|
+tok    798 |cr|
+tok    570 |ust|
+tok  22119 | layers|
+tok     11 |,|
+tok    326 | and|
+tok    842 | out|
+tok     70 |g|
+tok  47148 |assed|
+tok    261 | a|
+tok   9107 | primary|
+tok  22137 | atmosphere|
+tok    484 | that|
+tok   4849 | later|
+tok 100217 | cooled|
+tok   1511 | into|
+tok 101882 | oceans|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok   2035 |Key|
+tok  13260 | habit|
+tok   3563 |ability|
+tok  11652 | factors|
+tok    410 |**|
+tok   1127 | –|
+tok  13974 | Its|
+tok   4842 | mass|
+tok    326 | and|
+tok   9324 | distance|
+tok    591 | from|
+tok    290 | the|
+tok  11628 | Sun|
+tok   3357 | keep|
+tok  28295 | temperatures|
+tok  13127 | suitable|
+tok    395 | for|
+tok  20032 | liquid|
+tok   3411 | water|
+tok     11 |,|
+tok   2049 | while|
+tok    261 | a|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok  52652 | protects|
+tok    290 | the|
+tok  22137 | atmosphere|
+tok    591 | from|
+tok  17624 | solar|
+tok  11215 | wind|
+tok  94243 | erosion|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok   7930 |Long|
+tok  50005 |‑|
+tok   8044 |term|
+tok  27827 | stability|
+tok    410 |**|
+tok   1127 | –|
+tok  52171 | Plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok    326 | and|
+tok   1741 | ge|
+tok  79560 |ochemical|
+tok  41478 | cycles|
+tok    350 | (|
+tok     68 |e|
+tok   1940 |.g|
+tok   4213 |.,|
+tok    290 | the|
+tok  15883 | carbon|
+tok  50005 |‑|
+tok  46135 |sil|
+tok   8091 |icate|
+tok  15839 | cycle|
+tok      8 |)|
+tok  60548 | regulate|
+tok  16721 | climate|
+tok     11 |,|
+tok  75093 | recycle|
+tok   8731 | essential|
+tok   8632 | elements|
+tok     11 |,|
+tok    326 | and|
+tok   2501 | create|
+tok  15174 | diverse|
+tok 110538 | habitats|
+tok    484 | that|
+tok  15561 | sustain|
+tok   2615 | life|
+tok     13 |.|
+mode=streamed prompt_toks=1073 reused=0 generated=270 n_ubatch=128
+prefill: 36.96 s (29.03 tok/s)
+decode:  28.54 s (9.46 tok/s)
+io: cb_calls=6696 decode_uses=25920 decode_misses=2527 (hit 0.903) prefill_uses=98720 prefill_misses=4832
+io: pf_calls=207 pf_experts=4828 union avg=23.3 min=12 max=32 fill=11.37 s (pool 32 slots)
+io: prefetch_issued=273 prefetch_hits=96 prefetch_used=249 stall=12.80 s total_read=101152.7 MB avg_bw=1544 MB/s
+io: read_work=170.98 s preads=45792 per_stream_bw=592 MB/s
+mem: peak_rss=12.07 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=030b85a3f887e184
+text: <|channel|>analysis<|message|>The user wants a summary in three bullet points. They previously asked for explanation of Earth formation and why it can support life. They want a concise summary. So we need to produce three bullet points summarizing the formation and habitability. Should be concise. Let's produce three bullet points: 1) Earth formed from a protoplanetary disk via accretion, differentiation, and outgassing, leading to a layered interior and atmosphere. 2) Its size, distance from the Sun, and magnetic field allow it to retain an atmosphere and liquid water. 3) Plate tectonics and chemical cycles maintain a stable climate and provide essential elements for life. That covers formation and habitability.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation** – Earth accreted from a rotating protoplanetary disk, differentiated into core‑mantle‑crust layers, and outgassed a primary atmosphere that later cooled into oceans.  
+- **Key habitability factors** – Its mass and distance from the Sun keep temperatures suitable for liquid water, while a magnetic field protects the atmosphere from solar wind erosion.  
+- **Long‑term stability** – Plate tectonics and geochemical cycles (e.g., the carbon‑silicate cycle) regulate climate, recycle essential elements, and create diverse habitats that sustain life.

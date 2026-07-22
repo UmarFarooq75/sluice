@@ -1,0 +1,170 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+ttft: total=23589 ms | template=0 tokenize=3 kv_match=0 prefill=23585 first_sample=1
+ttft: ctx_held=0 rendered=536 reused=0 reprefill=536 (100.0% of rendered)
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   1844 |User|
+tok  10648 | wants|
+tok   1001 | one|
+tok   1374 | real|
+tok   1199 | use|
+tok   1890 | case|
+tok    395 | for|
+tok   2454 | each|
+tok     25 |:|
+tok  10825 | stack|
+tok    326 | and|
+tok  13661 | queue|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok   6052 | answer|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok   5622 |Stack|
+tok   1127 | –|
+tok 137052 | Undo|
+tok     14 |/|
+tok 139578 |Redo|
+tok    306 | in|
+tok    261 | a|
+tok   2201 | text|
+tok   9836 | editor|
+tok    410 |**|
+tok   4066 |  
+|
+tok   5958 |When|
+tok    481 | you|
+tok   1490 | type|
+tok    503 | or|
+tok   6168 | delete|
+tok   2201 | text|
+tok     11 |,|
+tok   2454 | each|
+tok   3736 | action|
+tok    382 | is|
+tok  31155 | pushed|
+tok  13291 | onto|
+tok    261 | a|
+tok  10825 | stack|
+tok     13 |.|
+tok  13463 | Press|
+tok    289 |ing|
+tok    425 | *|
+tok  70762 |Undo|
+tok      9 |*|
+tok  76042 | pops|
+tok    290 | the|
+tok   1645 | most|
+tok   7178 | recent|
+tok   3736 | action|
+tok    326 | and|
+tok    322 | re|
+tok  32557 |verts|
+tok    480 | it|
+tok     26 |;|
+tok  45097 | pressing|
+tok    425 | *|
+tok 139578 |Redo|
+tok      9 |*|
+tok  85031 | pushes|
+tok    480 | it|
+tok   1602 | back|
+tok     13 |.|
+tok    623 | The|
+tok  10825 | stack|
+tok  30005 | ensures|
+tok    290 | the|
+tok   2174 | last|
+tok   3343 | change|
+tok    481 | you|
+tok   2452 | made|
+tok    382 | is|
+tok    290 | the|
+tok   1577 | first|
+tok   1001 | one|
+tok 178433 | undone|
+tok    364 |.
+
+|
+tok    410 |**|
+tok   9801 |Queue|
+tok   1127 | –|
+tok  13103 | Print|
+tok  50005 |‑|
+tok   1148 |sp|
+tok    971 |ool|
+tok    259 |er|
+tok   3349 | job|
+tok   1562 | list|
+tok    410 |**|
+tok   4066 |  
+|
+tok  13302 |Print|
+tok  10420 | jobs|
+tok  18338 | arrive|
+tok    306 | in|
+tok    290 | the|
+tok   2569 | order|
+tok    481 | you|
+tok   4952 | send|
+tok   1373 | them|
+tok     13 |.|
+tok    623 | The|
+tok 199454 | spool|
+tok    259 |er|
+tok    469 | en|
+tok 124452 |queues|
+tok   2454 | each|
+tok   3349 | job|
+tok    540 | at|
+tok    290 | the|
+tok  20749 | rear|
+tok    326 | and|
+tok  90347 | deque|
+tok   1406 |ues|
+tok    290 | the|
+tok  34331 | oldest|
+tok   3349 | job|
+tok    540 | at|
+tok    290 | the|
+tok   5567 | front|
+tok    395 | for|
+tok  24698 | printing|
+tok     13 |.|
+tok   1328 | This|
+tok 114077 | FIFO|
+tok   2569 | order|
+tok  49460 | guarantees|
+tok    484 | that|
+tok  11965 | earlier|
+tok  13427 | documents|
+tok    553 | are|
+tok  22774 | printed|
+tok   2254 | before|
+tok   4849 | later|
+tok   8104 | ones|
+tok     13 |.|
+mode=streamed prompt_toks=536 reused=0 generated=147 n_ubatch=128
+prefill: 23.58 s (22.73 tok/s)
+decode:  20.00 s (7.35 tok/s)
+io: cb_calls=3648 decode_uses=14112 decode_misses=1721 (hit 0.878) prefill_uses=49316 prefill_misses=2794
+io: pf_calls=115 pf_experts=2790 union avg=24.3 min=11 max=32 fill=10.87 s (pool 32 slots)
+io: prefetch_issued=299 prefetch_hits=95 prefetch_used=267 stall=10.98 s total_read=63803.6 MB avg_bw=1464 MB/s
+io: read_work=160.80 s preads=28884 per_stream_bw=397 MB/s
+mem: peak_rss=10.93 GB phys_footprint=6.75 GB
+therm: fair
+logits_hash=178f5fb65e277dbf
+text: <|channel|>analysis<|message|>User wants one real use case for each: stack and queue. Provide concise answer.<|end|><|start|>assistant<|channel|>final<|message|>**Stack – Undo/Redo in a text editor**  
+When you type or delete text, each action is pushed onto a stack. Pressing *Undo* pops the most recent action and reverts it; pressing *Redo* pushes it back. The stack ensures the last change you made is the first one undone.
+
+**Queue – Print‑spooler job list**  
+Print jobs arrive in the order you send them. The spooler enqueues each job at the rear and dequeues the oldest job at the front for printing. This FIFO order guarantees that earlier documents are printed before later ones.

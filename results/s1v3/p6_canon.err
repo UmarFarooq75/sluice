@@ -152,6 +152,6 @@ llama_kv_cache_iswa: using full-size SWA cache (ref: https://github.com/ggml-org
 llmstream: pressure lvl=2 avail=3.9GB -> slot cap 14
 llmstream: pressure lvl=2 avail=4.0GB -> slot cap 12
 llmstream: pressure lvl=2 avail=4.1GB -> slot cap 10
-llmstream: pressure lvl=2 avail=4.2GB -> slot cap 8
-llmstream: pressure lvl=2 avail=4.1GB -> slot cap 6
-llmstream: pressure lvl=2 avail=4.0GB -> slot cap 5
+llmstream: pressure lvl=2 avail=4.0GB -> slot cap 8
+llmstream: pressure lvl=2 avail=4.2GB -> slot cap 6
+llmstream: pressure lvl=2 avail=4.2GB -> slot cap 5
