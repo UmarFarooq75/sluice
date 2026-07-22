@@ -39,5 +39,6 @@ fi
 
 echo "[$(date '+%m-%d %H:%M:%S')] legs start (avail=$(sl_avail_gb) GB)" >> "$OUT/gate.log"
 /usr/bin/python3 "$OUT/probe.py" > "$OUT/legs.log" 2>&1
-echo "[$(date '+%m-%d %H:%M:%S')] legs finished rc=$? (avail=$(sl_avail_gb) GB)" >> "$OUT/gate.log"
-echo done > "$OUT/DONE"
+rc=$?
+echo "[$(date '+%m-%d %H:%M:%S')] legs finished rc=$rc (avail=$(sl_avail_gb) GB)" >> "$OUT/gate.log"
+sl_finish "$rc" "$OUT"

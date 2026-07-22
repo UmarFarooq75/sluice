@@ -11,6 +11,7 @@ BIN=$REPO/csrc/stream_run
 MODEL=$REPO/models/gpt-oss-20b-MXFP4.gguf
 OUT=$REPO/results/e37b
 mkdir -p "$OUT"
+. "$REPO/scripts/lib/preflight.sh"
 PROMPT="Write a Python function that merges two sorted lists into one sorted list without using sort()."
 NGEN=20
 GATE_STREAM=8.0     # avail needed to run the streamed leg safely (~6.2 GB footprint + margin)
@@ -44,6 +45,7 @@ fi
 run_leg() {  # $1=label ; rest = extra env KEY=VAL
   local label="$1"; shift
   /usr/bin/time -l env LLMSTREAM_CHAT=1 "$@" \
+  rc=$(( ${rc:-0} + $? ))
     "$BIN" "$MODEL" "$NGEN" "$PROMPT" 128 \
     > "$OUT/$label.out" 2> "$OUT/$label.err"
 }
@@ -51,12 +53,14 @@ run_leg() {  # $1=label ; rest = extra env KEY=VAL
 # --- STREAMED leg (primary): guard-managed, SLOTS=16 (registry balanced), guard ON ---
 echo "[$(date +%H:%M:%S)] streamed leg start (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
 run_leg streamed LLMSTREAM_SLOTS=16 LLMSTREAM_PREFILL_SLOTS=64
+rc=$(( ${rc:-0} + $? ))
 
 # --- RESIDENT leg (opportunistic): only if avail >= GATE_RESIDENT, else skip ---
 ar=$(avail_gb)
 if awk "BEGIN{exit !($ar >= $GATE_RESIDENT)}"; then
   echo "[$(date +%H:%M:%S)] resident leg start (avail=${ar} GB)" >> "$OUT/gate.log"
   run_leg resident
+  rc=$(( ${rc:-0} + $? ))
   RES_NOTE=""
 else
   RES_NOTE="resident: skipped (avail=${ar} GB < ${GATE_RESIDENT} GB); E7 compute-ceiling anchor >=10.47 tok/s stands"
@@ -87,4 +91,4 @@ summ() {  # $1=label
   if [ -z "$RES_NOTE" ]; then summ resident; else echo "$RES_NOTE"; fi
 } > "$OUT/summary.txt"
 
-echo "done" > "$OUT/DONE"
+sl_finish "${rc:-1}" "$OUT"

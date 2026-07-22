@@ -81,6 +81,16 @@ else
 $out"
 fi
 
+# --- 3c. launchers propagate exit codes -------------------------------------
+# Same rule as 3b, one layer up: RC2's run.sh logged rc=0 and wrote DONE: done
+# while bisect.py was dying on a BrokenPipeError.
+if out=$(/usr/bin/python3 scripts/check_shell_rc.py 2>&1); then
+  say "$P" "launchers propagate harness exit codes"
+else
+  bad "launcher can report success over a dead harness:
+$out"
+fi
+
 # --- 4. the engine compiles --------------------------------------------------
 # compiled to a temp path on purpose: a detached experiment may be armed against
 # csrc/stream_run right now, and rewriting that file underneath it could hand the

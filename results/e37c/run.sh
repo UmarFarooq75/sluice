@@ -9,6 +9,7 @@ BIN=$REPO/csrc/stream_run
 MODEL=$REPO/models/gpt-oss-20b-MXFP4.gguf
 OUT=$REPO/results/e37c
 mkdir -p "$OUT"
+. "$REPO/scripts/lib/preflight.sh"
 PROMPT="Write a Python function that merges two sorted lists into one sorted list without using sort()."
 NGEN=64
 GATE=8.0
@@ -39,6 +40,7 @@ fi
 
 echo "[$(date +%H:%M:%S)] streamed leg start (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
 /usr/bin/time -l env LLMSTREAM_CHAT=1 LLMSTREAM_SLOTS=16 LLMSTREAM_PREFILL_SLOTS=64 \
+rc=$(( ${rc:-0} + $? ))
   "$BIN" "$MODEL" "$NGEN" "$PROMPT" 128 \
   > "$OUT/streamed.out" 2> "$OUT/streamed.err"
 
@@ -61,4 +63,4 @@ rssgb=$(awk "BEGIN{printf \"%.2f\", ${rss:-0}/1073741824}")
     "${hit:-NA}" "${tps:-NA}" "${dec:-NA}" "${stall:-NA}" "$rssgb" "$memline" "$cap" "${avgbw:-}" "$hash"
 } > "$OUT/summary.txt"
 
-echo "done" > "$OUT/DONE"
+sl_finish "${rc:-1}" "$OUT"

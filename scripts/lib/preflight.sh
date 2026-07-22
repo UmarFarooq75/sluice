@@ -28,3 +28,14 @@ sl_engine_running() { pgrep -f "csrc/stream_run" > /dev/null 2>&1; }
 
 # numeric >= without bc
 sl_ge() { awk "BEGIN{exit !($1 >= $2)}"; }
+
+# Write the DONE marker from the harness's ACTUAL exit code.
+#   sl_finish "$rc" "$OUT"
+# Exists because the obvious inline form is broken:
+#     echo "[$(date)] rc=$?" ; echo done > DONE
+# bash expands left to right, so $(date) runs FIRST and resets $? to date's status.
+# rc is then always 0 and DONE always says "done" — even when the harness died on a
+# traceback. That is exactly how RC2 reported success over a BrokenPipeError.
+sl_finish() {
+  if [ "${1:-1}" -eq 0 ]; then echo done > "$2/DONE"; else echo void > "$2/DONE"; fi
+}

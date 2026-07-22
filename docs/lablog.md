@@ -2723,3 +2723,41 @@ what the bug is.
 **So the verdict matters twice over**: if SWA is the mechanism, Fix A saves nothing
 and Fix B is the only shape that preserves the 3 s result. That should be known before
 anyone picks.
+
+### RC2 run 1 — VOID. Two harness defects, no engine defect. (2026-07-22)
+**Nothing quotable.** No leg produced a comparison. Artifacts: `results/rc2/run1_void/`.
+
+**Defect 1 — the shell layer reported success over a dead harness.** This is the
+**third** instance of "a missing value is not a data point", and the first one *above*
+the Python layer that already had the rule:
+`e41b run1` (silent default → confident RED) · `r0 AUTO_WRONG` (crash scored as
+divergence) · **`rc2` (traceback reported as `DONE: done`)**.
+```sh
+echo "[$(date '+%m-%d %H:%M:%S')] legs finished rc=$? (avail=$(sl_avail_gb) GB)"
+```
+bash expands left to right, so `$(date …)` runs **first** and resets `$?` to *date's*
+status. `rc` was always 0. Fixed: `rc=$?` captured on its own line; the marker written
+by `sl_finish`, which emits **`void`** on non-zero. Enforced by
+`scripts/check_shell_rc.py` in `make gate` — which promptly found the same
+unconditional-DONE weakness in **three more launchers** (e37b, e37c, e41b), all fixed.
+The checker's first version also flagged its own fix, because `$((…))` arithmetic
+looks like `$(…)` substitution; it now distinguishes them, and is negative-tested by
+injecting the real RC2 bug into a scratch launcher and confirming it fails.
+
+**Defect 2 — the engine never crashed.** `env_for()` never set `LLMSTREAM_SERVER=1`,
+so the engine ran **single-shot**: it took the sentinel argv as the prompt, generated,
+and exited normally. `<<<READY>>>` is printed **only** in server mode
+(`csrc/stream_run.cpp:1242`), so `until_ready()` read to EOF and the first
+`stdin.write` hit a closed pipe. The harness now raises a named error if the engine
+exits before `<<<READY>>>`, instead of failing later as a broken pipe.
+
+**On the suggested irony — it isn't there, and saying so matters.** The directive
+invited the reading that a crash in *SWA cache setup*, while probing SWA, would be
+evidence rather than noise. `S1a_under_t1.err` does end at
+`llama_kv_cache_iswa: using full-size SWA cache`. But that is simply the last line
+llama.cpp writes to **stderr** during load; everything after goes to **stdout**, which
+the harness had already drained and discarded. The process exited 0 after a normal
+generation. **There is no evidence here about SWA, ironic or otherwise** — that was
+the flattering interpretation and it would have been wrong.
+
+RC2 re-armed unchanged in design; window discipline unchanged.

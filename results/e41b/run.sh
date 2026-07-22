@@ -29,6 +29,7 @@ OUT=$REPO/results/e41b
 # scratchpad copy never was.
 PREV=$REPO/.gate/stream_run.ref
 mkdir -p "$OUT"
+. "$REPO/scripts/lib/preflight.sh"
 GATE=8.0
 
 rm -f "$OUT/DONE" "$OUT/ABORTED"
@@ -148,10 +149,11 @@ ar=$(avail_gb)
 if awk "BEGIN{exit !($ar >= 12.0)}"; then
   echo "[$(date '+%m-%d %H:%M:%S')] resident leg start (avail=${ar} GB)" >> "$OUT/gate.log"
   /usr/bin/time -l env LLMSTREAM_CHAT=1 "$BIN" "$MODEL" 64 "$PROMPT_A" 128 \
+  rc=$(( ${rc:-0} + $? ))
     > "$OUT/resident.out" 2> "$OUT/resident.err"
   echo "[$(date '+%m-%d %H:%M:%S')] resident leg done (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
 else
   echo "[$(date '+%m-%d %H:%M:%S')] resident leg SKIPPED (avail=${ar} GB < 12.0 GB); E7 compute-ceiling anchor >=10.47 tok/s stands" >> "$OUT/gate.log"
 fi
 
-echo "done" > "$OUT/DONE"
+sl_finish "${rc:-1}" "$OUT"

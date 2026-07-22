@@ -10,6 +10,7 @@ REPO=/Users/umarfarooq/Desktop/research
 OUT=$REPO/results/r0
 E41B=$REPO/results/e41b
 mkdir -p "$OUT"
+. "$REPO/scripts/lib/preflight.sh"
 GATE=8.0
 POLL=60
 MAX_S=43200      # 12 h for the RAM gate, measured from when E41b releases
@@ -73,6 +74,7 @@ fi
 # ---- phase 3: the probe -----------------------------------------------------
 echo "[$(date '+%m-%d %H:%M:%S')] legs start (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
 /usr/bin/python3 "$OUT/probe.py" > "$OUT/legs.log" 2>&1
-echo "[$(date '+%m-%d %H:%M:%S')] legs finished rc=$? (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
+rc=$?
+echo "[$(date '+%m-%d %H:%M:%S')] legs finished rc=$rc (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
 
-echo "done" > "$OUT/DONE"
+sl_finish "$rc" "$OUT"

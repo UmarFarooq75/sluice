@@ -59,10 +59,16 @@ def avail_gb():
     return p * ps / 1e9
 
 
-def env_for(system, ubatch, pool, extra=None):
+def env_for(system, ubatch, pool, server_mode=False, extra=None):
     e = os.environ.copy()
     e.update({"LLMSTREAM_CHAT": "1", "LLMSTREAM_SLOTS": "16",
               "LLMSTREAM_SYSTEM": system, "LLMSTREAM_PHASE_TIMERS": "1"})
+    if server_mode:
+        # RC2 run 1 omitted this. Without it the engine runs SINGLE-SHOT: it treats
+        # the sentinel as the prompt, generates, exits — and never prints <<<READY>>>,
+        # because that line is emitted only in server mode. until_ready() then hit EOF
+        # and the first stdin.write raised BrokenPipeError. The engine did not crash.
+        e.update({"LLMSTREAM_SERVER": "1", "LLMSTREAM_IDLE_EXIT": "300"})
     if pool:
         e["LLMSTREAM_PREFILL_SLOTS"] = "64"
     else:
@@ -91,7 +97,7 @@ def single(label, prompt, ngen, system, ubatch, pool):
     with open(OUT / f"{label}.err", "w") as fe:
         p = subprocess.run([BIN, MODEL, str(ngen), prompt, str(ubatch)],
                            stdout=subprocess.PIPE, stderr=fe, text=True,
-                           env=env_for(system, ubatch, pool))
+                           env=env_for(system, ubatch, pool, server_mode=False))
     return parse(label, p.returncode, p.stdout)
 
 
@@ -99,7 +105,8 @@ def server(label, requests, ngen, system, ubatch, pool):
     fe = open(OUT / f"{label}.err", "w")
     p = subprocess.Popen([BIN, MODEL, str(ngen), "SENTINEL", str(ubatch)],
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=fe,
-                         env=env_for(system, ubatch, pool), text=True, bufsize=1)
+                         env=env_for(system, ubatch, pool, server_mode=True),
+                         text=True, bufsize=1)
 
     def until_ready():
         buf = []
@@ -109,7 +116,12 @@ def server(label, requests, ngen, system, ubatch, pool):
             buf.append(line)
         return "".join(buf)
 
-    until_ready()
+    preamble = until_ready()
+    if p.poll() is not None:
+        fe.close()
+        raise RuntimeError(
+            f"{label}: engine exited (rc={p.returncode}) before <<<READY>>>. "
+            f"LLMSTREAM_SERVER set? Last stdout: {preamble[-200:]!r}")
     blocks = []
     for r in requests:
         p.stdin.write(r.replace("\n", "\\n") + "\n"); p.stdin.flush()
