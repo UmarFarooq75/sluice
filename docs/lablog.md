@@ -3091,3 +3091,63 @@ with a ship-blocking consequence. Fixed, and an empty token list now yields **VO
 MISMATCH** — the "a missing value is not a data point" rule, now applied to a ship gate
 rather than only to research legs. Fourth instance of that class; first one caught
 *before* it produced a wrong verdict.
+
+### S1 run 1 — VOID (canon never ran on 2 of 3), plus the FIRST OBSERVED ARGMAX FLIP
+### (2026-07-22)
+
+**1. Root cause of the VOID: the system prompt had no reasoning cap.**
+`p1`/`p3` stderr: `llmstream: KV canon skipped - no final-channel marker in this reply`.
+S1 used `SHORT_SYS = "You are a helpful assistant."` — **no `Reasoning:` line** — so
+gpt-oss reasoned at default effort and spent all 200 tokens inside the *analysis*
+channel. Canon has nothing to canonicalise if the final channel was never reached, and
+it correctly said so. **E41b run 2 worked because it used the UI's 1457-char system
+prompt, which ends with `Reasoning: low`.** Harness defect, not a feature defect.
+**Fixed**: `SYS = SHORT_SYS + " Reasoning: low"`.
+
+**Real product condition surfaced, worth documenting**: **canon silently no-ops whenever
+a reply is truncated before the final channel** — i.e. any time the max-token cap lands
+mid-reasoning. The engine logs it to stderr; the client sees no `canon_reply` and just
+loses reuse. Users will hit this.
+
+**2. p2 — canon DID run; the directive's "canon inert" premise does not hold for it.**
+`turn 1: held=227 kept=27 dropped=200 decoded=156 canonical=183`
+`turn 2: held=391 kept=198 dropped=193 decoded=141 canonical=339`
+Turn-2 telemetry: `ctx_held=183 rendered=198 reused=183 reprefill=15`, **TTFT 2.01 s**.
+So canon worked exactly as designed — **the entire 183-token canonical KV was reused and
+only the 15-token new suffix re-prefilled (92% of the render reused)**. The "183/193" in
+the directive conflates `reused=183` with `dropped=193`.
+
+**3. p2's MISMATCH is REAL — and it is the first argmax flip we have seen.**
+Both arms rendered **198** tokens and generated **193**. They diverge at generated token
+**73**: `1753 "every"` vs `9312 "Every"`.
+> canon: `…*Function-call stack in a program* – every time a function…`
+> fresh: `…*Function-call stack in a program* – Every time a function…`
+
+Not a harness artifact and not evidence that canon is broken: the canon arm reused 183
+tokens while the fresh arm prefilled 198 cold, so this is the **same upstream cross-shape
+variance RC4 attributed to pristine llama.cpp** — now shown capable of **flipping an
+argmax on a near-tie**.
+
+**Consequences, and one is a docs correction I owe:**
+- **README corrected.** It said "argmax-stable in all our tests". That is no longer true.
+  It now states argmax is *usually but not always* stable across shapes and cites this
+  counterexample. The hedge I wrote ("observed, not proven") was right, and the
+  observation has now been falsified.
+- **Gate 1 as specified may be unachievable.** It requires identical text between a
+  reuse arm and a cold arm — which is *inherently* cross-shape. If the backend can flip
+  an argmax on a tie, no amount of correct canon implementation makes that gate green
+  deterministically. **Flagging before re-running rather than burning a window on a test
+  that cannot pass.** Redesign options for the lead: (a) compare canon-on vs canon-off at
+  *matched* reuse, (b) accept a bounded flip rate with semantic-equivalence review,
+  (c) gate on the *first N* tokens where ties are rarer. **Not choosing unilaterally.**
+
+**4. RC5 — pool EXONERATED at matched shape.** `pool ON vs pool OFF @ ub=4: EQUAL`
+(`92546a4bad2ebe52` both). So **RC4's ub1-vs-ref split attributes to SHAPE, not pool.**
+Caveat kept: ub=4 is the only shape pool-off can take before D12 exits, so this is one
+shape, not a general claim.
+**Reporting bug fixed**: the RC5 block printed *both* branch interpretations around a
+single verdict — template text that reads as analysis while letting a reader pick the
+half they prefer. It now prints only the branch that matches the result.
+
+**5. Artifact bug fixed**: on the early-return path `p1`/`p3` wrote no `.out` at all, so
+the evidence lived only in stderr. Artifacts are now written before bailing.

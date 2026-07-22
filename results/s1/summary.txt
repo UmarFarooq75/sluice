@@ -1,0 +1,26 @@
+S1 — canon ship gates (2026-07-22 10:16)
+avail 12.65 GB | SLOTS=16 | NGEN=200 | canon ON | CLEAN
+VOID_LEGS: none
+
+GATE 1 — turn-2 token (argmax) sequence, canon ON vs fresh, identical rendering
+  prompt   verdict    detail                  ttft_s  reused/reprefill
+  p1       VOID       no canon_reply in turn 1 — canon did not run    None  None
+  p2       MISMATCH   193 vs 193 tokens        2.011  ('183', '15')
+  p3       VOID       no canon_reply in turn 1 — canon did not run    None  None
+
+  GATE 1: RED
+  PRE-REGISTERED CONSEQUENCE: canon STAYS DARK. Report to owner.
+  No partial ship. This is not a judgement call.
+
+GATE 2 — turn-2 TTFT: worst 2.01s over 1 prompts -> GREEN
+  (target ~3 s, accept <=4.5, falsifier >6; stock baseline 8.22 s, cold 16.22 s)
+
+RAPID-FIRE (recorded, NOT a gate)
+  p2: canon window per turn (text: -> READY) = [0.0, 0.0] s
+  The canon window IS the delay a user queues behind if they reply instantly.
+
+RC5 — pool isolated at MATCHED shape (ub=4 both arms)
+  pool ON vs pool OFF @ ub=4 EQUAL  rc5_ub4_poolon=92546a4bad2ebe52 rc5_ub4_pooloff=92546a4bad2ebe52
+  DIFFER => the pool changes numerics at matched shape: pool isolated.
+  EQUAL  => the pool is exonerated at this shape; the RC4 split was shape,
+            not pool. Note ub=4 is the only shape pool-off can take (D12).

@@ -35,7 +35,13 @@ B = importlib.util.module_from_spec(_s); _s.loader.exec_module(B)
 OUT = ROOT / "results" / "s1"; OUT.mkdir(parents=True, exist_ok=True)
 BIN, MODEL = B.BIN, B.MODEL
 NGEN = 200
-SYS = B.SHORT_SYS
+# ROOT CAUSE of S1 run 1: SHORT_SYS has no "Reasoning:" line, so gpt-oss reasoned at
+# default effort and burned all 200 tokens inside the analysis channel on p1/p3. The
+# engine then correctly reported "canon skipped - no final-channel marker in this
+# reply" - canon has nothing to canonicalise if the final channel was never reached.
+# E41b run 2 worked because it used the UI's 1457-char system prompt, which ends with
+# "Reasoning: low". Capping reasoning is what makes a 200-token budget sufficient.
+SYS = B.SHORT_SYS + " Reasoning: low"
 
 PROMPTS = [
     ("p1", "Explain how the Earth formed and why it can support life.",
@@ -80,6 +86,9 @@ def canon_session(label, p1, p2, rapid_fire=False):
     blocks.append(until_ready())
     m = re.search(r"(?m)^canon_reply: (.*)$", blocks[0])
     if not m:
+        # write the artifact BEFORE bailing: p1/p3 produced no .out at all in run 1,
+        # so the evidence for why canon skipped lived only in stderr.
+        (OUT / f"{label}.out").write_text("\n<<<TURN>>>\n".join(blocks))
         p.kill(); fe.close()
         return None, None, None, "no canon_reply in turn 1 — canon did not run"
     rep = m.group(1).replace("\\n", "\n").replace("\\\\", "\\")
@@ -195,9 +204,17 @@ def main():
     all_legs += [on, off]
     v, d = compare(on, off)
     L.append(verdict_line("pool ON vs pool OFF @ ub=4", v, d))
-    L.append("  DIFFER => the pool changes numerics at matched shape: pool isolated.")
-    L.append("  EQUAL  => the pool is exonerated at this shape; the RC4 split was shape,")
-    L.append("            not pool. Note ub=4 is the only shape pool-off can take (D12).")
+    # print the interpretation that MATCHES the result. Printing both branches around
+    # one verdict reads as analysis but is just a template, and a reader can pick the
+    # half they like.
+    if v == "DIFFER":
+        L.append("  => the pool changes numerics at matched shape: pool isolated.")
+    elif v == "EQUAL":
+        L.append("  => pool EXONERATED at this shape; RC4's ub1-vs-ref split attributes")
+        L.append("     to SHAPE, not pool. Caveat: ub=4 is the only shape pool-off can")
+        L.append("     take before D12 exits, so this is one shape, not a general claim.")
+    else:
+        L.append("  => VOID; no interpretation.")
 
     L.insert(2, void_banner(all_legs))
     txt = "\n".join(L)
