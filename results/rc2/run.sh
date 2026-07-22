@@ -19,7 +19,7 @@ if sl_engine_running; then
 fi
 
 ok=0; streak=0; start=$(date +%s)
-echo "[$(date '+%m-%d %H:%M:%S')] RC1 long-poll armed: need ${HOLD} consecutive >=${GATE} GB" >> "$OUT/gate.log"
+echo "[$(date '+%m-%d %H:%M:%S')] RC2 long-poll armed: need ${HOLD} consecutive >=${GATE} GB" >> "$OUT/gate.log"
 while :; do
   a=$(sl_avail_gb)
   if sl_ge "$a" "$GATE"; then streak=$((streak+1)); else streak=0; fi

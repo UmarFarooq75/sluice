@@ -195,6 +195,15 @@ def main():
         ("T2_ub2_nopool", SHORT_SYS, 200, 2, False, "DIFFER => same, at the smallest batch"),
         ("T3_ub64_pool_ngen20", SHORT_SYS, 20, 64, True, "shrink the known-failing config"),
         ("T4_ub64_pool_replicate", SHORT_SYS, 200, 64, True, "replicate RC2 S3 (must DIFFER)"),
+    ],
+    # RC5 precision leg (directive 10:07 item 3): pool-on vs pool-off at the SAME
+    # ubatch. Every comparison so far moved shape and pool together — RC3's
+    # B_ub4(pool0) vs A_ref(pool1), and RC4's ub1(pool0) vs ref(pool1) — so neither
+    # isolates the pool. ub=4 is the largest shape pool-off can take before D12
+    # exits at union > slots, so this is the only matched-shape pair available.
+    "rc5": [
+        ("P_ub4_poolon", SHORT_SYS, 200, 4, True, "pool ON at ub=4"),
+        ("P_ub4_pooloff", SHORT_SYS, 200, 4, False, "pool OFF at ub=4 — same shape"),
     ]}
     plan = PLANS[PLAN_NAME]
     rows, all_legs = [], []

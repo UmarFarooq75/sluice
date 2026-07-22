@@ -3030,3 +3030,34 @@ other**.
 **README debt now payable**: honest language is **config-pinned bit-exactness** (fixed
 model, `n_ubatch`, slots), with cross-ubatch variation documented as an **upstream
 backend property with stable argmax**. Held pending owner/lead go.
+
+### RECLASSIFICATION — E39 and E41b gate 1 are one inherited upstream property
+### (2026-07-22, on RC4 G3 evidence)
+Both were carried as unexplained defects. **They are neither unexplained nor ours.**
+
+**Evidence** (`results/rc4/`, G3): pristine llama.cpp **b10064** — no fork patch, no
+streaming, no expert pool, plain CPU — returns **three different logits hashes for the
+same 229 tokens** at `n_ubatch` 512 / 64 / 4:
+`265bf968b7290490` · `59c5ae11b64a81f9` · `477fe5925ab22b80`, **argmax 200007 in all
+three**.
+
+- **E39 (KV persist, "NOT bit-exact on resume")** → **RECLASSIFIED**: inherited backend
+  property. Identical text with a differing hash is the expected signature when the
+  restored path and the cold path prefill different shapes. **Not a restore bug.** The
+  reopening I recommended after R0 is **withdrawn** — R0 exonerated *batch shape without
+  reuse* at 23 tokens, which was too short to show the effect; RC4 measured it directly.
+- **E41b gate 1 (canon KV vs cold prefill, RED)** → **RECLASSIFIED**: same property.
+  The feature is not unfaithful; the comparison was cross-shape by construction.
+- **Our bit-exact gates remain sound** — each pins model, settings, slots and
+  `n_ubatch`, so "same settings → same bits" still holds and is still enforced.
+- **Scope of the claim, stated honestly**: argmax was stable in **every** test we ran
+  (RC3, RC4 engine legs, RC4 pristine). We have **not** proven argmax stability in
+  general — only that we never observed a flip. Text-level reproducibility is therefore
+  strongly supported but not guaranteed by measurement.
+
+**README updated** with the agreed language: bit-exactness is a **config-pinned**
+guarantee; cross-batch-shape variation is an upstream backend property, measured and
+argmax-stable in our tests. E39 and `LLMSTREAM_KV_CANON` rows both cite the RC4 hashes.
+
+**G2 deep localization CLOSED per directive** — attribution answered the question, and
+upstream kernel archaeology is not our roadmap.
