@@ -50,3 +50,7 @@ csrc/stock_probe_pristine
 
 # rolling per-turn UI diagnostics (raw stream + engine stderr)
 ui/.debug/
+
+# Role And State files (never tracked, even by accident)
+./ROLES-AND-STATE.md
+ROLES-AND-STATE.md

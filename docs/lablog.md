@@ -3332,3 +3332,41 @@ is seen, so the wait is explained rather than mysterious.
 **GATE GREEN, in full** — first fully green gate of the campaign: bit-exact
 `fdf0f83dd70504c5`, byte-identical-off vs the pre-canon reference, harmony fixtures,
 VOID-leg check, launcher exit-code check, flag documentation, engine builds.
+
+### G5-1. KV persistence revisit — ship E39 under the honest contract (PRE-REGISTERED)
+Unblocked by RC4: E39's differing `logits_hash` on resume is **inherited upstream
+cross-shape variance**, not a restore bug. The feature was correct; only its claim was
+unwritable. `LLMSTREAM_KV_PERSIST` already exists (dark) and does atomic
+temp-file-then-rename via `llama_state_seq_save_file`.
+
+**Colibri reference (evaluated, not copied).** `.coli_kv` lives beside the model, is
+**appended incrementally** with rotation (`.coli_kv.1`), is per-slot, and `KVSAVE=1` is
+their default. Their README claims resume is *"byte-identical to an uninterrupted
+session."* **Two things we take, one we do not.**
+- **Take: incremental append + rotation.** Ours rewrites the whole state each turn —
+  fine at 400 tokens, wasteful at 4000.
+- **Take: default-on with a single kill switch.** `KVSAVE=0` disables save *and* load;
+  a half-disabled cache is a footgun.
+- **Do NOT take their claim wording.** We measured a differing hash on resume (E39) and
+  RC4 explained it. We will claim **same text, config-pinned**, not byte-identical.
+  We have no evidence about *their* implementation and assert nothing about it — but we
+  will not copy a stronger claim than our own measurement supports.
+
+**Hypothesis worth testing before writing the claim** (their design suggests it): if
+resume replays the **same batch shapes** the original session used — restore, then
+continue with a 1-token decode exactly as the live session would have — the cross-shape
+variance may not arise at all, and the hash could match. **Falsifier**: hash still
+differs at matched shape ⇒ the honest claim stands as "same text, config-pinned".
+
+**Pre-registered gates.**
+1. **Text/argmax**: resumed chat token sequence == unbroken chat, 3 prompts. *Hard RED on
+   mismatch.*
+2. **Matched-shape hash probe** (the hypothesis): resume-then-1-token-decode vs the same
+   position reached without interruption. Records EQUAL/DIFFER; **not** a gate — it
+   decides the claim wording.
+3. **Telemetry**: resume announces loudly on stderr (already does — colibri shipped a
+   *silent* resume and a chat inherited 670 stale tokens, which read as a quantization
+   bug for a day; that is in our lablog as the reason ours is loud).
+4. **Byte-identical off** + bit-exact gate green.
+5. **Lifecycle**: stale-file rejection (model/config change), atomic write, and a bounded
+   size — none currently tested.
