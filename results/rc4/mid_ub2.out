@@ -1,0 +1,13 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+ttft: total=10395 ms | template=0 tokenize=1 kv_match=0 prefill=10393 first_sample=1
+ttft: ctx_held=0 rendered=75 reused=0 reprefill=75 (100.0% of rendered)
+mode=streamed prompt_toks=75 reused=0 generated=1 n_ubatch=2
+prefill: 10.39 s (7.22 tok/s)
+decode:  0.13 s (7.56 tok/s)
+io: cb_calls=936 decode_uses=96 decode_misses=10 (hit 0.896) prefill_uses=5350 prefill_misses=796
+io: prefetch_issued=271 prefetch_hits=60 prefetch_used=242 stall=7.35 s total_read=14274.3 MB avg_bw=1356 MB/s
+io: read_work=50.46 s preads=6462 per_stream_bw=283 MB/s
+mem: peak_rss=11.37 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=3acc730ac4bf2776
+text: <|channel|>

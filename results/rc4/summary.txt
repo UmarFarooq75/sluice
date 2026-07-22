@@ -1,0 +1,32 @@
+RC4 — confound cleanup, length reconciliation, attribution (2026-07-22 09:53)
+avail at start 8.37 GB | SLOTS=16 greedy | n_gen=1 | sliding_window=128
+LOCALIZE ONLY.
+VOID_LEGS: none
+
+G1 — cross-shape, POOL OFF family (ub 1/2/4) vs itself and vs pool-on ref
+  length    tokens  >SWA?    ub1 vs ub2   ub1 vs ub4   ub2 vs ub4   ub1 vs ref
+  short         28     no         EQUAL        EQUAL        EQUAL        EQUAL
+  mid           75     no         EQUAL        EQUAL        EQUAL       DIFFER
+  long         245    YES         EQUAL        EQUAL        EQUAL       DIFFER
+
+  (ub1/ub2/ub4 are all pool-OFF by construction — the pool engages only at
+   ne[1] > 1 — so any split among the first three columns needs no pool at all.)
+  (ub1 vs ref is the GATE-PATH vs UI-PATH comparison, never made before.)
+
+  hypothesis adjudication (pre-registered):
+    NO pool-off split at any length -> RC3's 'pool not required' is NOT
+    supported by a clean comparison; the pool IS implicated after all.
+
+G2 - DEBUG_HASH localization, first decode pass only
+  VOID - final-pass dbg blocks differ in length (116 vs 346); not the same shape, must not be diffed positionally
+
+G3 — ATTRIBUTION: pristine b10064, zero streaming, same alignment split
+     ub  n_tok  rc   argmax  logits_hash
+    512    229   0   200007  265bf968b7290490
+     64    229   0   200007  59c5ae11b64a81f9
+      4    229   0   200007  477fe5925ab22b80
+
+  PRISTINE b10064 SPLITS ON ALIGNMENT TOO -> INHERITED UPSTREAM NUMERICS.
+  => E39 and E41b gate 1 reclassify as a BACKEND PROPERTY, not our bugs.
+     Our bit-exact gates remain sound as CONFIG-PINNED guarantees.
+     argmax is stable across shapes.

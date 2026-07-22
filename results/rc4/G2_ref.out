@@ -1,0 +1,265 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+dbg ffn_moe_logits-23            404edfdc38ee6fb9
+dbg ffn_moe_probs-23             4f8b67c97ace596e
+dbg ffn_moe_argsort-23           4ded5562ed2e06c5
+dbg ffn_moe_topk-23              647a688dbf6ced80
+dbg ffn_moe_weights-23 (reshaped) ee8de281cdcad283
+dbg ffn_moe_weighted-23 (view)   5632f7ad8abd57ed
+dbg ffn_moe_weighted-23 (view)   0ab63116c71a74f1
+dbg ffn_moe_weighted-23 (view)   7e5d725841f0e98c
+dbg ffn_moe_weighted-23 (view)   081ade7fc3784f3d
+dbg ffn_moe_out-23               6e672501e6320b68
+ttft: total=10491 ms | template=0 tokenize=1 kv_match=0 prefill=10488 first_sample=1
+ttft: ctx_held=0 rendered=245 reused=0 reprefill=245 (100.0% of rendered)
+dbg ffn_moe_logits-0             eee5c71e746ab1ba
+dbg ffn_moe_probs-0              82a5830c9b55e922
+dbg ffn_moe_argsort-0            ff99265d6f144895
+dbg ffn_moe_topk-0               ebe2da058ddc771f
+dbg ffn_moe_weights-0 (reshaped) 97bd734ecd3cbdc4
+dbg ffn_moe_weighted-0 (view)    787cf81916e107a1
+dbg ffn_moe_weighted-0 (view)    b4370d69be41212e
+dbg ffn_moe_weighted-0 (view)    fd58e02a08085c36
+dbg ffn_moe_weighted-0 (view)    b72944e504fc6687
+dbg ffn_moe_out-0                672e2dbb3b7d24b8
+dbg ffn_moe_logits-1             b36bc218fc748112
+dbg ffn_moe_probs-1              88e70fa8649c5ca0
+dbg ffn_moe_argsort-1            15ea2748c589cce5
+dbg ffn_moe_topk-1               0835ea5f81230b90
+dbg ffn_moe_weights-1 (reshaped) ba40cbbc9427c9f5
+dbg ffn_moe_weighted-1 (view)    30122c3fd9fa14cb
+dbg ffn_moe_weighted-1 (view)    ec70251f68d000d3
+dbg ffn_moe_weighted-1 (view)    a4a6d310c762e797
+dbg ffn_moe_weighted-1 (view)    34c0323374e139f0
+dbg ffn_moe_out-1                e10f088e6761d140
+dbg ffn_moe_logits-2             cc11154120cf44e1
+dbg ffn_moe_probs-2              4e5fb73e24d894b5
+dbg ffn_moe_argsort-2            2c7474602f8d48e5
+dbg ffn_moe_topk-2               1bfa296591582f4b
+dbg ffn_moe_weights-2 (reshaped) 78cca89fe8ed05f9
+dbg ffn_moe_weighted-2 (view)    12951ee13060c944
+dbg ffn_moe_weighted-2 (view)    b2e19d23b7566c0c
+dbg ffn_moe_weighted-2 (view)    e0fb41dabc82f6ed
+dbg ffn_moe_weighted-2 (view)    6c05ffd677150827
+dbg ffn_moe_out-2                277601d49fd4cb63
+dbg ffn_moe_logits-3             32a69606e79c5f91
+dbg ffn_moe_probs-3              c4010e9ab7cb39e6
+dbg ffn_moe_argsort-3            c78530d00a245a25
+dbg ffn_moe_topk-3               1c0be0b99f887af3
+dbg ffn_moe_weights-3 (reshaped) 084de7a28227dffc
+dbg ffn_moe_weighted-3 (view)    a3d0960c3e5c3bf4
+dbg ffn_moe_weighted-3 (view)    3d0f78d105631070
+dbg ffn_moe_weighted-3 (view)    93d2f70dce140cc8
+dbg ffn_moe_weighted-3 (view)    06e6451c517f917f
+dbg ffn_moe_out-3                1cdd732afb70b63a
+dbg ffn_moe_logits-4             e1863d1144600000
+dbg ffn_moe_probs-4              31ad392761f908a4
+dbg ffn_moe_argsort-4            a9d12d4658301165
+dbg ffn_moe_topk-4               a271e6d4fdaae2a0
+dbg ffn_moe_weights-4 (reshaped) 9b9e3f212a82c035
+dbg ffn_moe_weighted-4 (view)    b7c605e413b14a73
+dbg ffn_moe_weighted-4 (view)    21b0c586a9893aaa
+dbg ffn_moe_weighted-4 (view)    b625f4e5207f83fa
+dbg ffn_moe_weighted-4 (view)    75bef01bec28a55f
+dbg ffn_moe_out-4                3f3528cccb456d49
+dbg ffn_moe_logits-5             976b233aa7f9ced7
+dbg ffn_moe_probs-5              65627d894567c3e4
+dbg ffn_moe_argsort-5            d31464ef022bd985
+dbg ffn_moe_topk-5               23bd440e6ee66ee9
+dbg ffn_moe_weights-5 (reshaped) 530a2ef60e6fbb44
+dbg ffn_moe_weighted-5 (view)    65d4fb64d2a3f290
+dbg ffn_moe_weighted-5 (view)    8611f97f568ff1cc
+dbg ffn_moe_weighted-5 (view)    f68a0daaa7dbc564
+dbg ffn_moe_weighted-5 (view)    cad5a9ea05524d6c
+dbg ffn_moe_out-5                ffee37739e855ec7
+dbg ffn_moe_logits-6             f8f46535da7572d1
+dbg ffn_moe_probs-6              0704bf1c151229de
+dbg ffn_moe_argsort-6            509bcbee5f1b5ea5
+dbg ffn_moe_topk-6               f3fc94c81c4d65d1
+dbg ffn_moe_weights-6 (reshaped) 4c74e5595cc27228
+dbg ffn_moe_weighted-6 (view)    97142a6980dccee6
+dbg ffn_moe_weighted-6 (view)    9762295c97d78665
+dbg ffn_moe_weighted-6 (view)    49c1eac30e8af897
+dbg ffn_moe_weighted-6 (view)    30c717826be4639b
+dbg ffn_moe_out-6                1ef6e030c102a4e6
+dbg ffn_moe_logits-7             bb5868d3e4f5f79b
+dbg ffn_moe_probs-7              e7fea5a618433165
+dbg ffn_moe_argsort-7            5425d4701f0c0ba5
+dbg ffn_moe_topk-7               6a59fcb036e545a8
+dbg ffn_moe_weights-7 (reshaped) 38423698766b5efb
+dbg ffn_moe_weighted-7 (view)    37aec6fe67fac707
+dbg ffn_moe_weighted-7 (view)    74a24305cba8db27
+dbg ffn_moe_weighted-7 (view)    fcdb6bda5360bdc6
+dbg ffn_moe_weighted-7 (view)    ac5fc2669801c0cf
+dbg ffn_moe_out-7                b044f2385615057f
+dbg ffn_moe_logits-8             18c302faa9cb18c9
+dbg ffn_moe_probs-8              7e5c30973173a20f
+dbg ffn_moe_argsort-8            23b1e2e0682bd435
+dbg ffn_moe_topk-8               8a2bb2f04864b5b1
+dbg ffn_moe_weights-8 (reshaped) ff2e3747eaecae2f
+dbg ffn_moe_weighted-8 (view)    163f8a25b0fb3373
+dbg ffn_moe_weighted-8 (view)    45268ad7781e2881
+dbg ffn_moe_weighted-8 (view)    dad2417db1407ece
+dbg ffn_moe_weighted-8 (view)    fccee9f87d3db534
+dbg ffn_moe_out-8                4c2d027a6dd74755
+dbg ffn_moe_logits-9             389e4970132d7b1b
+dbg ffn_moe_probs-9              bd9428899b118d62
+dbg ffn_moe_argsort-9            a7c2ce368b17b7a5
+dbg ffn_moe_topk-9               448ee540a9741018
+dbg ffn_moe_weights-9 (reshaped) beb67561817eb970
+dbg ffn_moe_weighted-9 (view)    8314fc64f5ca8aa5
+dbg ffn_moe_weighted-9 (view)    e18d33e2a163f2d5
+dbg ffn_moe_weighted-9 (view)    2957517749f227c3
+dbg ffn_moe_weighted-9 (view)    36f38dbd47f16ac9
+dbg ffn_moe_out-9                6ed088579c72aa81
+dbg ffn_moe_logits-10            bc65fa3dd2bbccba
+dbg ffn_moe_probs-10             b778a6da903afd1d
+dbg ffn_moe_argsort-10           49089018ed2d6445
+dbg ffn_moe_topk-10              be4002d4e9e15967
+dbg ffn_moe_weights-10 (reshaped) a1adc6b9fd2e3eb1
+dbg ffn_moe_weighted-10 (view)   167da564e0e20c9f
+dbg ffn_moe_weighted-10 (view)   ed63a3f0252f1efc
+dbg ffn_moe_weighted-10 (view)   d02cd3489671b876
+dbg ffn_moe_weighted-10 (view)   3dbc55d3db015b41
+dbg ffn_moe_out-10               fd214063030f2295
+dbg ffn_moe_logits-11            decdbc83c30a6126
+dbg ffn_moe_probs-11             408e530de6181d4f
+dbg ffn_moe_argsort-11           fbf4e8eb5100d325
+dbg ffn_moe_topk-11              b85c37d3a3327820
+dbg ffn_moe_weights-11 (reshaped) f68e527be659e339
+dbg ffn_moe_weighted-11 (view)   e13afa9c02b5f093
+dbg ffn_moe_weighted-11 (view)   5ce95af927f03692
+dbg ffn_moe_weighted-11 (view)   5bc7246ec849fc78
+dbg ffn_moe_weighted-11 (view)   9a3267d9b3f2e6ae
+dbg ffn_moe_out-11               8ed9a55c052c5404
+dbg ffn_moe_logits-12            2a3fbb4f23c39066
+dbg ffn_moe_probs-12             4ac2401ac3481374
+dbg ffn_moe_argsort-12           be2cdaee04491ac5
+dbg ffn_moe_topk-12              db49e9af867ad45a
+dbg ffn_moe_weights-12 (reshaped) cd62be1a170e3cdc
+dbg ffn_moe_weighted-12 (view)   771fc2e45fafad9f
+dbg ffn_moe_weighted-12 (view)   bec18558fe2ca59a
+dbg ffn_moe_weighted-12 (view)   57602a329893e340
+dbg ffn_moe_weighted-12 (view)   c982fb2b971f0dc0
+dbg ffn_moe_out-12               02cf02edd1c29842
+dbg ffn_moe_logits-13            e4bf5ec421d35ed4
+dbg ffn_moe_probs-13             73288048e19bdaca
+dbg ffn_moe_argsort-13           7d5b28e009a17195
+dbg ffn_moe_topk-13              27a9af306afc2171
+dbg ffn_moe_weights-13 (reshaped) 5480be5d55cec02b
+dbg ffn_moe_weighted-13 (view)   aa727c75e9b17b8e
+dbg ffn_moe_weighted-13 (view)   ea535140327ac04f
+dbg ffn_moe_weighted-13 (view)   b01c400b3af95ed4
+dbg ffn_moe_weighted-13 (view)   ec88f6b8d3e99fe6
+dbg ffn_moe_out-13               7a10fc650db33bc5
+dbg ffn_moe_logits-14            ea08e3b96088801f
+dbg ffn_moe_probs-14             53900e5e46c7518f
+dbg ffn_moe_argsort-14           0ed7416cc21a7e95
+dbg ffn_moe_topk-14              b6e776705be7a154
+dbg ffn_moe_weights-14 (reshaped) 6930a3249f19e2fe
+dbg ffn_moe_weighted-14 (view)   8c99d175570bc788
+dbg ffn_moe_weighted-14 (view)   369e848856bd13fe
+dbg ffn_moe_weighted-14 (view)   b061d6a353ac8687
+dbg ffn_moe_weighted-14 (view)   ca3875e7580e372c
+dbg ffn_moe_out-14               f490bea9af1ebe4b
+dbg ffn_moe_logits-15            f4368a5778ee099b
+dbg ffn_moe_probs-15             31a0a5902fbdd044
+dbg ffn_moe_argsort-15           46bb681b5066b9f5
+dbg ffn_moe_topk-15              b4a9a51c2eb4dfb0
+dbg ffn_moe_weights-15 (reshaped) f59de6f738fcc741
+dbg ffn_moe_weighted-15 (view)   068709d8e5c02ee8
+dbg ffn_moe_weighted-15 (view)   5c2293cc2493cbff
+dbg ffn_moe_weighted-15 (view)   01ff0c5172bcfaec
+dbg ffn_moe_weighted-15 (view)   8c9230ebd4d32aa8
+dbg ffn_moe_out-15               7ebd320306973e39
+dbg ffn_moe_logits-16            a176908439b31262
+dbg ffn_moe_probs-16             e8efe51adb1064ff
+dbg ffn_moe_argsort-16           30a708470b14fce5
+dbg ffn_moe_topk-16              806b11a10c1100bf
+dbg ffn_moe_weights-16 (reshaped) f360dfdb5ca83b76
+dbg ffn_moe_weighted-16 (view)   6d962336fb19c644
+dbg ffn_moe_weighted-16 (view)   08071d40337a58bb
+dbg ffn_moe_weighted-16 (view)   d93c6a715d3cdbf5
+dbg ffn_moe_weighted-16 (view)   6e822ed1fd2934a9
+dbg ffn_moe_out-16               638d4e011870abb3
+dbg ffn_moe_logits-17            9088cb6de27a6d10
+dbg ffn_moe_probs-17             b23531e1d54649fe
+dbg ffn_moe_argsort-17           d7c7cd00364e3c15
+dbg ffn_moe_topk-17              3996a54f677a0825
+dbg ffn_moe_weights-17 (reshaped) 69c453d8b87fb65c
+dbg ffn_moe_weighted-17 (view)   74aaa6be9e2e3766
+dbg ffn_moe_weighted-17 (view)   ece0ab0cc252d558
+dbg ffn_moe_weighted-17 (view)   98dde9cfbbdf073b
+dbg ffn_moe_weighted-17 (view)   6c6f25246d784c51
+dbg ffn_moe_out-17               195a629ab63ff43a
+dbg ffn_moe_logits-18            0c13d4dc7859504f
+dbg ffn_moe_probs-18             6830eded233b242f
+dbg ffn_moe_argsort-18           8d6ffa9b7a3b4005
+dbg ffn_moe_topk-18              60505682f8356431
+dbg ffn_moe_weights-18 (reshaped) 76f6c16e71cddd75
+dbg ffn_moe_weighted-18 (view)   1b9db278df10ea88
+dbg ffn_moe_weighted-18 (view)   51c15f0a929a6dd5
+dbg ffn_moe_weighted-18 (view)   477ef0b3c04dfa51
+dbg ffn_moe_weighted-18 (view)   cd2f4e0b0b2c4be5
+dbg ffn_moe_out-18               fccc6dc4020aff87
+dbg ffn_moe_logits-19            fa5fafd0b8539d6c
+dbg ffn_moe_probs-19             9d7038fc12cf038a
+dbg ffn_moe_argsort-19           10df44000404bf55
+dbg ffn_moe_topk-19              358fc8b8989b6e56
+dbg ffn_moe_weights-19 (reshaped) 9a37dd1a6aa255a7
+dbg ffn_moe_weighted-19 (view)   aa476c8a2c32344d
+dbg ffn_moe_weighted-19 (view)   298b5c715c273d10
+dbg ffn_moe_weighted-19 (view)   9f073efe24b176f1
+dbg ffn_moe_weighted-19 (view)   6864d1f3355c37c9
+dbg ffn_moe_out-19               d47ec61220d35047
+dbg ffn_moe_logits-20            7700971c442d611e
+dbg ffn_moe_probs-20             2815a793a8df70e7
+dbg ffn_moe_argsort-20           4e6e4f42109a53a5
+dbg ffn_moe_topk-20              e6dcb833195766e8
+dbg ffn_moe_weights-20 (reshaped) 68cc9bd359607c13
+dbg ffn_moe_weighted-20 (view)   b59a407775127aef
+dbg ffn_moe_weighted-20 (view)   d92f9c9256700a32
+dbg ffn_moe_weighted-20 (view)   397b2e3038cbf99d
+dbg ffn_moe_weighted-20 (view)   dbd8852a53e03416
+dbg ffn_moe_out-20               e473175ab123ff1b
+dbg ffn_moe_logits-21            31027df828c79f79
+dbg ffn_moe_probs-21             8821ce6d8d0abbc2
+dbg ffn_moe_argsort-21           c00b263ed344adf5
+dbg ffn_moe_topk-21              a607fc08ead125e6
+dbg ffn_moe_weights-21 (reshaped) 2d1333ad38b552bf
+dbg ffn_moe_weighted-21 (view)   074af2a3dcd197db
+dbg ffn_moe_weighted-21 (view)   0f76d3e496f91c60
+dbg ffn_moe_weighted-21 (view)   42c679ea6e9c0918
+dbg ffn_moe_weighted-21 (view)   aa025bced76b657f
+dbg ffn_moe_out-21               44c3fef8dd39d899
+dbg ffn_moe_logits-22            ca1e0bab21498568
+dbg ffn_moe_probs-22             d93854003afada54
+dbg ffn_moe_argsort-22           3968218503ae7155
+dbg ffn_moe_topk-22              9b5c1da7023f7e77
+dbg ffn_moe_weights-22 (reshaped) a44e8bafda7825d9
+dbg ffn_moe_weighted-22 (view)   1178ddd28d2ff0a0
+dbg ffn_moe_weighted-22 (view)   a605d24612b4d3a0
+dbg ffn_moe_weighted-22 (view)   977976e2a81a1434
+dbg ffn_moe_weighted-22 (view)   99e3f80bc7e3075d
+dbg ffn_moe_out-22               5a0346fc04bc68d7
+dbg ffn_moe_logits-23            efd1b1d16dc2a3a1
+dbg ffn_moe_probs-23             795c633cd87a564d
+dbg ffn_moe_argsort-23           91241650fc4dd555
+dbg ffn_moe_topk-23              87827dd8f4da27d3
+dbg ffn_moe_weights-23 (reshaped) d2a87e8dac273c9a
+dbg ffn_moe_weighted-23 (view)   ece84a3d07f14dcf
+dbg ffn_moe_weighted-23 (view)   7019e1a22422276f
+dbg ffn_moe_weighted-23 (view)   d818497338e66483
+dbg ffn_moe_weighted-23 (view)   0ff6e1e0821a8e8c
+dbg ffn_moe_out-23               923626fe7ecb973b
+mode=streamed prompt_toks=245 reused=0 generated=1 n_ubatch=512
+prefill: 10.49 s (23.36 tok/s)
+decode:  0.34 s (2.95 tok/s)
+io: cb_calls=48 decode_uses=96 decode_misses=37 (hit 0.615) prefill_uses=22544 prefill_misses=625
+io: pf_calls=23 pf_experts=621 union avg=27.0 min=20 max=32 fill=4.84 s (pool 32 slots)
+io: prefetch_issued=62 prefetch_hits=6 prefetch_used=52 stall=0.28 s total_read=9595.7 MB avg_bw=886 MB/s
+io: read_work=49.57 s preads=4344 per_stream_bw=194 MB/s
+mem: peak_rss=11.76 GB phys_footprint=6.94 GB
+therm: nominal
+logits_hash=9696e06b2608c439
+text: <|channel|>

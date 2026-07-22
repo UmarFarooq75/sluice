@@ -2977,3 +2977,56 @@ built. **`scripts/install.sh` calls bare `cmake` and would fail on a fresh shell
 **Two defects found in my own harness before it ran**: `prompts()` re-ran the engine on
 every call (three wasted loads, risk of mismatched prompts across groups); G2 was still a
 placeholder with dead branches. Both fixed pre-run.
+
+### RC4 RESULT — attribution answered (UPSTREAM); RC3's "pool not required" REVERSED
+### (2026-07-22, machine time 09:56). CLEAN, VOID_LEGS none.
+
+**G3 — ATTRIBUTION. Pristine b10064 splits on alignment too.** Plain CPU, zero
+streaming, zero pool, zero patch, same 229 tokens:
+`ub512 = 265bf968b7290490` · `ub64 = 59c5ae11b64a81f9` · `ub4 = 477fe5925ab22b80`,
+**argmax = 200007 in all three**.
+⇒ **Inherited upstream numerics, not ours.** **E39 and E41b gate 1 reclassify as a
+BACKEND PROPERTY.** Our bit-exact gates remain sound as **config-pinned** guarantees.
+Because argmax is stable, this is a **bit-equality** property, not a correctness one —
+output text is unaffected.
+
+**G1 — the pool-off family never splits, and that REVERSES RC3.**
+
+| length | tokens | >SWA | ub1v2 | ub1v4 | ub2v4 | ub1 vs ref(512,pool) |
+|---|---|---|---|---|---|---|
+| short | 28 | no | EQUAL | EQUAL | EQUAL | EQUAL |
+| mid | 75 | no | EQUAL | EQUAL | EQUAL | **DIFFER** |
+| long | 245 | YES | EQUAL | EQUAL | EQUAL | **DIFFER** |
+
+RC3's headline — "chunking alone is sufficient, pool not required" — **is not supported
+by a clean comparison and is withdrawn.** It rested on `B_ub4(pool0)` vs `A_ref(pool1)`,
+which moved two variables; the senior lead flagged exactly that, and the clean pool-off
+vs pool-off test reverses it. **The pool IS implicated.** The error was mine.
+
+**The confound is inverted, not removed**: `ub1 vs ref` still moves ubatch *and* pool
+together. Pool-off cannot run large ubatch (D12 exits at union > slots), so a fully
+clean pool-vs-nopool comparison at matched shape **may not be constructible on this
+model**. Recorded as a limit, not papered over.
+
+**H1/H2/H3 unadjudicated**: all three predicted splits *within* the pool-off family and
+there are none. The length dependence that does exist is in the pool comparison (short
+EQUAL, mid/long DIFFER), and **mid = 75 tokens is UNDER the 128 window, so H1 is not
+supported** even there. **SWA has now failed as an explanation three times.**
+
+**G2 — VOID, and it exposed an instrument limit worth more than the leg.**
+Final-pass blocks were 116 vs 346 lines. Cause: **`LLMSTREAM_DEBUG_HASH` observes a
+different node set depending on pool state** — pool-on emitted **250** dbg lines over 6
+tensor kinds, pool-off **31,752** over many more, because the pool short-circuits
+`cb_eval` for multi-token graphs (`if (st->pf_on && t->ne[1] > 1 && !is_slots) return
+true;`). **The instrument cannot compare across pool states.**
+⇒ The only localizable pair is **pool-ON vs pool-ON**: RC3's `A_ref(512)` vs `A_64`,
+both known to differ, identical node sets.
+
+**Methodological wart disclosed**: G3's prompt was the raw wire-format history string
+(229 tokens), not the chat-rendered text G1 used. The alignment conclusion holds — the
+three ub values saw identical tokens — but **G3 and G1 hashes are not comparable to each
+other**.
+
+**README debt now payable**: honest language is **config-pinned bit-exactness** (fixed
+model, `n_ubatch`, slots), with cross-ubatch variation documented as an **upstream
+backend property with stable argmax**. Held pending owner/lead go.
