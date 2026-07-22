@@ -1226,14 +1226,22 @@ int main(int argc, char ** argv) {
     if (server_mode && kv_path && *kv_path) {
         std::vector<llama_token> loaded((size_t) n_ctx);
         size_t n_loaded = 0;
-        if (llama_state_seq_load_file(ctx, kv_path, 0, loaded.data(), loaded.size(), &n_loaded)
-            && n_loaded > 0) {
+        auto tkv0 = std::chrono::steady_clock::now();
+        // llama_state_seq_load_file fails CLOSED (verified in vendor source): bad
+        // magic/version, token count > n_ctx, and every exception path all return 0,
+        // and a partial restore clears the destination seq (llama-kv-cache.cpp
+        // state_read -> seq_rm on failure). So a stale/corrupt/wrong-model file can
+        // only ever produce "starting fresh", never a half-restored KV.
+        const size_t kv_rd = llama_state_seq_load_file(ctx, kv_path, 0, loaded.data(), loaded.size(), &n_loaded);
+        if (kv_rd > 0 && n_loaded > 0) {
             ctx_toks.assign(loaded.begin(), loaded.begin() + n_loaded);
             // LOUD on purpose: colibri shipped a SILENT resume and a chat inherited
             // 670 stale tokens - replies came back in the wrong language and it
             // "read as a quantization bug for a day". A resume must never be quiet.
             fprintf(stderr, "llmstream: KV RESUMED from %s - %zu tokens of prior conversation "
-                            "are in context. Delete the file to start fresh.\n", kv_path, n_loaded);
+                            "are in context (%.1f MB in %.2f s). Delete the file to start fresh.\n",
+                    kv_path, n_loaded, kv_rd / 1e6,
+                    std::chrono::duration<double>(std::chrono::steady_clock::now() - tkv0).count());
         } else {
             fprintf(stderr, "llmstream: KV persist armed (%s) - no usable prior state, starting fresh\n", kv_path);
         }
@@ -1653,9 +1661,12 @@ int main(int argc, char ** argv) {
     // torn checkpoint behind (colibri gets this via data-then-counter ordering).
     if (kv_path && *kv_path && !ctx_toks.empty()) {
         std::string tmp = std::string(kv_path) + ".tmp";
-        if (llama_state_seq_save_file(ctx, tmp.c_str(), 0, ctx_toks.data(), ctx_toks.size())
-            && rename(tmp.c_str(), kv_path) == 0) {
-            fprintf(stderr, "llmstream: KV checkpointed (%zu tokens) -> %s\n", ctx_toks.size(), kv_path);
+        auto tck0 = std::chrono::steady_clock::now();
+        const size_t kv_wr = llama_state_seq_save_file(ctx, tmp.c_str(), 0, ctx_toks.data(), ctx_toks.size());
+        if (kv_wr > 0 && rename(tmp.c_str(), kv_path) == 0) {
+            fprintf(stderr, "llmstream: KV checkpointed (%zu tokens, %.1f MB, %.2f s) -> %s\n",
+                    ctx_toks.size(), kv_wr / 1e6,
+                    std::chrono::duration<double>(std::chrono::steady_clock::now() - tck0).count(), kv_path);
         } else {
             unlink(tmp.c_str());
             fprintf(stderr, "llmstream: KV checkpoint FAILED (chat still fine, resume unavailable)\n");
