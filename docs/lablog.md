@@ -3061,3 +3061,33 @@ argmax-stable in our tests. E39 and `LLMSTREAM_KV_CANON` rows both cite the RC4 
 
 **G2 deep localization CLOSED per directive** — attribution answered the question, and
 upstream kernel archaeology is not our roadmap.
+
+### S1. Canon ship gates 1–2 + rapid-fire + rc5 (PRE-REGISTERED 2026-07-22)
+`results/s1/`. Canon ON. Ship-phase rung, spec approved 10:10.
+
+- **Gate 1 (faithfulness)**: turn-2 **token sequence** — the argmax sequence, i.e. what
+  the user actually sees — with canon ON vs a fresh single-shot of the **identical**
+  rendering, on **3 distinct prompts**. `logits_hash` equality is **not** required and
+  **not** expected: RC4 established cross-shape hash variance as an upstream property.
+  **Pre-registered consequence (directive): any mismatch ⇒ canon STAYS DARK, report to
+  owner, no partial ship.** Wired as a hard verdict with a non-zero exit, not a
+  judgement call.
+- **Gate 2 (TTFT)**: worst-of-3 turn-2 TTFT. GREEN ≤ 4.5 s, AMBER ≤ 6, RED > 6; target
+  ~3 s against stock 8.22 s and cold 16.22 s.
+- **Rapid-fire (recorded, NOT a gate)**: canon runs between the `text:` line and
+  `<<<READY>>>`, so both are timestamped — **that interval is exactly the delay a user
+  queues behind** if they reply instantly. Measured, not modelled. Turn 3 is then sent
+  the moment READY lands.
+- **RC5 precision pair** folded in: pool-on vs pool-off at **matched ub=4**. ub=4 is the
+  largest shape pool-off can take before D12 exits, so this is the **only** matched-shape
+  pool comparison constructible on this model. DIFFER ⇒ the pool changes numerics at
+  fixed shape; EQUAL ⇒ pool exonerated at this shape and RC4's split was shape, not pool.
+
+**Harness bug caught before the run, recorded because of what it would have caused.**
+The fresh arm was missing `LLMSTREAM_PRINT_TOKS`; its token list would have been
+**empty**, every prompt would have scored MISMATCH, and **gate 1 would have gone falsely
+RED — triggering "canon stays dark, report to owner"**. A false negative on the one gate
+with a ship-blocking consequence. Fixed, and an empty token list now yields **VOID, not
+MISMATCH** — the "a missing value is not a data point" rule, now applied to a ship gate
+rather than only to research legs. Fourth instance of that class; first one caught
+*before* it produced a wrong verdict.
