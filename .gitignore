@@ -47,3 +47,6 @@ csrc/tmpl_probe
 vendor/ollama/
 .relay/
 csrc/stock_probe_pristine
+
+# rolling per-turn UI diagnostics (raw stream + engine stderr)
+ui/.debug/

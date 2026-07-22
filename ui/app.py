@@ -330,6 +330,32 @@ def parse_metrics(tail):
     return out
 
 
+DEBUG_DIR = ROOT / "ui" / ".debug"
+DEBUG_KEEP = 6          # turns retained
+DEBUG_CAP = 200_000     # bytes per turn, so a runaway reply cannot fill the disk
+
+
+def capture_turn(raw, stderr_tail, meta):
+    """Persist the RAW stream (markers intact) + engine stderr for one turn.
+
+    Exists because two live-UI symptoms could not be confirmed against the session
+    that produced them: the UI held raw output and engine stderr only in memory, so
+    when a reply rendered wrongly there was nothing left to diagnose. Rolling and
+    capped; best-effort and never allowed to affect the turn.
+    """
+    try:
+        DEBUG_DIR.mkdir(parents=True, exist_ok=True)
+        stamp = time.strftime("%Y%m%d-%H%M%S")
+        (DEBUG_DIR / f"turn-{stamp}.txt").write_text(
+            f"# {meta}\n\n=== RAW (markers intact) ===\n{raw[:DEBUG_CAP]}\n\n"
+            f"=== ENGINE STDERR (tail) ===\n{stderr_tail[-8000:]}\n")
+        old = sorted(DEBUG_DIR.glob("turn-*.txt"))[:-DEBUG_KEEP]
+        for f in old:
+            f.unlink(missing_ok=True)
+    except Exception:
+        pass    # diagnostics must never break a reply
+
+
 def strip_harmony(t):
     """Remove ALL harmony control tokens from text, including the plain-text
     channel/role labels that follow a marker (`<|channel|>analysis`,
@@ -669,6 +695,9 @@ if prompt:
         total = time.time() - t0
         tail = buf.decode(errors="replace")
         met = parse_metrics(tail)
+        capture_turn(raw, stderr_tail,
+                     f"turn={len(st.session_state.chat_log)} total={total:.1f}s "
+                     f"metrics={met} canon_env={os.environ.get('LLMSTREAM_KV_CANON')}")
         status.update(label="Done - engine stays warm", state="complete")
 
         timing_bits = [f"total {total:.1f}s"]
