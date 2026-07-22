@@ -2831,3 +2831,55 @@ cleanly; ubatch 8 hits D12 at union 18). Localize only, no fixes.
 batching. T1/T2 DIFFER ⇒ the pool is exonerated and multi-token prefill in the reuse
 path is the mechanism. T4 EQUAL ⇒ stop, nothing is reproducible.
 Then the DEBUG_HASH localization runs at the **smallest still-failing** config.
+
+### RC3 RE-SPECCED — chunk alignment with ZERO reuse (PRE-REGISTERED 2026-07-22)
+**The senior lead's reading is sharper than my RC3 draft, and it is adopted.** My
+version would have compared pool-on vs pool-off; theirs removes reuse from the
+experiment entirely, which is a strictly better instrument. One correction to the
+phrasing, and it **strengthens** the hypothesis rather than weakening it.
+
+**Verified from the data, not assumed:**
+- *"R0's pool legs never exceeded one chunk"* — **correct.** `prompt_toks=23` in both
+  `B1` and `B128`, so ubatch=128 was a single chunk. **pool × multi-chunk was never
+  covered by any experiment.**
+- *"every DIFFER is pool + multi-chunk"* — **correct.**
+- *"every EQUAL is pool-off or single-chunk"* — **the second half does not hold.** The
+  EQUAL legs all ran ubatch=1, i.e. **85 to 333 chunks — maximally chunked**, not
+  single-chunk. What they share is only **pool = OFF**. This *helps* the hypothesis:
+  chunking without the pool never diverged, so the suspect is specifically
+  **pool multi-chunk**, not chunking in general.
+- **The confound is now explicit and it is total.** In every RC2 DIFFER leg the two
+  arms prefilled different token counts, so they never shared a boundary:
+  `S2 fresh = [128, 117]` vs `S2 reused = [128, 89]`. **Reuse and alignment are
+  perfectly confounded in every divergence measured so far — including E41b's B≠C.**
+
+**RC3: fresh vs fresh.** Same tokens, pool ON, varying only chunk boundaries.
+
+| leg | ub | pool | chunks of 245 |
+|---|---|---|---|
+| A_ref | 512 | 1 | `[245]` — reference |
+| A_128 | 128 | 1 | `[128, 117]` |
+| A_123 | 123 | 1 | `[123, 122]` — **same count, different boundary** |
+| A_64 | 64 | 1 | `[64, 64, 64, 53]` |
+| A_61 | 61 | 1 | `[61, 61, 61, 61, 1]` — ragged tail |
+| B_ub4_nopool | 4 | **0** | 62 chunks — chunking **without** the pool |
+| T4_replicate | 64 | 1 | RC2's failing pair; **must DIFFER** |
+
+`A_123` vs `A_128` is the leg I added to their design: identical chunk *count*,
+different boundary *position*, so a split there separates "where the boundary falls"
+from "how many chunks there are".
+
+**Pre-registered outcomes.**
+1. **Any A_* differs from A_ref** ⇒ alignment alone splits hashes **with zero reuse**
+   ⇒ **reuse is fully exonerated**, and E41b's B≠C, RC2 S2/S3 and E39 are all
+   explained by arms prefilling different chunk splits. Bug = pool chunk-boundary
+   numerics.
+2. **B_ub4_nopool also differs** ⇒ chunking alone does it, pool not required — a wider
+   blast radius than expected.
+3. **All A_* agree** ⇒ alignment is not sufficient; **reuse remains implicated**, and
+   the next step is reuse-vs-fresh at *matched* boundaries.
+4. **T4 does not DIFFER** ⇒ **STOP**: RC2 is not reproducible and nothing is
+   interpretable. Wired as a hard halt in the summary, not a footnote.
+
+Then DEBUG_HASH localization at the minimal DIFFER config for the first divergent
+(layer, node). Localize only; no fixes.

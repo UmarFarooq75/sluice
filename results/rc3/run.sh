@@ -38,7 +38,7 @@ if sl_engine_running; then
 fi
 
 echo "[$(date '+%m-%d %H:%M:%S')] legs start (avail=$(sl_avail_gb) GB)" >> "$OUT/gate.log"
-/usr/bin/python3 "$REPO/results/rc2/bisect.py" rc3 > "$OUT/legs.log" 2>&1
+/usr/bin/python3 "$OUT/align.py" > "$OUT/legs.log" 2>&1
 rc=$?
 echo "[$(date '+%m-%d %H:%M:%S')] legs finished rc=$rc (avail=$(sl_avail_gb) GB)" >> "$OUT/gate.log"
 sl_finish "$rc" "$OUT"
