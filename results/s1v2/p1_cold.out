@@ -1,0 +1,219 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+ttft: total=8613 ms | template=0 tokenize=1 kv_match=0 prefill=8610 first_sample=1
+ttft: ctx_held=0 rendered=161 reused=0 reprefill=161 (100.0% of rendered)
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok    976 |The|
+tok   1825 | user|
+tok  10648 | wants|
+tok    261 | a|
+tok  18522 | summary|
+tok    306 | in|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok   3164 | They|
+tok  14380 | previously|
+tok   7747 | asked|
+tok    392 | "|
+tok 176289 |Explain|
+tok   1495 | how|
+tok    290 | the|
+tok  16464 | Earth|
+tok  20680 | formed|
+tok    326 | and|
+tok   4436 | why|
+tok    480 | it|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok   3692 |."|
+tok    623 | The|
+tok  29186 | assistant|
+tok  10175 | gave|
+tok    261 | a|
+tok  14633 | detailed|
+tok   6052 | answer|
+tok     13 |.|
+tok   6549 | Now|
+tok   1023 | they|
+tok   1682 | want|
+tok    261 | a|
+tok  18522 | summary|
+tok    306 | in|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok   2632 | So|
+tok    581 | we|
+tok   1309 | need|
+tok    316 | to|
+tok  10635 | produce|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok  43991 | summar|
+tok   6396 |izing|
+tok    290 | the|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok  16464 | Earth|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+tok  41021 | Let's|
+tok  10635 | produce|
+tok  82463 | concise|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok     12 |-|
+tok   6240 | **|
+tok  87981 |Formation|
+tok    410 |**|
+tok     25 |:|
+tok    623 | The|
+tok  11628 | Sun|
+tok    326 | and|
+tok  66223 | planets|
+tok  44410 | emerged|
+tok    591 | from|
+tok    261 | a|
+tok  65441 | rotating|
+tok  12095 | cloud|
+tok    328 | of|
+tok   7322 | gas|
+tok    326 | and|
+tok  22163 | dust|
+tok    350 | (|
+tok   3086 |the|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok   2245 |);|
+tok  22163 | dust|
+tok  57948 | grains|
+tok   1407 | co|
+tok   3459 |ales|
+tok   2050 |ced|
+tok   1511 | into|
+tok  17921 | planet|
+tok    268 |es|
+tok  54879 |imals|
+tok     11 |,|
+tok   1118 | which|
+tok 171749 | collided|
+tok    326 | and|
+tok   1259 | acc|
+tok   3431 |ret|
+tok    295 |ed|
+tok   1511 | into|
+tok    290 | the|
+tok  16464 | Earth|
+tok     11 |,|
+tok   1815 | then|
+tok 142663 | differentiated|
+tok   1511 | into|
+tok  10089 | core|
+tok     11 |,|
+tok 138580 | mantle|
+tok     11 |,|
+tok    326 | and|
+tok  55814 | crust|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok  10617 |Ge|
+tok   8339 |ological|
+tok    827 | &|
+tok 181260 | Atmospheric|
+tok  13724 | Development|
+tok    410 |**|
+tok     25 |:|
+tok   9069 | Vol|
+tok   6929 |can|
+tok    291 |ic|
+tok    842 | out|
+tok     70 |g|
+tok  31297 |assing|
+tok   9917 | released|
+tok   3411 | water|
+tok  46102 | vapor|
+tok     11 |,|
+tok  10271 | CO|
+tok 153435 |₂|
+tok     11 |,|
+tok    326 | and|
+tok   1273 | other|
+tok  59246 | gases|
+tok     11 |,|
+tok  44860 | forming|
+tok    261 | a|
+tok  47446 | dense|
+tok  22137 | atmosphere|
+tok    484 | that|
+tok 100217 | cooled|
+tok    316 | to|
+tok   3763 | allow|
+tok  20032 | liquid|
+tok   3411 | water|
+tok    326 | and|
+tok    261 | a|
+tok  22105 | stable|
+tok   9753 | surface|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok  27182 |Life|
+tok  50005 |‑|
+tok  44859 |support|
+tok    289 |ing|
+tok  39333 | Conditions|
+tok    410 |**|
+tok     25 |:|
+tok  16464 | Earth|
+tok    802 |’s|
+tok   9324 | distance|
+tok    591 | from|
+tok    290 | the|
+tok  11628 | Sun|
+tok   9610 | places|
+tok    480 | it|
+tok    306 | in|
+tok    290 | the|
+tok   2844 | hab|
+tok   8375 |itable|
+tok  15070 | zone|
+tok     11 |,|
+tok   1617 | its|
+tok  33641 | magnetic|
+tok   3259 | field|
+mode=streamed prompt_toks=161 reused=0 generated=200 n_ubatch=128
+prefill: 8.61 s (18.70 tok/s)
+decode:  19.75 s (10.13 tok/s)
+io: cb_calls=4848 decode_uses=19200 decode_misses=1820 (hit 0.905) prefill_uses=14816 prefill_misses=1097
+io: pf_calls=46 pf_experts=1093 union avg=23.8 min=14 max=32 fill=4.82 s (pool 32 slots)
+io: prefetch_issued=252 prefetch_hits=70 prefetch_used=238 stall=9.18 s total_read=42001.2 MB avg_bw=1481 MB/s
+io: read_work=90.40 s preads=19014 per_stream_bw=465 MB/s
+mem: peak_rss=12.55 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=444f639db9a6cf17
+text: <|channel|>analysis<|message|>The user wants a summary in three bullet points. They previously asked "Explain how the Earth formed and why it can support life." The assistant gave a detailed answer. Now they want a summary in three bullet points. So we need to produce three bullet points summarizing the formation and why Earth can support life. Let's produce concise bullet points.<|end|><|start|>assistant<|channel|>final<|message|>- **Formation**: The Sun and planets emerged from a rotating cloud of gas and dust (the solar nebula); dust grains coalesced into planetesimals, which collided and accreted into the Earth, then differentiated into core, mantle, and crust.  
+- **Geological & Atmospheric Development**: Volcanic outgassing released water vapor, CO₂, and other gases, forming a dense atmosphere that cooled to allow liquid water and a stable surface.  
+- **Life‑supporting Conditions**: Earth’s distance from the Sun places it in the habitable zone, its magnetic field

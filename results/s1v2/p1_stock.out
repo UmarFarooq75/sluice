@@ -1,0 +1,442 @@
+ttft: total=4736 ms | template=0 tokenize=0 kv_match=0 prefill=4735 first_sample=1
+ttft: ctx_held=0 rendered=32 reused=0 reprefill=32 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok 146677 | Earth's|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok    480 | it|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+tok  51441 | Provide|
+tok    261 | a|
+tok  82463 | concise|
+tok    889 | but|
+tok  21182 | thorough|
+tok  30547 | explanation|
+tok     13 |.|
+tok  18057 | Should|
+tok   4321 | cover|
+tok     25 |:|
+tok  17624 | solar|
+tok   2420 | system|
+tok  18704 | formation|
+tok     11 |,|
+tok   1259 | acc|
+tok    264 |re|
+tok   1141 |tion|
+tok     11 |,|
+tok  94550 | differentiation|
+tok     11 |,|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   3411 | water|
+tok     11 |,|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  14651 | plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok   4436 | why|
+tok  16464 | Earth|
+tok    382 | is|
+tok   2844 | hab|
+tok   8375 |itable|
+tok     25 |:|
+tok   9324 | distance|
+tok    591 | from|
+tok  11628 | Sun|
+tok     11 |,|
+tok   2349 | size|
+tok     11 |,|
+tok  27524 | composition|
+tok     11 |,|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   3411 | water|
+tok     11 |,|
+tok  22105 | stable|
+tok  16721 | climate|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  51441 | Provide|
+tok    261 | a|
+tok   5364 | clear|
+tok  30547 | explanation|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok   5299 |How|
+tok    290 | the|
+tok  16464 | Earth|
+tok   5287 | Form|
+tok    295 |ed|
+tok  91587 |**
+
+|
+tok     16 |1|
+tok     13 |.|
+tok   6240 | **|
+tok    976 |The|
+tok  36790 | Solar|
+tok  38507 | Neb|
+tok   3419 |ula|
+tok    410 |**|
+tok   1127 | –|
+tok  12958 | About|
+tok    220 | |
+tok     19 |4|
+tok     13 |.|
+tok     21 |6|
+tok  35971 | |
+tok     65 |b|
+tok  27032 |illion|
+tok   2101 | years|
+tok   5288 | ago|
+tok    290 | the|
+tok  11628 | Sun|
+tok    326 | and|
+tok    290 | the|
+tok  66223 | planets|
+tok  22839 | grew|
+tok    842 | out|
+tok    328 | of|
+tok    261 | a|
+tok  65441 | rotating|
+tok  12095 | cloud|
+tok    328 | of|
+tok   7322 | gas|
+tok    326 | and|
+tok  22163 | dust|
+tok   4358 | called|
+tok    290 | the|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok     13 |.|
+tok   4066 |  
+|
+tok     17 |2|
+tok     13 |.|
+tok   6240 | **|
+tok   4945 |Acc|
+tok    264 |re|
+tok   1141 |tion|
+tok    328 | of|
+tok  10867 | Plan|
+tok  30200 |etes|
+tok  54879 |imals|
+tok    410 |**|
+tok   1127 | –|
+tok  74229 | Tiny|
+tok  22163 | dust|
+tok  57948 | grains|
+tok  24327 | stuck|
+tok   4717 | together|
+tok    656 | by|
+tok  29674 | electro|
+tok   4267 |static|
+tok  16691 | forces|
+tok     11 |,|
+tok  44860 | forming|
+tok  12384 | larger|
+tok    966 | “|
+tok  10838 |plan|
+tok  30200 |etes|
+tok  54879 |imals|
+tok   2517 |.”|
+tok   5006 | These|
+tok  22410 | bodies|
+tok 171749 | collided|
+tok    326 | and|
+tok  49536 | merged|
+tok     11 |,|
+tok  41018 | gradually|
+tok   6282 | building|
+tok    869 | up|
+tok    290 | the|
+tok   4842 | mass|
+tok    328 | of|
+tok    290 | the|
+tok  16464 | Earth|
+tok     13 |.|
+tok   4066 |  
+|
+tok     18 |3|
+tok     13 |.|
+tok   6240 | **|
+tok 168540 |Differ|
+tok  14989 |enti|
+tok    387 |ation|
+tok    410 |**|
+tok   1127 | –|
+tok   1877 | As|
+tok    290 | the|
+tok  17921 | planet|
+tok  22839 | grew|
+tok     11 |,|
+tok 152581 | gravitational|
+tok   5954 | energy|
+tok    326 | and|
+tok 103093 | radioactive|
+tok  57549 | decay|
+tok  44191 | heated|
+mode=streamed prompt_toks=32 reused=0 generated=200 n_ubatch=128
+prefill: 4.73 s (6.76 tok/s)
+decode:  18.81 s (10.63 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=1635 (hit 0.915) prefill_uses=2948 prefill_misses=529
+io: pf_calls=23 pf_experts=525 union avg=22.8 min=16 max=29 fill=3.78 s (pool 32 slots)
+io: prefetch_issued=282 prefetch_hits=83 prefetch_used=264 stall=8.36 s total_read=32418.7 MB avg_bw=1377 MB/s
+io: read_work=78.62 s preads=14676 per_stream_bw=412 MB/s
+mem: peak_rss=12.49 GB phys_footprint=6.73 GB
+therm: nominal
+logits_hash=8718400dfba2f17d
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide a concise but thorough explanation. Should cover: solar system formation, accretion, differentiation, atmosphere, water, magnetic field, plate tectonics, etc. Also mention why Earth is habitable: distance from Sun, size, composition, magnetic field, atmosphere, water, stable climate, etc. Provide a clear explanation.<|end|><|start|>assistant<|channel|>final<|message|>**How the Earth Formed**
+
+1. **The Solar Nebula** – About 4.6 billion years ago the Sun and the planets grew out of a rotating cloud of gas and dust called the solar nebula.  
+2. **Accretion of Planetesimals** – Tiny dust grains stuck together by electrostatic forces, forming larger “planetesimals.” These bodies collided and merged, gradually building up the mass of the Earth.  
+3. **Differentiation** – As the planet grew, gravitational energy and radioactive decay heated
+
+<<<TURN>>>
+ttft: total=5964 ms | template=0 tokenize=7 kv_match=0 prefill=5956 first_sample=1
+ttft: ctx_held=232 rendered=144 reused=32 reprefill=112 (77.8% of rendered)
+ttft: diverged_at=32 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok 104833 | summarize|
+tok    290 | the|
+tok  30547 | explanation|
+tok    306 | in|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok  31926 | bullet|
+tok   5571 | points|
+tok  24878 | covering|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok  16464 | Earth|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok     12 |-|
+tok   6240 | **|
+tok   4945 |Acc|
+tok    264 |re|
+tok   1141 |tion|
+tok    827 | &|
+tok  97964 | Differ|
+tok  14989 |enti|
+tok    387 |ation|
+tok    410 |**|
+tok   1127 | –|
+tok  12958 | About|
+tok    220 | |
+tok     19 |4|
+tok     13 |.|
+tok     21 |6|
+tok  35971 | |
+tok     65 |b|
+tok  27032 |illion|
+tok  35971 | |
+tok  75629 |years|
+tok   5288 | ago|
+tok     11 |,|
+tok  22163 | dust|
+tok    326 | and|
+tok   7322 | gas|
+tok    306 | in|
+tok    290 | the|
+tok   5612 | young|
+tok  36790 | Solar|
+tok   1219 | System|
+tok  63282 | collapsed|
+tok   1511 | into|
+tok    261 | a|
+tok  65441 | rotating|
+tok  18044 | disk|
+tok     26 |;|
+tok    290 | the|
+tok  16464 | Earth|
+tok  22839 | grew|
+tok    656 | by|
+tok   6110 | coll|
+tok   7069 |iding|
+tok    483 | with|
+tok   1273 | other|
+tok  17921 | planet|
+tok    268 |es|
+tok  54879 |imals|
+tok     11 |,|
+tok   1815 | then|
+tok  33930 | separated|
+tok   1511 | into|
+tok    261 | a|
+tok  47446 | dense|
+tok  10089 | core|
+tok     11 |,|
+tok    261 | a|
+tok   5786 | sil|
+tok   8091 |icate|
+tok 138580 | mantle|
+tok     11 |,|
+tok    326 | and|
+tok    261 | a|
+tok  55814 | crust|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok 175824 |Atmos|
+tok  11842 |phere|
+tok    827 | &|
+tok  12303 | Water|
+tok    410 |**|
+tok   1127 | –|
+tok   9069 | Vol|
+tok   6929 |can|
+tok    291 |ic|
+tok    842 | out|
+tok     70 |g|
+tok  31297 |assing|
+tok   9917 | released|
+tok  59246 | gases|
+tok    350 | (|
+tok   8310 |CO|
+tok 153435 |₂|
+tok     11 |,|
+tok    487 | H|
+tok 153435 |₂|
+tok     46 |O|
+tok     11 |,|
+tok    478 | N|
+tok 153435 |₂|
+tok      8 |)|
+tok    484 | that|
+tok  20680 | formed|
+tok    261 | a|
+tok   9107 | primary|
+tok  22137 | atmosphere|
+tok     26 |;|
+tok   4849 | later|
+tok  75513 | comet|
+tok    815 |ary|
+tok    326 | and|
+tok 132339 | asteroid|
+tok  33761 | impacts|
+tok  14942 | delivered|
+tok   6623 | additional|
+tok   3411 | water|
+tok     11 |,|
+tok   9278 | creating|
+tok 101882 | oceans|
+tok    484 | that|
+tok  76502 | buffered|
+tok  12088 | temperature|
+tok    326 | and|
+tok   5181 | provided|
+tok    261 | a|
+tok  65334 | solvent|
+tok    395 | for|
+tok  38395 | chemistry|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok 112059 |Habit|
+tok   3563 |ability|
+tok 107647 | Factors|
+tok    410 |**|
+tok   1127 | –|
+tok  16464 | Earth|
+tok    802 |’s|
+tok   2349 | size|
+tok  18295 | keeps|
+tok    261 | a|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok    484 | that|
+tok 132962 | shields|
+tok   2615 | life|
+tok    591 | from|
+tok  17624 | solar|
+tok  11215 | wind|
+tok     11 |,|
+tok   1617 | its|
+tok  61353 | orbit|
+tok   9610 | places|
+tok    480 | it|
+tok    306 | in|
+tok    290 | the|
+tok  11628 | Sun|
+tok    802 |’s|
+tok    966 | “|
+tok  30717 |Gold|
+tok    311 |il|
+tok  14622 |ocks|
+tok  15070 | zone|
+tok    693 |”|
+tok    395 | for|
+tok  20032 | liquid|
+tok   3411 | water|
+tok     11 |,|
+tok    326 | and|
+tok  14651 | plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok  75093 | recycle|
+tok  15883 | carbon|
+mode=streamed prompt_toks=144 reused=32 generated=200 n_ubatch=128
+prefill: 5.96 s (18.81 tok/s)
+decode:  17.67 s (11.32 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=1697 (hit 0.912) prefill_uses=10308 prefill_misses=567
+io: pf_calls=23 pf_experts=564 union avg=24.5 min=19 max=32 fill=3.17 s (pool 32 slots)
+io: prefetch_issued=46 prefetch_hits=11 prefetch_used=38 stall=6.99 s total_read=30616.2 MB avg_bw=1296 MB/s
+io: read_work=64.14 s preads=13860 per_stream_bw=477 MB/s
+mem: peak_rss=12.49 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=51c8f9d35d4f6212
+text: <|channel|>analysis<|message|>We need to summarize the explanation in three bullet points. Provide concise bullet points covering formation and why Earth can support life.<|end|><|start|>assistant<|channel|>final<|message|>- **Accretion & Differentiation** – About 4.6 billion years ago, dust and gas in the young Solar System collapsed into a rotating disk; the Earth grew by colliding with other planetesimals, then separated into a dense core, a silicate mantle, and a crust.  
+- **Atmosphere & Water** – Volcanic outgassing released gases (CO₂, H₂O, N₂) that formed a primary atmosphere; later cometary and asteroid impacts delivered additional water, creating oceans that buffered temperature and provided a solvent for chemistry.  
+- **Habitability Factors** – Earth’s size keeps a magnetic field that shields life from solar wind, its orbit places it in the Sun’s “Goldilocks zone” for liquid water, and plate tectonics recycle carbon

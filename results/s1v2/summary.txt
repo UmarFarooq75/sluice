@@ -1,0 +1,40 @@
+S1v2 — canon ship gates (2026-07-22 10:36)
+avail 8.94 GB | SLOTS=16 | NGEN=200 | N=6 prompts
+VOID_LEGS: none
+
+GATE 1v2 — NON-INFERIORITY: canon may not ADD divergence beyond stock.
+
+  prompt   canon flips  stock flips  ttft_s
+  p1                 1            1    2.42
+  p2              VOID            -    None
+  p3              VOID            -    None
+  p4              VOID            -    None
+  p5              VOID            -    None
+  p6                 1            1   1.913
+
+  TOTAL canon flips 2 vs stock flips 2
+  (a) non-inferiority (canon <= stock): PASS
+
+  (b) flip classification — every divergence
+    p1 canon pos=13   ('623', '3164') (' The', ' They') class=word-substitution reconverged=False
+    p1 stock pos=3    ('2167', '976') ('We', 'The') class=word-substitution reconverged=False
+    p6 canon pos=62   ('6198', '1631') (' performance', ' look') class=word-substitution reconverged=False
+    p6 stock pos=3    ('176289', '2167') ('Explain', 'We') class=word-substitution reconverged=False
+
+  (c) unconditional hard REDs
+    p1: non-tie-shaped flip at pos 13 (' The', ' They') class=word-substitution reconverged=False
+    p2: canon produced no canon_reply (final channel not reached)
+    p3: canon produced no canon_reply (final channel not reached)
+    p4: canon produced no canon_reply (final channel not reached)
+    p5: canon produced no canon_reply (final channel not reached)
+    p6: non-tie-shaped flip at pos 62 (' performance', ' look') class=word-substitution reconverged=False
+
+  GATE 1v2: RED
+  CONSEQUENCE: canon STAYS DARK. Report to owner. No partial ship.
+
+GATE 2 — worst turn-2 TTFT 2.42s -> GREEN (stock 8.22 s, cold 16.22 s)
+
+RAPID-FIRE (recorded, NOT a gate)
+  canon window (text: -> READY) is the delay a user queues behind.
+
+MEASURED FLIP RATE for the README: canon 2 divergences over 2 prompts (stock 2).

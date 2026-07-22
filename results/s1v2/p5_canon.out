@@ -1,0 +1,214 @@
+ttft: total=4574 ms | template=0 tokenize=0 kv_match=0 prefill=4572 first_sample=1
+ttft: ctx_held=0 rendered=27 reused=0 reprefill=27 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok   6052 | answer|
+tok     25 |:|
+tok   4614 | What|
+tok  16431 | causes|
+tok    290 | the|
+tok  28089 | seasons|
+tok    402 | on|
+tok  16464 | Earth|
+tok     30 |?|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok     25 |:|
+tok 146677 | Earth's|
+tok 123167 | axial|
+tok  68195 | tilt|
+tok  15001 | relative|
+tok    316 | to|
+tok   1617 | its|
+tok 132498 | orbital|
+tok  16499 | plane|
+tok     11 |,|
+tok  24297 | causing|
+tok  44689 | varying|
+tok  17624 | solar|
+tok   2215 | ins|
+tok  33369 |olation|
+tok    540 | at|
+tok   2647 | different|
+tok   4029 | lat|
+tok  25642 |itudes|
+tok   1072 | over|
+tok    290 | the|
+tok   1284 | year|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok 146677 | Earth's|
+tok  61353 | orbit|
+tok 199115 | elliptical|
+tok    889 | but|
+tok    625 | not|
+tok   2758 | main|
+tok   7075 | cause|
+tok     13 |.|
+tok  51441 | Provide|
+tok   4878 | details|
+tok     25 |:|
+tok 146677 | Earth's|
+tok  16300 | axis|
+tok    382 | is|
+tok 186352 | tilted|
+tok   6574 | ~|
+tok   1860 |23|
+tok     13 |.|
+tok     20 |5|
+tok 148177 |°,|
+tok    813 | so|
+tok    472 | as|
+tok  16464 | Earth|
+tok    503 | or|
+tok  24043 |bits|
+tok  11628 | Sun|
+tok     11 |,|
+tok   2647 | different|
+tok 185815 | hemis|
+tok 120056 |pheres|
+tok   6442 | receive|
+tok    945 | more|
+tok   2823 | direct|
+tok  55414 | sunlight|
+tok    540 | at|
+tok   2647 | different|
+tok   4238 | times|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  28089 | seasons|
+tok    553 | are|
+tok   5192 | due|
+tok    316 | to|
+tok  68195 | tilt|
+tok     11 |,|
+tok    625 | not|
+tok   9324 | distance|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok    328 | of|
+tok   1495 | how|
+tok    290 | the|
+tok  68195 | tilt|
+tok  15286 | leads|
+tok    316 | to|
+tok  44689 | varying|
+tok  17624 | solar|
+tok  16538 | angle|
+tok     11 |,|
+tok   2163 | day|
+tok   5517 | length|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  28089 | seasons|
+tok    553 | are|
+tok  23821 | opposite|
+tok    306 | in|
+tok 185815 | hemis|
+tok 120056 |pheres|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok    290 | the|
+tok  68195 | tilt|
+tok   2447 | being|
+tok  22105 | stable|
+tok   5192 | due|
+tok    316 | to|
+tok  38962 | angular|
+tok  41184 | momentum|
+tok     11 |,|
+tok    889 | but|
+tok    876 | pre|
+tok  36438 |cession|
+tok   6629 | changes|
+tok   1072 | over|
+tok   1701 | long|
+tok   4238 | times|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok    290 | the|
+tok 199115 | elliptical|
+tok  61353 | orbit|
+tok  24297 | causing|
+tok  12644 | slight|
+tok  35930 | variation|
+tok    306 | in|
+tok   9324 | distance|
+tok    889 | but|
+tok    625 | not|
+tok   2758 | main|
+tok   7075 | cause|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok    290 | the|
+tok  68195 | tilt|
+tok  24297 | causing|
+tok    290 | the|
+tok   7334 | sun|
+tok    885 |'s|
+tok   6567 | decl|
+tok   3273 |ination|
+tok    316 | to|
+tok   3343 | change|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok    290 | the|
+tok   3159 | effect|
+tok    402 | on|
+tok  12088 | temperature|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok    290 | the|
+tok  28089 | seasons|
+tok   2447 | being|
+tok   9113 | defined|
+tok    656 | by|
+tok    290 | the|
+tok   1887 | sol|
+tok    302 |st|
+tok   1386 |ices|
+tok    326 | and|
+tok   2801 | equ|
+tok 136110 |inox|
+tok    268 |es|
+tok     13 |.|
+tok  51441 | Provide|
+tok   8633 | mention|
+tok    328 | of|
+tok    290 | the|
+mode=streamed prompt_toks=27 reused=0 generated=200 n_ubatch=128
+prefill: 4.57 s (5.91 tok/s)
+decode:  17.95 s (11.14 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=1537 (hit 0.920) prefill_uses=2488 prefill_misses=520
+io: pf_calls=23 pf_experts=516 union avg=22.4 min=17 max=29 fill=3.75 s (pool 32 slots)
+io: prefetch_issued=234 prefetch_hits=45 prefetch_used=223 stall=7.59 s total_read=30364.4 MB avg_bw=1348 MB/s
+io: read_work=74.67 s preads=13746 per_stream_bw=407 MB/s
+mem: peak_rss=12.55 GB phys_footprint=6.73 GB
+therm: nominal
+logits_hash=a990598caad7e09c
+text: <|channel|>analysis<|message|>We need to answer: What causes the seasons on Earth? Provide explanation: Earth's axial tilt relative to its orbital plane, causing varying solar insolation at different latitudes over the year. Also mention Earth's orbit elliptical but not main cause. Provide details: Earth's axis is tilted ~23.5°, so as Earth orbits Sun, different hemispheres receive more direct sunlight at different times. Also mention that the seasons are due to tilt, not distance. Provide explanation of how the tilt leads to varying solar angle, day length, etc. Also mention that the seasons are opposite in hemispheres. Provide mention of the tilt being stable due to angular momentum, but precession changes over long times. Provide mention of the elliptical orbit causing slight variation in distance but not main cause. Provide mention of the tilt causing the sun's declination to change. Provide mention of the effect on temperature. Provide mention of the seasons being defined by the solstices and equinoxes. Provide mention of the

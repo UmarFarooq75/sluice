@@ -1,0 +1,214 @@
+ttft: total=4152 ms | template=0 tokenize=0 kv_match=0 prefill=4150 first_sample=1
+ttft: ctx_held=0 rendered=29 reused=0 reprefill=29 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok    290 | the|
+tok   2273 | process|
+tok     25 |:|
+tok  64016 | yeast|
+tok   8510 | fer|
+tok   1626 |ments|
+tok 109680 | sugars|
+tok  24168 | producing|
+tok  10271 | CO|
+tok     17 |2|
+tok    326 | and|
+tok  16589 | alcohol|
+tok     11 |,|
+tok  10271 | CO|
+tok     17 |2|
+tok   8625 | gets|
+tok  58304 | trapped|
+tok    306 | in|
+tok  41613 | dough|
+tok     11 |,|
+tok  24297 | causing|
+tok  16601 | rise|
+tok     13 |.|
+tok   8820 | Also|
+tok  64016 | yeast|
+tok  51685 | metabolism|
+tok     11 |,|
+tok  45397 | gluten|
+tok   5402 | network|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  51441 | Provide|
+tok   4878 | details|
+tok     25 |:|
+tok  64016 | yeast|
+tok    382 | is|
+tok    261 | a|
+tok 109440 | microorgan|
+tok   2367 |ism|
+tok     11 |,|
+tok  31575 | Sac|
+tok   3257 |char|
+tok  35927 |omy|
+tok   1622 |ces|
+tok  29404 | cere|
+tok   2083 |vis|
+tok  57593 |iae|
+tok     11 |,|
+tok  32423 | metabol|
+tok   6370 |izes|
+tok 109680 | sugars|
+tok   4493 | via|
+tok 157291 | glycol|
+tok   5828 |ysis|
+tok     11 |,|
+tok  28135 | produces|
+tok  10271 | CO|
+tok     17 |2|
+tok    326 | and|
+tok  98947 | ethanol|
+tok     13 |.|
+tok    623 | The|
+tok  10271 | CO|
+tok     17 |2|
+tok  88023 | expands|
+tok     11 |,|
+tok  41613 | dough|
+tok  67628 | rises|
+tok     13 |.|
+tok   8820 | Also|
+tok  64016 | yeast|
+tok   1217 | also|
+tok  28135 | produces|
+tok   1273 | other|
+tok  43556 | compounds|
+tok    484 | that|
+tok  22977 | contribute|
+tok    316 | to|
+tok  23341 | flavor|
+tok     13 |.|
+tok    623 | The|
+tok  45397 | gluten|
+tok   5402 | network|
+tok  88055 | traps|
+tok   7322 | gas|
+tok     13 |.|
+tok   8820 | Also|
+tok    290 | the|
+tok  41613 | dough|
+tok    382 | is|
+tok  40265 | elastic|
+tok     11 |,|
+tok    813 | so|
+tok    480 | it|
+tok    665 | can|
+tok   5060 | hold|
+tok   7322 | gas|
+tok     13 |.|
+tok   8820 | Also|
+tok    290 | the|
+tok  64016 | yeast|
+tok   1217 | also|
+tok  28135 | produces|
+tok  10609 | heat|
+tok     11 |,|
+tok    889 | but|
+tok   2758 | main|
+tok    382 | is|
+tok  10271 | CO|
+tok     17 |2|
+tok     13 |.|
+tok   8820 | Also|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok 168866 | anaer|
+tok  53561 |obic|
+tok    306 | in|
+tok  41613 | dough|
+tok     13 |.|
+tok   8820 | Also|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok  12088 | temperature|
+tok    326 | and|
+tok 113693 | hydration|
+tok   7902 | affect|
+tok  64016 | yeast|
+tok   8110 | activity|
+tok     13 |.|
+tok   8820 | Also|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok   8266 | growth|
+tok    326 | and|
+tok  58396 | reproduction|
+tok     13 |.|
+tok   8820 | Also|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok   8285 | ability|
+tok    316 | to|
+tok  10635 | produce|
+tok  10271 | CO|
+tok     17 |2|
+tok    382 | is|
+tok   5192 | due|
+tok    316 | to|
+tok 120397 | fermentation|
+tok     13 |.|
+tok   8820 | Also|
+tok    290 | the|
+tok  41613 | dough|
+tok    885 |'s|
+tok  45397 | gluten|
+tok   5402 | network|
+tok  11526 | forms|
+tok    261 | a|
+tok  12248 | matrix|
+tok    484 | that|
+tok  88055 | traps|
+tok   7322 | gas|
+tok     13 |.|
+tok   8820 | Also|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok  51685 | metabolism|
+tok    382 | is|
+tok  41421 | influenced|
+tok    656 | by|
+tok  15338 | sugar|
+tok  27748 | concentration|
+tok     11 |,|
+tok    275 | p|
+tok     39 |H|
+tok     11 |,|
+tok  12088 | temperature|
+tok     13 |.|
+tok   8820 | Also|
+tok    290 | the|
+tok  64016 | yeast|
+tok    885 |'s|
+tok   8285 | ability|
+tok    316 | to|
+tok  10635 | produce|
+tok  10271 | CO|
+mode=streamed prompt_toks=29 reused=0 generated=200 n_ubatch=128
+prefill: 4.15 s (6.99 tok/s)
+decode:  16.44 s (12.17 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=1242 (hit 0.935) prefill_uses=2672 prefill_misses=516
+io: pf_calls=23 pf_experts=512 union avg=22.3 min=16 max=26 fill=3.30 s (pool 32 slots)
+io: prefetch_issued=244 prefetch_hits=72 prefetch_used=228 stall=6.09 s total_read=26534.0 MB avg_bw=1289 MB/s
+io: read_work=62.99 s preads=12012 per_stream_bw=421 MB/s
+mem: peak_rss=12.56 GB phys_footprint=6.73 GB
+therm: nominal
+logits_hash=113cc883ce43b61b
+text: <|channel|>analysis<|message|>We need to explain the process: yeast ferments sugars producing CO2 and alcohol, CO2 gets trapped in dough, causing rise. Also yeast metabolism, gluten network, etc. Provide details: yeast is a microorganism, Saccharomyces cerevisiae, metabolizes sugars via glycolysis, produces CO2 and ethanol. The CO2 expands, dough rises. Also yeast also produces other compounds that contribute to flavor. The gluten network traps gas. Also the dough is elastic, so it can hold gas. Also the yeast also produces heat, but main is CO2. Also the yeast's metabolism is anaerobic in dough. Also the dough's temperature and hydration affect yeast activity. Also the yeast's growth and reproduction. Also the yeast's ability to produce CO2 is due to fermentation. Also the dough's gluten network forms a matrix that traps gas. Also the yeast's metabolism is influenced by sugar concentration, pH, temperature. Also the yeast's ability to produce CO

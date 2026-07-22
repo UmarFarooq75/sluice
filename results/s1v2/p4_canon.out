@@ -1,0 +1,214 @@
+ttft: total=4038 ms | template=0 tokenize=0 kv_match=0 prefill=4037 first_sample=1
+ttft: ctx_held=0 rendered=28 reused=0 reprefill=28 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok 160099 | refrigeration|
+tok  30540 | principle|
+tok     13 |.|
+tok   7649 | Use|
+tok  17576 | therm|
+tok 135410 |odynamics|
+tok     25 |:|
+tok  78102 | compressor|
+tok     11 |,|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     11 |,|
+tok  24603 | expansion|
+tok  39077 | valve|
+tok     11 |,|
+tok  84074 | evapor|
+tok   1246 |ator|
+tok     13 |.|
+tok    623 | The|
+tok  30606 | refriger|
+tok    493 |ant|
+tok 146757 | absorbs|
+tok  10609 | heat|
+tok    591 | from|
+tok   6772 | inside|
+tok  44820 | fridge|
+tok     11 |,|
+tok  30979 | releases|
+tok   7539 | outside|
+tok     13 |.|
+tok   7649 | Use|
+tok  15839 | cycle|
+tok     25 |:|
+tok  41811 | compression|
+tok  21073 | increases|
+tok   9890 | pressure|
+tok    326 | and|
+tok  12088 | temperature|
+tok     11 |,|
+tok   1815 | then|
+tok   4664 | cond|
+tok   1603 |ense|
+tok     11 |,|
+tok   1815 | then|
+tok  10791 | expand|
+tok     11 |,|
+tok   1815 | then|
+tok  84074 | evapor|
+tok    379 |ate|
+tok 114264 | absorbing|
+tok  10609 | heat|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  44820 | fridge|
+tok   8844 | uses|
+tok    261 | a|
+tok  30606 | refriger|
+tok    493 |ant|
+tok    484 | that|
+tok   6629 | changes|
+tok  15222 | phase|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  44820 | fridge|
+tok   8844 | uses|
+tok    261 | a|
+tok  78102 | compressor|
+tok    316 | to|
+tok  34112 | compress|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     11 |,|
+tok  31213 | raising|
+tok  12088 | temperature|
+tok     11 |,|
+tok   1815 | then|
+tok   4664 | cond|
+tok   6694 |enses|
+tok    316 | to|
+tok  20032 | liquid|
+tok     11 |,|
+tok   1815 | then|
+tok  88023 | expands|
+tok    316 | to|
+tok   4465 | low|
+tok   9890 | pressure|
+tok     11 |,|
+tok   8157 | cool|
+tok     82 |s|
+tok     11 |,|
+tok   1815 | then|
+tok  84074 | evapor|
+tok   1381 |ates|
+tok 114264 | absorbing|
+tok  10609 | heat|
+tok    591 | from|
+tok  13878 | interior|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  44820 | fridge|
+tok   8844 | uses|
+tok    261 | a|
+tok  17576 | therm|
+tok 102814 |odynamic|
+tok  15839 | cycle|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  44820 | fridge|
+tok   8844 | uses|
+tok    261 | a|
+tok  10609 | heat|
+tok  17128 | pump|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  44820 | fridge|
+tok   8844 | uses|
+tok    261 | a|
+tok  30606 | refriger|
+tok    493 |ant|
+tok    484 | that|
+tok    382 | is|
+tok    261 | a|
+tok   7322 | gas|
+tok    540 | at|
+tok   4465 | low|
+tok   9890 | pressure|
+tok    326 | and|
+tok  20032 | liquid|
+tok    540 | at|
+tok   1932 | high|
+tok   9890 | pressure|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  44820 | fridge|
+tok   8844 | uses|
+tok    261 | a|
+tok  78102 | compressor|
+tok    316 | to|
+tok  34112 | compress|
+tok  30606 | refriger|
+tok    493 |ant|
+tok     11 |,|
+tok  31213 | raising|
+tok  12088 | temperature|
+tok     11 |,|
+tok   1815 | then|
+tok   4664 | cond|
+tok   6694 |enses|
+tok     11 |,|
+tok   1815 | then|
+tok  88023 | expands|
+tok     11 |,|
+tok   1815 | then|
+tok  84074 | evapor|
+tok   1381 |ates|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  44820 | fridge|
+tok   8844 | uses|
+tok    261 | a|
+tok  10609 | heat|
+tok  17128 | pump|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok    290 | the|
+tok  44820 | fridge|
+tok   8844 | uses|
+tok    261 | a|
+tok  30606 | refriger|
+tok    493 |ant|
+tok    484 | that|
+mode=streamed prompt_toks=28 reused=0 generated=200 n_ubatch=128
+prefill: 4.04 s (6.94 tok/s)
+decode:  16.61 s (12.04 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=1269 (hit 0.934) prefill_uses=2580 prefill_misses=514
+io: pf_calls=23 pf_experts=510 union avg=22.2 min=16 max=27 fill=3.18 s (pool 32 slots)
+io: prefetch_issued=244 prefetch_hits=75 prefetch_used=232 stall=6.40 s total_read=26865.4 MB avg_bw=1301 MB/s
+io: read_work=61.37 s preads=12162 per_stream_bw=438 MB/s
+mem: peak_rss=12.54 GB phys_footprint=6.73 GB
+therm: nominal
+logits_hash=be469bc63cf3c550
+text: <|channel|>analysis<|message|>We need to explain refrigeration principle. Use thermodynamics: compressor, refrigerant, expansion valve, evaporator. The refrigerant absorbs heat from inside fridge, releases outside. Use cycle: compression increases pressure and temperature, then condense, then expand, then evaporate absorbing heat. Also mention that fridge uses a refrigerant that changes phase. Also mention that the fridge uses a compressor to compress refrigerant, raising temperature, then condenses to liquid, then expands to low pressure, cools, then evaporates absorbing heat from interior. Also mention that the fridge uses a thermodynamic cycle. Also mention that the fridge uses a heat pump. Also mention that the fridge uses a refrigerant that is a gas at low pressure and liquid at high pressure. Also mention that the fridge uses a compressor to compress refrigerant, raising temperature, then condenses, then expands, then evaporates. Also mention that the fridge uses a heat pump. Also mention that the fridge uses a refrigerant that

@@ -1,0 +1,214 @@
+ttft: total=4451 ms | template=0 tokenize=0 kv_match=0 prefill=4450 first_sample=1
+ttft: ctx_held=0 rendered=31 reused=0 reprefill=31 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok   6052 | answer|
+tok     25 |:|
+tok   9809 | difference|
+tok   2870 | between|
+tok  10825 | stack|
+tok    326 | and|
+tok  13661 | queue|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok     25 |:|
+tok  10825 | stack|
+tok    451 | L|
+tok  79012 |IFO|
+tok     11 |,|
+tok  13661 | queue|
+tok 114077 | FIFO|
+tok     11 |,|
+tok  12084 | operations|
+tok   9349 | push|
+tok 195932 |/pop|
+tok  10217 | vs|
+tok 117229 | enqueue|
+tok  32262 |/de|
+tok   9409 |queue|
+tok     11 |,|
+tok  16622 | usage|
+tok  15652 | examples|
+tok     13 |.|
+tok  51441 | Provide|
+tok  19504 | differences|
+tok    306 | in|
+tok   1238 | data|
+tok   8866 | structure|
+tok     11 |,|
+tok  12084 | operations|
+tok     11 |,|
+tok   9391 | applications|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok  27899 | underlying|
+tok  87321 | implementations|
+tok     13 |.|
+tok  51441 | Provide|
+tok  10112 | maybe|
+tok  19504 | differences|
+tok    306 | in|
+tok   8197 | memory|
+tok  16622 | usage|
+tok     11 |,|
+tok 193379 | concurrency|
+tok     13 |.|
+tok  51441 | Provide|
+tok  19271 | typical|
+tok   1199 | use|
+tok   7911 | cases|
+tok     25 |:|
+tok  10825 | stack|
+tok    395 | for|
+tok 122185 | recursion|
+tok     11 |,|
+tok  59427 | undo|
+tok     11 |,|
+tok   5178 | etc|
+tok     26 |;|
+tok  13661 | queue|
+tok    395 | for|
+tok  51708 | scheduling|
+tok     11 |,|
+tok 190016 | BFS|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  10825 | stack|
+tok    382 | is|
+tok   1299 | like|
+tok    261 | a|
+tok  10825 | stack|
+tok    328 | of|
+tok  36206 | plates|
+tok     11 |,|
+tok  13661 | queue|
+tok   1299 | like|
+tok   2543 | line|
+tok    540 | at|
+tok    261 | a|
+tok   6922 | bank|
+tok     13 |.|
+tok  51441 | Provide|
+tok   9809 | difference|
+tok    306 | in|
+tok  12084 | operations|
+tok     25 |:|
+tok  10825 | stack|
+tok    853 | has|
+tok   9349 | push|
+tok 195932 |/pop|
+tok     11 |,|
+tok  13661 | queue|
+tok    853 | has|
+tok 117229 | enqueue|
+tok  32262 |/de|
+tok   9409 |queue|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok    484 | that|
+tok  10825 | stack|
+tok    665 | can|
+tok    413 | be|
+tok  20681 | implemented|
+tok    483 | with|
+tok   2644 | array|
+tok    503 | or|
+tok  17002 | linked|
+tok   1562 | list|
+tok     11 |,|
+tok  13661 | queue|
+tok    665 | can|
+tok    413 | be|
+tok  20681 | implemented|
+tok    483 | with|
+tok   2644 | array|
+tok    503 | or|
+tok  17002 | linked|
+tok   1562 | list|
+tok     11 |,|
+tok    889 | but|
+tok  13661 | queue|
+tok   4783 | often|
+tok   8844 | uses|
+tok  37626 | circular|
+tok   8573 | buffer|
+tok     13 |.|
+tok  51441 | Provide|
+tok   9809 | difference|
+tok    306 | in|
+tok  37588 | complexity|
+tok     25 |:|
+tok   2973 | both|
+tok    532 | O|
+tok      7 |(|
+tok     16 |1|
+tok    741 |).|
+tok  51441 | Provide|
+tok   9809 | difference|
+tok    306 | in|
+tok  16622 | usage|
+tok     25 |:|
+tok  10825 | stack|
+tok    382 | is|
+tok    451 | L|
+tok  79012 |IFO|
+tok     11 |,|
+tok  13661 | queue|
+tok    382 | is|
+tok 114077 | FIFO|
+tok     13 |.|
+tok  51441 | Provide|
+tok   9809 | difference|
+tok    306 | in|
+tok  19271 | typical|
+tok  12084 | operations|
+tok     25 |:|
+tok   2344 | top|
+tok  10217 | vs|
+tok   5567 | front|
+tok     13 |.|
+tok  51441 | Provide|
+tok   9809 | difference|
+tok    306 | in|
+tok  19271 | typical|
+tok   1238 | data|
+tok   8866 | structure|
+tok     25 |:|
+tok  10825 | stack|
+tok   8844 | uses|
+tok   2174 | last|
+tok    306 | in|
+tok   1577 | first|
+tok    842 | out|
+tok     11 |,|
+tok  13661 | queue|
+tok   8844 | uses|
+tok   1577 | first|
+tok    306 | in|
+tok   1577 | first|
+tok    842 | out|
+tok     13 |.|
+tok  51441 | Provide|
+mode=streamed prompt_toks=31 reused=0 generated=200 n_ubatch=128
+prefill: 4.45 s (6.97 tok/s)
+decode:  21.86 s (9.15 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=2054 (hit 0.893) prefill_uses=2856 prefill_misses=540
+io: pf_calls=23 pf_experts=536 union avg=23.3 min=19 max=30 fill=3.57 s (pool 32 slots)
+io: prefetch_issued=368 prefetch_hits=110 prefetch_used=324 stall=11.11 s total_read=39257.6 MB avg_bw=1492 MB/s
+io: read_work=91.44 s preads=17772 per_stream_bw=429 MB/s
+mem: peak_rss=12.54 GB phys_footprint=6.73 GB
+therm: nominal
+logits_hash=705c036d00847317
+text: <|channel|>analysis<|message|>We need to answer: difference between stack and queue. Provide explanation: stack LIFO, queue FIFO, operations push/pop vs enqueue/dequeue, usage examples. Provide differences in data structure, operations, applications. Also mention underlying implementations. Provide maybe differences in memory usage, concurrency. Provide typical use cases: stack for recursion, undo, etc; queue for scheduling, BFS, etc. Also mention that stack is like a stack of plates, queue like line at a bank. Provide difference in operations: stack has push/pop, queue has enqueue/dequeue. Also mention that stack can be implemented with array or linked list, queue can be implemented with array or linked list, but queue often uses circular buffer. Provide difference in complexity: both O(1). Provide difference in usage: stack is LIFO, queue is FIFO. Provide difference in typical operations: top vs front. Provide difference in typical data structure: stack uses last in first out, queue uses first in first out. Provide

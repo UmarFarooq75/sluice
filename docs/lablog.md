@@ -3185,3 +3185,48 @@ canon never fires (S1 run 1's VOID).
 **Docs owed on the result**: the measured flip rate goes into the README sentence, and
 the truncation no-op gets documented as a product condition plus a UI hint
 ("max tokens reached mid-reasoning: reuse lost this turn").
+
+### S1v2 RESULT + S1v3 (PRE-REGISTERED 2026-07-22)
+**S1v2: GATE 1v2 RED, but for two different reasons — one of them was my rule, not the
+feature.**
+
+| prompt | canon flips | stock flips | ttft |
+|---|---|---|---|
+| p1 | 1 (pos **13**) | 1 (pos **3**) | 2.42 s |
+| p2–p5 | **no canon_reply** (final channel not reached at NGEN=200) | — | — |
+| p6 | 1 (pos **62**) | 1 (pos **3**) | 1.91 s |
+
+- **(a) Non-inferiority PASSED**: canon 2 flips vs stock 2.
+- **My auto-RED rule was miscalibrated and the data proves it.** I made
+  `reconverged=False` a hard RED. But **stock diverges from cold at position 3** on both
+  prompts, and never re-converges either — so the rule condemns the *shipping product*.
+  Canon's flips are at 13 and 62, i.e. **later** than stock's. Rule **retired** per the
+  lead: tie-class is judged **at the flip token** only; coherence is judged by a human on
+  full transcripts, which S1v3 now delivers. Re-convergence is still **recorded**, just
+  not fatal.
+- **All four flips were `word-substitution`, none `OTHER`.** The tie-class judgement was
+  sound; only the re-convergence criterion was wrong.
+- **The real blocker: 4 of 6 prompts never reached the final channel.** NGEN=200 was a
+  harness choice, not the product's — the UI ships 2048 and the 1457-char system prompt.
+
+**S1v3 — product config.** `NGEN=2048`, system prompt scraped from `ui/app.py`
+(1457 chars, verified). NGEN is a **cap**, so replies still stop at EOG; this removes an
+artificial truncation rather than forcing long generations.
+- **Truncation no-op vs canon defect are now distinguished**: final channel *not* reached
+  ⇒ a product **condition** to price (recorded, not RED); final channel reached but no
+  `canon_reply` ⇒ **canon defect, hard RED**.
+- **Reasoning-length distribution reported** (analysis-channel tokens per reply, with
+  min/median/max and a count over 500) to answer the lead's question: if real prompts
+  routinely burn >500 tokens reasoning at `Reasoning: low`, the no-op is a
+  **product-frequency problem** shipping only with a UI warning + docs, not an edge case.
+- Kept: **(a)** non-inferiority, **gate 2**, canon-specific hard REDs (telemetry
+  inconsistency, degenerate output, defect-class no-op).
+
+**Classifier re-validated after the rule change**, with fixtures built so the token
+divergence lands where the test intends (two earlier attempts asserted against
+mis-constructed streams and failed for that reason, not the code's): word-substitution
+at 13 → not RED; stock's pos-3 flip → treated identically; a non-word pair → still
+`OTHER` → still RED; `every`/`Every` → `case/whitespace`.
+
+**Docs language owed**: the honesty sentence must cover **the product as it exists** —
+**stock reuse already diverges from a cold prefill at position 3** — not merely canon.

@@ -1,0 +1,587 @@
+ttft: total=4641 ms | template=0 tokenize=1 kv_match=0 prefill=4639 first_sample=1
+ttft: ctx_held=0 rendered=32 reused=0 reprefill=32 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok 146677 | Earth's|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok    480 | it|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+tok  51441 | Provide|
+tok    261 | a|
+tok  82463 | concise|
+tok    889 | but|
+tok  21182 | thorough|
+tok  30547 | explanation|
+tok     13 |.|
+tok  18057 | Should|
+tok   4321 | cover|
+tok     25 |:|
+tok  17624 | solar|
+tok   2420 | system|
+tok  18704 | formation|
+tok     11 |,|
+tok   1259 | acc|
+tok    264 |re|
+tok   1141 |tion|
+tok     11 |,|
+tok  94550 | differentiation|
+tok     11 |,|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   3411 | water|
+tok     11 |,|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  14651 | plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok   4436 | why|
+tok  16464 | Earth|
+tok    382 | is|
+tok   2844 | hab|
+tok   8375 |itable|
+tok     25 |:|
+tok   9324 | distance|
+tok    591 | from|
+tok  11628 | Sun|
+tok     11 |,|
+tok   2349 | size|
+tok     11 |,|
+tok  27524 | composition|
+tok     11 |,|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   3411 | water|
+tok     11 |,|
+tok  22105 | stable|
+tok  16721 | climate|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  51441 | Provide|
+tok    261 | a|
+tok   5364 | clear|
+tok  30547 | explanation|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok   5299 |How|
+tok    290 | the|
+tok  16464 | Earth|
+tok   5287 | Form|
+tok    295 |ed|
+tok  91587 |**
+
+|
+tok     16 |1|
+tok     13 |.|
+tok   6240 | **|
+tok    976 |The|
+tok  36790 | Solar|
+tok  38507 | Neb|
+tok   3419 |ula|
+tok    410 |**|
+tok   1127 | –|
+tok  12958 | About|
+tok    220 | |
+tok     19 |4|
+tok     13 |.|
+tok     21 |6|
+tok  35971 | |
+tok     65 |b|
+tok  27032 |illion|
+tok   2101 | years|
+tok   5288 | ago|
+tok    290 | the|
+tok  11628 | Sun|
+tok    326 | and|
+tok    290 | the|
+tok  66223 | planets|
+tok  22839 | grew|
+tok    842 | out|
+tok    328 | of|
+tok    261 | a|
+tok  65441 | rotating|
+tok  12095 | cloud|
+tok    328 | of|
+tok   7322 | gas|
+tok    326 | and|
+tok  22163 | dust|
+tok   4358 | called|
+tok    290 | the|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok     13 |.|
+tok   4066 |  
+|
+tok     17 |2|
+tok     13 |.|
+tok   6240 | **|
+tok   4945 |Acc|
+tok    264 |re|
+tok   1141 |tion|
+tok    328 | of|
+tok  10867 | Plan|
+tok  30200 |etes|
+tok  54879 |imals|
+tok    410 |**|
+tok   1127 | –|
+tok  74229 | Tiny|
+tok  22163 | dust|
+tok  57948 | grains|
+tok  24327 | stuck|
+tok   4717 | together|
+tok    656 | by|
+tok  29674 | electro|
+tok   4267 |static|
+tok  16691 | forces|
+tok     11 |,|
+tok  44860 | forming|
+tok  12384 | larger|
+tok    966 | “|
+tok  10838 |plan|
+tok  30200 |etes|
+tok  54879 |imals|
+tok   2517 |.”|
+tok   5006 | These|
+tok  22410 | bodies|
+tok 171749 | collided|
+tok    326 | and|
+tok  49536 | merged|
+tok     11 |,|
+tok  41018 | gradually|
+tok   6282 | building|
+tok    869 | up|
+tok    290 | the|
+tok   4842 | mass|
+tok    328 | of|
+tok    290 | the|
+tok  16464 | Earth|
+tok     13 |.|
+tok   4066 |  
+|
+tok     18 |3|
+tok     13 |.|
+tok   6240 | **|
+tok 168540 |Differ|
+tok  14989 |enti|
+tok    387 |ation|
+tok    410 |**|
+tok   1127 | –|
+tok   1877 | As|
+tok    290 | the|
+tok  17921 | planet|
+tok  22839 | grew|
+tok     11 |,|
+tok 152581 | gravitational|
+tok   5954 | energy|
+tok    326 | and|
+tok 103093 | radioactive|
+tok  57549 | decay|
+tok  44191 | heated|
+mode=streamed prompt_toks=32 reused=0 generated=200 n_ubatch=128
+prefill: 4.64 s (6.90 tok/s)
+decode:  19.40 s (10.31 tok/s)
+io: cb_calls=4824 decode_uses=19200 decode_misses=1642 (hit 0.914) prefill_uses=2948 prefill_misses=529
+io: pf_calls=23 pf_experts=525 union avg=22.8 min=16 max=29 fill=3.69 s (pool 32 slots)
+io: prefetch_issued=275 prefetch_hits=86 prefetch_used=256 stall=8.88 s total_read=32418.7 MB avg_bw=1349 MB/s
+io: read_work=80.45 s preads=14676 per_stream_bw=403 MB/s
+mem: peak_rss=10.58 GB phys_footprint=6.73 GB
+therm: nominal
+logits_hash=8718400dfba2f17d
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide a concise but thorough explanation. Should cover: solar system formation, accretion, differentiation, atmosphere, water, magnetic field, plate tectonics, etc. Also mention why Earth is habitable: distance from Sun, size, composition, magnetic field, atmosphere, water, stable climate, etc. Provide a clear explanation.<|end|><|start|>assistant<|channel|>final<|message|>**How the Earth Formed**
+
+1. **The Solar Nebula** – About 4.6 billion years ago the Sun and the planets grew out of a rotating cloud of gas and dust called the solar nebula.  
+2. **Accretion of Planetesimals** – Tiny dust grains stuck together by electrostatic forces, forming larger “planetesimals.” These bodies collided and merged, gradually building up the mass of the Earth.  
+3. **Differentiation** – As the planet grew, gravitational energy and radioactive decay heated
+canon: held=232 kept=32 dropped=200 decoded=114 canonical=146 (5.94 s, post-reply)
+canon_reply: **How the Earth Formed**\n\n1. **The Solar Nebula** – About 4.6 billion years ago the Sun and the planets grew out of a rotating cloud of gas and dust called the solar nebula.  \n2. **Accretion of Planetesimals** – Tiny dust grains stuck together by electrostatic forces, forming larger “planetesimals.” These bodies collided and merged, gradually building up the mass of the Earth.  \n3. **Differentiation** – As the planet grew, gravitational energy and radioactive decay heated
+
+<<<TURN>>>
+ttft: total=2420 ms | template=0 tokenize=7 kv_match=0 prefill=2412 first_sample=1
+ttft: ctx_held=146 rendered=161 reused=146 reprefill=15 (9.3% of rendered)
+ttft: diverged_at=146 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok    976 |The|
+tok   1825 | user|
+tok  10648 | wants|
+tok    261 | a|
+tok  18522 | summary|
+tok    306 | in|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok    623 | The|
+tok  29186 | assistant|
+tok   1757 | should|
+tok  40206 | comply|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok     12 |-|
+tok   6240 | **|
+tok  88453 |Solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok  38335 | collapse|
+tok    410 |**|
+tok     25 |:|
+tok  12958 | About|
+tok    220 | |
+tok     19 |4|
+tok     13 |.|
+tok     21 |6|
+tok  35971 | |
+tok     65 |b|
+tok  27032 |illion|
+tok   2101 | years|
+tok   5288 | ago|
+tok     11 |,|
+tok    290 | the|
+tok  11628 | Sun|
+tok    326 | and|
+tok    261 | a|
+tok  65441 | rotating|
+tok  12095 | cloud|
+tok    328 | of|
+tok   7322 | gas|
+tok  50005 |‑|
+tok 153892 |dust|
+tok    350 | (|
+tok   3086 |the|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok      8 |)|
+tok  63282 | collapsed|
+tok     11 |,|
+tok  44860 | forming|
+tok    261 | a|
+tok    440 | pro|
+tok   8169 |top|
+tok   8068 |lan|
+tok    292 |et|
+tok    815 |ary|
+tok  18044 | disk|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok   4945 |Acc|
+tok    264 |re|
+tok   1141 |tion|
+tok    328 | of|
+tok  17921 | planet|
+tok    268 |es|
+tok  54879 |imals|
+tok    410 |**|
+tok     25 |:|
+tok  74592 | Dust|
+tok  57948 | grains|
+tok  24327 | stuck|
+tok   4717 | together|
+tok     11 |,|
+tok  22839 | grew|
+tok   1511 | into|
+tok  67546 | kilometer|
+tok  50005 |‑|
+tok     82 |s|
+tok   2110 |ized|
+tok  17921 | planet|
+tok    268 |es|
+tok  54879 |imals|
+tok     11 |,|
+tok    326 | and|
+tok   1819 | through|
+tok 100572 | collisions|
+tok    326 | and|
+tok 152581 | gravitational|
+tok  42237 | attraction|
+tok   1407 | co|
+tok   3459 |ales|
+tok   2050 |ced|
+tok   1511 | into|
+tok    290 | the|
+tok  16464 | Earth|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok 168540 |Differ|
+tok  14989 |enti|
+tok    387 |ation|
+tok    326 | and|
+tok  13260 | habit|
+tok   3563 |ability|
+tok    410 |**|
+tok     25 |:|
+tok  69221 | Heating|
+tok    591 | from|
+tok 100572 | collisions|
+tok    326 | and|
+tok 103093 | radioactive|
+tok  57549 | decay|
+tok  14273 | caused|
+tok    290 | the|
+tok  17921 | planet|
+tok    316 | to|
+tok  88369 | differentiate|
+tok   1511 | into|
+tok  10089 | core|
+tok     11 |,|
+tok 138580 | mantle|
+tok     11 |,|
+tok    326 | and|
+tok  55814 | crust|
+tok     11 |,|
+tok   9278 | creating|
+tok    261 | a|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  22105 | stable|
+tok   9753 | surface|
+tok   6409 | conditions|
+tok     11 |,|
+tok    326 | and|
+tok    261 | a|
+tok   3411 | water|
+tok  50005 |‑|
+tok  18716 |rich|
+tok   5870 | environment|
+tok    484 | that|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+mode=streamed prompt_toks=161 reused=146 generated=160 n_ubatch=128
+prefill: 2.41 s (6.22 tok/s)
+decode:  15.43 s (10.37 tok/s)
+io: cb_calls=3864 decode_uses=15360 decode_misses=1468 (hit 0.904) prefill_uses=1384 prefill_misses=389
+io: pf_calls=23 pf_experts=386 union avg=16.8 min=10 max=25 fill=1.88 s (pool 32 slots)
+io: prefetch_issued=71 prefetch_hits=29 prefetch_used=61 stall=6.57 s total_read=25553.2 MB avg_bw=1433 MB/s
+io: read_work=49.06 s preads=11568 per_stream_bw=521 MB/s
+mem: peak_rss=10.58 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=9bce0b97b0a47844
+text: <|channel|>analysis<|message|>The user wants a summary in three bullet points. The assistant should comply.<|end|><|start|>assistant<|channel|>final<|message|>- **Solar nebula collapse**: About 4.6 billion years ago, the Sun and a rotating cloud of gas‑dust (the solar nebula) collapsed, forming a protoplanetary disk.  
+- **Accretion of planetesimals**: Dust grains stuck together, grew into kilometer‑sized planetesimals, and through collisions and gravitational attraction coalesced into the Earth.  
+- **Differentiation and habitability**: Heating from collisions and radioactive decay caused the planet to differentiate into core, mantle, and crust, creating a magnetic field, stable surface conditions, and a water‑rich environment that can support life.
+canon: held=321 kept=161 dropped=160 decoded=138 canonical=299 (7.55 s, post-reply)
+canon_reply: - **Solar nebula collapse**: About 4.6 billion years ago, the Sun and a rotating cloud of gas‑dust (the solar nebula) collapsed, forming a protoplanetary disk.  \n- **Accretion of planetesimals**: Dust grains stuck together, grew into kilometer‑sized planetesimals, and through collisions and gravitational attraction coalesced into the Earth.  \n- **Differentiation and habitability**: Heating from collisions and radioactive decay caused the planet to differentiate into core, mantle, and crust, creating a magnetic field, stable surface conditions, and a water‑rich environment that can support life.
+
+<<<TURN>>>
+ttft: total=501 ms | template=0 tokenize=4 kv_match=0 prefill=496 first_sample=1
+ttft: ctx_held=299 rendered=161 reused=160 reprefill=1 (0.6% of rendered)
+ttft: diverged_at=160 kv_had=173781|assistant| rerender_has=173781|assistant|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok    976 |The|
+tok   1825 | user|
+tok  10648 | wants|
+tok    261 | a|
+tok  18522 | summary|
+tok    306 | in|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok    623 | The|
+tok  29186 | assistant|
+tok   1757 | should|
+tok  40206 | comply|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok     12 |-|
+tok   6240 | **|
+tok  88453 |Solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok  38335 | collapse|
+tok    410 |**|
+tok     25 |:|
+tok  12958 | About|
+tok    220 | |
+tok     19 |4|
+tok     13 |.|
+tok     21 |6|
+tok  35971 | |
+tok     65 |b|
+tok  27032 |illion|
+tok   2101 | years|
+tok   5288 | ago|
+tok     11 |,|
+tok    290 | the|
+tok  11628 | Sun|
+tok    326 | and|
+tok    261 | a|
+tok  65441 | rotating|
+tok  12095 | cloud|
+tok    328 | of|
+tok   7322 | gas|
+tok  50005 |‑|
+tok 153892 |dust|
+tok    350 | (|
+tok   3086 |the|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok      8 |)|
+tok  63282 | collapsed|
+tok     11 |,|
+tok  44860 | forming|
+tok    261 | a|
+tok    440 | pro|
+tok   8169 |top|
+tok   8068 |lan|
+tok    292 |et|
+tok    815 |ary|
+tok  18044 | disk|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok   4945 |Acc|
+tok    264 |re|
+tok   1141 |tion|
+tok    328 | of|
+tok  17921 | planet|
+tok    268 |es|
+tok  54879 |imals|
+tok    410 |**|
+tok     25 |:|
+tok  74592 | Dust|
+tok  57948 | grains|
+tok  24327 | stuck|
+tok   4717 | together|
+tok     11 |,|
+tok  22839 | grew|
+tok   1511 | into|
+tok  67546 | kilometer|
+tok  50005 |‑|
+tok     82 |s|
+tok   2110 |ized|
+tok  17921 | planet|
+tok    268 |es|
+tok  54879 |imals|
+tok     11 |,|
+tok    326 | and|
+tok   1819 | through|
+tok 100572 | collisions|
+tok    326 | and|
+tok 152581 | gravitational|
+tok  42237 | attraction|
+tok   1407 | co|
+tok   3459 |ales|
+tok   2050 |ced|
+tok   1511 | into|
+tok    290 | the|
+tok  16464 | Earth|
+tok     13 |.|
+tok   4066 |  
+|
+tok     12 |-|
+tok   6240 | **|
+tok 168540 |Differ|
+tok  14989 |enti|
+tok    387 |ation|
+tok    326 | and|
+tok  13260 | habit|
+tok   3563 |ability|
+tok    410 |**|
+tok     25 |:|
+tok  69221 | Heating|
+tok    591 | from|
+tok 100572 | collisions|
+tok    326 | and|
+tok 103093 | radioactive|
+tok  57549 | decay|
+tok  14273 | caused|
+tok    290 | the|
+tok  17921 | planet|
+tok    316 | to|
+tok  88369 | differentiate|
+tok   1511 | into|
+tok  10089 | core|
+tok     11 |,|
+tok 138580 | mantle|
+tok     11 |,|
+tok    326 | and|
+tok  55814 | crust|
+tok     11 |,|
+tok   9278 | creating|
+tok    261 | a|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  22105 | stable|
+tok   9753 | surface|
+tok   6409 | conditions|
+tok     11 |,|
+tok    326 | and|
+tok    261 | a|
+tok   3411 | water|
+tok  50005 |‑|
+tok  18716 |rich|
+tok   5870 | environment|
+tok    484 | that|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+mode=streamed prompt_toks=161 reused=160 generated=160 n_ubatch=128
+prefill: 0.50 s (2.02 tok/s)
+decode:  15.21 s (10.52 tok/s)
+io: cb_calls=3864 decode_uses=15360 decode_misses=1434 (hit 0.907) prefill_uses=96 prefill_misses=31
+io: prefetch_issued=79 prefetch_hits=27 prefetch_used=74 stall=6.93 s total_read=20463.8 MB avg_bw=1303 MB/s
+io: read_work=32.79 s preads=9264 per_stream_bw=624 MB/s
+mem: peak_rss=10.58 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=9bce0b97b0a47844
+text: <|channel|>analysis<|message|>The user wants a summary in three bullet points. The assistant should comply.<|end|><|start|>assistant<|channel|>final<|message|>- **Solar nebula collapse**: About 4.6 billion years ago, the Sun and a rotating cloud of gas‑dust (the solar nebula) collapsed, forming a protoplanetary disk.  
+- **Accretion of planetesimals**: Dust grains stuck together, grew into kilometer‑sized planetesimals, and through collisions and gravitational attraction coalesced into the Earth.  
+- **Differentiation and habitability**: Heating from collisions and radioactive decay caused the planet to differentiate into core, mantle, and crust, creating a magnetic field, stable surface conditions, and a water‑rich environment that can support life.
+canon: held=321 kept=161 dropped=160 decoded=138 canonical=299 (8.14 s, post-reply)
+canon_reply: - **Solar nebula collapse**: About 4.6 billion years ago, the Sun and a rotating cloud of gas‑dust (the solar nebula) collapsed, forming a protoplanetary disk.  \n- **Accretion of planetesimals**: Dust grains stuck together, grew into kilometer‑sized planetesimals, and through collisions and gravitational attraction coalesced into the Earth.  \n- **Differentiation and habitability**: Heating from collisions and radioactive decay caused the planet to differentiate into core, mantle, and crust, creating a magnetic field, stable surface conditions, and a water‑rich environment that can support life.
