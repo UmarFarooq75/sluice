@@ -1,4 +1,27 @@
-# sluice
+<div align="center">
+
+```
+                     ╭──────────────────────────────╮
+     ≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋┤   21B params · 12.1 GB       │
+     ≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋┤   sitting on your SSD        │
+     ≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋┤                              │
+                     ╰───────────────┬──────────────╯
+                                 ╔═══╧═══╗
+                                 ║ ▓▓▓▓▓ ║   the gate — 6.6 GB of RAM
+                                 ╚═══╤═══╝
+                                     ▼
+                            6.14 tok/s · bit-exact
+```
+
+# ≋ sluice
+
+**Models bigger than your RAM, with quality receipts.**
+
+*Big models through a small gate.*
+
+</div>
+
+---
 
 **Virtual memory for LLMs.** Run Mixture-of-Experts models **bigger than your RAM** by streaming their experts from SSD on demand — **bit-exact by default**, on **any GGUF MoE** via architecture-family adapters, not one hard-coded model.
 
@@ -23,28 +46,34 @@ Ollama solved *running a model that fits your machine*. sluice solves *the model
 
 Every number below was measured on the same **$1,000 MacBook Air M2, 16 GB** and traces to an on-disk artifact. **No projections, no "up to."**
 
-| Model | Metric | Value | Mode / conditions | Source |
-|---|---|---|---|---|
-| gpt-oss-20b | Memory footprint | **6.73 GB** (phys_footprint) | Exact, streamed, generation-length-invariant | E37c · `results/e37c/` |
-| gpt-oss-20b | Decode speed | **6.14 tok/s** | **Exact** (bit-exact), clean quiet box, N=64 | E37c · `results/e37c/summary.txt` |
-| gpt-oss-20b | Decode speed | **8.79 tok/s** | **Fast** mode, warm sustained chat — *field observation*, temp 0.80, under desktop load | lablog "Live-UI observation" 2026-07-21 |
-| gpt-oss-20b | Decode speed | **4.89 tok/s** | **Exact, with a light desktop load** (VS Code + agent, 8.4 GB free), N=64 | E37d · `results/e37d/` |
-| gpt-oss-20b | First token (cold) | **21.7 s** | Fast mode, first message, cold cache | same field observation |
+| # | Config / load | Measured | Source |
+|---|---|---|---|
+| 1 | **Exact**, streamed, quiet box, N=64 | **6.14 tok/s** · hit .861 · footprint 6.73 GB | E37c · [`results/e37c/`](results/e37c/) |
+| 2 | **Exact**, light desktop load (8.4 GB free) | **4.89 tok/s** | E37d · [`results/e37d/`](results/e37d/) |
+| 3 | **Exact**, heavy load (1.5 GB free) | **1.57 tok/s** | E37 · [`results/g1_e37/`](results/g1_e37/) *(contaminated; kept as the under-load point)* |
+| 4 | **Fast**, warm sustained chat | **8.79 tok/s** | field observation, [lablog](docs/lablog.md) 2026-07-21 |
+| 5 | **Fast + Light** memory, live UI, cold turn | **10.78 tok/s** · hit .918 · 4.4 GB free | live session, [screenshot above](#see-it-running) |
+| 6 | **First token**, cold vs warm (canon on) | **15.5 s → 3.1 s** · reuse 1068 → 1204 | live session, 3 turns |
+| 7 | **First token**, harness, matched rendering | **3.0 s** vs 8.2 s without canon, 16.2 s cold | E41b run 2 · [`results/e41b/`](results/e41b/) |
 
-**Speed depends on your free RAM, and we measure that instead of hiding it.** Same model, same settings, same bit-exact output (`7fff2b7b9461da2a` in every row) — only machine load changes:
+**Rows 1–3 are the same settings and the same bit-exact output** (`7fff2b7b9461da2a` in
+every one) — only machine load changes. Rows 4–6 are **Fast** quality: a labelled,
+measured trade, not the same thing as row 1. Rows 5–6 come from **uncontrolled live
+sessions**, not pre-registered runs, and are marked as such.
 
-| Your machine | Free RAM | Exact decode |
-|---|---|---|
-| Nothing else running | ~9.2 GB | **6.14 tok/s** |
-| Light load (editor + a tool) | ~8.4 GB | **4.89 tok/s** |
-| Heavy load (browser + calls + editor) | ~1.5 GB | **1.57 tok/s** |
-
-The cache hit rate is essentially identical across all three (.855–.861) — the loss is *not* caching, it's that less free RAM starves the SSD reads (measured effective bandwidth 1421 → 1254 → 660 MB/s). This is why `sluice estimate` probes **your** disk before you download anything.
+**One machine, honestly.** Every row above is a **MacBook Air M2, 16 GB, CPU backend**.
+We are not going to imply a fleet we do not have. The table is built to grow —
+see [CONTRIBUTING.md](CONTRIBUTING.md) for how to add a row with receipts.
 
 Read the fine print — it's the point:
-- **6.14 tok/s is the bit-exact rung** — identical logits to the fully-resident model (`logits_hash` gate green). **8.79 tok/s is the Fast rung** — a labeled, non-bit-exact quality trade (see the dial); it's a *field observation* from an uncontrolled UI session, not a pre-registered measurement, and we mark it as such.
-- **First-token latency (21.7 s cold) is our worst UX number today.** It's *prefill*, not decode — a separate axis, and an open problem (see Honest limits).
-- The `time -l` peak RSS for the exact run reads 10.04 GB; that includes instantly-reclaimable mmap'd file pages and grows with generation length. **phys_footprint (6.73 GB) is the memory that actually costs RAM** and is generation-length-invariant. We report both and quote the one that reflects real pressure.
+- **6.14 tok/s is the bit-exact rung** — identical logits to the fully-resident model.
+  **8.79 / 10.78 are Fast** — a labelled quality trade (see the dial).
+- **First-token latency was our worst number** (21.7 s cold). Multi-turn is now
+  **~3 s** because the KV is canonicalized after each reply; the cold first turn is
+  still prefill-bound and still the honest weak spot.
+- `time -l` peak RSS reads 10.04 GB and includes reclaimable mmap pages that grow with
+  generation length. **phys_footprint (6.73 GB) is the memory that actually costs RAM.**
+  We report both and quote the one that reflects real pressure.
 
 The full experiment record — every prediction written *before* the result, every artifact path — is [`docs/lablog.md`](docs/lablog.md).
 
@@ -79,6 +108,31 @@ Prefer the terminal, or an API?
 ```
 
 The engine is a llama.cpp fork; the first CLI call builds it automatically (`bash scripts/build_driver.sh`), so there's no separate build step to remember.
+
+---
+
+## See it running
+
+<img src="docs/assets/ui-start.png" width="100%" alt="sluice playground, before the first message">
+
+**Before you send anything.** `gpt-oss-20b` · **Balanced** memory (~6.6 GB) · **Balanced**
+quality · Reasoning Low · engine off. The card says **`expected ~4 tok/s (balanced) ·
+scaled to your 1.7 GB/s disk`** — that estimate is produced by probing *this* machine's
+disk before the model loads, which is the whole point: you see the price before you pay
+it. Machine at that moment: 15% CPU, 7.3 GB RAM free.
+
+<img src="docs/assets/ui-answer.png" width="100%" alt="a completed answer with its per-turn physics">
+
+**A completed answer.** Same model · **Light** memory (~5.5 GB) · **Fast** quality ·
+Reasoning Low · engine warm (pid 21141, RSS 1.8 GB). Caption underneath reads
+**`total 140.5s · first token 15.5s · 10.78 tok/s`** — a cold first turn with no reuse.
+Machine: 12% CPU, **4.4 GB RAM free** — a 21B model answering with less free RAM than the
+model file is large.
+
+> Both screenshots are single real sessions on the reference machine, cropped only to
+> remove browser chrome. The configuration in each caption is the one visible in the
+> image, not one recalled afterwards.
+
 
 ---
 
