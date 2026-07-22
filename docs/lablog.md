@@ -3370,3 +3370,27 @@ differs at matched shape ⇒ the honest claim stands as "same text, config-pinne
 4. **Byte-identical off** + bit-exact gate green.
 5. **Lifecycle**: stale-file rejection (model/config change), atomic write, and a bounded
    size — none currently tested.
+
+### G5-1 verdict — RED under the pre-registered claim; every mechanism gate PASS
+Run 1 (02:00) voided on a harness summary-format crash after all legs completed;
+preserved as `results/g5kv/legs_run1_void.log`. Run 2 (02:12) completed clean.
+
+- **Gate 4 GREEN**: bit-exact `fdf0f83dd70504c5` + byte-identical-off vs a reference
+  rebuilt from pre-change source. The feature is inert when off.
+- **Gate 1 (HARD) RED**: p1, p2 resumed turn-2 == unbroken turn-2, 60/60 token ids.
+  p3 diverged at step 36 (`,` vs ` streaming`, ids 11 vs 22797) inside the analysis
+  channel; both continuations coherent, same conclusion. Measured flip rate 1/180 tokens.
+- **Gate 2 probe**: hash DIFFERS in all 3 pairs at MATCHED ctx tuples — the
+  matched-shape hypothesis is refuted. p1's hash pair reproduces E39's exactly
+  (fc1efa9e0bd36fcc / f40384bd332e7eab, two days apart): the resume path is
+  deterministic; it is the shape-dependent computation that differs (RC4).
+- **Gates 3, 5 all PASS**: loud resume with size+latency (12 MB, 0.01 s); atomic
+  checkpoint, no .tmp survivor, bounded size; corrupt and truncated files both fall
+  closed to "starting fresh" with a working turn after.
+
+**Meaning.** Resume-vs-unbroken is the reuse-vs-fresh comparison class. RC4 already
+established that class cannot promise token-identity — canon shipped accepting exactly
+this divergence family. The pre-registered gate 1 demanded a stronger property than the
+one the project already ships elsewhere. The feature cannot ship under "resumed chat
+continues identically"; whether it ships under canon's contract ("same quality,
+config-pinned, divergence class documented") is an owner decision, queued.

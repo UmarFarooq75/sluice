@@ -1,0 +1,154 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=13259 ms | template=0 tokenize=1 kv_match=0 prefill=13256 first_sample=1
+ttft: ctx_held=0 rendered=293 reused=0 reprefill=293 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok   6052 | answer|
+tok   9809 | difference|
+tok   2870 | between|
+tok  53514 | TCP|
+tok    326 | and|
+tok  91977 | UDP|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok    889 | but|
+tok  21182 | thorough|
+tok  30547 | explanation|
+tok     13 |.|
+tok   7649 | Use|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok 132059 | Mention|
+tok  37673 | reliability|
+tok     11 |,|
+tok   6703 | connection|
+tok  49951 |-oriented|
+tok  10217 | vs|
+tok   6703 | connection|
+tok   2695 |less|
+tok     11 |,|
+tok  30931 | ordering|
+tok     11 |,|
+tok   7845 | flow|
+tok   3580 | control|
+tok     11 |,|
+tok  94337 | congestion|
+tok   3580 | control|
+tok     11 |,|
+tok  52558 | overhead|
+tok     11 |,|
+tok   1199 | use|
+tok   7911 | cases|
+tok     13 |.|
+tok  51441 | Provide|
+tok  15652 | examples|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok  82267 |TCP|
+tok    350 | (|
+tok 113821 |Transmission|
+tok  12006 | Control|
+tok  41914 | Protocol|
+mode=streamed prompt_toks=293 reused=0 generated=60 n_ubatch=128
+prefill: 13.26 s (22.10 tok/s)
+decode:  9.46 s (6.34 tok/s)
+io: cb_calls=1512 decode_uses=5760 decode_misses=623 (hit 0.892) prefill_uses=26960 prefill_misses=1590
+io: pf_calls=69 pf_experts=1586 union avg=23.0 min=14 max=31 fill=6.51 s (pool 32 slots)
+io: prefetch_issued=280 prefetch_hits=106 prefetch_used=257 stall=5.70 s total_read=33041.6 MB avg_bw=1454 MB/s
+io: read_work=94.71 s preads=14958 per_stream_bw=349 MB/s
+mem: peak_rss=11.14 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=34a9c9179c451abd
+text: <|channel|>analysis<|message|>We need to answer difference between TCP and UDP. Provide concise but thorough explanation. Use bullet points. Mention reliability, connection-oriented vs connectionless, ordering, flow control, congestion control, overhead, use cases. Provide examples.<|end|><|start|>assistant<|channel|>final<|message|>**TCP (Transmission Control Protocol
+<<<READY>>>
+ttft: total=8143 ms | template=0 tokenize=12 kv_match=0 prefill=8129 first_sample=1
+ttft: ctx_held=353 rendered=375 reused=293 reprefill=82 (21.9% of rendered)
+ttft: diverged_at=293 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   1844 |User|
+tok  31064 | asks|
+tok     25 |:|
+tok    392 | "|
+tok  34405 |Which|
+tok   1001 | one|
+tok   1481 | would|
+tok    481 | you|
+tok   5230 | pick|
+tok    395 | for|
+tok    261 | a|
+tok   3823 | video|
+tok   2421 | call|
+tok     11 |,|
+tok    306 | in|
+tok   1001 | one|
+tok  21872 | sentence|
+tok  16842 |?"|
+tok   3164 | They|
+tok   1682 | want|
+tok    261 | a|
+tok  35005 | recommendation|
+tok     13 |.|
+tok   2214 | For|
+tok   3823 | video|
+tok   2421 | call|
+tok     11 |,|
+tok  13729 | typically|
+tok   1199 | use|
+tok  91977 | UDP|
+tok    395 | for|
+tok   1374 | real|
+tok  10158 |-time|
+tok     11 |,|
+tok    889 | but|
+tok   1991 | many|
+tok   1199 | use|
+tok  98549 | RTP|
+tok   1072 | over|
+tok  91977 | UDP|
+tok     13 |.|
+tok   3072 | But|
+tok   1236 | some|
+tok   1199 | use|
+tok  53514 | TCP|
+tok    395 | for|
+tok  37673 | reliability|
+tok     30 |?|
+tok  44130 | Usually|
+tok  91977 | UDP|
+tok     13 |.|
+tok   2632 | So|
+tok   6052 | answer|
+tok     25 |:|
+tok  91977 | UDP|
+tok     13 |.|
+tok  51441 | Provide|
+mode=streamed prompt_toks=375 reused=293 generated=60 n_ubatch=128
+prefill: 8.13 s (10.09 tok/s)
+decode:  9.06 s (6.63 tok/s)
+io: cb_calls=1464 decode_uses=5760 decode_misses=903 (hit 0.843) prefill_uses=7548 prefill_misses=585
+io: pf_calls=23 pf_experts=585 union avg=25.4 min=19 max=31 fill=5.94 s (pool 32 slots)
+io: prefetch_issued=356 prefetch_hits=158 prefetch_used=284 stall=5.19 s total_read=24439.9 MB avg_bw=1422 MB/s
+io: read_work=90.06 s preads=11064 per_stream_bw=271 MB/s
+io: guard pressure_drops=2 cap_evictions=96 final_cap=12
+mem: peak_rss=11.14 GB phys_footprint=5.49 GB
+therm: nominal
+logits_hash=aab603a4d8f70eff
+text: <|channel|>analysis<|message|>User asks: "Which one would you pick for a video call, in one sentence?" They want a recommendation. For video call, typically use UDP for real-time, but many use RTP over UDP. But some use TCP for reliability? Usually UDP. So answer: UDP. Provide
+<<<READY>>>

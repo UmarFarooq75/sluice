@@ -212,7 +212,7 @@ gate = "INCOMPLETE" if incomplete else ("RED" if hard_red else "GREEN")
 
 lines = [
     "G5-1 gate — KV persistence revisit (%s)" % time.strftime("%Y-%m-%d %H:%M"),
-    "model=%s n_gen=%d SLOTS=16 PREFILL_SLOTS=64 n_ubatch=128 exact greedy | E39 config, pinned" % os.path.basename(MODEL),
+    "model=%s n_gen=%d SLOTS=16 PREFILL_SLOTS=64 n_ubatch=128 exact greedy | E39 config, pinned" % (os.path.basename(MODEL), NGEN),
     void_banner(legs), "",
     "gate 1 — resumed turn-2 == unbroken turn-2, token ids (HARD):",
     *[verdict_line(l, v, d) for l, v, d in rows], "",

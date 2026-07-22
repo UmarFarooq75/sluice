@@ -1,0 +1,154 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=14071 ms | template=0 tokenize=3 kv_match=0 prefill=14066 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok 146677 | Earth's|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok    480 | it|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok    889 | but|
+tok  21182 | thorough|
+tok  30547 | explanation|
+tok     13 |.|
+tok   7649 | Use|
+tok 118908 | headings|
+tok     11 |,|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok  18057 | Should|
+tok   4321 | cover|
+tok     25 |:|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok     11 |,|
+tok   1259 | acc|
+tok    264 |re|
+tok   1141 |tion|
+tok     11 |,|
+tok  94550 | differentiation|
+tok     11 |,|
+tok  34328 | cooling|
+tok     11 |,|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   3411 | water|
+tok     11 |,|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  14651 | plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok     11 |,|
+tok  22105 | stable|
+tok  16721 | climate|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+mode=streamed prompt_toks=296 reused=0 generated=60 n_ubatch=128
+prefill: 14.07 s (21.04 tok/s)
+decode:  8.23 s (7.29 tok/s)
+io: cb_calls=1512 decode_uses=5760 decode_misses=464 (hit 0.919) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=7.34 s (pool 32 slots)
+io: prefetch_issued=238 prefetch_hits=70 prefetch_used=225 stall=4.56 s total_read=30496.9 MB avg_bw=1368 MB/s
+io: read_work=98.78 s preads=13806 per_stream_bw=309 MB/s
+mem: peak_rss=10.63 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=22ab70701690e8ae
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also
+<<<READY>>>
+ttft: total=8089 ms | template=1 tokenize=19 kv_match=0 prefill=8068 first_sample=1
+ttft: ctx_held=356 rendered=375 reused=296 reprefill=79 (21.1% of rendered)
+ttft: diverged_at=296 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   1844 |User|
+tok  10648 | wants|
+tok    261 | a|
+tok  18522 | summary|
+tok    306 | in|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok     12 |-|
+tok   6240 | **|
+tok   4945 |Acc|
+tok    264 |re|
+tok   1141 |tion|
+tok    827 | &|
+tok  97964 | Differ|
+tok  14989 |enti|
+tok    387 |ation|
+tok    410 |**|
+tok   1127 | –|
+tok  12958 | About|
+tok    220 | |
+tok     19 |4|
+tok     13 |.|
+tok     21 |6|
+tok  35971 | |
+tok     65 |b|
+tok  27032 |illion|
+tok  35971 | |
+tok  75629 |years|
+tok   5288 | ago|
+tok     11 |,|
+tok  22163 | dust|
+tok    326 | and|
+tok   7322 | gas|
+tok    306 | in|
+tok    290 | the|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok   1407 | co|
+tok   3459 |ales|
+tok   2050 |ced|
+tok   1511 | into|
+tok  17921 | planet|
+tok    268 |es|
+mode=streamed prompt_toks=375 reused=296 generated=60 n_ubatch=128
+prefill: 8.07 s (9.79 tok/s)
+decode:  9.51 s (6.31 tok/s)
+io: cb_calls=1464 decode_uses=5760 decode_misses=851 (hit 0.852) prefill_uses=7272 prefill_misses=560
+io: pf_calls=23 pf_experts=557 union avg=24.2 min=18 max=32 fill=5.98 s (pool 32 slots)
+io: prefetch_issued=449 prefetch_hits=219 prefetch_used=369 stall=5.69 s total_read=24652.0 MB avg_bw=1403 MB/s
+io: read_work=94.83 s preads=11160 per_stream_bw=260 MB/s
+io: guard pressure_drops=2 cap_evictions=94 final_cap=12
+mem: peak_rss=10.63 GB phys_footprint=5.51 GB
+therm: nominal
+logits_hash=fc1efa9e0bd36fcc
+text: <|channel|>analysis<|message|>User wants a summary in three bullet points. Provide concise bullet points.<|end|><|start|>assistant<|channel|>final<|message|>- **Accretion & Differentiation** – About 4.6 billion years ago, dust and gas in the solar nebula coalesced into planetes
+<<<READY>>>

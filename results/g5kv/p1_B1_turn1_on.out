@@ -1,0 +1,78 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=13587 ms | template=0 tokenize=1 kv_match=0 prefill=13584 first_sample=1
+ttft: ctx_held=0 rendered=296 reused=0 reprefill=296 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok 146677 | Earth's|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok    480 | it|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok    889 | but|
+tok  21182 | thorough|
+tok  30547 | explanation|
+tok     13 |.|
+tok   7649 | Use|
+tok 118908 | headings|
+tok     11 |,|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok  18057 | Should|
+tok   4321 | cover|
+tok     25 |:|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok     11 |,|
+tok   1259 | acc|
+tok    264 |re|
+tok   1141 |tion|
+tok     11 |,|
+tok  94550 | differentiation|
+tok     11 |,|
+tok  34328 | cooling|
+tok     11 |,|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   3411 | water|
+tok     11 |,|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  14651 | plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok     11 |,|
+tok  22105 | stable|
+tok  16721 | climate|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+mode=streamed prompt_toks=296 reused=0 generated=60 n_ubatch=128
+prefill: 13.58 s (21.79 tok/s)
+decode:  7.97 s (7.52 tok/s)
+io: cb_calls=1512 decode_uses=5760 decode_misses=457 (hit 0.921) prefill_uses=27236 prefill_misses=1599
+io: pf_calls=69 pf_experts=1595 union avg=23.1 min=14 max=31 fill=6.84 s (pool 32 slots)
+io: prefetch_issued=245 prefetch_hits=77 prefetch_used=229 stall=4.14 s total_read=30496.9 MB avg_bw=1415 MB/s
+io: read_work=91.48 s preads=13806 per_stream_bw=333 MB/s
+mem: peak_rss=10.90 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=22ab70701690e8ae
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide concise but thorough explanation. Use headings, bullet points. Should cover: solar nebula, accretion, differentiation, cooling, atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also
+<<<READY>>>

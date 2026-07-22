@@ -1,0 +1,78 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=6996 ms | template=0 tokenize=2 kv_match=0 prefill=6993 first_sample=1
+ttft: ctx_held=353 rendered=375 reused=293 reprefill=82 (21.9% of rendered)
+ttft: diverged_at=293 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   1844 |User|
+tok  31064 | asks|
+tok     25 |:|
+tok    392 | "|
+tok  34405 |Which|
+tok   1001 | one|
+tok   1481 | would|
+tok    481 | you|
+tok   5230 | pick|
+tok    395 | for|
+tok    261 | a|
+tok   3823 | video|
+tok   2421 | call|
+tok     11 |,|
+tok    306 | in|
+tok   1001 | one|
+tok  21872 | sentence|
+tok  16842 |?"|
+tok   3164 | They|
+tok   1682 | want|
+tok    261 | a|
+tok  35005 | recommendation|
+tok     13 |.|
+tok   2214 | For|
+tok   3823 | video|
+tok   2421 | call|
+tok     11 |,|
+tok  13729 | typically|
+tok   1199 | use|
+tok  91977 | UDP|
+tok    395 | for|
+tok   1374 | real|
+tok  10158 |-time|
+tok  22797 | streaming|
+tok   2236 | because|
+tok   6931 | lower|
+tok  85157 | latency|
+tok     11 |,|
+tok    889 | but|
+tok   1991 | many|
+tok   1199 | use|
+tok  98549 | RTP|
+tok   1072 | over|
+tok  91977 | UDP|
+tok     13 |.|
+tok   3072 | But|
+tok   1236 | some|
+tok   1199 | use|
+tok  53514 | TCP|
+tok    395 | for|
+tok  37673 | reliability|
+tok    889 | but|
+tok   7266 | higher|
+tok  85157 | latency|
+tok     13 |.|
+tok   2632 | So|
+tok   6052 | answer|
+mode=streamed prompt_toks=375 reused=293 generated=60 n_ubatch=128
+prefill: 6.99 s (11.73 tok/s)
+decode:  9.32 s (6.44 tok/s)
+io: cb_calls=1464 decode_uses=5760 decode_misses=619 (hit 0.893) prefill_uses=7548 prefill_misses=589
+io: pf_calls=23 pf_experts=585 union avg=25.4 min=19 max=31 fill=4.84 s (pool 32 slots)
+io: prefetch_issued=244 prefetch_hits=95 prefetch_used=219 stall=5.66 s total_read=19244.5 MB avg_bw=1180 MB/s
+io: read_work=78.22 s preads=8712 per_stream_bw=246 MB/s
+mem: peak_rss=11.17 GB phys_footprint=6.74 GB
+therm: nominal
+logits_hash=9dca34d9d258ff2b
+text: <|channel|>analysis<|message|>User asks: "Which one would you pick for a video call, in one sentence?" They want a recommendation. For video call, typically use UDP for real-time streaming because lower latency, but many use RTP over UDP. But some use TCP for reliability but higher latency. So answer
+<<<READY>>>

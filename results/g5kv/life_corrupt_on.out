@@ -1,0 +1,50 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=12719 ms | template=0 tokenize=1 kv_match=0 prefill=12716 first_sample=1
+ttft: ctx_held=0 rendered=292 reused=0 reprefill=292 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   1844 |User|
+tok   5003 | says|
+tok     25 |:|
+tok    392 | "|
+tok  62316 |Say|
+tok    290 | the|
+tok   2195 | word|
+tok  40617 | hello|
+tok    326 | and|
+tok   6939 | nothing|
+tok   1203 | else|
+tok   3692 |."|
+tok   2632 | So|
+tok    581 | we|
+tok   1757 | should|
+tok   9570 | respond|
+tok    483 | with|
+tok    392 | "|
+tok  24912 |hello|
+tok      1 |"|
+tok   1606 | only|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok  24912 |hello|
+mode=streamed prompt_toks=292 reused=0 generated=32 n_ubatch=128
+prefill: 12.72 s (22.96 tok/s)
+decode:  6.88 s (4.65 tok/s)
+io: cb_calls=840 decode_uses=3072 decode_misses=467 (hit 0.848) prefill_uses=26868 prefill_misses=1576
+io: pf_calls=69 pf_experts=1572 union avg=22.8 min=14 max=31 fill=5.96 s (pool 32 slots)
+io: prefetch_issued=242 prefetch_hits=77 prefetch_used=226 stall=4.62 s total_read=30284.8 MB avg_bw=1545 MB/s
+io: read_work=85.59 s preads=13710 per_stream_bw=354 MB/s
+mem: peak_rss=11.11 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=ba03a9218f0c3589
+text: <|channel|>analysis<|message|>User says: "Say the word hello and nothing else." So we should respond with "hello" only.<|end|><|start|>assistant<|channel|>final<|message|>hello
+<<<READY>>>

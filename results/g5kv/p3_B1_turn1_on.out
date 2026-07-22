@@ -1,0 +1,78 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=13011 ms | template=0 tokenize=1 kv_match=0 prefill=13009 first_sample=1
+ttft: ctx_held=0 rendered=293 reused=0 reprefill=293 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok   6052 | answer|
+tok   9809 | difference|
+tok   2870 | between|
+tok  53514 | TCP|
+tok    326 | and|
+tok  91977 | UDP|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok    889 | but|
+tok  21182 | thorough|
+tok  30547 | explanation|
+tok     13 |.|
+tok   7649 | Use|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok 132059 | Mention|
+tok  37673 | reliability|
+tok     11 |,|
+tok   6703 | connection|
+tok  49951 |-oriented|
+tok  10217 | vs|
+tok   6703 | connection|
+tok   2695 |less|
+tok     11 |,|
+tok  30931 | ordering|
+tok     11 |,|
+tok   7845 | flow|
+tok   3580 | control|
+tok     11 |,|
+tok  94337 | congestion|
+tok   3580 | control|
+tok     11 |,|
+tok  52558 | overhead|
+tok     11 |,|
+tok   1199 | use|
+tok   7911 | cases|
+tok     13 |.|
+tok  51441 | Provide|
+tok  15652 | examples|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok    410 |**|
+tok  82267 |TCP|
+tok    350 | (|
+tok 113821 |Transmission|
+tok  12006 | Control|
+tok  41914 | Protocol|
+mode=streamed prompt_toks=293 reused=0 generated=60 n_ubatch=128
+prefill: 13.01 s (22.52 tok/s)
+decode:  9.69 s (6.19 tok/s)
+io: cb_calls=1512 decode_uses=5760 decode_misses=634 (hit 0.890) prefill_uses=26960 prefill_misses=1590
+io: pf_calls=69 pf_experts=1586 union avg=23.0 min=14 max=31 fill=6.31 s (pool 32 slots)
+io: prefetch_issued=263 prefetch_hits=87 prefetch_used=244 stall=5.63 s total_read=32962.1 MB avg_bw=1452 MB/s
+io: read_work=92.94 s preads=14922 per_stream_bw=355 MB/s
+mem: peak_rss=11.11 GB phys_footprint=6.75 GB
+therm: nominal
+logits_hash=34a9c9179c451abd
+text: <|channel|>analysis<|message|>We need to answer difference between TCP and UDP. Provide concise but thorough explanation. Use bullet points. Mention reliability, connection-oriented vs connectionless, ordering, flow control, congestion control, overhead, use cases. Provide examples.<|end|><|start|>assistant<|channel|>final<|message|>**TCP (Transmission Control Protocol
+<<<READY>>>

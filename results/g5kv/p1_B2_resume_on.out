@@ -1,0 +1,78 @@
+llmstream: 24 layers, 16 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+<<<READY>>>
+ttft: total=6455 ms | template=0 tokenize=2 kv_match=0 prefill=6451 first_sample=1
+ttft: ctx_held=356 rendered=375 reused=296 reprefill=79 (21.1% of rendered)
+ttft: diverged_at=296 kv_had=200005|<|channel|>| rerender_has=200008|<|message|>|
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   1844 |User|
+tok  10648 | wants|
+tok    261 | a|
+tok  18522 | summary|
+tok    306 | in|
+tok   3407 | three|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok  51441 | Provide|
+tok  82463 | concise|
+tok  31926 | bullet|
+tok   5571 | points|
+tok     13 |.|
+tok 200007 |<|end|>|
+tok 200006 |<|start|>|
+tok 173781 |assistant|
+tok 200005 |<|channel|>|
+tok  17196 |final|
+tok 200008 |<|message|>|
+tok     12 |-|
+tok   6240 | **|
+tok   4945 |Acc|
+tok    264 |re|
+tok   1141 |tion|
+tok    827 | &|
+tok  97964 | Differ|
+tok  14989 |enti|
+tok    387 |ation|
+tok    410 |**|
+tok   1127 | –|
+tok  12958 | About|
+tok    220 | |
+tok     19 |4|
+tok     13 |.|
+tok     21 |6|
+tok  35971 | |
+tok     65 |b|
+tok  27032 |illion|
+tok  35971 | |
+tok  75629 |years|
+tok   5288 | ago|
+tok     11 |,|
+tok  22163 | dust|
+tok    326 | and|
+tok   7322 | gas|
+tok    306 | in|
+tok    290 | the|
+tok  17624 | solar|
+tok  53678 | neb|
+tok   3419 |ula|
+tok   1407 | co|
+tok   3459 |ales|
+tok   2050 |ced|
+tok   1511 | into|
+tok  17921 | planet|
+tok    268 |es|
+mode=streamed prompt_toks=375 reused=296 generated=60 n_ubatch=128
+prefill: 6.45 s (12.25 tok/s)
+decode:  9.37 s (6.40 tok/s)
+io: cb_calls=1464 decode_uses=5760 decode_misses=690 (hit 0.880) prefill_uses=7272 prefill_misses=561
+io: pf_calls=23 pf_experts=557 union avg=24.2 min=16 max=32 fill=4.45 s (pool 32 slots)
+io: prefetch_issued=274 prefetch_hits=109 prefetch_used=242 stall=5.65 s total_read=20212.0 MB avg_bw=1278 MB/s
+io: read_work=74.95 s preads=9150 per_stream_bw=270 MB/s
+mem: peak_rss=10.92 GB phys_footprint=6.74 GB
+therm: nominal
+logits_hash=f40384bd332e7eab
+text: <|channel|>analysis<|message|>User wants a summary in three bullet points. Provide concise bullet points.<|end|><|start|>assistant<|channel|>final<|message|>- **Accretion & Differentiation** – About 4.6 billion years ago, dust and gas in the solar nebula coalesced into planetes
+<<<READY>>>

@@ -1,0 +1,41 @@
+G5-1 gate — KV persistence revisit (2026-07-23 02:12)
+model=gpt-oss-20b-MXFP4.gguf n_gen=60 SLOTS=16 PREFILL_SLOTS=64 n_ubatch=128 exact greedy | E39 config, pinned
+VOID_LEGS: none
+
+gate 1 — resumed turn-2 == unbroken turn-2, token ids (HARD):
+  p1 turn-2 token ids        EQUAL  60 tokens identical
+  p2 turn-2 token ids        EQUAL  60 tokens identical
+  p3 turn-2 token ids        DIFFER  step 36: p3_A emitted 11, p3_B2 emitted 22797
+
+gate 2 — matched-shape hash probe (recorded, decides wording, NOT a gate):
+  p1 hash A_ctx=('356', '375', '296', '79') B2_ctx=('356', '375', '296', '79') DIFFER  p1_A=fc1efa9e0bd36fcc p1_B2=f40384bd332e7eab
+  p2 hash A_ctx=('361', '380', '301', '79') B2_ctx=('361', '380', '301', '79') DIFFER  p2_A=ffba3493e609bc34 p2_B2=70efacc95c4ca3a6
+  p3 hash A_ctx=('353', '375', '293', '82') B2_ctx=('353', '375', '293', '82') DIFFER  p3_A=aab603a4d8f70eff p3_B2=9dca34d9d258ff2b
+  wording: hash differs on resume (upstream cross-shape variance, RC4) -> claim stays: same text, config-pinned
+
+gate 3 — telemetry:
+  p1 resume announced                            PASS
+  p1 resume instrumented (MB, s)                 PASS (11.9 MB, 0.01 s)
+  p2 resume announced                            PASS
+  p2 resume instrumented (MB, s)                 PASS (12.0 MB, 0.01 s)
+  p3 resume announced                            PASS
+  p3 resume instrumented (MB, s)                 PASS (11.8 MB, 0.01 s)
+
+gate 5 — lifecycle:
+  p1 checkpoint exists after exit                PASS
+  p1 no .tmp survivor (atomic)                   PASS
+  p1 checkpoint size 11.9 MB (< 1024 MB bound)   PASS
+  p2 checkpoint exists after exit                PASS
+  p2 no .tmp survivor (atomic)                   PASS
+  p2 checkpoint size 12.0 MB (< 1024 MB bound)   PASS
+  p3 checkpoint exists after exit                PASS
+  p3 no .tmp survivor (atomic)                   PASS
+  p3 checkpoint size 11.8 MB (< 1024 MB bound)   PASS
+  corrupt file -> starting fresh                 PASS
+  corrupt file -> turn still served              PASS
+  truncated file -> starting fresh               PASS
+  truncated file -> turn still served            PASS
+
+(gate 4 — bit-exact + byte-identical-off — runs in run.sh via scripts/gate.sh; see gate_full.log)
+
+GATE: RED
