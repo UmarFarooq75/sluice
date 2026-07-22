@@ -54,10 +54,23 @@ vs pristine `llama-cli`, same prompt, greedy.
 > behaviour when nobody asks it to. E43 establishes that or finds it false. Either
 > outcome is worth more than the headline comparison.
 
-**§D-3 — Ollama is not installed.** Installing it is a download, and downloads need
-authorization under the standing rules. The script therefore **detects and defers**:
-if `ollama` is absent, that arm reports `NOT INSTALLED` and the run continues. It
-never installs anything. The exact step for the owner to authorize is printed.
+**§D-3 — Ollama is not installed, and MUST NOT be installed globally.**
+> **HARD CONSTRAINT (owner, 2026-07-22): "don't install anything globally".**
+> No `brew install`, no `.pkg`, nothing that touches `/usr/local`, `/opt`, `~/Library`,
+> a login item, or a background service. Ollama ships a launch daemon by default,
+> which is exactly the class of thing this forbids.
+
+The only permitted form is a **project-local, self-contained binary under
+`vendor/ollama/`**, run in the foreground and killed when the leg ends — which is
+also the method the prior artifact used ("standalone Ollama binary (project-local)",
+`results/qwen36_headtohead.json`). It is gitignored, it never registers a service,
+and removing the directory removes it completely.
+
+The script **never installs anything itself**. If `vendor/ollama/ollama` is absent,
+that arm reports `NOT INSTALLED` and the run continues; the exact project-local
+fetch command is printed for the owner to run deliberately. Model pulls, when
+authorized, are limited to **gpt-oss-20b**, and the GGUF is **hardlinked** into
+Ollama's blob store so no second 12 GB copy lands on disk.
 The prior artifact's method is reused verbatim once it exists: **hardlink our GGUF
 into Ollama's blob store (zero-copy) and serve it via a Modelfile**, so all arms read
 byte-identical weights and no second 12 GB copy lands on disk.

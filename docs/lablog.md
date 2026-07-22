@@ -2703,3 +2703,23 @@ RC1's known-passing one, one dimension at a time.
 **If every dimension is individually exonerated and divergence appears only under the
 full combination, that is the finding and it gets reported as such.** No winner will
 be forced.
+
+**RC2 addendum — expected fix shape if SWA confirms (pre-registered, NOT to build).**
+Written before the run so the verdict also tells us what the fix would cost, not just
+what the bug is.
+- **Fix A — clamp reuse to `context − sliding_window`.** Keep only the prefix that is
+  outside every SWA layer's window, re-prefill the last 128 tokens. Cheap, local, no
+  new state. **Cost to the 3 s TTFT**: re-prefill rises from 17 to ~128+17 tokens. At
+  E41b's measured ~10 tok/s suffix-prefill rate that is **≈13–15 s, i.e. WORSE than
+  stock's 8.2 s** — the entire canon win would be erased and then some.
+- **Fix B — canon re-decodes past the window.** At canonicalization time, re-decode
+  the final 128 positions so the SWA cache is populated exactly as a fresh prefill
+  would leave it. Cost lands **post-reply, off the TTFT path**, where canon already
+  spends 7.3 s. **TTFT would stay ~3 s.** More engine surface, and it assumes the SWA
+  cache can be repopulated deterministically — which RC2's localization is exactly
+  what would establish.
+- **Fix C — do not reuse across the boundary at all** (the strict/dormant-ruling
+  path): correct, and gives up the feature.
+**So the verdict matters twice over**: if SWA is the mechanism, Fix A saves nothing
+and Fix B is the only shape that preserves the 3 s result. That should be known before
+anyone picks.

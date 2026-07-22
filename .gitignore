@@ -42,3 +42,6 @@ ui_streamlit.log
 # byte-identical-off reference binary (make gate-ref)
 .gate/
 csrc/tmpl_probe
+
+# project-local Ollama for E43 (never installed globally)
+vendor/ollama/
