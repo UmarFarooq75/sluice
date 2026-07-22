@@ -1,0 +1,1021 @@
+dbg ffn_moe_logits-0             d466b471fa67e974
+dbg ffn_moe_probs-0              e8172519910ec4cf
+dbg ffn_moe_probs-0 (reshaped)   e8172519910ec4cf
+dbg ffn_moe_argsort-0            4be416b6da569e85
+dbg ffn_moe_topk-0               c45687fe359aca31
+dbg ffn_moe_weights-0            3c515ab9fea7d1c3
+dbg ffn_moe_weights-0 (reshaped) 3c515ab9fea7d1c3
+dbg ffn_moe_weights_softmax-0    4be6408eb650d091
+dbg ffn_moe_gate-0               d9d2ee3e3d62b807
+dbg ffn_moe_gate_biased-0        389ad400acda1b85
+dbg ffn_moe_up-0                 ea040318f371e4d9
+dbg ffn_moe_up_biased-0          e1b0f57ee4d7d0af
+dbg ffn_moe_swiglu_oai-0         5a8be1bed4f38156
+dbg ffn_moe_down-0               75355e1e1cf301d2
+dbg ffn_moe_down_biased-0        8832abce4b08f639
+dbg ffn_moe_weighted-0           bb2b1332d9ba7a90
+dbg ffn_moe_weighted-0 (view)    8793c31c12ee2ca6
+dbg ffn_moe_weighted-0 (view)    c85c475c03cc901a
+dbg ffn_moe_weighted-0 (view)    1477c1739d71d7ff
+dbg ffn_moe_weighted-0 (view)    db668eaa9060f67a
+dbg ffn_moe_out-0                ff8b78d127955f3a
+dbg ffn_moe_logits-1             7a93e6ed3c3b59b6
+dbg ffn_moe_probs-1              445bf002ebb3db2d
+dbg ffn_moe_probs-1 (reshaped)   445bf002ebb3db2d
+dbg ffn_moe_argsort-1            8c3b8f7373fd8565
+dbg ffn_moe_topk-1               26078e508b9ab878
+dbg ffn_moe_weights-1            001613de3f578f28
+dbg ffn_moe_weights-1 (reshaped) 001613de3f578f28
+dbg ffn_moe_weights_softmax-1    9453c2b917eca492
+dbg ffn_moe_gate-1               40f6eb761d167e1f
+dbg ffn_moe_gate_biased-1        e44c4f535f392bf8
+dbg ffn_moe_up-1                 5eba7588f4c54a70
+dbg ffn_moe_up_biased-1          34a2ec438b17e3b0
+dbg ffn_moe_swiglu_oai-1         c3a24aa44c4bbbb2
+dbg ffn_moe_down-1               3c755f575738741f
+dbg ffn_moe_down_biased-1        ff319a7570e0e651
+dbg ffn_moe_weighted-1           13f0414332b1ff35
+dbg ffn_moe_weighted-1 (view)    bdb8a31fa54cff0e
+dbg ffn_moe_weighted-1 (view)    f39c1e6e18965777
+dbg ffn_moe_weighted-1 (view)    7c3594bb3f691c6a
+dbg ffn_moe_weighted-1 (view)    3794ccf70d721023
+dbg ffn_moe_out-1                ffaaf32a6e167a3e
+dbg ffn_moe_logits-2             4b66f500e164ac58
+dbg ffn_moe_probs-2              55aa554fb4f41e59
+dbg ffn_moe_probs-2 (reshaped)   55aa554fb4f41e59
+dbg ffn_moe_argsort-2            def83631b329d915
+dbg ffn_moe_topk-2               b11024b9577a2ff6
+dbg ffn_moe_weights-2            d1ca320551eb5a37
+dbg ffn_moe_weights-2 (reshaped) d1ca320551eb5a37
+dbg ffn_moe_weights_softmax-2    5e47e1a5e290e046
+dbg ffn_moe_gate-2               dd16179252f38dba
+dbg ffn_moe_gate_biased-2        c7d3420a29e76631
+dbg ffn_moe_up-2                 b4237d51bda27c0b
+dbg ffn_moe_up_biased-2          1034f4a562c2ae19
+dbg ffn_moe_swiglu_oai-2         dbe7ceab3b3f2da5
+dbg ffn_moe_down-2               1b5abd6d046da7b8
+dbg ffn_moe_down_biased-2        a6f26c1d30163475
+dbg ffn_moe_weighted-2           b42ab0e7ccee3c67
+dbg ffn_moe_weighted-2 (view)    d0461ec3515ec707
+dbg ffn_moe_weighted-2 (view)    63fb70e4a6cc586a
+dbg ffn_moe_weighted-2 (view)    3e5cf519288b3b20
+dbg ffn_moe_weighted-2 (view)    ee1281b9889be903
+dbg ffn_moe_out-2                bfffdef12d89ed1f
+dbg ffn_moe_logits-3             79910b4ed762bf47
+dbg ffn_moe_probs-3              84cd2227a123074d
+dbg ffn_moe_probs-3 (reshaped)   84cd2227a123074d
+dbg ffn_moe_argsort-3            a272cd0a8332d5f5
+dbg ffn_moe_topk-3               cecc0cc263eb1404
+dbg ffn_moe_weights-3            5286e4b5a479b8ce
+dbg ffn_moe_weights-3 (reshaped) 5286e4b5a479b8ce
+dbg ffn_moe_weights_softmax-3    dc77bd45ff633174
+dbg ffn_moe_gate-3               bc5234b2c9235672
+dbg ffn_moe_gate_biased-3        d882afd22e12dfd2
+dbg ffn_moe_up-3                 b3373b796d5f68e4
+dbg ffn_moe_up_biased-3          3e817a2b8d42e472
+dbg ffn_moe_swiglu_oai-3         3d910bb12950df66
+dbg ffn_moe_down-3               3aef1d88127baf81
+dbg ffn_moe_down_biased-3        12cdfdbb844e4703
+dbg ffn_moe_weighted-3           81e986ff1903d286
+dbg ffn_moe_weighted-3 (view)    472338b4e857feea
+dbg ffn_moe_weighted-3 (view)    b4b56a6961b0b33b
+dbg ffn_moe_weighted-3 (view)    c4018fcbc33ae9d8
+dbg ffn_moe_weighted-3 (view)    30c4d852783cf2a6
+dbg ffn_moe_out-3                5aa2de029ae4366b
+dbg ffn_moe_logits-4             d2676861cdd56429
+dbg ffn_moe_probs-4              ceace82bbc336cff
+dbg ffn_moe_probs-4 (reshaped)   ceace82bbc336cff
+dbg ffn_moe_argsort-4            39351962461067e5
+dbg ffn_moe_topk-4               71cbe8c7e5cbff04
+dbg ffn_moe_weights-4            954ba36a9e9d5a24
+dbg ffn_moe_weights-4 (reshaped) 954ba36a9e9d5a24
+dbg ffn_moe_weights_softmax-4    dc976d4fb7a002b7
+dbg ffn_moe_gate-4               3051dba62f5401b2
+dbg ffn_moe_gate_biased-4        92adf22a95e1cf90
+dbg ffn_moe_up-4                 cd96f63051a99e19
+dbg ffn_moe_up_biased-4          38eec43d9ff2c507
+dbg ffn_moe_swiglu_oai-4         6d719ec58219170d
+dbg ffn_moe_down-4               dfff0558c13733b8
+dbg ffn_moe_down_biased-4        b229d86d0c251e3c
+dbg ffn_moe_weighted-4           054aa955daa45914
+dbg ffn_moe_weighted-4 (view)    aec0c109720127e6
+dbg ffn_moe_weighted-4 (view)    45d2753e32840059
+dbg ffn_moe_weighted-4 (view)    88bcee068cce46ea
+dbg ffn_moe_weighted-4 (view)    dd8345e02829c880
+dbg ffn_moe_out-4                24e79e0077b654e6
+dbg ffn_moe_logits-5             7a22fe07c7996468
+dbg ffn_moe_probs-5              ef6a5ad0749521ee
+dbg ffn_moe_probs-5 (reshaped)   ef6a5ad0749521ee
+dbg ffn_moe_argsort-5            d67a6aac73d771c5
+dbg ffn_moe_topk-5               4f8a0d0160db4615
+dbg ffn_moe_weights-5            d65f9ea75a1f1026
+dbg ffn_moe_weights-5 (reshaped) d65f9ea75a1f1026
+dbg ffn_moe_weights_softmax-5    c8c0900df0c2c4db
+dbg ffn_moe_gate-5               e1b15bbc21dc499c
+dbg ffn_moe_gate_biased-5        b9206e3e8988954f
+dbg ffn_moe_up-5                 6132a98431e521c2
+dbg ffn_moe_up_biased-5          9f17605491226574
+dbg ffn_moe_swiglu_oai-5         40edeb4401d931a3
+dbg ffn_moe_down-5               23637d49507fc7cb
+dbg ffn_moe_down_biased-5        6e56c2243d13d1a9
+dbg ffn_moe_weighted-5           3d4d2bfd2bd486a3
+dbg ffn_moe_weighted-5 (view)    5029b702d297515e
+dbg ffn_moe_weighted-5 (view)    1ded004206e1367d
+dbg ffn_moe_weighted-5 (view)    ba48094c7aeb0029
+dbg ffn_moe_weighted-5 (view)    657f6a24cab4d768
+dbg ffn_moe_out-5                99282ac55666f3eb
+dbg ffn_moe_logits-6             e2e7cd5b5cabb9e8
+dbg ffn_moe_probs-6              cacaa2ade9e09e52
+dbg ffn_moe_probs-6 (reshaped)   cacaa2ade9e09e52
+dbg ffn_moe_argsort-6            dc715ced22030025
+dbg ffn_moe_topk-6               503adf60bbbb7b07
+dbg ffn_moe_weights-6            87573ca28fc51748
+dbg ffn_moe_weights-6 (reshaped) 87573ca28fc51748
+dbg ffn_moe_weights_softmax-6    29356961a850f5bb
+dbg ffn_moe_gate-6               226309d8548c3c76
+dbg ffn_moe_gate_biased-6        2c1fca5d08b3d1a7
+dbg ffn_moe_up-6                 8aa05f0df57a42d4
+dbg ffn_moe_up_biased-6          b5a5adc1fd5c298d
+dbg ffn_moe_swiglu_oai-6         7c2d5ec62ae2414d
+dbg ffn_moe_down-6               ca3b502119bb6221
+dbg ffn_moe_down_biased-6        52e787fb61ef6be3
+dbg ffn_moe_weighted-6           37340757f5ece4ad
+dbg ffn_moe_weighted-6 (view)    4dddcecb9dfa85e1
+dbg ffn_moe_weighted-6 (view)    a064f8cbd2cb01c9
+dbg ffn_moe_weighted-6 (view)    70b02e36cd04e557
+dbg ffn_moe_weighted-6 (view)    c4a1ee4ed21883e3
+dbg ffn_moe_out-6                f82045075357cbeb
+dbg ffn_moe_logits-7             a4f08bd1ec77cc25
+dbg ffn_moe_probs-7              b73b055e38d873ac
+dbg ffn_moe_probs-7 (reshaped)   b73b055e38d873ac
+dbg ffn_moe_argsort-7            62a84605107c2975
+dbg ffn_moe_topk-7               61dbc2055b09d593
+dbg ffn_moe_weights-7            6845b568c8ee81bb
+dbg ffn_moe_weights-7 (reshaped) 6845b568c8ee81bb
+dbg ffn_moe_weights_softmax-7    961e5e21a2d363d4
+dbg ffn_moe_gate-7               c02775fe79e47186
+dbg ffn_moe_gate_biased-7        b79c3469beec6975
+dbg ffn_moe_up-7                 de1b6569dabf34ff
+dbg ffn_moe_up_biased-7          8c2819bdf6b1343b
+dbg ffn_moe_swiglu_oai-7         4287ebf4ff3a8a7a
+dbg ffn_moe_down-7               7c56b7a5fa1e5734
+dbg ffn_moe_down_biased-7        30bdd403f39ecbb8
+dbg ffn_moe_weighted-7           f2f59d9a29534358
+dbg ffn_moe_weighted-7 (view)    df6923fbe78ed6df
+dbg ffn_moe_weighted-7 (view)    8c93f15a9a0c84d1
+dbg ffn_moe_weighted-7 (view)    56e5d374848a8d0c
+dbg ffn_moe_weighted-7 (view)    7697cf3e0ecddf53
+dbg ffn_moe_out-7                e429941ae56a3a38
+dbg ffn_moe_logits-8             93bd8496ee7df790
+dbg ffn_moe_probs-8              45fa2ce5a34a9483
+dbg ffn_moe_probs-8 (reshaped)   45fa2ce5a34a9483
+dbg ffn_moe_argsort-8            55f88d44fc293195
+dbg ffn_moe_topk-8               d9adc408a619e973
+dbg ffn_moe_weights-8            cd464b465e4b5606
+dbg ffn_moe_weights-8 (reshaped) cd464b465e4b5606
+dbg ffn_moe_weights_softmax-8    78a4dfa16992902c
+dbg ffn_moe_gate-8               bf572e5fc6e1d642
+dbg ffn_moe_gate_biased-8        730491186bbb2b27
+dbg ffn_moe_up-8                 56c6486bfdb626a1
+dbg ffn_moe_up_biased-8          9f7b11d4efdee158
+dbg ffn_moe_swiglu_oai-8         6a0786aaabb70cb9
+dbg ffn_moe_down-8               2512bf1135af328d
+dbg ffn_moe_down_biased-8        b0cef63a5d407635
+dbg ffn_moe_weighted-8           0fb50f0cb0ded7d7
+dbg ffn_moe_weighted-8 (view)    bb6d1ae8cb2ede41
+dbg ffn_moe_weighted-8 (view)    c1b8f53572fecd9a
+dbg ffn_moe_weighted-8 (view)    256db754868bb9d4
+dbg ffn_moe_weighted-8 (view)    d101513a59b37289
+dbg ffn_moe_out-8                1aa85b68999100d0
+dbg ffn_moe_logits-9             65e8138c2d3a541c
+dbg ffn_moe_probs-9              5e946dbac81a5612
+dbg ffn_moe_probs-9 (reshaped)   5e946dbac81a5612
+dbg ffn_moe_argsort-9            56f0ea29cab66775
+dbg ffn_moe_topk-9               0e8a9bdc67be2bd9
+dbg ffn_moe_weights-9            894ffe7c37f47da8
+dbg ffn_moe_weights-9 (reshaped) 894ffe7c37f47da8
+dbg ffn_moe_weights_softmax-9    ecd3d5defb89f089
+dbg ffn_moe_gate-9               dfc38a7f865d93e1
+dbg ffn_moe_gate_biased-9        bad30263dfcea5b9
+dbg ffn_moe_up-9                 cb2658debdcfd1b7
+dbg ffn_moe_up_biased-9          d7686afd13a8532b
+dbg ffn_moe_swiglu_oai-9         ef7ffdba94e177f7
+dbg ffn_moe_down-9               d8aa4742f5ede7da
+dbg ffn_moe_down_biased-9        26d8705766dfad2e
+dbg ffn_moe_weighted-9           d0927115f2c56506
+dbg ffn_moe_weighted-9 (view)    f4e9f7906d713f85
+dbg ffn_moe_weighted-9 (view)    5dd8692f17fd8e2d
+dbg ffn_moe_weighted-9 (view)    2d9bf87a62cca87d
+dbg ffn_moe_weighted-9 (view)    81080960a2cd84a6
+dbg ffn_moe_out-9                9884c69e7cb1b85f
+dbg ffn_moe_logits-10            dc893ff5b4ac59af
+dbg ffn_moe_probs-10             b88b76de7983e769
+dbg ffn_moe_probs-10 (reshaped)  b88b76de7983e769
+dbg ffn_moe_argsort-10           a4bd602b2d723365
+dbg ffn_moe_topk-10              6024b2b924e5dd66
+dbg ffn_moe_weights-10           7128e1eeb6577085
+dbg ffn_moe_weights-10 (reshaped) 7128e1eeb6577085
+dbg ffn_moe_weights_softmax-10   a86be441e4d60a1c
+dbg ffn_moe_gate-10              ac6151913b324da6
+dbg ffn_moe_gate_biased-10       3444e9e144107a02
+dbg ffn_moe_up-10                5e0f60fa4ad34fcf
+dbg ffn_moe_up_biased-10         cf9a46f4a2953c45
+dbg ffn_moe_swiglu_oai-10        36f4eadc17393b4c
+dbg ffn_moe_down-10              50a216ade6dd14c4
+dbg ffn_moe_down_biased-10       43ec79ad3e6a54f5
+dbg ffn_moe_weighted-10          c07b94fd70e9e24d
+dbg ffn_moe_weighted-10 (view)   37a72917df4d531f
+dbg ffn_moe_weighted-10 (view)   6908c6d4795b02a3
+dbg ffn_moe_weighted-10 (view)   6076fe25268a3a6e
+dbg ffn_moe_weighted-10 (view)   96c2fd16e2152d36
+dbg ffn_moe_out-10               3f5533b4f4d44176
+dbg ffn_moe_logits-11            4eba7b20d891f4f0
+dbg ffn_moe_probs-11             601a3bfd68ff4211
+dbg ffn_moe_probs-11 (reshaped)  601a3bfd68ff4211
+dbg ffn_moe_argsort-11           efd35b6c94bc6c15
+dbg ffn_moe_topk-11              8b4ec14bcf3df156
+dbg ffn_moe_weights-11           12954b9c6aa837e3
+dbg ffn_moe_weights-11 (reshaped) 12954b9c6aa837e3
+dbg ffn_moe_weights_softmax-11   92cef1846389f556
+dbg ffn_moe_gate-11              e429ae1a1b9bd4af
+dbg ffn_moe_gate_biased-11       17159cc2e298fb40
+dbg ffn_moe_up-11                af4b42e56668113b
+dbg ffn_moe_up_biased-11         0a95cd2ebb596734
+dbg ffn_moe_swiglu_oai-11        3f7b1935a7cf0179
+dbg ffn_moe_down-11              3e4f30a6a51faf3f
+dbg ffn_moe_down_biased-11       81fe9766e13f9d1b
+dbg ffn_moe_weighted-11          961e0200de881645
+dbg ffn_moe_weighted-11 (view)   00352fb6d252416f
+dbg ffn_moe_weighted-11 (view)   84184ac71c8a713c
+dbg ffn_moe_weighted-11 (view)   dac1142057cb2a17
+dbg ffn_moe_weighted-11 (view)   8f10639060f4632c
+dbg ffn_moe_out-11               ef1874159d040620
+dbg ffn_moe_logits-12            e0ea47838c4e8312
+dbg ffn_moe_probs-12             e0e8dca4ed20472c
+dbg ffn_moe_probs-12 (reshaped)  e0e8dca4ed20472c
+dbg ffn_moe_argsort-12           5330c1ac1a21be45
+dbg ffn_moe_topk-12              8bcb9c7e65d820b1
+dbg ffn_moe_weights-12           12c4ac36050b570d
+dbg ffn_moe_weights-12 (reshaped) 12c4ac36050b570d
+dbg ffn_moe_weights_softmax-12   6745894757e569c4
+dbg ffn_moe_gate-12              e36f413da035684e
+dbg ffn_moe_gate_biased-12       56d5f56488f87978
+dbg ffn_moe_up-12                38fbd478ecf20548
+dbg ffn_moe_up_biased-12         bec03179e3355a2c
+dbg ffn_moe_swiglu_oai-12        1b52c4d68455980c
+dbg ffn_moe_down-12              57e367b2ca59842f
+dbg ffn_moe_down_biased-12       0332755e42963288
+dbg ffn_moe_weighted-12          1a8338b7b58d597a
+dbg ffn_moe_weighted-12 (view)   a97e126ec0eabc52
+dbg ffn_moe_weighted-12 (view)   0669d35982bc5882
+dbg ffn_moe_weighted-12 (view)   cda323fe258c34c2
+dbg ffn_moe_weighted-12 (view)   b6ec12fc0e0a4551
+dbg ffn_moe_out-12               d09245167f058e5b
+dbg ffn_moe_logits-13            563cc550ac552da3
+dbg ffn_moe_probs-13             9ebe4fbe1afea525
+dbg ffn_moe_probs-13 (reshaped)  9ebe4fbe1afea525
+dbg ffn_moe_argsort-13           c5360b4e4ae42db5
+dbg ffn_moe_topk-13              37c70928d3294490
+dbg ffn_moe_weights-13           2f6f3dd934ada675
+dbg ffn_moe_weights-13 (reshaped) 2f6f3dd934ada675
+dbg ffn_moe_weights_softmax-13   eb52a4c1123749e8
+dbg ffn_moe_gate-13              37870d7e146fe195
+dbg ffn_moe_gate_biased-13       8664eef98487ca56
+dbg ffn_moe_up-13                2d7e1850767bf99b
+dbg ffn_moe_up_biased-13         4fd05b492378a8cc
+dbg ffn_moe_swiglu_oai-13        055ce7e7cb19c33d
+dbg ffn_moe_down-13              307dc6a9fd8baa18
+dbg ffn_moe_down_biased-13       0f7b513fe0aecdd1
+dbg ffn_moe_weighted-13          c23f448f439b2a24
+dbg ffn_moe_weighted-13 (view)   4af7e1cab2f57388
+dbg ffn_moe_weighted-13 (view)   fa3a01483708aa93
+dbg ffn_moe_weighted-13 (view)   398360f6c73aa4c3
+dbg ffn_moe_weighted-13 (view)   c3733796377a8d71
+dbg ffn_moe_out-13               a4285fd376c0e868
+dbg ffn_moe_logits-14            d7540c77dc02e18d
+dbg ffn_moe_probs-14             210835da98912d9d
+dbg ffn_moe_probs-14 (reshaped)  210835da98912d9d
+dbg ffn_moe_argsort-14           cff69aa5aba4f515
+dbg ffn_moe_topk-14              51ea69316a435aa2
+dbg ffn_moe_weights-14           97ea18add28fc655
+dbg ffn_moe_weights-14 (reshaped) 97ea18add28fc655
+dbg ffn_moe_weights_softmax-14   53bf3dac8a80b383
+dbg ffn_moe_gate-14              3ac46e131d62a5a5
+dbg ffn_moe_gate_biased-14       bc77fc6a13a1eaba
+dbg ffn_moe_up-14                153b4ee104446f59
+dbg ffn_moe_up_biased-14         852a85b10a6e5594
+dbg ffn_moe_swiglu_oai-14        400de4300ed74598
+dbg ffn_moe_down-14              69bfdc121fbc2830
+dbg ffn_moe_down_biased-14       efbe7894a8dbdf60
+dbg ffn_moe_weighted-14          9edbe49bce169303
+dbg ffn_moe_weighted-14 (view)   de1f061e228cc928
+dbg ffn_moe_weighted-14 (view)   f662676b759584db
+dbg ffn_moe_weighted-14 (view)   ac6c753528e53dc7
+dbg ffn_moe_weighted-14 (view)   414ad6f392c850ea
+dbg ffn_moe_out-14               40cbc15a50615dcf
+dbg ffn_moe_logits-15            f89bcff45d0c7265
+dbg ffn_moe_probs-15             c9a59c966a0dfdc5
+dbg ffn_moe_probs-15 (reshaped)  c9a59c966a0dfdc5
+dbg ffn_moe_argsort-15           d741c79cc947fe25
+dbg ffn_moe_topk-15              a1615eebe450dbe6
+dbg ffn_moe_weights-15           515c57a6bfe5661c
+dbg ffn_moe_weights-15 (reshaped) 515c57a6bfe5661c
+dbg ffn_moe_weights_softmax-15   bceba80c66b0c92a
+dbg ffn_moe_gate-15              3a68d1ca822ab745
+dbg ffn_moe_gate_biased-15       b662e4017fb9d972
+dbg ffn_moe_up-15                21e6c42f5e42e7ed
+dbg ffn_moe_up_biased-15         0492c11c6d3ae0b7
+dbg ffn_moe_swiglu_oai-15        86ce7952a11fc5c4
+dbg ffn_moe_down-15              6a221f77fcca397d
+dbg ffn_moe_down_biased-15       fc0567fb216073e5
+dbg ffn_moe_weighted-15          9afe384b57819251
+dbg ffn_moe_weighted-15 (view)   3eb0382a85c65d93
+dbg ffn_moe_weighted-15 (view)   0b0b4d33cc34489a
+dbg ffn_moe_weighted-15 (view)   293b6f4e2b62d36d
+dbg ffn_moe_weighted-15 (view)   8f0c45657de56c20
+dbg ffn_moe_out-15               a214930dc7d05da6
+dbg ffn_moe_logits-16            7f1b4d73bd141ab9
+dbg ffn_moe_probs-16             9eb01072028c014f
+dbg ffn_moe_probs-16 (reshaped)  9eb01072028c014f
+dbg ffn_moe_argsort-16           c45de7b91f6571c5
+dbg ffn_moe_topk-16              61e209296dd1adbf
+dbg ffn_moe_weights-16           2c4de078311067a5
+dbg ffn_moe_weights-16 (reshaped) 2c4de078311067a5
+dbg ffn_moe_weights_softmax-16   fd9d4535d42d2ac4
+dbg ffn_moe_gate-16              7d1c381ae236e0be
+dbg ffn_moe_gate_biased-16       7babba59d19fa56d
+dbg ffn_moe_up-16                113ea54321504b3c
+dbg ffn_moe_up_biased-16         d433156efdd6fca1
+dbg ffn_moe_swiglu_oai-16        2b2b9bcbd69e52d8
+dbg ffn_moe_down-16              273780abb9ce9e68
+dbg ffn_moe_down_biased-16       1334769fc7a849cf
+dbg ffn_moe_weighted-16          c33550b125420740
+dbg ffn_moe_weighted-16 (view)   06f901b1989f95af
+dbg ffn_moe_weighted-16 (view)   a065eabe5824152b
+dbg ffn_moe_weighted-16 (view)   35fdc4c1aee6c18c
+dbg ffn_moe_weighted-16 (view)   89faa9699c6519b9
+dbg ffn_moe_out-16               a4c979866574d935
+dbg ffn_moe_logits-17            09a704ccb1b894d0
+dbg ffn_moe_probs-17             5b2a7d8917e4dfbd
+dbg ffn_moe_probs-17 (reshaped)  5b2a7d8917e4dfbd
+dbg ffn_moe_argsort-17           f9249011c38e12e5
+dbg ffn_moe_topk-17              2b7a0c90711f6d31
+dbg ffn_moe_weights-17           9bbcfe2bee97001a
+dbg ffn_moe_weights-17 (reshaped) 9bbcfe2bee97001a
+dbg ffn_moe_weights_softmax-17   9cf549b7ee066e0f
+dbg ffn_moe_gate-17              bb6e91a3b07a679f
+dbg ffn_moe_gate_biased-17       1a663eae73c34069
+dbg ffn_moe_up-17                73119da9d220a8a1
+dbg ffn_moe_up_biased-17         b1d74377f615afd0
+dbg ffn_moe_swiglu_oai-17        55c2dfdd115a1d1a
+dbg ffn_moe_down-17              61c356123d0fde47
+dbg ffn_moe_down_biased-17       4de5536086254e50
+dbg ffn_moe_weighted-17          6a29fa839737f582
+dbg ffn_moe_weighted-17 (view)   4706262b1ca8d56a
+dbg ffn_moe_weighted-17 (view)   912343784da0de68
+dbg ffn_moe_weighted-17 (view)   297dd04f63138cda
+dbg ffn_moe_weighted-17 (view)   43bb029bde9149d3
+dbg ffn_moe_out-17               9affaa349fc2f1e8
+dbg ffn_moe_logits-18            6275aa1e68fb6356
+dbg ffn_moe_probs-18             066ba806c4f0ac92
+dbg ffn_moe_probs-18 (reshaped)  066ba806c4f0ac92
+dbg ffn_moe_argsort-18           771e2e6a686ea1f5
+dbg ffn_moe_topk-18              334dfa90f3127b53
+dbg ffn_moe_weights-18           fdb8d62ab33fe8d6
+dbg ffn_moe_weights-18 (reshaped) fdb8d62ab33fe8d6
+dbg ffn_moe_weights_softmax-18   90fc0fffa9bcd793
+dbg ffn_moe_gate-18              90ceb3a6085a4bf3
+dbg ffn_moe_gate_biased-18       9bc2e1965105a65c
+dbg ffn_moe_up-18                eb77e484cec28c14
+dbg ffn_moe_up_biased-18         9bf711a6af87f41e
+dbg ffn_moe_swiglu_oai-18        ec2e9a37569c3199
+dbg ffn_moe_down-18              723de85c909ebf32
+dbg ffn_moe_down_biased-18       70cc107e371e56e8
+dbg ffn_moe_weighted-18          fb2da0081da65fc6
+dbg ffn_moe_weighted-18 (view)   dacbfb1cc415f197
+dbg ffn_moe_weighted-18 (view)   d0aef2e6cb530b98
+dbg ffn_moe_weighted-18 (view)   060a52ab2e731b1d
+dbg ffn_moe_weighted-18 (view)   3f8de37e9b661fa5
+dbg ffn_moe_out-18               dcd8a56066b3bc75
+dbg ffn_moe_logits-19            db76838a325626dc
+dbg ffn_moe_probs-19             99d10ae46f68814c
+dbg ffn_moe_probs-19 (reshaped)  99d10ae46f68814c
+dbg ffn_moe_argsort-19           2e1aa29bfb55a255
+dbg ffn_moe_topk-19              84a206c61098fb64
+dbg ffn_moe_weights-19           c17f554478a6939a
+dbg ffn_moe_weights-19 (reshaped) c17f554478a6939a
+dbg ffn_moe_weights_softmax-19   34dfb0e582407a99
+dbg ffn_moe_gate-19              a839c741ccd12fa5
+dbg ffn_moe_gate_biased-19       bd6d41d11e95702a
+dbg ffn_moe_up-19                78bab74a8dd749c9
+dbg ffn_moe_up_biased-19         b03c3f298f43aae5
+dbg ffn_moe_swiglu_oai-19        9e05a0ce4f373833
+dbg ffn_moe_down-19              bde520b1230be22a
+dbg ffn_moe_down_biased-19       fdeb87f3e319bd45
+dbg ffn_moe_weighted-19          f7b6ac8d625d42d1
+dbg ffn_moe_weighted-19 (view)   796cce3be70d3d0b
+dbg ffn_moe_weighted-19 (view)   6ae711269d546722
+dbg ffn_moe_weighted-19 (view)   ccf9184b14dcd7d6
+dbg ffn_moe_weighted-19 (view)   ca0b97807fcdc3df
+dbg ffn_moe_out-19               2011e1e7097dcd5f
+dbg ffn_moe_logits-20            7da8ee80baad5e97
+dbg ffn_moe_probs-20             fdac4c0c1ef4dad0
+dbg ffn_moe_probs-20 (reshaped)  fdac4c0c1ef4dad0
+dbg ffn_moe_argsort-20           e89ca3dd8b84d275
+dbg ffn_moe_topk-20              0deeb7e963a0861b
+dbg ffn_moe_weights-20           c5e3aaafcc28ab39
+dbg ffn_moe_weights-20 (reshaped) c5e3aaafcc28ab39
+dbg ffn_moe_weights_softmax-20   6b3653ea94686dce
+dbg ffn_moe_gate-20              c50d37f8243177e2
+dbg ffn_moe_gate_biased-20       9051c8bf53bb41c4
+dbg ffn_moe_up-20                8b69661a126a8e43
+dbg ffn_moe_up_biased-20         76858cbcd2933310
+dbg ffn_moe_swiglu_oai-20        9eebc37e228ccadd
+dbg ffn_moe_down-20              40edf4bf790e0582
+dbg ffn_moe_down_biased-20       1f473221b496ac97
+dbg ffn_moe_weighted-20          1269a29782545ca9
+dbg ffn_moe_weighted-20 (view)   6dd6ee48d5aa55ce
+dbg ffn_moe_weighted-20 (view)   8fafb63dfbc54e01
+dbg ffn_moe_weighted-20 (view)   27803305946478c7
+dbg ffn_moe_weighted-20 (view)   a614f43f494f58d4
+dbg ffn_moe_out-20               8e6233ee2b0bdd62
+dbg ffn_moe_logits-21            167c554e56992785
+dbg ffn_moe_probs-21             f7695f43668cda07
+dbg ffn_moe_probs-21 (reshaped)  f7695f43668cda07
+dbg ffn_moe_argsort-21           f64843b3b23546e5
+dbg ffn_moe_topk-21              91cb9382dc80f811
+dbg ffn_moe_weights-21           7c61e3c260a6a533
+dbg ffn_moe_weights-21 (reshaped) 7c61e3c260a6a533
+dbg ffn_moe_weights_softmax-21   8e6538204d0fe109
+dbg ffn_moe_gate-21              f4073cc027715409
+dbg ffn_moe_gate_biased-21       cb392d2f0e695931
+dbg ffn_moe_up-21                4ccce71bd28f61b5
+dbg ffn_moe_up_biased-21         341d902868aae50e
+dbg ffn_moe_swiglu_oai-21        d21b094704acad74
+dbg ffn_moe_down-21              79ab2254d9e1fccf
+dbg ffn_moe_down_biased-21       473db27fcdcf6f89
+dbg ffn_moe_weighted-21          b7ad5f19f665a0b1
+dbg ffn_moe_weighted-21 (view)   9f77531572f50363
+dbg ffn_moe_weighted-21 (view)   8ca4346ab67cc3a3
+dbg ffn_moe_weighted-21 (view)   87a442a73a304206
+dbg ffn_moe_weighted-21 (view)   4dd09b6948dae8b2
+dbg ffn_moe_out-21               4cec16d197d4c5aa
+dbg ffn_moe_logits-22            d1c1827663bd9df8
+dbg ffn_moe_probs-22             78dd447bc4862400
+dbg ffn_moe_probs-22 (reshaped)  78dd447bc4862400
+dbg ffn_moe_argsort-22           51103124cbc541b5
+dbg ffn_moe_topk-22              2f65e7a127a7c5d5
+dbg ffn_moe_weights-22           0814c6f789bfa86d
+dbg ffn_moe_weights-22 (reshaped) 0814c6f789bfa86d
+dbg ffn_moe_weights_softmax-22   f794172c355090a4
+dbg ffn_moe_gate-22              4e991ed9e1e7be34
+dbg ffn_moe_gate_biased-22       28cc2f85ddf6edb9
+dbg ffn_moe_up-22                57a20bfa5223b247
+dbg ffn_moe_up_biased-22         7d182f468b018037
+dbg ffn_moe_swiglu_oai-22        b3280f376d76c770
+dbg ffn_moe_down-22              3db80d01fab90843
+dbg ffn_moe_down_biased-22       d6823a0de53f0b4c
+dbg ffn_moe_weighted-22          2043dfebc16617d5
+dbg ffn_moe_weighted-22 (view)   b3321d0c83eb7535
+dbg ffn_moe_weighted-22 (view)   5b31abbfd47a68cb
+dbg ffn_moe_weighted-22 (view)   20be327bca215f7a
+dbg ffn_moe_weighted-22 (view)   3a499700c6d0aae0
+dbg ffn_moe_out-22               e0cd86f1691aa5e4
+dbg ffn_moe_logits-23            b2523739e9f210f6
+dbg ffn_moe_probs-23             09a84a4fd79f6ad3
+dbg ffn_moe_probs-23 (reshaped)  09a84a4fd79f6ad3
+dbg ffn_moe_argsort-23           1023e6fb61379965
+dbg ffn_moe_topk-23              a2d020d02e420ee0
+dbg ffn_moe_weights-23           15bbd8604b58656e
+dbg ffn_moe_weights-23 (reshaped) 15bbd8604b58656e
+dbg ffn_moe_weights_softmax-23   9d5ac3160bf14d0b
+dbg ffn_moe_gate-23              7a3982bfab8aeade
+dbg ffn_moe_gate_biased-23       e6626672ad31c810
+dbg ffn_moe_up-23                2203f644afc49f17
+dbg ffn_moe_up_biased-23         d13e477f959bca9a
+dbg ffn_moe_swiglu_oai-23        7ccba32eec1c90e2
+dbg ffn_moe_down-23              21e83223fb7a5093
+dbg ffn_moe_down_biased-23       ae37376ccd64cefe
+dbg ffn_moe_weighted-23          9d3f37e97907fc29
+dbg ffn_moe_weighted-23 (view)   35c6a6cd895aa1a8
+dbg ffn_moe_weighted-23 (view)   dfe8a272fe869488
+dbg ffn_moe_weighted-23 (view)   60f47a694c1c725c
+dbg ffn_moe_weighted-23 (view)   8f4b1fe3ac528b68
+dbg ffn_moe_out-23               cada44e4500de683
+ttft: total=913 ms | template=0 tokenize=0 kv_match=0 prefill=911 first_sample=1
+ttft: ctx_held=41 rendered=40 reused=39 reprefill=1 (2.5% of rendered)
+ttft: diverged_at=39 kv_had=173781|assistant| rerender_has=173781|assistant|
+dbg ffn_moe_logits-0             1890f6b5c42cd084
+dbg ffn_moe_probs-0              655555a38b94c423
+dbg ffn_moe_probs-0 (reshaped)   655555a38b94c423
+dbg ffn_moe_argsort-0            8f5e47d845770825
+dbg ffn_moe_topk-0               8f642eaa1f8ffeaf
+dbg ffn_moe_weights-0            5b1dd0d047ad8758
+dbg ffn_moe_weights-0 (reshaped) 5b1dd0d047ad8758
+dbg ffn_moe_weights_softmax-0    66fb45f43a9e0dc5
+dbg ffn_moe_gate-0               c6c7acc1fd35bac9
+dbg ffn_moe_gate_biased-0        e6e32a1251d7e49b
+dbg ffn_moe_up-0                 ffe2c2bab67a74cd
+dbg ffn_moe_up_biased-0          adfd98d1ff9591c2
+dbg ffn_moe_swiglu_oai-0         de54b346ccb0cbd7
+dbg ffn_moe_down-0               66a6240017cc0158
+dbg ffn_moe_down_biased-0        7e1dcf4df6c6903a
+dbg ffn_moe_weighted-0           912f3f474082530b
+dbg ffn_moe_weighted-0 (view)    b57c582991c359fc
+dbg ffn_moe_weighted-0 (view)    27379f317947c4f6
+dbg ffn_moe_weighted-0 (view)    4bf31d4f46f92fd7
+dbg ffn_moe_weighted-0 (view)    c268d5448439c36f
+dbg ffn_moe_out-0                3e009fd0af40e0ba
+dbg ffn_moe_logits-1             7e31ab5bac375a1d
+dbg ffn_moe_probs-1              12a3ceb66362ada5
+dbg ffn_moe_probs-1 (reshaped)   12a3ceb66362ada5
+dbg ffn_moe_argsort-1            b1aca532c583f275
+dbg ffn_moe_topk-1               08608a1ccf752708
+dbg ffn_moe_weights-1            7b076ca9755f685a
+dbg ffn_moe_weights-1 (reshaped) 7b076ca9755f685a
+dbg ffn_moe_weights_softmax-1    9be35c4bc1801bdd
+dbg ffn_moe_gate-1               2c3bb45c0a7d42e6
+dbg ffn_moe_gate_biased-1        cc3ea23e66ed139e
+dbg ffn_moe_up-1                 7dbc53874dbf86d1
+dbg ffn_moe_up_biased-1          6df198120557779e
+dbg ffn_moe_swiglu_oai-1         c85a7a00674ed22f
+dbg ffn_moe_down-1               95d46257a54a09f6
+dbg ffn_moe_down_biased-1        96332abb9ebe7355
+dbg ffn_moe_weighted-1           b713ded3fd834a01
+dbg ffn_moe_weighted-1 (view)    1d63f8b008d8c470
+dbg ffn_moe_weighted-1 (view)    ea64b64fbd493b63
+dbg ffn_moe_weighted-1 (view)    3ba0c48d1ba2c9e4
+dbg ffn_moe_weighted-1 (view)    eb97ab2ed138e527
+dbg ffn_moe_out-1                740306c9a659743e
+dbg ffn_moe_logits-2             afd750c47eca0181
+dbg ffn_moe_probs-2              cf3cd8ab13e209f8
+dbg ffn_moe_probs-2 (reshaped)   cf3cd8ab13e209f8
+dbg ffn_moe_argsort-2            b35eb8c2d00d8dc5
+dbg ffn_moe_topk-2               1bfa296591582f4b
+dbg ffn_moe_weights-2            178729b7cdb05d1e
+dbg ffn_moe_weights-2 (reshaped) 178729b7cdb05d1e
+dbg ffn_moe_weights_softmax-2    5f4cd782d375da04
+dbg ffn_moe_gate-2               075b143475d57380
+dbg ffn_moe_gate_biased-2        92050b683be4ae16
+dbg ffn_moe_up-2                 9283ff66d8568d29
+dbg ffn_moe_up_biased-2          72377b22b61b31b3
+dbg ffn_moe_swiglu_oai-2         d1b4a7be3677e404
+dbg ffn_moe_down-2               fb9b622a9843a858
+dbg ffn_moe_down_biased-2        768afacf4570a112
+dbg ffn_moe_weighted-2           23c974bc6ac32642
+dbg ffn_moe_weighted-2 (view)    23600e324a7b461f
+dbg ffn_moe_weighted-2 (view)    6a2215751ddc5fe6
+dbg ffn_moe_weighted-2 (view)    da14c8a67bd38a82
+dbg ffn_moe_weighted-2 (view)    4cde4f46a1460940
+dbg ffn_moe_out-2                5fb399b3a056d536
+dbg ffn_moe_logits-3             3cd14e9476f063f6
+dbg ffn_moe_probs-3              c52807859250383f
+dbg ffn_moe_probs-3 (reshaped)   c52807859250383f
+dbg ffn_moe_argsort-3            e69691d6ae0039b5
+dbg ffn_moe_topk-3               a9c07a296701e2d9
+dbg ffn_moe_weights-3            d289a8887d759a1c
+dbg ffn_moe_weights-3 (reshaped) d289a8887d759a1c
+dbg ffn_moe_weights_softmax-3    7df914e67e2caf32
+dbg ffn_moe_gate-3               b59a37210d99d855
+dbg ffn_moe_gate_biased-3        11ea2923c0a6382f
+dbg ffn_moe_up-3                 494320eafb782c3b
+dbg ffn_moe_up_biased-3          ad607085e826030c
+dbg ffn_moe_swiglu_oai-3         68b2f08dcc9c9272
+dbg ffn_moe_down-3               1d8d57dd8c37adb8
+dbg ffn_moe_down_biased-3        d879a2543c229b41
+dbg ffn_moe_weighted-3           5f4c580fd7068f9b
+dbg ffn_moe_weighted-3 (view)    5bbfa8b4e03620e5
+dbg ffn_moe_weighted-3 (view)    68a4f010e5d3a6f1
+dbg ffn_moe_weighted-3 (view)    4e4df6e9f19ca79a
+dbg ffn_moe_weighted-3 (view)    bcd8fc2cc0032b00
+dbg ffn_moe_out-3                6e9732d10174e777
+dbg ffn_moe_logits-4             43fec284d1eb2e9d
+dbg ffn_moe_probs-4              a6aed73447b62af4
+dbg ffn_moe_probs-4 (reshaped)   a6aed73447b62af4
+dbg ffn_moe_argsort-4            a1229a1008242bc5
+dbg ffn_moe_topk-4               a271e6d4fdaae2a0
+dbg ffn_moe_weights-4            f4ecb57410fcd57c
+dbg ffn_moe_weights-4 (reshaped) f4ecb57410fcd57c
+dbg ffn_moe_weights_softmax-4    a87a525df379a9e8
+dbg ffn_moe_gate-4               6adf92ef31090a5e
+dbg ffn_moe_gate_biased-4        2b57d476e8b32326
+dbg ffn_moe_up-4                 20c5059d454ed958
+dbg ffn_moe_up_biased-4          f86d8c8192899b86
+dbg ffn_moe_swiglu_oai-4         f2db9b73caeb94fd
+dbg ffn_moe_down-4               ac0dde041952b30b
+dbg ffn_moe_down_biased-4        66a6ce8e40cb5df6
+dbg ffn_moe_weighted-4           e7a20fa2802d452e
+dbg ffn_moe_weighted-4 (view)    3cc5bcd0c2459862
+dbg ffn_moe_weighted-4 (view)    90e1a4de1fe09281
+dbg ffn_moe_weighted-4 (view)    dd76bf22f449bfdb
+dbg ffn_moe_weighted-4 (view)    bfc6f5c7c5371677
+dbg ffn_moe_out-4                a59bd4c71a462137
+dbg ffn_moe_logits-5             3a162e8184e2b6fe
+dbg ffn_moe_probs-5              72482ec5e886682e
+dbg ffn_moe_probs-5 (reshaped)   72482ec5e886682e
+dbg ffn_moe_argsort-5            54f5ac740d8c1005
+dbg ffn_moe_topk-5               1b756d682a236049
+dbg ffn_moe_weights-5            357fad31c7c1a41b
+dbg ffn_moe_weights-5 (reshaped) 357fad31c7c1a41b
+dbg ffn_moe_weights_softmax-5    adff994368ee0fec
+dbg ffn_moe_gate-5               9a8fbb5c848ab4bd
+dbg ffn_moe_gate_biased-5        1c515ff5b0b19ecc
+dbg ffn_moe_up-5                 ff8fa14290082498
+dbg ffn_moe_up_biased-5          f77ab4c7fcc119dc
+dbg ffn_moe_swiglu_oai-5         15d11f0fa0e7122f
+dbg ffn_moe_down-5               6d880a316b11f6b3
+dbg ffn_moe_down_biased-5        1e0a368ce7f8bae9
+dbg ffn_moe_weighted-5           c59c011c1eea4a81
+dbg ffn_moe_weighted-5 (view)    ceec5bb16c31b6f6
+dbg ffn_moe_weighted-5 (view)    d5d2e5c068c4b745
+dbg ffn_moe_weighted-5 (view)    66be5ce09abd9921
+dbg ffn_moe_weighted-5 (view)    ca0525f41066c832
+dbg ffn_moe_out-5                66ed80ecec45f32f
+dbg ffn_moe_logits-6             a6285762b640b616
+dbg ffn_moe_probs-6              d06262fedb09ac18
+dbg ffn_moe_probs-6 (reshaped)   d06262fedb09ac18
+dbg ffn_moe_argsort-6            e400dbaeb2ff8365
+dbg ffn_moe_topk-6               f3fc94c81c4d65d1
+dbg ffn_moe_weights-6            78255b5aaeedbe48
+dbg ffn_moe_weights-6 (reshaped) 78255b5aaeedbe48
+dbg ffn_moe_weights_softmax-6    38549434bd159df6
+dbg ffn_moe_gate-6               4597c06adbd5c040
+dbg ffn_moe_gate_biased-6        37c0d7b50d8e64ef
+dbg ffn_moe_up-6                 86da0280cc68e143
+dbg ffn_moe_up_biased-6          abf12a4950167f4f
+dbg ffn_moe_swiglu_oai-6         f546c5b6c9cd5fe9
+dbg ffn_moe_down-6               799e06707a386edb
+dbg ffn_moe_down_biased-6        05edc3109141588d
+dbg ffn_moe_weighted-6           4f095ba9b7da2bb0
+dbg ffn_moe_weighted-6 (view)    759bc2d854a48299
+dbg ffn_moe_weighted-6 (view)    7c964accedc11107
+dbg ffn_moe_weighted-6 (view)    3005c95c97e89c48
+dbg ffn_moe_weighted-6 (view)    a33fdd2038dd9693
+dbg ffn_moe_out-6                7a115addfd0965fc
+dbg ffn_moe_logits-7             c9876ec37040dc73
+dbg ffn_moe_probs-7              d88025a5b99d4d72
+dbg ffn_moe_probs-7 (reshaped)   d88025a5b99d4d72
+dbg ffn_moe_argsort-7            efbf4f11883ea255
+dbg ffn_moe_topk-7               2a64a49f8a79cc86
+dbg ffn_moe_weights-7            4ae9d2857971249a
+dbg ffn_moe_weights-7 (reshaped) 4ae9d2857971249a
+dbg ffn_moe_weights_softmax-7    2855ac97f54a3ba0
+dbg ffn_moe_gate-7               13cf90c2789f54c3
+dbg ffn_moe_gate_biased-7        2fb10440f298f4cc
+dbg ffn_moe_up-7                 67ca706f3b1c111d
+dbg ffn_moe_up_biased-7          5b2eb894f699c885
+dbg ffn_moe_swiglu_oai-7         f499d6243f08ffeb
+dbg ffn_moe_down-7               c40dafde7dc3ac27
+dbg ffn_moe_down_biased-7        3ca2bf2ee1528509
+dbg ffn_moe_weighted-7           17143b0a41763978
+dbg ffn_moe_weighted-7 (view)    7cfeca2dd4c9c435
+dbg ffn_moe_weighted-7 (view)    fc5d1f2cd640b66c
+dbg ffn_moe_weighted-7 (view)    204c48f0826689ca
+dbg ffn_moe_weighted-7 (view)    7ad0a2355a8a313e
+dbg ffn_moe_out-7                e357af78c991346e
+dbg ffn_moe_logits-8             a6daf2d20182009e
+dbg ffn_moe_probs-8              d34d6fa9c303a9df
+dbg ffn_moe_probs-8 (reshaped)   d34d6fa9c303a9df
+dbg ffn_moe_argsort-8            f7233e4ccfcf5b15
+dbg ffn_moe_topk-8               9715040873cf77a5
+dbg ffn_moe_weights-8            a1abc019c905c74a
+dbg ffn_moe_weights-8 (reshaped) a1abc019c905c74a
+dbg ffn_moe_weights_softmax-8    76452d8d0fc26b37
+dbg ffn_moe_gate-8               b262dd16b30200f6
+dbg ffn_moe_gate_biased-8        2c68c7dd8b1d7eb7
+dbg ffn_moe_up-8                 ae957bb8be692d53
+dbg ffn_moe_up_biased-8          aa04e883c1ae4dbd
+dbg ffn_moe_swiglu_oai-8         7be374572276b787
+dbg ffn_moe_down-8               d3b82ff24b916fd2
+dbg ffn_moe_down_biased-8        0b68f8ef26d50df1
+dbg ffn_moe_weighted-8           ba39863c2524ca5d
+dbg ffn_moe_weighted-8 (view)    e13c3d6008257ace
+dbg ffn_moe_weighted-8 (view)    7ec7210029baa13a
+dbg ffn_moe_weighted-8 (view)    47fdf14313e7f78e
+dbg ffn_moe_weighted-8 (view)    4c494e4dc447c056
+dbg ffn_moe_out-8                4bd56339bf684d04
+dbg ffn_moe_logits-9             abf80263a6234c54
+dbg ffn_moe_probs-9              94a8fb43ff704c6d
+dbg ffn_moe_probs-9 (reshaped)   94a8fb43ff704c6d
+dbg ffn_moe_argsort-9            91e764f4ef5cc275
+dbg ffn_moe_topk-9               f40d7ab6d7a03a11
+dbg ffn_moe_weights-9            2fb1a8572136a830
+dbg ffn_moe_weights-9 (reshaped) 2fb1a8572136a830
+dbg ffn_moe_weights_softmax-9    ecb96e6fab1d3032
+dbg ffn_moe_gate-9               b4d8189aa554c61b
+dbg ffn_moe_gate_biased-9        b0061df1cb7875d2
+dbg ffn_moe_up-9                 3952229f3d3d530e
+dbg ffn_moe_up_biased-9          01d627aa24f8e06b
+dbg ffn_moe_swiglu_oai-9         5c14036f44313482
+dbg ffn_moe_down-9               0739842916ce6b4a
+dbg ffn_moe_down_biased-9        67ea45fbd945d422
+dbg ffn_moe_weighted-9           544c3172da61435d
+dbg ffn_moe_weighted-9 (view)    47ad82e26bceecaf
+dbg ffn_moe_weighted-9 (view)    abf6c521b7cd0564
+dbg ffn_moe_weighted-9 (view)    bb2263a7d4c974ba
+dbg ffn_moe_weighted-9 (view)    04151dc1e7271ed5
+dbg ffn_moe_out-9                1b04a7410f823f3f
+dbg ffn_moe_logits-10            a93907adbac87a9d
+dbg ffn_moe_probs-10             c2d1e21a9bc41c89
+dbg ffn_moe_probs-10 (reshaped)  c2d1e21a9bc41c89
+dbg ffn_moe_argsort-10           53ce53bbe10b22f5
+dbg ffn_moe_topk-10              dea53e3683e45aa4
+dbg ffn_moe_weights-10           12445c92f5640485
+dbg ffn_moe_weights-10 (reshaped) 12445c92f5640485
+dbg ffn_moe_weights_softmax-10   d578fc43795fc57f
+dbg ffn_moe_gate-10              d2ac08a4dd1b880a
+dbg ffn_moe_gate_biased-10       babcb420005b69f2
+dbg ffn_moe_up-10                3a3ce4b35f6d7348
+dbg ffn_moe_up_biased-10         fd51f7e20254a643
+dbg ffn_moe_swiglu_oai-10        e3f0cef663de7f9c
+dbg ffn_moe_down-10              943b601c80887960
+dbg ffn_moe_down_biased-10       871f06d20e3455fe
+dbg ffn_moe_weighted-10          7a03119a8e52c1f8
+dbg ffn_moe_weighted-10 (view)   0cb35eb5a5be9811
+dbg ffn_moe_weighted-10 (view)   f68cc850cb5f3216
+dbg ffn_moe_weighted-10 (view)   6470698393507dc8
+dbg ffn_moe_weighted-10 (view)   b06fb2746527cfa6
+dbg ffn_moe_out-10               76958460dc976e01
+dbg ffn_moe_logits-11            8fead41433918067
+dbg ffn_moe_probs-11             fd5456b979b31784
+dbg ffn_moe_probs-11 (reshaped)  fd5456b979b31784
+dbg ffn_moe_argsort-11           e886174464f55525
+dbg ffn_moe_topk-11              9c614657ef7052ef
+dbg ffn_moe_weights-11           e5aa9cd2d4cbf159
+dbg ffn_moe_weights-11 (reshaped) e5aa9cd2d4cbf159
+dbg ffn_moe_weights_softmax-11   63348470947a6df2
+dbg ffn_moe_gate-11              68113019979d1c34
+dbg ffn_moe_gate_biased-11       f52647a3cd2ffd4e
+dbg ffn_moe_up-11                838798764143315c
+dbg ffn_moe_up_biased-11         4e58ecb0f81840f5
+dbg ffn_moe_swiglu_oai-11        37b6e517c09da8ab
+dbg ffn_moe_down-11              274ab1c155883b77
+dbg ffn_moe_down_biased-11       dcdb88bf065b0e69
+dbg ffn_moe_weighted-11          ab68a59c1b08920b
+dbg ffn_moe_weighted-11 (view)   e88f2e74faef7bec
+dbg ffn_moe_weighted-11 (view)   7be3126b2a6962f6
+dbg ffn_moe_weighted-11 (view)   eab27d5ca470a3ba
+dbg ffn_moe_weighted-11 (view)   8cd0877a72d1b80a
+dbg ffn_moe_out-11               55331e8f18be2882
+dbg ffn_moe_logits-12            4ddea4870f68bd46
+dbg ffn_moe_probs-12             a5f5fb0f15272ef9
+dbg ffn_moe_probs-12 (reshaped)  a5f5fb0f15272ef9
+dbg ffn_moe_argsort-12           a423b5f234462b45
+dbg ffn_moe_topk-12              44b8d9fa198c6265
+dbg ffn_moe_weights-12           900a9d96763adecf
+dbg ffn_moe_weights-12 (reshaped) 900a9d96763adecf
+dbg ffn_moe_weights_softmax-12   6b4869322a4d0342
+dbg ffn_moe_gate-12              235364157dbeeab0
+dbg ffn_moe_gate_biased-12       a83c0eef902ce13c
+dbg ffn_moe_up-12                9e6f705f8c23be9c
+dbg ffn_moe_up_biased-12         43bac98e608bcb52
+dbg ffn_moe_swiglu_oai-12        48b52ecb660c2a75
+dbg ffn_moe_down-12              7a90d684bd3ccfde
+dbg ffn_moe_down_biased-12       9d9ba9fbf2d27a15
+dbg ffn_moe_weighted-12          a7d5600064afd3e2
+dbg ffn_moe_weighted-12 (view)   4df0cae9b79c43d8
+dbg ffn_moe_weighted-12 (view)   389f40dd7b448cd1
+dbg ffn_moe_weighted-12 (view)   238fc72478cc0b26
+dbg ffn_moe_weighted-12 (view)   7fc5103b36fada74
+dbg ffn_moe_out-12               e8da71ab89063689
+dbg ffn_moe_logits-13            92e580917bd992d4
+dbg ffn_moe_probs-13             75b5a16eab60c661
+dbg ffn_moe_probs-13 (reshaped)  75b5a16eab60c661
+dbg ffn_moe_argsort-13           a2737ccf51f10215
+dbg ffn_moe_topk-13              278abd793bdf85cb
+dbg ffn_moe_weights-13           5a78603b5066cedb
+dbg ffn_moe_weights-13 (reshaped) 5a78603b5066cedb
+dbg ffn_moe_weights_softmax-13   ce76c857407461bd
+dbg ffn_moe_gate-13              e87c54afc4a9df74
+dbg ffn_moe_gate_biased-13       8bbaff443dcae7b8
+dbg ffn_moe_up-13                ff73a370ebebc50d
+dbg ffn_moe_up_biased-13         8a55fadba012dd97
+dbg ffn_moe_swiglu_oai-13        1e3cd1027d20efd2
+dbg ffn_moe_down-13              f15b330ef39b68fa
+dbg ffn_moe_down_biased-13       14a895c148117f1c
+dbg ffn_moe_weighted-13          588e9e8c97475f62
+dbg ffn_moe_weighted-13 (view)   d05a1c77e6ad3b58
+dbg ffn_moe_weighted-13 (view)   be284a45297f09e7
+dbg ffn_moe_weighted-13 (view)   9fdecb70f666e0a3
+dbg ffn_moe_weighted-13 (view)   37b2337db8e65c97
+dbg ffn_moe_out-13               fc3c777c6fbfffee
+dbg ffn_moe_logits-14            55721e9bf147b4ec
+dbg ffn_moe_probs-14             39bd441bd38c1219
+dbg ffn_moe_probs-14 (reshaped)  39bd441bd38c1219
+dbg ffn_moe_argsort-14           3d766dbcb59e5005
+dbg ffn_moe_topk-14              4377f64f8b3ff244
+dbg ffn_moe_weights-14           96087b2787773515
+dbg ffn_moe_weights-14 (reshaped) 96087b2787773515
+dbg ffn_moe_weights_softmax-14   f8425481df1c4f7e
+dbg ffn_moe_gate-14              d02836eec276b5fd
+dbg ffn_moe_gate_biased-14       4b15ffca2c76e333
+dbg ffn_moe_up-14                aab67c3ee6ac81f7
+dbg ffn_moe_up_biased-14         435dcb703123b655
+dbg ffn_moe_swiglu_oai-14        79e123ded3cf9957
+dbg ffn_moe_down-14              dc7bd8d0b46e5188
+dbg ffn_moe_down_biased-14       e03f747738a4cb36
+dbg ffn_moe_weighted-14          083cc67b21ac415e
+dbg ffn_moe_weighted-14 (view)   923b9e29a09c05d7
+dbg ffn_moe_weighted-14 (view)   1b8d15c8443ff5a6
+dbg ffn_moe_weighted-14 (view)   afaed34acfc473f5
+dbg ffn_moe_weighted-14 (view)   4d03a90692bb7c93
+dbg ffn_moe_out-14               59b827f10263c306
+dbg ffn_moe_logits-15            2b5f316be5214f7c
+dbg ffn_moe_probs-15             3438f34696418433
+dbg ffn_moe_probs-15 (reshaped)  3438f34696418433
+dbg ffn_moe_argsort-15           f2987402c4161d25
+dbg ffn_moe_topk-15              2dffa19bbc6bf590
+dbg ffn_moe_weights-15           17ee06cfde4fbfba
+dbg ffn_moe_weights-15 (reshaped) 17ee06cfde4fbfba
+dbg ffn_moe_weights_softmax-15   c66cc4cd222fdf3f
+dbg ffn_moe_gate-15              4fd7d3945ff651a8
+dbg ffn_moe_gate_biased-15       350528d5692fea40
+dbg ffn_moe_up-15                9b87d6cc3d452330
+dbg ffn_moe_up_biased-15         eb80c1ff6f64c66c
+dbg ffn_moe_swiglu_oai-15        153aacd2447dc0ee
+dbg ffn_moe_down-15              2d39cfcc6be83f85
+dbg ffn_moe_down_biased-15       9544bb2570074c9e
+dbg ffn_moe_weighted-15          f06ccc9de2024c7d
+dbg ffn_moe_weighted-15 (view)   ba4395592e77b9a0
+dbg ffn_moe_weighted-15 (view)   346575ce7b08e61d
+dbg ffn_moe_weighted-15 (view)   ed519a0496d638ea
+dbg ffn_moe_weighted-15 (view)   d7c61824f8e4bbdb
+dbg ffn_moe_out-15               1d0631beae1ce036
+dbg ffn_moe_logits-16            eae2c264fcbabfc6
+dbg ffn_moe_probs-16             23b2d37ef122f52f
+dbg ffn_moe_probs-16 (reshaped)  23b2d37ef122f52f
+dbg ffn_moe_argsort-16           3e28cd2f7a360615
+dbg ffn_moe_topk-16              c152077b1022c36a
+dbg ffn_moe_weights-16           d5006d06866784ef
+dbg ffn_moe_weights-16 (reshaped) d5006d06866784ef
+dbg ffn_moe_weights_softmax-16   4e6d7a15e41a924f
+dbg ffn_moe_gate-16              35a43c9f8acfae8c
+dbg ffn_moe_gate_biased-16       27868e014cc755ae
+dbg ffn_moe_up-16                59acbcd163bd7f21
+dbg ffn_moe_up_biased-16         06cdb70ee6650693
+dbg ffn_moe_swiglu_oai-16        4d70520276f0a7d5
+dbg ffn_moe_down-16              c41690d394f905d7
+dbg ffn_moe_down_biased-16       4e65aad312b6a994
+dbg ffn_moe_weighted-16          07227dd2543e130d
+dbg ffn_moe_weighted-16 (view)   e97234bafb829c2c
+dbg ffn_moe_weighted-16 (view)   6e0b6e56ab2602a2
+dbg ffn_moe_weighted-16 (view)   d33040eba45b4d56
+dbg ffn_moe_weighted-16 (view)   99f98db87f554bbc
+dbg ffn_moe_out-16               54e6ba2506a9286b
+dbg ffn_moe_logits-17            793b15dda2f6f18d
+dbg ffn_moe_probs-17             436be903b2e7195a
+dbg ffn_moe_probs-17 (reshaped)  436be903b2e7195a
+dbg ffn_moe_argsort-17           896cdbc1a97c7ab5
+dbg ffn_moe_topk-17              4e42f0a40281338a
+dbg ffn_moe_weights-17           c0d9f3fde95e3cec
+dbg ffn_moe_weights-17 (reshaped) c0d9f3fde95e3cec
+dbg ffn_moe_weights_softmax-17   6167334feca084fa
+dbg ffn_moe_gate-17              e3213c2ad9ad7d9c
+dbg ffn_moe_gate_biased-17       623b075a7ff28119
+dbg ffn_moe_up-17                c5be2c30aa7b196e
+dbg ffn_moe_up_biased-17         1bba4c5c88788aba
+dbg ffn_moe_swiglu_oai-17        33d61a9be5c5d378
+dbg ffn_moe_down-17              5942caff2c8936bd
+dbg ffn_moe_down_biased-17       5879b0b0ce6e973d
+dbg ffn_moe_weighted-17          b38babb0b21e68c6
+dbg ffn_moe_weighted-17 (view)   9592dae57541632b
+dbg ffn_moe_weighted-17 (view)   d51aebe146b10105
+dbg ffn_moe_weighted-17 (view)   a332841f3d8f520f
+dbg ffn_moe_weighted-17 (view)   ec76845ee222fb3e
+dbg ffn_moe_out-17               8bfa38ea3753ef7d
+dbg ffn_moe_logits-18            e96752479a4d7417
+dbg ffn_moe_probs-18             93480a13b3184416
+dbg ffn_moe_probs-18 (reshaped)  93480a13b3184416
+dbg ffn_moe_argsort-18           c2430f570cbef0e5
+dbg ffn_moe_topk-18              1f22bb59087dd990
+dbg ffn_moe_weights-18           9bc804ca898f1a09
+dbg ffn_moe_weights-18 (reshaped) 9bc804ca898f1a09
+dbg ffn_moe_weights_softmax-18   3c6e6ab8ebd1350d
+dbg ffn_moe_gate-18              75453b8ab158cdca
+dbg ffn_moe_gate_biased-18       2907868281fe1a11
+dbg ffn_moe_up-18                655b45b7b14049e3
+dbg ffn_moe_up_biased-18         cfcd8af7956199aa
+dbg ffn_moe_swiglu_oai-18        e6f697e86f457eb7
+dbg ffn_moe_down-18              5d10f3d1a020eec8
+dbg ffn_moe_down_biased-18       aff7dfef94ab4321
+dbg ffn_moe_weighted-18          4943bb2cfc599a54
+dbg ffn_moe_weighted-18 (view)   2a96f4d5f66e5722
+dbg ffn_moe_weighted-18 (view)   93a9f182ce40abe4
+dbg ffn_moe_weighted-18 (view)   637625b7c14f3284
+dbg ffn_moe_weighted-18 (view)   953f10d4c2fa8337
+dbg ffn_moe_out-18               41f260241042e4f4
+dbg ffn_moe_logits-19            a8ea0015971dee15
+dbg ffn_moe_probs-19             d0a9a17658f23062
+dbg ffn_moe_probs-19 (reshaped)  d0a9a17658f23062
+dbg ffn_moe_argsort-19           1c3c221466e2a305
+dbg ffn_moe_topk-19              5c0591c4917505b1
+dbg ffn_moe_weights-19           7c379ffa68ad7808
+dbg ffn_moe_weights-19 (reshaped) 7c379ffa68ad7808
+dbg ffn_moe_weights_softmax-19   ac8009dd55f2dd3e
+dbg ffn_moe_gate-19              bec19f4191ca65e5
+dbg ffn_moe_gate_biased-19       85d57555c1128e93
+dbg ffn_moe_up-19                ddef46184522b543
+dbg ffn_moe_up_biased-19         1263cebbe21a3702
+dbg ffn_moe_swiglu_oai-19        9faeae77835fec9c
+dbg ffn_moe_down-19              610b03812d687753
+dbg ffn_moe_down_biased-19       d2386278e3e4e2af
+dbg ffn_moe_weighted-19          826ec46ae8b59271
+dbg ffn_moe_weighted-19 (view)   c8fc13d1c80cd8e0
+dbg ffn_moe_weighted-19 (view)   2b4949d0b0b290c3
+dbg ffn_moe_weighted-19 (view)   d42545b9b9d6e39a
+dbg ffn_moe_weighted-19 (view)   3f7c5eebdfdac81d
+dbg ffn_moe_out-19               93abf96b252553a9
+dbg ffn_moe_logits-20            60bee202e8eb9635
+dbg ffn_moe_probs-20             844ddb22f870a4f9
+dbg ffn_moe_probs-20 (reshaped)  844ddb22f870a4f9
+dbg ffn_moe_argsort-20           6df3277d83300535
+dbg ffn_moe_topk-20              3bc9eaeb347c449b
+dbg ffn_moe_weights-20           d415594f3455f883
+dbg ffn_moe_weights-20 (reshaped) d415594f3455f883
+dbg ffn_moe_weights_softmax-20   eda1f81bd05fca48
+dbg ffn_moe_gate-20              424373e3419915ce
+dbg ffn_moe_gate_biased-20       2fed7fdd610a8bc7
+dbg ffn_moe_up-20                d278502e544a341f
+dbg ffn_moe_up_biased-20         9560dd3b8f9d7868
+dbg ffn_moe_swiglu_oai-20        4dcc128fb810bff8
+dbg ffn_moe_down-20              dffa2f0dd9b97d76
+dbg ffn_moe_down_biased-20       ca218cbed8f1ff33
+dbg ffn_moe_weighted-20          645b6d9f036df5d3
+dbg ffn_moe_weighted-20 (view)   25cce3b1010553bb
+dbg ffn_moe_weighted-20 (view)   695b445704c828cf
+dbg ffn_moe_weighted-20 (view)   fab223a864b13d3c
+dbg ffn_moe_weighted-20 (view)   6a9b5582912192f2
+dbg ffn_moe_out-20               8f66b1a1cf5ccdf7
+dbg ffn_moe_logits-21            8a842d764df8fb43
+dbg ffn_moe_probs-21             b600fd98d86f3d9c
+dbg ffn_moe_probs-21 (reshaped)  b600fd98d86f3d9c
+dbg ffn_moe_argsort-21           73a30db75ce9aee5
+dbg ffn_moe_topk-21              11551d1bcfe9e43c
+dbg ffn_moe_weights-21           8317accb02610f58
+dbg ffn_moe_weights-21 (reshaped) 8317accb02610f58
+dbg ffn_moe_weights_softmax-21   e96ed8e3f0c67baa
+dbg ffn_moe_gate-21              9bf0c75521b46235
+dbg ffn_moe_gate_biased-21       053228fb384dc5d9
+dbg ffn_moe_up-21                47aec1fd5135055b
+dbg ffn_moe_up_biased-21         ef5dbbe6b6733fc3
+dbg ffn_moe_swiglu_oai-21        bb5810b9373a5d60
+dbg ffn_moe_down-21              2fc07fbee309415a
+dbg ffn_moe_down_biased-21       ba2be00f42249a4b
+dbg ffn_moe_weighted-21          f803cda83ed0a9e6
+dbg ffn_moe_weighted-21 (view)   ed2b26428508d95c
+dbg ffn_moe_weighted-21 (view)   ce1cc7fa21108b8e
+dbg ffn_moe_weighted-21 (view)   4c90d2d4d331f445
+dbg ffn_moe_weighted-21 (view)   8d0ca5089103c50c
+dbg ffn_moe_out-21               38b88d4b15ec3b66
+dbg ffn_moe_logits-22            7f9060be659eb277
+dbg ffn_moe_probs-22             3d4a006cc35e8263
+dbg ffn_moe_probs-22 (reshaped)  3d4a006cc35e8263
+dbg ffn_moe_argsort-22           8afb208ac6e72925
+dbg ffn_moe_topk-22              1ca6f51631f30827
+dbg ffn_moe_weights-22           50f7ec434256c4ff
+dbg ffn_moe_weights-22 (reshaped) 50f7ec434256c4ff
+dbg ffn_moe_weights_softmax-22   0239a30c454ff6c0
+dbg ffn_moe_gate-22              7e56707006e30a1d
+dbg ffn_moe_gate_biased-22       0b3230c63f11c585
+dbg ffn_moe_up-22                176c1a6fdd8b9e88
+dbg ffn_moe_up_biased-22         b9f9a389b11f0496
+dbg ffn_moe_swiglu_oai-22        8b37ad0a942c1934
+dbg ffn_moe_down-22              96cfcbcd0156720f
+dbg ffn_moe_down_biased-22       2a5faf942bce01a0
+dbg ffn_moe_weighted-22          60310953bd97de66
+dbg ffn_moe_weighted-22 (view)   671ca92b144be471
+dbg ffn_moe_weighted-22 (view)   945af711c7e19559
+dbg ffn_moe_weighted-22 (view)   bd2a1bfd64ca5d66
+dbg ffn_moe_weighted-22 (view)   33c6c3cfb80a8cf5
+dbg ffn_moe_out-22               ba191508e3e89717
+dbg ffn_moe_logits-23            07b88b1b5707c239
+dbg ffn_moe_probs-23             4ad8c29bd9d4480e
+dbg ffn_moe_probs-23 (reshaped)  4ad8c29bd9d4480e
+dbg ffn_moe_argsort-23           9a62a2a6871efa75
+dbg ffn_moe_topk-23              6cf200b5d02bb9be
+dbg ffn_moe_weights-23           61f0a763e17cc7d2
+dbg ffn_moe_weights-23 (reshaped) 61f0a763e17cc7d2
+dbg ffn_moe_weights_softmax-23   8dedffd7899eb8aa
+dbg ffn_moe_gate-23              c25c3389b6897cc2
+dbg ffn_moe_gate_biased-23       a0f5d9a0d7b04c51
+dbg ffn_moe_up-23                35e71c9a18d151b2
+dbg ffn_moe_up_biased-23         7430ea44de661a56
+dbg ffn_moe_swiglu_oai-23        2bb1dee08333fe4a
+dbg ffn_moe_down-23              3d96955168863e2a
+dbg ffn_moe_down_biased-23       9e22a6aca045ba5e
+dbg ffn_moe_weighted-23          5dea32c66f87fe58
+dbg ffn_moe_weighted-23 (view)   4d65acd6a54aabc6
+dbg ffn_moe_weighted-23 (view)   88681ead751a3e3c
+dbg ffn_moe_weighted-23 (view)   52ac23602f97e99e
+dbg ffn_moe_weighted-23 (view)   6d83d58983fc3959
+dbg ffn_moe_out-23               9e31c7c3a815ac38
+mode=streamed prompt_toks=40 reused=39 generated=1 n_ubatch=1
+prefill: 0.91 s (1.10 tok/s)
+decode:  0.55 s (1.80 tok/s)
+io: cb_calls=48 decode_uses=96 decode_misses=18 (hit 0.812) prefill_uses=96 prefill_misses=43
+io: prefetch_issued=97 prefetch_hits=14 prefetch_used=72 stall=1.00 s total_read=2094.1 MB avg_bw=1429 MB/s
+io: read_work=9.08 s preads=948 per_stream_bw=231 MB/s
+mem: peak_rss=11.21 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=032f5d9384c0404b
+text: <|channel|>

@@ -1,0 +1,13 @@
+ttft: total=8090 ms | template=0 tokenize=0 kv_match=0 prefill=8089 first_sample=1
+ttft: ctx_held=0 rendered=40 reused=0 reprefill=40 (100.0% of rendered)
+ttft: diverged_at=0 kv_had=-1|| rerender_has=200006|<|start|>|
+mode=streamed prompt_toks=40 reused=0 generated=1 n_ubatch=1
+prefill: 8.09 s (4.95 tok/s)
+decode:  0.14 s (6.99 tok/s)
+io: cb_calls=984 decode_uses=96 decode_misses=11 (hit 0.885) prefill_uses=3684 prefill_misses=519
+io: prefetch_issued=256 prefetch_hits=75 prefetch_used=220 stall=5.96 s total_read=10417.5 MB avg_bw=1266 MB/s
+io: read_work=35.91 s preads=4716 per_stream_bw=290 MB/s
+mem: peak_rss=11.30 GB phys_footprint=6.72 GB
+therm: nominal
+logits_hash=032f5d9384c0404b
+text: <|channel|>

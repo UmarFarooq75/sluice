@@ -2638,3 +2638,68 @@ lines do not align (different batch composition) and are excluded by constructio
 
 **Not in this rung**: any fix, any product change, any change to `LLMSTREAM_KV_CANON`
 (stays dark). Standing gates apply; window-gated behind the usual ≥8 GB self-poll.
+
+### RC1 RESULT — instrument good, minimal reproducer does NOT reproduce (2026-07-22)
+All four legs returned the identical hash `032f5d9384c0404b`. **VOID_LEGS: none.**
+- **Control PASSED**: dbg-off == dbg-on. `LLMSTREAM_DEBUG_HASH` is numerically inert,
+  so the instrument is trustworthy for the localization work ahead.
+- **RC1-R** (reused 21 of 40) == fresh. **RC1-E39** (restored KV, reused 39) == fresh.
+- **None of the three pre-registered branches fired.** The honest outcome is the
+  fourth one nobody wrote down: *the small reproducer does not reproduce.* The
+  divergence is condition-dependent, and RC1's job is now to have bounded it from
+  below rather than to have localized it.
+
+### RC2. Bisect to the minimal failing reproducer (PRE-REGISTERED 2026-07-22)
+**Localize only. No fixes.** Bisect from E41b run 2's known-failing config toward
+RC1's known-passing one, one dimension at a time.
+
+**The five dimensions that differ between pass and fail** (all confounded today):
+
+| dimension | RC1 (passes) | E41b run 2 (fails) |
+|---|---|---|
+| rendered length | 40 | 421 |
+| reused length | 21 | 296 |
+| turn-1 generation | 1 | 200 |
+| total context | 40 | 496 |
+| ubatch / prefill pool | 1 / **inactive** | 128 / **active** |
+
+**Ranked mechanism candidates, with falsifiers — written before the first leg.**
+
+1. **iSWA sliding-window boundary. `gpt-oss.attention.sliding_window = 128`**
+   (read from GGUF metadata today). RC1's entire context was **40 tokens — never
+   crossed it**; E41b reached 496. On a fresh prefill the SWA layers' window is
+   populated in one ordered pass; on a reused-prefix continuation the same positions
+   were written during a previous turn's *decode* steps, then truncated by
+   `llama_memory_seq_rm`. Beyond 128 tokens the two can present different windows to
+   the same query. **This is my top candidate and it explains the pass/fail split
+   exactly.** *Falsifier*: a reproducer with total context **< 128** that still
+   diverges, or one **> 128** that does not.
+2. **Prefill-pool engagement (incl. the D14 type-variant interaction).** The pool
+   only engages at `ne[1] > 1`, so it was **active in E41b and inactive in RC1** — a
+   difference nobody controlled for. D14 showed a wrongly-typed pool silently
+   corrupts hidden state on mixed-quant files. *Falsifier*: divergence reproduces
+   with `PREFILL_SLOTS` unset and `ubatch=1`.
+3. **A confound I must break: `sliding_window = 128` and E41b's `n_ubatch = 128` are
+   THE SAME NUMBER.** Any result that varies them together is uninterpretable. RC2
+   varies them **independently** (e.g. ubatch 64 with context 300).
+4. **KV written by decode vs by prefill.** E41b reused positions 296–495 written by
+   200 single-token decode steps; RC1's turn 1 generated 1 token. *Falsifier*:
+   divergence reproduces with a long turn-1 generation but sub-128 total context.
+5. **Plain length/position effects** (RoPE, accumulation). *Falsifier*: a matched-length
+   fresh-vs-fresh pair diverges, which would indict length alone.
+
+**Leg order — the SWA test runs FIRST because it is cheapest and most decisive:**
+- **S1-under**: ubatch=1, pool off, total ctx ≈ 100 (**< 128**), reused ≈ 55.
+- **S1-over**: ubatch=1, pool off, total ctx ≈ 240 (**> 128**), reused ≈ 115.
+  Identical in every other respect. *Prediction: under passes, over diverges.* If so,
+  **SWA is the mechanism and both the pool and batch shape are exonerated in one
+  step** — and the minimal failing reproducer is already in hand.
+- **S2**: pool on/off at fixed over-window context (isolates candidate 2).
+- **S3**: ubatch 64 at context 300 (breaks the 128/128 confound, candidate 3).
+- **S4**: long turn-1 generation, sub-128 context (candidate 4).
+- Then **re-run the RC1 DEBUG_HASH localization at the minimal failing config** — the
+  instrument and the VOID rules carry over unchanged.
+
+**If every dimension is individually exonerated and divergence appears only under the
+full combination, that is the finding and it gets reported as such.** No winner will
+be forced.

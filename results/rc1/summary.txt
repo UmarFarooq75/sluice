@@ -1,0 +1,22 @@
+RC1 — reuse-path divergence localization (2026-07-22 08:37)
+avail at start 8.32 GB | SLOTS=16 greedy | n_gen=1 | CLEAN
+LOCALIZE ONLY — no fixes in this rung.
+
+VOID_LEGS: none
+
+CONTROL — DEBUG_HASH inertness (everything below depends on this)
+  dbg off vs dbg on          EQUAL  RC1-C_dbgoff=032f5d9384c0404b RC1-F_fresh=032f5d9384c0404b
+
+hashes
+  RC1-C_dbgoff         rc=0 hash=032f5d9384c0404b rendered=['40'] reused=['0', '0']
+  RC1-F_fresh          rc=0 hash=032f5d9384c0404b rendered=['40'] reused=['0', '0']
+  RC1-R_reused         rc=0 hash=032f5d9384c0404b rendered=['21', '40'] reused=['0', '0', '21', '21']
+  RC1-E39_restore      rc=0 hash=032f5d9384c0404b rendered=['40'] reused=['39', '39']
+
+RC1-R (reused prefix) vs RC1-F (fresh, identical rendering)
+  logits_hash                EQUAL  RC1-F_fresh=032f5d9384c0404b RC1-R_reused=032f5d9384c0404b
+  no divergence to localize in this leg
+
+RC1-E39 (restored KV) vs RC1-F (fresh, identical rendering)
+  logits_hash                EQUAL  RC1-F_fresh=032f5d9384c0404b RC1-E39_restore=032f5d9384c0404b
+  no divergence to localize in this leg
