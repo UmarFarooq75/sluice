@@ -492,11 +492,10 @@ def cmd_run(args):
         "LLMSTREAM_IDLE_EXIT": "600", "LLMSTREAM_PREFILL_SLOTS": "1",
         "LLMSTREAM_SYSTEM": system_with_reasoning(reasoning),
     })
-    # E41b, DARK: pass-through only, no flag on purpose — the feature's faithfulness
-    # gate has not run (docs/lablog.md E41b). Unset => no canon_reply is emitted, the
-    # client stores nothing extra, and this path is byte-identical.
-    if os.environ.get("LLMSTREAM_KV_CANON"):
-        env["LLMSTREAM_KV_CANON"] = os.environ["LLMSTREAM_KV_CANON"]
+    # E41b canon: ON by default for chat (S3). Client-side flip — the engine default
+    # stays OFF so gates and harnesses keep their pinned config. LLMSTREAM_KV_CANON=0
+    # disables it.
+    env["LLMSTREAM_KV_CANON"] = os.environ.get("LLMSTREAM_KV_CANON", "1")
     print(f"{DIM}loading {name} ({mode} mode) - one-time, stays warm…{RESET}")
     proc = subprocess.Popen([str(ENGINE), str(p), "512", "CLI_REPL", "128"],
                             env=env, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE,

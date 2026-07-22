@@ -3294,3 +3294,41 @@ than stock in all six prompts** (canon 35–746; stock at position 3 in five of 
    (avail 8.44 GB, engine 136.8% CPU, RSS 3.64 GB) and it was progressing again. **I
    stopped it anyway.** The stall was real and measured, but the kill at that instant was
    no longer necessary and may have ended a turn that would have completed.
+
+### S3. Canon ships ON by default for chat (2026-07-22, machine time ~13:15)
+**GATE 5 GREEN.** Ruled on the config substitution rather than waving it through: the
+confirming round ran **Light memory / Fast quality**, not Balanced/Balanced. All five
+pre-registered criteria are **config-agnostic or stricter under Fast**:
+
+| criterion | depends on | config-coupled? |
+|---|---|---|
+| reuse present & climbing | canon extract / re-render / seq_rm / decode | no |
+| no canon_reply mismatch | client echo contract (string equality) | no |
+| no raw channel internals | strip/split over the stream | **Fast is STRICTER** (E6: high margin derails channels) |
+| coherent replies | routing fidelity | **Fast is STRICTER** (0.90 vs 0.95) |
+| caption every turn | fragment not preempting the script | no |
+
+The two criteria that could have been config-sensitive were tested under the **harder**
+setting. Measured: `t1 140.5 s / ft 15.5 s / 10.78 tok/s, reused 0` · `t2 58.5 s /
+ft 3.1 s / 9.93 tok/s, reused 1068` · `t3 120.6 s / ft 4.8 s / 7.10 tok/s, reused 1204`.
+Zero mismatch warnings; parser verified independently by me against the captured raw
+(zero marker leaks across every sampled streaming prefix).
+
+**What a Balanced/Balanced round would additionally retire: almost nothing mechanistic.**
+The only genuine gap is coverage — canon has not been *observed* at the preset a
+first-run user gets. Since Balanced is strictly easier for both at-risk signals, I called
+GREEN rather than spend a window re-testing the easy case. Worth one smoke round after
+the flip if anyone wants belt-and-braces, but as a smoke test, not a gate.
+
+**Shipped**: `LLMSTREAM_KV_CANON` defaults to `1` in `sluice run` and the UI.
+**The flip is CLIENT-side** — the engine's own default stays off, so every gate and
+harness keeps its pinned configuration without being touched, and the S4 strict switch
+becomes a one-line change rather than a revert. `LLMSTREAM_KV_CANON=0` disables.
+
+**UX polish shipped with it**: the post-reply canon window read as "stuck" for 5–10 s.
+The status now says *"Finishing turn — preparing a fast next turn…"* once `<<<END>>>`
+is seen, so the wait is explained rather than mysterious.
+
+**GATE GREEN, in full** — first fully green gate of the campaign: bit-exact
+`fdf0f83dd70504c5`, byte-identical-off vs the pre-canon reference, harmony fixtures,
+VOID-leg check, launcher exit-code check, flag documentation, engine builds.

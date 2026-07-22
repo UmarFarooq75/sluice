@@ -267,13 +267,14 @@ def ensure_server(cfg, sys_prompt, n_gen, status):
     })
     if sys_prompt.strip():
         env["LLMSTREAM_SYSTEM"] = sys_prompt.strip()
-    # E41b, DARK: no UI control on purpose — the feature's faithfulness gate has not
-    # run yet (see docs/lablog.md E41b). It is a pass-through only, so a developer
-    # can set LLMSTREAM_KV_CANON=1 in the shell that launches the UI and get the
-    # client contract wired end to end. Unset => the engine emits no canon_reply,
-    # the client stores no canon, and every byte of this path is unchanged.
-    if os.environ.get("LLMSTREAM_KV_CANON"):
-        env["LLMSTREAM_KV_CANON"] = os.environ["LLMSTREAM_KV_CANON"]
+    # E41b canon: ON by default for chat (S3, after gate 5). Turn-2 TTFT drops from
+    # ~8 s to ~3 s because the next turn reuses the whole canonical KV instead of
+    # re-prefilling from the assistant boundary. LLMSTREAM_KV_CANON=0 disables it.
+    #
+    # The flip is CLIENT-side on purpose: the engine's own default stays OFF, so
+    # every gate and harness keeps its pinned configuration without being touched,
+    # and the later strict switch is a one-line change here rather than a revert.
+    env["LLMSTREAM_KV_CANON"] = os.environ.get("LLMSTREAM_KV_CANON", "1")
     # ubatch drives batched (expert-major) prefill, which needs the CPU-only
     # prefill pool to absorb a batch's expert union. On GPU there is no pool,
     # so a batched prefill whose union exceeds the slot count hits the engine's
@@ -667,6 +668,11 @@ if prompt:
                             st.caption(":material/psychology: Thinking…")
                     answer_ph.markdown((final + ("▌" if end < 0 else ""))
                                        if (final or not thinking) else "")
+                elif raw and b"<<<END>>>" in buf:
+                    # generation is finished but the engine is still canonicalising
+                    # the KV (5-10 s). Without this the spinner reads as "stuck".
+                    status.update(label="Finishing turn — preparing a fast next turn…",
+                                  state="running")
                 if b"<<<READY>>>" in buf:
                     done = True
             engine_died = proc.poll() is not None
