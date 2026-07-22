@@ -52,7 +52,7 @@ P2 = "Summarize that in three bullet points."
 
 
 def avail_gb():
-    out = subprocess.run(["vm_stat"], capture_output=True, text=True).stdout
+    out = subprocess.run(["vm_stat"], capture_output=True, text=True, errors="replace").stdout
     ps = int(re.search(r"page size of (\d+)", out).group(1))
     p = sum(int(m.group(1)) for k in
             ("Pages free", "Pages inactive", "Pages speculative", "Pages purgeable")
@@ -98,7 +98,7 @@ def parse(label, rc, text):
 def single(label, prompt, ngen, system, ubatch, pool, extra=None):
     with open(OUT / f"{label}.err", "w") as fe:
         p = subprocess.run([BIN, MODEL, str(ngen), prompt, str(ubatch)],
-                           stdout=subprocess.PIPE, stderr=fe, text=True,
+                           stdout=subprocess.PIPE, stderr=fe, text=True, errors="replace",
                            env=env_for(system, ubatch, pool, server_mode=False, extra=extra))
     return parse(label, p.returncode, p.stdout)
 
@@ -108,7 +108,7 @@ def server(label, requests, ngen, system, ubatch, pool):
     p = subprocess.Popen([BIN, MODEL, str(ngen), "SENTINEL", str(ubatch)],
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=fe,
                          env=env_for(system, ubatch, pool, server_mode=True),
-                         text=True, bufsize=1)
+                         text=True, errors="replace", bufsize=1)
 
     def until_ready():
         buf = []

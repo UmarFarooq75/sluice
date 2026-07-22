@@ -89,14 +89,18 @@ def g3_stock(text):
     cc = ["clang++", "-O3", "-std=c++17", f"-I{PRISTINE}/include",
           f"-I{PRISTINE}/ggml/include", str(src), f"-L{lib}", "-lllama", "-lggml",
           "-lggml-base", f"-Wl,-rpath,{lib}", "-o", str(exe)]
-    r = subprocess.run(cc, capture_output=True, text=True)
+    # errors="replace": the engine can emit a token piece that splits a multi-byte
+    # UTF-8 char across a pipe read, which raises UnicodeDecodeError under strict
+    # decoding (S1v3 VOID). Lossy DISPLAY decode is safe because the comparison
+    # source of truth is the ASCII "tok <id> |piece|" lines from PRINT_TOKS.
+    r = subprocess.run(cc, capture_output=True, text=True, errors="replace")
     if r.returncode != 0:
         return None, f"stock_probe build failed: {r.stderr[-300:]}"
     pf = OUT / "stock_prompt.txt"; pf.write_text(text)
     rows = []
     for ub in (512, 64, 4):
         p = subprocess.run([str(exe), str(ROOT / "models" / "gpt-oss-20b-MXFP4.gguf"),
-                            str(pf), str(ub)], capture_output=True, text=True)
+                            str(pf), str(ub)], capture_output=True, text=True, errors="replace")
         h = re.search(r"logits_hash=(\w+)", p.stdout)
         am = re.search(r"argmax=(\d+)", p.stdout)
         nt = re.search(r"n_tokens=(\d+)", p.stdout)

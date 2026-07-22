@@ -66,7 +66,7 @@ BASE = {"LLMSTREAM_CHAT": "1", "LLMSTREAM_SLOTS": "16", "LLMSTREAM_PRINT_TOKS": 
 
 
 def avail_gb():
-    out = subprocess.run(["vm_stat"], capture_output=True, text=True).stdout
+    out = subprocess.run(["vm_stat"], capture_output=True, text=True, errors="replace").stdout
     ps = int(re.search(r"page size of (\d+)", out).group(1))
     p = sum(int(m.group(1)) for k in
             ("Pages free", "Pages inactive", "Pages speculative", "Pages purgeable")

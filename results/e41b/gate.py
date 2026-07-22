@@ -48,7 +48,7 @@ def avail_gb():
     """Same four buckets and the same page size as run.sh's awk gate — a second
     opinion here is only useful if it uses the same yardstick, or the launcher
     passes its gate and this aborts anyway."""
-    out = subprocess.run(["vm_stat"], capture_output=True, text=True).stdout
+    out = subprocess.run(["vm_stat"], capture_output=True, text=True, errors="replace").stdout
     ps = int(re.search(r"page size of (\d+)", out).group(1))
     p = 0
     for k in ("Pages free", "Pages inactive", "Pages speculative", "Pages purgeable"):
@@ -75,7 +75,7 @@ def server(label, requests, canon):
         extra["LLMSTREAM_KV_CANON"] = "1"
     p = subprocess.Popen([BIN, MODEL, str(NGEN), "SERVER_SENTINEL", "128"],
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                         stderr=errf, env=env_for(extra), text=True, bufsize=1)
+                         stderr=errf, env=env_for(extra), text=True, errors="replace", bufsize=1)
 
     def until_ready():
         buf = []

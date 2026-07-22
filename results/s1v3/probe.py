@@ -77,7 +77,11 @@ def session(label, p1, p2, canon, rapid_fire=False, ngen=NGEN):
     fe = open(OUT / f"{label}.err", "w")
     p = subprocess.Popen([BIN, MODEL, str(ngen), "SENTINEL", "128"],
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=fe,
-                         env=env, text=True, bufsize=1)
+                         # errors="replace": the engine can emit a token piece that splits a multi-byte
+                         # UTF-8 char across a pipe read, which raises UnicodeDecodeError under strict
+                         # decoding (S1v3 VOID). Lossy DISPLAY decode is safe because the comparison
+                         # source of truth is the ASCII "tok <id> |piece|" lines from PRINT_TOKS.
+                         env=env, text=True, errors="replace", bufsize=1)
     marks, blocks = [], []
 
     def until_ready():

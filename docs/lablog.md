@@ -3230,3 +3230,28 @@ at 13 → not RED; stock's pos-3 flip → treated identically; a non-word pair �
 
 **Docs language owed**: the honesty sentence must cover **the product as it exists** —
 **stock reuse already diverges from a cold prefill at position 3** — not merely canon.
+
+### S1v3 run 1 VOID — UnicodeDecodeError; every harness hardened (2026-07-22)
+**Cause**: the engine's stdout can carry invalid UTF-8 mid-stream — a token piece
+splitting a multi-byte character across a pipe read. `subprocess` with `text=True`
+decodes strictly, so `until_ready()` raised. Surfaced at `NGEN=2048` simply because more
+tokens means more chances to land on a split.
+
+**Fix**: `errors="replace"` on every subprocess that decodes engine stdout. **Safe
+because the comparison source of truth is the ASCII `tok <id> |piece|` line** — the
+token id parses correctly even when the piece is mojibake, and every gate compares token
+ids, never rendered text.
+
+**Verified two ways rather than assumed**: (a) a subprocess emitting the invalid
+sequence `\xe2\x28\xa1` raises `UnicodeDecodeError` under strict decoding and returns
+cleanly with `errors="replace"`; (b) a token id still parses out of a line whose piece
+has been replaced with U+FFFD.
+
+**Fixed across the whole tree, not just S1v3** — the lead flagged that rc*/s1*/e41b share
+the pattern, and they did: `e38`, `e39`, `e41b` (×2), `r0`, `rc1` (×2), `rc2` (×3),
+`rc4` (×2), `s1`, `s1v2`, `s1v3` — 15 call sites in 10 files. Any of them could have
+voided a future run the same way.
+
+**Self-correction**: my first pass attached the explanatory comment to `vm_stat` calls as
+well, where it is simply false — `vm_stat` is not engine stdout. Removed there, kept on
+the engine readers. A comment that misdescribes its own line is worse than none.

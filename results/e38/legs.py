@@ -56,7 +56,11 @@ def server_two_turn(label):
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                          stderr=open(OUT / f"{label}.err", "w"),
                          env=env_for({"LLMSTREAM_SERVER": "1", "LLMSTREAM_IDLE_EXIT": "180"}),
-                         text=True, bufsize=1)
+                         # errors="replace": the engine can emit a token piece that splits a multi-byte
+                         # UTF-8 char across a pipe read, which raises UnicodeDecodeError under strict
+                         # decoding (S1v3 VOID). Lossy DISPLAY decode is safe because the comparison
+                         # source of truth is the ASCII "tok <id> |piece|" lines from PRINT_TOKS.
+                         text=True, errors="replace", bufsize=1)
 
     def read_until_ready():
         buf = []

@@ -45,7 +45,7 @@ BASE = {"LLMSTREAM_CHAT": "1", "LLMSTREAM_SLOTS": "16", "LLMSTREAM_SYSTEM": SYST
 
 
 def avail_gb():
-    out = subprocess.run(["vm_stat"], capture_output=True, text=True).stdout
+    out = subprocess.run(["vm_stat"], capture_output=True, text=True, errors="replace").stdout
     ps = int(re.search(r"page size of (\d+)", out).group(1))
     p = sum(int(m.group(1)) for k in
             ("Pages free", "Pages inactive", "Pages speculative", "Pages purgeable")
@@ -79,7 +79,7 @@ def run_server(label, requests, dbg, extra=None):
     fe = open(OUT / f"{label}.err", "w")
     p = subprocess.Popen([BIN, MODEL, str(NGEN), "SENTINEL", "1"],
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=fe,
-                         env=env, text=True, bufsize=1)
+                         env=env, text=True, errors="replace", bufsize=1)
 
     def until_ready():
         buf = []
