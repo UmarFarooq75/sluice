@@ -5,14 +5,32 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Runs the STATIC half of the standing protocol. The model-dependent legs
-# (bit-exact hash, byte-identical-off) need a 12 GB GGUF and a quiet machine, so
-# they self-defer here and say so — a deferred gate is NOT a green gate, and the
-# script's own output makes that distinction rather than hiding it.
+# This workflow deliberately runs scripts/install.sh FIRST rather than skipping the
+# build check. The static gate verifies that the engine compiles, and a fresh checkout
+# has no vendor/llama.cpp (it is gitignored and fetched by the installer). Letting that
+# check "defer" would produce a green badge over a build nobody verified — the exact
+# dishonesty the gate exists to prevent.
+#
+# The upside: CI now also verifies the README's first command on a genuinely clean
+# machine, which is the one thing local testing cannot prove.
+#
+# Model-dependent legs (bit-exact hash, byte-identical-off) need a 12 GB GGUF and a
+# quiet box; they self-defer here and the script reports PARTIAL, not GREEN.
 jobs:
   static:
     runs-on: macos-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: make static
+
+      - name: Cache vendored llama.cpp build
+        uses: actions/cache@v4
+        with:
+          path: vendor/llama.cpp
+          key: llamacpp-${{ runner.os }}-b10064-${{ hashFiles('patches/llmstream.patch') }}
+
+      - name: Install (fetch + patch + build) — this is the README's first command
+        run: bash scripts/install.sh
+
+      - name: Gate — static checks
         run: bash scripts/gate.sh --static
