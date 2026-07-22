@@ -3,18 +3,31 @@
 #   gate: LONG POLL — every 60 s for up to 12 h, fire when avail >=8 GB holds for
 #         3 consecutive readings (a single reading can catch a transient dip that
 #         would collapse again mid-leg). Every reading logged. Abort+log at 12 h.
+#   RUN 2 (branch (b), after leg 0 cleared the structural-mismatch hypothesis).
 #   legs (sequential, one model process at a time — protocol #1):
-#     A  canon ON,  2-turn chat  -> turn-2 reused/reprefill/ttft + logits_hash
+#     A  canon ON,  2-turn chat  -> turn-2 reused/reprefill/ttft + logits_hash.
+#                                   Echo now CORRECTED: run 1's regex lacked re.M so
+#                                   canon_reply silently defaulted to "" and leg A ran
+#                                   an empty assistant turn. require_field now ABORTS
+#                                   rather than defaulting.
 #     B  canon OFF, 2-turn chat  -> CONTROL: identical rendering, stock reuse path
 #     C  fresh single-shot       -> turn-2's rendering with reused=0 (reference hash)
-#   then the byte-identical-off executable check and the bit-exact gate.
+#     D  replay of run 1's exact 315-token rendering, cold, vs run 1's leg-A hash
+#        -> the faithfulness comparison run 1 failed to be (same prompt, two KV paths)
+#   then the SEMANTIC inert check (run 1's compared raw stdout, so wall-clock timings
+#   and prefetch counters made it "DIFFER" on pure noise), and the bit-exact gate.
+#   Finally, OPPORTUNISTIC: the resident compute-ceiling leg if avail >= 12 GB.
 # Survives VS Code / terminal close (run under nohup + caffeinate from the launch cmd).
 set -u
 REPO=/Users/umarfarooq/Desktop/research
 BIN=$REPO/csrc/stream_run
 MODEL=$REPO/models/gpt-oss-20b-MXFP4.gguf
 OUT=$REPO/results/e41b
-PREV=/private/tmp/claude-501/-Users-umarfarooq-Desktop-research/ba7a8b96-b96b-4bdd-a879-d7a7b2ff0f3f/scratchpad/stream_run.pre_e41b
+# Pre-canon engine, for the byte-identical-off comparison. Built FROM GIT
+# (fbc361a^ = the commit before the canon change) into .gate/, because the original
+# lived in /tmp and did not survive the reboot. Git is the reproducible source; a
+# scratchpad copy never was.
+PREV=$REPO/.gate/stream_run.ref
 mkdir -p "$OUT"
 GATE=8.0
 
@@ -81,14 +94,16 @@ if pgrep -f "csrc/stream_run" > /dev/null 2>&1; then
   exit 0
 fi
 
-echo "[$(date +%H:%M:%S)] legs A/B/C start (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
+echo "[$(date +%H:%M:%S)] legs A/B/C/D start (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
 /usr/bin/python3 "$OUT/gate.py" > "$OUT/legs.log" 2>&1
 rc=$?
 echo "[$(date +%H:%M:%S)] legs finished rc=$rc (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
 
 # --- protocol #3: byte-identical with the flag unset (executable check) -------
-# same short prompt through the pre-E41b binary and the new one, canon UNSET.
-# stdout must match byte for byte, not just the hash.
+# same short prompt through the pre-canon binary and the new one, canon UNSET.
+# Compared on SEMANTIC lines only (see the grep below): run 1 compared raw stdout
+# and "failed" on wall-clock timings and prefetch race counters, which differ
+# between two runs of the SAME binary. That was noise reported as a violation.
 echo "[$(date +%H:%M:%S)] inert check" >> "$OUT/gate.log"
 IP="Name three primary colors."
 for pair in "old:$PREV" "new:$BIN"; do
@@ -123,5 +138,20 @@ env LLMSTREAM_CHAT=1 LLMSTREAM_SLOTS=5 "$BIN" "$MODEL" 8 "$PROMPT_A" 1 \
     echo "inert check: not run"
   fi
 } > "$OUT/gates.txt" 2>&1
+
+# --- OPPORTUNISTIC: resident compute-ceiling leg (skipped twice already) --------
+# SLOTS unset => resident: the whole 12.1 GB model in RAM, no expert streaming, so
+# decode tok/s is the pure compute ceiling. N=64 (not E37b's 20) to match E37c's
+# 6.14 tok/s streamed number this is meant to be compared against. `time -l` also
+# yields peak RSS, which is the open G1 metric question.
+ar=$(avail_gb)
+if awk "BEGIN{exit !($ar >= 12.0)}"; then
+  echo "[$(date '+%m-%d %H:%M:%S')] resident leg start (avail=${ar} GB)" >> "$OUT/gate.log"
+  /usr/bin/time -l env LLMSTREAM_CHAT=1 "$BIN" "$MODEL" 64 "$PROMPT_A" 128 \
+    > "$OUT/resident.out" 2> "$OUT/resident.err"
+  echo "[$(date '+%m-%d %H:%M:%S')] resident leg done (avail=$(avail_gb) GB)" >> "$OUT/gate.log"
+else
+  echo "[$(date '+%m-%d %H:%M:%S')] resident leg SKIPPED (avail=${ar} GB < 12.0 GB); E7 compute-ceiling anchor >=10.47 tok/s stands" >> "$OUT/gate.log"
+fi
 
 echo "done" > "$OUT/DONE"
