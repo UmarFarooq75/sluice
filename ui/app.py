@@ -337,7 +337,12 @@ def strip_harmony(t):
     leaks into the rendered text."""
     t = re.sub(r"<\|channel\|>\s*\w+", " ", t)   # channel marker + its name
     t = re.sub(r"<\|start\|>\s*\w+", " ", t)     # start marker + role
-    t = re.sub(r"<\|[^|]*\|>", " ", t)           # any remaining markers
+    t = re.sub(r"<\|[^|]*\|>", " ", t)           # any remaining COMPLETE markers
+    # A partial marker at the buffer edge ("<|chan", "<|channel|") has no closing
+    # "|>" yet, so nothing above matches it. Left alone it reaches st.markdown and
+    # gets mangled into stray punctuation. Drop any trailing fragment.
+    t = re.sub(r"<\|[^|]*\|?$", "", t)
+    t = re.sub(r"<\|", "", t)                    # belt and braces: never show internals
     return re.sub(r"[ \t]+\n", "\n", re.sub(r"[ \t]+", " ", t)).strip()
 
 
@@ -705,10 +710,17 @@ if prompt:
             # "no tokens" when the engine actually generated some.
             fallback = strip_harmony(raw)
             if fallback:
-                final_clean, analysis = fallback, ""
-                if met.get("decode") and float(met["decode"][1]) > 0:
-                    st.caption("⚠︎ Fast mode produced unstructured output — "
-                               "switch to Balanced for clean answers.")
+                # The model never emitted a final channel — it was still reasoning when
+                # it stopped (token cap, or Fast mode derailing the channel structure).
+                # Showing that text AS the answer misrepresents thinking as a reply,
+                # which is what the live UI did. Say what happened and keep the text in
+                # the expander where it belongs.
+                final_clean, analysis = "", fallback
+                st.warning(
+                    ":material/warning: This reply has no final answer — the model was "
+                    "still reasoning when it stopped. Its thinking is below. "
+                    "Try again, raise **Max new tokens**, or switch quality to "
+                    "**Balanced** if you are on Fast.")
             elif met.get("generated") == ("0",):
                 final_clean = ("*(the model chose to stop immediately — try Balanced "
                                "quality, or rephrase your message)*")

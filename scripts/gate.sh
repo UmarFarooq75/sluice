@@ -91,6 +91,16 @@ else
 $out"
 fi
 
+# --- 3d. harmony parser fixtures --------------------------------------------
+# Channel internals must never reach the user, at any streaming buffer boundary.
+# Two live-UI symptoms got past review before this existed (S2).
+if out=$(/usr/bin/python3 ui/test_harmony.py 2>&1); then
+  say "$P" "harmony parser fixtures ($(printf '%s' "$out" | tail -1))"
+else
+  bad "harmony parser fixtures FAILED:
+$out"
+fi
+
 # --- 4. the engine compiles --------------------------------------------------
 # compiled to a temp path on purpose: a detached experiment may be armed against
 # csrc/stream_run right now, and rewriting that file underneath it could hand the
