@@ -68,7 +68,9 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/resource.h>
+#ifdef __APPLE__
 #include <sys/sysctl.h>
+#endif
 #include <thread>
 #include <unistd.h>
 #include <unordered_map>
