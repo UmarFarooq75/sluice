@@ -3493,3 +3493,34 @@ or could thrash a box without it.
 - **Decision rule**: B legs beat A1 tok/s beyond run-to-run spread of the two A
   legs ⇒ LLMSTREAM_PAGECACHE ships documented as an option for high-RAM boxes;
   otherwise the finding is the documentation.
+
+### E42-r1. Speculative decoding, rung 1: self-drafting n-gram + batched verify (PRE-REGISTERED 2026-07-23)
+**The MTP answer.** Colibri's MTP heads are trained-in and lost through GGUF (format
+ceiling, documented). The GGUF-compatible route to >1 token per forward pass is
+speculative decoding: draft K tokens, verify in ONE batched decode, accept the
+matching prefix. Prior modeling (E42 design): union-of-experts cost grows with K on
+a streamed cache, inverting llama.cpp's long-draft advice — **K=2 is the modeled
+optimum**; an eagle-class draft (a≈0.72) modeled 8.27 tok/s. No draft model exists
+on this box and downloads need owner sign-off, so **rung 1 is self-drafting**:
+n-gram/prompt-lookup from the session's own context (zero memory, zero downloads) —
+the floor of the speedup curve, not its ceiling.
+- **Mechanism**: `LLMSTREAM_SPEC=K` (off by default). Drafter: longest-suffix n-gram
+  match over prompt+generated tokens proposes up to K continuation tokens; batched
+  verify decodes [cur, d1..dK] with per-position logits; accept while target argmax
+  == draft; on reject, `llama_memory_seq_rm` rolls the KV back to the last accepted
+  position. Greedy target only (exact mode semantics).
+- **Contract (honest)**: batched verification changes batch shapes ⇒ RC4-class
+  cross-shape variance ⇒ this is a **Fast-class feature**: token-stream equality vs
+  spec-off is expected but not bit-guaranteed. It will never touch the exact path.
+- **Gates**: (1) spec-off path byte-identical (flag unset; ref binary comparison +
+  pinned hash). (2) spec-on token ids vs spec-off across 3 prompts: divergences must
+  be ≤ the RC4 flip class (isolated single-token argmax flips, coherent both sides);
+  systematic divergence or incoherence = HARD RED, feature stays dark. (3) union
+  telemetry: expert-union per verify batch must be measured and reported.
+- **Prediction**: acceptance on code-gen prompt ≥ 0.35 (repetitive structure), chat
+  prose lower (0.15–0.30). tok/s: +10–30% on code at K=2, possibly ~0 on prose
+  (drafter too weak); union/layer at K=2 ≈ 7–9 vs 4 baseline, well under SLOTS=24.
+- **Falsifier**: acceptance < 0.15 on code OR tok/s regression on both prompt types
+  ⇒ publish negative, keep the flag dark, document eagle-draft as the rental-box
+  path. **No drafter tuning beyond the pre-registered n-gram (max order 3, min
+  match 2) — one setting, one verdict.**
