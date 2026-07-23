@@ -180,13 +180,13 @@ Factual, no strawmen. Nearest neighbors are **colibri** (`raw/colibri`, a single
 | **Bit-exact** streamed-vs-resident gate | ✅ (`logits_hash`, every commit) | ⚠️ MMLU-style benches, not bit-identity | n/a |
 | Universal **quality dial**, default bit-exact | ✅ `AGREE_TARGET` | ⚠️ CACHE_ROUTE (opt-in, keeps true top-J, cites arXiv:2412.00099, ROUTE_AGREE telemetry) | ❌ |
 | **Honest pre-load estimator** (probes your disk) | ✅ | ⚠️ live metrics, not a pre-commit estimate | ❌ |
-| Native **int8 MTP** self-speculation | ❌ (format ceiling) | ✅ (2.2–2.8×) | ❌ |
-| **O_DIRECT / io_uring** fast path | ❌ (mmap + F_NOCACHE) | ✅ (`DIRECT=1`, +65% on Strix Halo) | n/a |
+| Native **int8 MTP** self-speculation | ⚠️ MTP heads are dropped by GGUF (format ceiling); the GGUF-compatible answer — **speculative decoding with batched verify + KV rollback — is built and verified exact** (full token match, 0.75–0.83 acceptance; [E42-r1](results/e42r1/summary.txt)). Dark until a dense drafter provides coverage (self-drafting n-gram measured net-negative, published). | ✅ (2.2–2.8×) | ❌ |
+| **Uncached / direct I/O** | ✅ `F_NOCACHE` on the streaming fd **since the first build** (macOS analog of O_DIRECT); page cache measured **no-help at 16 GB** ([E45](results/e45/summary.txt), negative published). O_DIRECT+io_uring proper = Linux port, pending. | ✅ (`DIRECT=1`, +65% on Strix Halo) | n/a |
 | **KV-cache persistence** (warm chat resume) | ✅ per-model `.kv`, atomic, fail-closed, loud resume ([receipts](results/g5kv/summary.txt)) | ✅ (`.coli_kv`, claims byte-identical) | ⚠️ varies |
-| **Live-learning / auto-pin** hot experts | ⚠️ sidecar built, engine hook dark (see env ref) | ✅ (`.coli_usage`) | ❌ |
+| **Live-learning / auto-pin** hot experts | ✅ answered with receipts: frequency-decay pinning **loses to plain LRU at both 5 and 24 slots** (E36, [E44](results/e44/summary.txt)) — we ship the policy that measured best. Warm-start packs raise early hit **+3.0 pt clean** ([E44b](results/e44b/summary.txt)), opt-in; speed claim withheld pending a quiet-box run. | ✅ (`.coli_usage`) | ❌ |
 | **Packaging maturity** (installers, model library, viz) | ⚠️ research-phase | ✅ | ✅✅ |
 
-Where they clearly lead: colibri on MTP, the O_DIRECT path, and live-learning maturity; Ollama on packaging and model-library breadth. Where we lead: **any-GGUF universality, bit-exact gates, the default-bit-exact quality dial, and an estimator that tells the truth before you commit.**
+Where they clearly lead: colibri on trained-in MTP heads (a real speed multiplier we can only match with a draft model) and the Linux O_DIRECT path; Ollama on packaging and model-library breadth. Where we lead: **any-GGUF universality, bit-exact gates, the default-bit-exact quality dial, and an estimator that tells the truth before you commit.**
 
 ---
 
