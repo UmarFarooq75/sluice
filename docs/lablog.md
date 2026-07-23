@@ -3599,3 +3599,32 @@ measured. Owner directive: validate, don't assume.
 - **Memory honesty**: GPU device buffers cost ~3 GB on a unified pool at ~8 GB
   avail; if the gpu leg aborts or thrashes, that outcome IS the policy answer for
   16 GB boxes and is published as such.
+
+**E46 measured + verdict (2026-07-23, LIGHT LOAD).** GATE GREEN mechanically, but
+**the GPU legs are VOID as GPU evidence**: stderr says `SLOT_DEV device 'gpu' not
+found, using CPU` — this engine build has no Metal linked. Caught by reading the
+artifacts, not the table. The backend policy question stays open on this box; the
+old GPU rungs came from a Metal-linked build that the current build_driver.sh does
+not reproduce. detect_compute now reports the ENGINE's capability (otool -L), not
+the platform's.
+**Accidental real finding**: the fallback legs A/B'd two CPU configs — shipped
+(ubatch=128, prefill pool 64, mmap) at 4.90/5.71 tok/s vs fallback (ubatch=1, no
+pool, mmap OFF via the SLOT_DEV side effect, stream_run.cpp:1060) at 8.55/8.43,
+same minute, same machine, identical pinned hashes, hit .930/.931 vs .953/.953.
+THREE variables confounded — isolated next.
+
+### E47. Isolate the 1.5-1.7x CPU-config delta (PRE-REGISTERED 2026-07-23, before any run)
+Legs (N=64, prompt A, SLOTS=24, CPU, LIGHT LOAD label): A shipped
+(ubatch=128+pool64+mmap) · A2 repeat (noise bar) · B ubatch=1+pool64+mmap ·
+C ubatch=1+nopool+mmap · D ubatch=1+nopool+mmap-off (via SLOT_DEV fallback,
+labeled as the hack it is) · D2 repeat.
+- **HARD GATE**: every leg reproduces pinned `7fff2b7b9461da2a` (E46 showed all
+  these shapes do).
+- **Prediction (falsifiable)**: the mmap-off step (D vs C) carries most of the
+  delta — the resident trunk stops competing with page-cache churn; ubatch and
+  pool steps are minor (<1x noise bar each). If D-vs-C is the big step, the ship
+  path is a proper LLMSTREAM_NO_MMAP flag (engine change, gated) rather than the
+  SLOT_DEV side effect.
+- **Decision rule**: any config beating shipped beyond 2x the A<->A2 spread on a
+  quiet-box confirmation ships as the new default config with receipts; light-load
+  numbers alone do not flip defaults.

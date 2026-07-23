@@ -347,6 +347,16 @@ def detect_compute():
     "device": str}. VRAM is the DISCRETE card's own memory (None for unified,
     where GPU and CPU share one pool and 'adding' the GPU adds no cache)."""
     if sys.platform == "darwin" and platform.machine() == "arm64":
+        # E46 lesson: report what the ENGINE BUILD can use, not what the machine
+        # has. This build fell back to CPU with a one-line warning while a whole
+        # experiment thought it was measuring Metal.
+        eng_metal = False
+        if ENGINE.exists():
+            ot = subprocess.run(["otool", "-L", str(ENGINE)], capture_output=True, text=True).stdout
+            eng_metal = "Metal" in ot
+        if not eng_metal:
+            return {"gpu": None, "unified": True, "vram_gb": None,
+                    "device": "Apple Silicon (unified) — engine built CPU-only, Metal not linked"}
         return {"gpu": "metal", "unified": True, "vram_gb": None, "device": "Apple Silicon (unified memory)"}
     smi = shutil.which("nvidia-smi")
     if smi:
