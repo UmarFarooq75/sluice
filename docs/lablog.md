@@ -3394,3 +3394,31 @@ this divergence family. The pre-registered gate 1 demanded a stronger property t
 one the project already ships elsewhere. The feature cannot ship under "resumed chat
 continues identically"; whether it ships under canon's contract ("same quality,
 config-pinned, divergence class documented") is an owner decision, queued.
+
+### E44. Auto-pin retest at the shipped regime — SLOTS=24 (PRE-REGISTERED 2026-07-23)
+**Why retest closed threads.** E34 (warmpack: no value) and E36 (lfru: no win) were
+both measured at SLOTS=5 ≈ top_k=4 — a cache with ~1 spare slot, where no policy has
+room to act. The shipped regime is SLOTS=24 (E37c, 6.14 tok/s clean). A verdict from
+a regime we no longer run is not evidence about the one we do. Same workload as
+E34/E36 (prompt A, exact greedy) so the regime is the ONLY variable that moved.
+
+- **Arms** (single-shot, streamed, SLOTS=24, guard ON, ubatch=1):
+  LRU (shipped default) · LRU repeat (noise bar) · `LLMSTREAM_EVICT=lfru` ·
+  `LLMSTREAM_WARMPACK=results/warmpacks/chat.warmpack.pack` (prompt A is code,
+  held out from that pack — no train=test).
+- **N sweep**: 8, 20, 64. Metrics per leg: `logits_hash`, decode hit rate, tok/s,
+  TTFT. 12 legs.
+- **HARD GATE (any arm, any N)**: `logits_hash` must equal the pinned prompt-A
+  hashes — N=8 `fdf0f83dd70504c5`, N=20 `e3fa62923ee35254`, N=64
+  `7fff2b7b9461da2a`. Residency policy must never change the math; a mismatch is
+  a feature-breaking bug and ends the arm regardless of its speed.
+- **Prediction**: at 24 slots the per-layer working set (~15) fits, so steady-state
+  residency converges regardless of policy. (1) lfru vs LRU: |Δhit| ≤ 2× the
+  LRU↔LRU noise bar at every N — no win, again. (2) warmpack: earlier warm point —
+  higher hit at N=8 and lower TTFT vs cold LRU; by N=64 the total-run Δhit shrinks
+  toward noise as warmup amortizes. tok/s follows hit rate.
+- **Falsifiers**: lfru |Δhit| > 2× noise bar at any N (either direction) falsifies
+  (1). Warmpack failing to beat cold LRU's hit at N=8 beyond the noise bar
+  falsifies (2) and closes warmpack for good at every regime we have.
+- **No tuning**: one pack, one decay setting (as committed), one run each. A loss
+  ends the thread; a win flips the table row with receipts.
