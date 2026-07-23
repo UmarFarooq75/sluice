@@ -3559,3 +3559,21 @@ dark.** What ships is the finding: the GGUF-compatible MTP answer is built and
 verified exact; its speedup is gated on draft COVERAGE, not correctness — an
 eagle-class dense drafter (rental box, owner-authorized download) is the
 documented next rung. K stays 2; no drafter tuning per pre-registration.
+
+### G6-1. Backend placement: detect, predict, choose — per machine, not per assumption (2026-07-23)
+Owner directive: sluice must use whatever compute exists — CPU alone, GPU alone,
+or the combination (trunk in VRAM, expert cache spanning VRAM+RAM) — chosen per
+machine. Design shipped in this rung:
+- `detect_compute()` in the CLI: Metal/unified (Apple), CUDA discrete (nvidia-smi
+  name + VRAM), else CPU-only. Loads nothing.
+- `choose_backend()` applies the MEASURED policy: unified+streaming ⇒ CPU (E24/GPU
+  rungs: backend-indifferent below ~0.9 hit, GPU costs 3 GB + prefill footgun);
+  model fits VRAM ⇒ GPU resident; discrete VRAM but model larger ⇒ hybrid
+  placement — engine orchestration for managed hybrid is NOT built yet, so doctor
+  prints it as the predicted-best PENDING VALIDATION and the default stays the
+  validated branch. No branch auto-enables without a measured row behind it.
+- `sluice run --backend gpu|cpu` override (gpu ⇒ SLOT_DEV=gpu NGL=99 ubatch=1, no
+  prefill pool — mirrors the UI's known-safe GPU config).
+- doctor gains a `compute` section: devices found, backend chosen, one-line reason.
+Validation state: Apple-unified branch measured (this box). CUDA/hybrid branches
+are predictions awaiting the rental box; their doctor output says so explicitly.
