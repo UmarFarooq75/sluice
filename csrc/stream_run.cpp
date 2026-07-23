@@ -975,7 +975,13 @@ int main(int argc, char ** argv) {
     // responsiveness during the domain battery. Off by default until the
     // control ladder prices its speed cost; the default follows the data.
     if (getenv("LLMSTREAM_POLITE") && atoi(getenv("LLMSTREAM_POLITE")) != 0) {
+#ifdef __APPLE__
         if (setpriority(PRIO_DARWIN_PROCESS, 0, PRIO_DARWIN_BG) != 0) {
+#else
+        // Linux: nice 19 is the closest one-call analog to the Darwin
+        // background band (CPU only; no I/O throttle without ionice).
+        if (setpriority(PRIO_PROCESS, 0, 19) != 0) {
+#endif
             fprintf(stderr, "llmstream: POLITE requested but setpriority failed: %s\n", strerror(errno));
         } else {
             fprintf(stderr, "llmstream: POLITE on - background CPU/IO band\n");
