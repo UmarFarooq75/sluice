@@ -4,7 +4,7 @@ set -u
 REPO=/Users/umarfarooq/Desktop/research
 OUT=$REPO/results/e47
 mkdir -p "$OUT"
-GATE=7.0; POLL=30; MAX_S=43200; HOLD=3   # lowered 8.0->7.0 for this run only (owner-directed, lablog E47 amendment 2)
+GATE=8.5; POLL=60; MAX_S=43200; HOLD=5   # quiet-window rerun (E47 verdict: inconclusive under load)
 rm -f "$OUT/DONE" "$OUT/ABORTED"
 . "$REPO/scripts/lib/preflight.sh"
 
