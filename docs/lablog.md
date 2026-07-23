@@ -3441,3 +3441,31 @@ experiment only, and the summary is labeled **LIGHT LOAD**: the hash gate is
 load-invariant, hit-rate verdicts are judged against the in-run LRU↔LRU noise bar
 (which absorbs any load-widened jitter), and tok/s is reportable only as a
 light-load number (ladder precedent: E37d), never as the clean figure.
+
+**E44 measured + verdict (2026-07-23, LIGHT LOAD labeled).** GATE GREEN — all 12
+legs reproduce their pinned hash. Noise bar (LRU↔LRU): 0.000 pt at every N.
+- **lfru: 0.000 pt at every N — identical residency outcome to LRU at SLOTS=24.**
+  Prediction (1) confirmed. Two regimes (5 and 24 slots), same verdict as E36:
+  **lfru is closed for good.** tok/s differences (3.70 vs 4.03 etc.) are light-load
+  jitter, directional-only per the E34 pre-commitment.
+- **warmpack at the CONTAMINATED upper bound: +2.7 pt @ N=8 → +1.4 @ N=20 →
+  +0.5 @ N=64** — front-loaded and decaying, the E33 shape, and above the
+  documented 0–1 pt prefetch-timing jitter at N=8. Per the pre-fixed rule this
+  does NOT flip anything: it triggers the required CLEAN leg (prompt-A pack on a
+  held-out prompt), pre-registered as E44b below.
+- ttft columns did not parse in single-shot mode — recorded as missing, compared
+  against nothing (VOID discipline); cold-start benefit is carried by N=8 hit only.
+
+### E44b. Warmpack clean leg (PRE-REGISTERED 2026-07-23, before any run)
+- **Legs** (same config as E44, LIGHT LOAD label carried): prompt B = "Explain how
+  the Earth formed and why it can support life." (held out from the pack), N ∈
+  {8, 20}: OFF, OFF repeat (noise bar), ON (gptossA.warmpack.pack).
+- **Logit-neutrality gate (HARD)**: ON logits_hash == OFF logits_hash per (B, N);
+  prompt B has no pinned hash, so OFF is the in-run reference and an OFF↔OFF
+  mismatch VOIDS the comparison rather than gating.
+- **Prediction**: clean lift at N=8 positive but smaller than the contaminated
+  +2.7 pt (pack is prompt-A-fit; overlap between prompts' working sets is the
+  open question this measures). **Decision rule**: clean Δhit @ N=8 > 2× the
+  OFF↔OFF bar (floor 1.0 pt for the known jitter class) ⇒ warmpack ships as an
+  opt-in with receipts and the table row flips; otherwise warmpack closes for
+  good, upper-bound lift noted as an honest footnote.
