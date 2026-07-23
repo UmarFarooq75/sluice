@@ -26,9 +26,9 @@ die()  { printf "\033[31mxx\033[0m %s\n" "$*" >&2; exit 1; }
 OS="$(uname -s)"; ARCH="$(uname -m)"
 say "platform: $OS/$ARCH"
 if [ "$OS" != "Darwin" ]; then
-  warn "Only macOS (Apple Silicon) is tested. scripts/build_driver.sh links"
-  warn "-lobjc -framework Foundation for the thermal probe, which will NOT build"
-  warn "on $OS without edits. Continuing, but expect the driver build to fail."
+  warn "Only macOS (Apple Silicon) has MEASURED numbers. The build itself is"
+  warn "portable ($OS included — thermal/memory probes degrade gracefully) and is"
+  warn "verified by CI on ubuntu; runtime behavior on $OS is not yet benchmarked."
 fi
 [ "$OS" = "Darwin" ] && [ "$ARCH" != "arm64" ] && \
   warn "Intel Mac detected; measurements in this repo are all Apple Silicon."

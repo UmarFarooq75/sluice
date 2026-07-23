@@ -8,11 +8,20 @@ cd "$(dirname "$0")/.."
 # may be armed against that exact path and would otherwise exec a binary being
 # rewritten underneath it.
 OUT="${OUT:-csrc/stream_run}"
-clang++ -O3 -std=c++17 \
+CXX="${CXX:-clang++}"
+command -v "$CXX" >/dev/null 2>&1 || CXX=g++
+PLATFORM_FLAGS=()
+if [ "$(uname -s)" = "Darwin" ]; then
+    # therm_state() (D10) reads NSProcessInfo.thermalState via the objc runtime
+    PLATFORM_FLAGS=(-lobjc -framework Foundation)
+else
+    PLATFORM_FLAGS=(-pthread)
+fi
+"$CXX" -O3 -std=c++17 \
     -Ivendor/llama.cpp/include -Ivendor/llama.cpp/ggml/include -Ivendor/llama.cpp/src \
     csrc/stream_run.cpp \
     -Lvendor/llama.cpp/build/bin -lllama -lggml -lggml-base -lggml-cpu \
-    -lobjc -framework Foundation \
+    "${PLATFORM_FLAGS[@]}" \
     -Wl,-rpath,"$PWD/vendor/llama.cpp/build/bin" \
     -o "$OUT"
 echo "$OUT built"

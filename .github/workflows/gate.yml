@@ -34,3 +34,25 @@ jobs:
 
       - name: Gate — static checks
         run: bash scripts/gate.sh --static
+
+  # The "builds on Linux" receipt (owner directive 2026-07-23: not only Apple).
+  # Same honest scope as the macOS job: install + static gate, model legs
+  # self-defer. Runtime performance on Linux is NOT claimed by this job — it
+  # proves the build and the static contract, nothing more.
+  static-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache vendored llama.cpp build
+        uses: actions/cache@v4
+        with:
+          path: vendor/llama.cpp
+          key: llamacpp-${{ runner.os }}-b10064-${{ hashFiles('patches/llmstream.patch') }}
+
+      - name: Install (fetch + patch + build)
+        run: bash scripts/install.sh
+
+      - name: Gate — static checks
+        run: bash scripts/gate.sh --static

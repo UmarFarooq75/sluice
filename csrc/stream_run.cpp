@@ -57,11 +57,13 @@
 #include <deque>
 #include <fcntl.h>
 #include <list>
-#include <mach/mach.h>
 #include <mutex>
+#include <poll.h>
+#ifdef __APPLE__
+#include <mach/mach.h>
 #include <objc/message.h>
 #include <objc/runtime.h>
-#include <poll.h>
+#endif
 #include <string>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -275,6 +277,7 @@ static void pf_release(stream_state & st) {
 }
 
 static size_t avail_mem_bytes(void) {
+#ifdef __APPLE__
     vm_statistics64_data_t vm;
     mach_msg_type_number_t cnt = HOST_VM_INFO64_COUNT;
     if (host_statistics64(mach_host_self(), HOST_VM_INFO64, (host_info64_t) &vm, &cnt) != KERN_SUCCESS) {
@@ -282,6 +285,19 @@ static size_t avail_mem_bytes(void) {
     }
     return (size_t) (vm.free_count + vm.inactive_count + vm.purgeable_count) *
            (size_t) sysconf(_SC_PAGESIZE);
+#else
+    // Linux: MemAvailable is the kernel's own "how much can be allocated
+    // without swapping" estimate - the same meaning the mach sum has above.
+    FILE * f = fopen("/proc/meminfo", "r");
+    if (!f) return 0;
+    char line[256];
+    size_t kb = 0;
+    while (fgets(line, sizeof line, f)) {
+        if (sscanf(line, "MemAvailable: %zu kB", &kb) == 1) break;
+    }
+    fclose(f);
+    return kb * 1024;
+#endif
 }
 
 // E10: dual trigger — the memorystatus signal jetsam kills on, OR available
@@ -313,8 +329,14 @@ static void pressure_monitor(stream_state * st) {
             _exit(0);
         }
         uint32_t lvl = 0;
+#ifdef __APPLE__
         size_t sz = sizeof(lvl);
         if (sysctlbyname("kern.memorystatus_vm_pressure_level", &lvl, &sz, nullptr, 0) != 0) lvl = 1;
+#else
+        // Linux has no memorystatus signal; the dual trigger's other arm (the
+        // avail floor below) carries the guard alone, as E10 designed for.
+        lvl = 1;
+#endif
         const double avail_gb = avail_mem_bytes() / 1e9;
         bool severe = lvl >= 4 || avail_gb < floor_gb;
         bool warn   = lvl >= 2 || avail_gb < floor_gb * 1.5;
@@ -879,6 +901,7 @@ static bool cb_eval(struct ggml_tensor * t, bool ask, void * user_data) {
 // 2026-07-20 afternoon bandwidth sag 1.7->1.1 GB/s made this load-bearing).
 // NSProcessInfo.thermalState via the objc runtime - public API, no sudo.
 static const char * therm_state(void) {
+#ifdef __APPLE__
     id cls = (id) objc_getClass("NSProcessInfo");
     if (!cls) return "unavailable";
     id info = ((id (*)(id, SEL)) objc_msgSend)(cls, sel_registerName("processInfo"));
@@ -886,6 +909,9 @@ static const char * therm_state(void) {
     long s = ((long (*)(id, SEL)) objc_msgSend)(info, sel_registerName("thermalState"));
     static const char * names[] = {"nominal", "fair", "serious", "critical"};
     return (s >= 0 && s <= 3) ? names[s] : "unknown";
+#else
+    return "unavailable";
+#endif
 }
 
 // COMPUTE pillar artifact: what this run actually cost in memory. ru_maxrss is
@@ -895,6 +921,7 @@ static const char * therm_state(void) {
 static void print_mem_footprint() {
     struct rusage ru{};
     getrusage(RUSAGE_SELF, &ru);
+#ifdef __APPLE__
     task_vm_info_data_t vmi{};
     mach_msg_type_number_t cnt = TASK_VM_INFO_COUNT;
     if (task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmi, &cnt) == KERN_SUCCESS) {
@@ -903,6 +930,10 @@ static void print_mem_footprint() {
     } else {
         printf("mem: peak_rss=%.2f GB\n", ru.ru_maxrss / 1e9);
     }
+#else
+    // Linux ru_maxrss is KILOBYTES (macOS: bytes); no phys_footprint analog.
+    printf("mem: peak_rss=%.2f GB\n", ru.ru_maxrss * 1024.0 / 1e9);
+#endif
     printf("therm: %s\n", therm_state());
 }
 
