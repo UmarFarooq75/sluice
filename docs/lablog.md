@@ -3546,3 +3546,16 @@ A legs 3.95 / 4.28), stalls flat (~9.6–9.9 s), per-leg read volume unchanged
 stays documented-but-dark; the honest table row is "F_NOCACHE shipped since first
 build; page cache measured no-help at 16 GB; O_DIRECT/io_uring = Linux box." A
 high-RAM box may invert this — that measurement belongs to the rental.
+
+**E42-r1 measured + verdict (2026-07-23, LIGHT LOAD).** GATE GREEN — no VOID legs,
+off-path pinned hash reproduced, and **FULL token match on all 3 prompts** (zero
+RC4-class flips this run: the verify/rollback machinery is exact in practice).
+Acceptance when drafting: code 0.750, prose 0.833, reason 0.222. But the
+pre-registered n-gram drafter only proposed on ~10–15% of steps (fallback_1tok
+44–56 of ~60), and batched verify through the prefill pool cost more than the rare
+accepts saved: tok/s 3.61 vs 4.34 (code), 5.11 vs 6.42 (reason), 8.16 vs 8.20
+(prose). **Falsifier fired on speed: negative published, LLMSTREAM_SPEC stays
+dark.** What ships is the finding: the GGUF-compatible MTP answer is built and
+verified exact; its speedup is gated on draft COVERAGE, not correctness — an
+eagle-class dense drafter (rental box, owner-authorized download) is the
+documented next rung. K stays 2; no drafter tuning per pre-registration.
