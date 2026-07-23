@@ -85,7 +85,8 @@ incomplete = any(l.void for l in legs)
 gate = "INCOMPLETE" if incomplete else ("RED" if hash_red else "GREEN")
 
 lines = [
-    "E44 — auto-pin retest at SLOTS=24 (%s)" % time.strftime("%Y-%m-%d %H:%M"),
+    "E44 — auto-pin retest at SLOTS=24 (%s) | LIGHT LOAD (7.0 GB gate, owner-directed;"
+    " tok/s is a light-load number, hash and hit verdicts unaffected)" % time.strftime("%Y-%m-%d %H:%M"),
     "model=%s prompt A, exact greedy, guard ON, ubatch=1, streamed | pack=%s "
     "(warm arm CONTAMINATED upper bound: pack source = test prompt)" % (
         os.path.basename(MODEL), os.path.basename(PACK)),
