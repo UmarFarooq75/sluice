@@ -3422,3 +3422,14 @@ E34/E36 (prompt A, exact greedy) so the regime is the ONLY variable that moved.
   falsifies (2) and closes warmpack for good at every regime we have.
 - **No tuning**: one pack, one decay setting (as committed), one run each. A loss
   ends the thread; a win flips the table row with receipts.
+
+**E44 amendment (pre-run, before any leg).** Pack audit: every domain pack in
+`results/warmpacks/` is 16-layer (OLMoE-era traces; gpt-oss has 24), and
+`gptoss20b_gate.pack` is the synthetic fixture. The cited `chat.warmpack.pack` is
+therefore INVALID for this model. The only real gpt-oss pack is
+`results/warmpack_ab/gptossA.warmpack.pack` (24-layer, built from a live prompt-A
+id-dump in E34). Since the E44 workload IS prompt A, the warm arm is a
+**CONTAMINATED upper bound** and is labeled so. Decision rule, fixed now: no lift
+at the contaminated upper bound at SLOTS=24 ⇒ warmpack is closed at every regime
+we have, for good; a lift ⇒ a clean leg (held-out prompt) is REQUIRED before any
+row flips or claim ships. Predictions and falsifiers otherwise unchanged.
