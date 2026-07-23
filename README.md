@@ -86,7 +86,7 @@ The full experiment record — every prediction written *before* the result, eve
 
 ## Quickstart
 
-Needs macOS on Apple Silicon (the only tested platform), Python 3, cmake, and a C++ toolchain. ~12 GB free disk for the default model.
+Needs macOS on Apple Silicon (the only **benchmarked** platform) or Linux (build verified by CI on every commit; runtime not yet benchmarked), Python 3, cmake, and a C++ toolchain. ~12 GB free disk for the default model.
 
 ```bash
 git clone https://github.com/UmarFarooq75/sluice.git
@@ -103,7 +103,7 @@ bash scripts/install.sh                # one-time: fetches llama.cpp, applies ou
 ./cli/sluice ui                        # playground → http://localhost:8501
 ```
 
-`scripts/install.sh` is **required on a fresh clone**: `vendor/` is deliberately not committed, so there is no llama.cpp to link against until the installer fetches the pinned revision (`b10064`) and applies [patches/llmstream.patch](patches/llmstream.patch). It is safe to re-run — each step is skipped if already satisfied. **Only macOS/Apple Silicon is tested**: the driver links `-lobjc -framework Foundation` for the thermal probe, so Linux needs edits, and the installer says so up front instead of failing mysteriously.
+`scripts/install.sh` is **required on a fresh clone**: `vendor/` is deliberately not committed, so there is no llama.cpp to link against until the installer fetches the pinned revision (`b10064`) and applies [patches/llmstream.patch](patches/llmstream.patch). It is safe to re-run — each step is skipped if already satisfied. **macOS/Apple Silicon is the only platform with measured numbers; Linux builds are CI-verified** (the `static-linux` job compiles the engine and runs the static gates on every commit) — platform probes (thermal, memory pressure) degrade gracefully there, and runtime benchmarks await a real Linux box.
 
 Prefer the terminal, or an API?
 
