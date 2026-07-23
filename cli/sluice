@@ -496,6 +496,17 @@ def cmd_run(args):
     # stays OFF so gates and harnesses keep their pinned config. LLMSTREAM_KV_CANON=0
     # disables it.
     env["LLMSTREAM_KV_CANON"] = os.environ.get("LLMSTREAM_KV_CANON", "1")
+    # G5-1 KV persistence: ON by default for chat (owner decision 2026-07-23). The
+    # checkpoint is keyed to the exact model file (<model>.kv beside it), so
+    # switching models can never resume another model's state. Same contract as
+    # canon: resume is config-pinned same-quality, not token-identical to an
+    # uninterrupted session (results/g5kv: 2/3 chats identical, one 1-in-180
+    # argmax flip, RC4 class). =0/off disables; any other value is a custom path.
+    _kv = os.environ.get("LLMSTREAM_KV_PERSIST")
+    if _kv in ("0", "off", ""):
+        env.pop("LLMSTREAM_KV_PERSIST", None)
+    else:
+        env["LLMSTREAM_KV_PERSIST"] = _kv or str(p) + ".kv"
     print(f"{DIM}loading {name} ({mode} mode) - one-time, stays warm…{RESET}")
     proc = subprocess.Popen([str(ENGINE), str(p), "512", "CLI_REPL", "128"],
                             env=env, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE,

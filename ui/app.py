@@ -275,6 +275,16 @@ def ensure_server(cfg, sys_prompt, n_gen, status):
     # every gate and harness keeps its pinned configuration without being touched,
     # and the later strict switch is a one-line change here rather than a revert.
     env["LLMSTREAM_KV_CANON"] = os.environ.get("LLMSTREAM_KV_CANON", "1")
+    # G5-1 KV persistence: ON by default for chat (owner decision 2026-07-23), keyed
+    # to the exact model file (<model>.kv beside it) so switching models can never
+    # resume another model's state. Same contract as canon: config-pinned
+    # same-quality resume, not token-identical (results/g5kv, RC4 class).
+    # =0/off disables; any other value is a custom path.
+    _kv = os.environ.get("LLMSTREAM_KV_PERSIST")
+    if _kv in ("0", "off", ""):
+        env.pop("LLMSTREAM_KV_PERSIST", None)
+    else:
+        env["LLMSTREAM_KV_PERSIST"] = _kv or str(cfg["path"]) + ".kv"
     # ubatch drives batched (expert-major) prefill, which needs the CPU-only
     # prefill pool to absorb a batch's expert union. On GPU there is no pool,
     # so a batched prefill whose union exceeds the slot count hits the engine's
