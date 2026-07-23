@@ -3628,3 +3628,11 @@ labeled as the hack it is) · D2 repeat.
 - **Decision rule**: any config beating shipped beyond 2x the A<->A2 spread on a
   quiet-box confirmation ships as the new default config with receipts; light-load
   numbers alone do not flip defaults.
+
+**E47 measured + verdict (2026-07-23).** GATE GREEN mechanically (all pinned
+hashes, D-legs confirmed fallback config) but **INCONCLUSIVE by the pre-registered
+rule**: the A<->A2 noise bar was 2.11 tok/s (5.23 vs 3.12 — active desktop load),
+wider than every step delta. E46's 8.4-8.5 did not reproduce under this load.
+No attribution, no ship. Re-armed as the same harness behind a stricter gate
+(8.5 GB, HOLD=5) to catch a genuinely quiet window; the config question stays
+open and pre-registered as-is.
