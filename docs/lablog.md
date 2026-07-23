@@ -3469,3 +3469,27 @@ legs reproduce their pinned hash. Noise bar (LRU↔LRU): 0.000 pt at every N.
   OFF↔OFF bar (floor 1.0 pt for the known jitter class) ⇒ warmpack ships as an
   opt-in with receipts and the table row flips; otherwise warmpack closes for
   good, upper-bound lift noted as an honest footnote.
+
+### E45. Page-cache probe — the honest macOS answer to colibri's O_DIRECT row (PRE-REGISTERED 2026-07-23)
+**Discovery first**: `F_NOCACHE` has shipped unconditionally on the expert-streaming
+fd since the first build (stream_run.cpp ~L1125). The comparison-table row "O_DIRECT
+❌" was wrong in our own disfavor: sluice already does uncached expert reads on
+macOS. What was never measured is the OTHER direction: macOS F_NOCACHE only stops
+NEW cache fills — already-cached pages still serve — so letting the page cache
+retain expert data could act as a free second-level cache on a box with headroom,
+or could thrash a box without it.
+- **Mechanism**: `LLMSTREAM_PAGECACHE=1` skips the fcntl (new, env-gated). Unset =
+  byte-identical legacy path.
+- **Legs** (N=64, prompt A, SLOTS=24, streamed, LIGHT LOAD label carried):
+  A1 default → B1 pagecache → B2 pagecache (repeat, warmed) → A2 default (after B
+  warmed the cache: does F_NOCACHE still read from cached pages? documents the
+  contamination class our protocols have always assumed).
+- **HARD GATE**: every leg's hash == pinned N=64 `7fff2b7b9461da2a`.
+- **Prediction**: B1 ≥ A1 modestly (within-run re-reads of evicted experts served
+  from RAM); B2 ≥ B1 (cross-run warmth); A2 > A1 (F_NOCACHE reads DO hit existing
+  cached pages — confirming the E37b leg-order rationale). Falsifier: pagecache
+  legs slower or stall-heavy (double-caching pressure) ⇒ publish negative, row
+  stays "F_NOCACHE shipped; O_DIRECT/io_uring = Linux box".
+- **Decision rule**: B legs beat A1 tok/s beyond run-to-run spread of the two A
+  legs ⇒ LLMSTREAM_PAGECACHE ships documented as an option for high-RAM boxes;
+  otherwise the finding is the documentation.
