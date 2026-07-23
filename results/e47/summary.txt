@@ -1,0 +1,17 @@
+E47 — isolate the CPU-config delta (2026-07-23 10:27) | LIGHT LOAD (7.0 GB gate, owner-directed)
+N=64 prompt A SLOTS=24 CPU | steps: A ub128+pool+mmap -> B ub1 -> C -pool -> D -mmap (SLOT_DEV hack)
+VOID_LEGS: none
+
+hash gate clean; D legs confirmed CPU-fallback config
+
+| leg | prefill s | decode tok/s | hit | stall s |
+|---|---|---|---|---|
+| A_shipped | 5.06 | 5.66 | 0.930 | 5.85 |
+| A2_shipped | 5.51 | 5.98 | 0.931 | 5.55 |
+| B_ub1_pool | 7.64 | 6.57 | 0.953 | 9.51 |
+| C_ub1_nopool | 7.73 | 6.49 | 0.953 | 9.63 |
+| D_ub1_nopool_nommap | 7.71 | 8.57 | 0.953 | 9.89 |
+| D2_ub1_nopool_nommap | 7.46 | 9.15 | 0.953 | 9.54 |
+
+(step attribution and ship decision by reviewer vs the A<->A2 noise bar)
+GATE: GREEN

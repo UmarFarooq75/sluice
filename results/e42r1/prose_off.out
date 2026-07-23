@@ -1,0 +1,76 @@
+llmstream: 24 layers, 24 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok  16644 | explain|
+tok 146677 | Earth's|
+tok  18704 | formation|
+tok    326 | and|
+tok   4436 | why|
+tok    480 | it|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     13 |.|
+tok  51441 | Provide|
+tok    261 | a|
+tok  82463 | concise|
+tok    889 | but|
+tok  21182 | thorough|
+tok  30547 | explanation|
+tok     13 |.|
+tok  18057 | Should|
+tok   4321 | cover|
+tok     25 |:|
+tok  36790 | Solar|
+tok   2420 | system|
+tok  18704 | formation|
+tok     11 |,|
+tok   1259 | acc|
+tok    264 |re|
+tok   1141 |tion|
+tok     11 |,|
+tok  94550 | differentiation|
+tok     11 |,|
+tok  18704 | formation|
+tok    328 | of|
+tok  22137 | atmosphere|
+tok     11 |,|
+tok   3411 | water|
+tok     11 |,|
+tok  33641 | magnetic|
+tok   3259 | field|
+tok     11 |,|
+tok  14651 | plate|
+tok 172242 | tect|
+tok 121926 |onics|
+tok     11 |,|
+tok  22105 | stable|
+tok  16721 | climate|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok   8820 | Also|
+tok   8633 | mention|
+tok   4436 | why|
+tok  16464 | Earth|
+tok    665 | can|
+tok   2498 | support|
+tok   2615 | life|
+tok     25 |:|
+tok   9324 | distance|
+tok    591 | from|
+mode=streamed prompt_toks=18 reused=0 generated=64 n_ubatch=1
+prefill: 6.79 s (2.65 tok/s)
+decode:  7.80 s (8.20 tok/s)
+io: cb_calls=1968 decode_uses=6144 decode_misses=151 (hit 0.975) prefill_uses=1660 prefill_misses=220
+io: prefetch_issued=263 prefetch_hits=97 prefetch_used=251 stall=7.12 s total_read=8402.9 MB avg_bw=576 MB/s
+io: read_work=45.84 s preads=3804 per_stream_bw=183 MB/s
+mem: peak_rss=10.65 GB phys_footprint=9.69 GB
+therm: nominal
+logits_hash=aa8ebd489bb5459c
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide a concise but thorough explanation. Should cover: Solar system formation, accretion, differentiation, formation of atmosphere, water, magnetic field, plate tectonics, stable climate, etc. Also mention why Earth can support life: distance from

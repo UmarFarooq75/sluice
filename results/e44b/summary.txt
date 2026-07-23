@@ -1,0 +1,13 @@
+E44b — warmpack clean leg (2026-07-23 07:01) | LIGHT LOAD (7.0 GB gate, owner-directed)
+prompt B (held out from pack), SLOTS=24, exact greedy, ubatch=1 | pack=gptossA (CLEAN by construction)
+VOID_LEGS: none
+
+| N | OFF hit | OFF2 hit | ON hit | tok/s off/off2/on | logit-neutral |
+|---|---|---|---|---|---|
+| 8 | 0.927 | 0.927 | 0.957 | 4.43 / 4.46 / 4.00 | yes |
+| 20 | 0.955 | 0.955 | 0.968 | 5.36 / 5.96 / 4.40 | yes |
+
+no hash problems
+
+(decision vs the pre-registered bar is written by the reviewer, not this script)
+GATE: GREEN

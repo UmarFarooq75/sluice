@@ -1,0 +1,11 @@
+llmstream: 24 layers, 24 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+mode=streamed prompt_toks=23 reused=0 generated=64 n_ubatch=1
+prefill: 7.85 s (2.93 tok/s)
+decode:  14.94 s (4.28 tok/s)
+io: cb_calls=2088 decode_uses=6144 decode_misses=287 (hit 0.953) prefill_uses=2120 prefill_misses=272
+io: prefetch_issued=251 prefetch_hits=88 prefetch_used=243 stall=9.74 s total_read=10735.5 MB avg_bw=471 MB/s
+io: read_work=53.73 s preads=4860 per_stream_bw=200 MB/s
+mem: peak_rss=10.82 GB phys_footprint=9.27 GB
+therm: nominal
+logits_hash=7fff2b7b9461da2a
+text: <|channel|>analysis<|message|>We need to write a Python function that merges two sorted lists into one sorted list without using sort(). So basically implement merge step of merge sort. The function should take two sorted lists and return a merged sorted list. We can use two pointers. The function signature: def merge_sorted_lists(a, b):

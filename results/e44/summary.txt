@@ -1,0 +1,16 @@
+E44 — auto-pin retest at SLOTS=24 (2026-07-23 06:53) | LIGHT LOAD (7.0 GB gate, owner-directed; tok/s is a light-load number, hash and hit verdicts unaffected)
+model=gpt-oss-20b-MXFP4.gguf prompt A, exact greedy, guard ON, ubatch=1, streamed | pack=gptossA.warmpack.pack (warm arm CONTAMINATED upper bound: pack source = test prompt)
+VOID_LEGS: none
+
+HARD GATE — pinned hash per N (policy must not change the math):
+  all non-VOID legs reproduce their pinned hash
+
+measured (comparisons only between non-VOID legs; verdicts vs the
+pre-registered noise bar are written by the reviewer, not this script):
+| N | LRU hit | LRU2 hit | lfru hit | warm hit | LRU tok/s | lfru tok/s | warm tok/s | LRU ttft | warm ttft |
+|---|---|---|---|---|---|---|---|---|---|
+| 8 | 0.908 | 0.908 | 0.908 | 0.935 | 3.70 | 4.03 | 3.82 | ? | ? |
+| 20 | 0.931 | 0.931 | 0.931 | 0.945 | 3.64 | 4.17 | 4.40 | ? | ? |
+| 64 | 0.953 | 0.953 | 0.953 | 0.958 | 4.23 | 4.16 | 4.45 | ? | ? |
+
+GATE: GREEN

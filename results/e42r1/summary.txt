@@ -1,0 +1,14 @@
+E42-r1 — self-drafting spec-dec, K=2 (2026-07-23 07:16) | LIGHT LOAD (7.0 GB gate, owner-directed)
+N=64 SLOTS=24 PREFILL_SLOTS=64 exact greedy streamed | drafter: n-gram order 3->2 (pre-registered)
+VOID_LEGS: none
+
+off-path hash: pinned hash reproduced on prompt A
+
+| prompt | token stream vs off | off tok/s | spec tok/s | spec telemetry |
+|---|---|---|---|---|
+| code | FULL MATCH (64 toks) | 4.34 | 3.61 | k=2 rounds=8 drafted=16 accepted=12 accept_rate=0.750 fallback_1tok=44 |
+| prose | FULL MATCH (64 toks) | 8.20 | 8.16 | k=2 rounds=3 drafted=6 accepted=5 accept_rate=0.833 fallback_1tok=56 |
+| reason | FULL MATCH (64 toks) | 6.42 | 5.11 | k=2 rounds=9 drafted=18 accepted=4 accept_rate=0.222 fallback_1tok=51 |
+
+(RC4-class divergence judgment and ship decision by reviewer per pre-registration)
+GATE: GREEN

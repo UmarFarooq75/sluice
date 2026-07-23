@@ -1,0 +1,11 @@
+llmstream: 24 layers, 24 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+mode=streamed prompt_toks=18 reused=0 generated=20 n_ubatch=1
+prefill: 6.07 s (2.96 tok/s)
+decode:  4.55 s (4.40 tok/s)
+io: cb_calls=912 decode_uses=1920 decode_misses=61 (hit 0.968) prefill_uses=1660 prefill_misses=138
+io: prefetch_issued=116 prefetch_hits=46 prefetch_used=102 stall=3.91 s total_read=8972.8 MB avg_bw=845 MB/s
+io: read_work=30.33 s preads=4062 per_stream_bw=296 MB/s
+mem: peak_rss=10.39 GB phys_footprint=9.27 GB
+therm: nominal
+logits_hash=df29641a9d164a11
+text: <|channel|>analysis<|message|>We need to explain Earth's formation and why it can support life. Provide a concise but

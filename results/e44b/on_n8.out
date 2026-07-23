@@ -1,0 +1,11 @@
+llmstream: 24 layers, 24 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+mode=streamed prompt_toks=18 reused=0 generated=8 n_ubatch=1
+prefill: 6.02 s (2.99 tok/s)
+decode:  2.00 s (4.00 tok/s)
+io: cb_calls=624 decode_uses=768 decode_misses=33 (hit 0.957) prefill_uses=1660 prefill_misses=141
+io: prefetch_issued=113 prefetch_hits=38 prefetch_used=98 stall=3.65 s total_read=8601.7 MB avg_bw=1072 MB/s
+io: read_work=29.46 s preads=3894 per_stream_bw=292 MB/s
+mem: peak_rss=10.37 GB phys_footprint=9.27 GB
+therm: nominal
+logits_hash=1e5184acc3e78a52
+text: <|channel|>analysis<|message|>We need to explain Earth's

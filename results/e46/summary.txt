@@ -1,0 +1,17 @@
+E46 — backend A/B at shipped regime (2026-07-23 09:44) | LIGHT LOAD (7.0 GB gate, owner-directed)
+prompt A, N=64, SLOTS=24 | cpu: ubatch=128 + prefill pool 64 | gpu: SLOT_DEV=gpu NGL=99 ubatch=1
+VOID_LEGS: none
+
+hash gates clean
+  gpu backend deterministic (gpu == gpu2 hash 7fff2b7b9461da2a)
+  cpu-vs-gpu token ids: FULL MATCH (64)
+
+| leg | prefill s | decode tok/s | hit | hash |
+|---|---|---|---|---|
+| cpu | 4.55 | 4.90 | 0.930 | 7fff2b7b9461da2a |
+| cpu2 | 5.58 | 5.71 | 0.931 | 7fff2b7b9461da2a |
+| gpu | 7.57 | 8.55 | 0.953 | 7fff2b7b9461da2a |
+| gpu2 | 7.80 | 8.43 | 0.953 | 7fff2b7b9461da2a |
+
+(policy decision vs pre-registered falsifier by reviewer)
+GATE: GREEN

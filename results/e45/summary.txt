@@ -1,0 +1,16 @@
+E45 — page-cache probe (2026-07-23 07:08) | LIGHT LOAD (7.0 GB gate, owner-directed)
+prompt A, N=64, SLOTS=24, streamed | order: A1 default -> B1 -> B2 pagecache -> A2 default
+VOID_LEGS: none
+
+HARD GATE — pinned N=64 hash 7fff2b7b9461da2a:
+  all non-VOID legs reproduce it
+
+| leg | hit | tok/s | stall s | read MB | avg bw |
+|---|---|---|---|---|---|
+| A1_default | 0.951 | 3.95 | 9.57 | 10947.6 | 455 |
+| B1_pagecache | 0.953 | 3.37 | 9.85 | 10735.5 | 395 |
+| B2_pagecache | 0.951 | 3.84 | 9.85 | 10947.6 | 440 |
+| A2_default | 0.953 | 4.28 | 9.74 | 10735.5 | 471 |
+
+(decision vs pre-registered rule by reviewer, not this script)
+GATE: GREEN

@@ -1,0 +1,77 @@
+llmstream: 24 layers, 24 slots/layer, 6 tensors/expert, 13.25 MB/expert, prefetch=on
+llmstream: prefill pool 32 slots x 6 type-variants (424 MB), shared across layers
+tok 200005 |<|channel|>|
+tok  35644 |analysis|
+tok 200008 |<|message|>|
+tok   2167 |We|
+tok   1309 | need|
+tok    316 | to|
+tok   6052 | answer|
+tok     25 |:|
+tok   9809 | difference|
+tok   2870 | between|
+tok  53514 | TCP|
+tok    326 | and|
+tok  91977 | UDP|
+tok     13 |.|
+tok  51441 | Provide|
+tok  30547 | explanation|
+tok     25 |:|
+tok  53514 | TCP|
+tok    382 | is|
+tok   6703 | connection|
+tok  49951 |-oriented|
+tok     11 |,|
+tok  15048 | reliable|
+tok     11 |,|
+tok  17889 | ordered|
+tok     11 |,|
+tok   7845 | flow|
+tok   3580 | control|
+tok     11 |,|
+tok  94337 | congestion|
+tok   3580 | control|
+tok     11 |,|
+tok   2915 | error|
+tok  19141 | checking|
+tok     11 |,|
+tok   8211 | header|
+tok  52558 | overhead|
+tok     11 |,|
+tok   5178 | etc|
+tok     13 |.|
+tok  91977 | UDP|
+tok    382 | is|
+tok   6703 | connection|
+tok   2695 |less|
+tok     11 |,|
+tok 135675 | unreliable|
+tok     11 |,|
+tok    860 | no|
+tok  30931 | ordering|
+tok     11 |,|
+tok    860 | no|
+tok   7845 | flow|
+tok   3580 | control|
+tok     11 |,|
+tok    860 | no|
+tok  94337 | congestion|
+tok   3580 | control|
+tok     11 |,|
+tok   6931 | lower|
+tok  52558 | overhead|
+tok     11 |,|
+tok  16107 | faster|
+tok     11 |,|
+tok   2061 | used|
+spec: k=2 rounds=9 drafted=18 accepted=4 accept_rate=0.222 fallback_1tok=51
+mode=streamed prompt_toks=15 reused=0 generated=64 n_ubatch=1
+prefill: 6.87 s (2.18 tok/s)
+decode:  12.53 s (5.11 tok/s)
+io: cb_calls=2232 decode_uses=7488 decode_misses=212 (hit 0.972) prefill_uses=1384 prefill_misses=219
+io: prefetch_issued=260 prefetch_hits=103 prefetch_used=244 stall=8.45 s total_read=9158.3 MB avg_bw=472 MB/s
+io: read_work=53.06 s preads=4146 per_stream_bw=173 MB/s
+mem: peak_rss=10.89 GB phys_footprint=9.70 GB
+therm: nominal
+logits_hash=627cfceebf5b8545
+text: <|channel|>analysis<|message|>We need to answer: difference between TCP and UDP. Provide explanation: TCP is connection-oriented, reliable, ordered, flow control, congestion control, error checking, header overhead, etc. UDP is connectionless, unreliable, no ordering, no flow control, no congestion control, lower overhead, faster, used
