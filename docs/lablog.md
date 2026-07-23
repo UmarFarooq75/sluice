@@ -3433,3 +3433,11 @@ id-dump in E34). Since the E44 workload IS prompt A, the warm arm is a
 at the contaminated upper bound at SLOTS=24 ⇒ warmpack is closed at every regime
 we have, for good; a lift ⇒ a clean leg (held-out prompt) is REQUIRED before any
 row flips or claim ships. Predictions and falsifiers otherwise unchanged.
+
+**E44 amendment 2 (pre-run, owner-directed).** The 8 GB window did not open after
+all apps except VS Code were closed (avail flat at ~7.0 GB; holders are VS Code +
+this session). Owner directed the run to proceed. Gate lowered to 7.0 GB for this
+experiment only, and the summary is labeled **LIGHT LOAD**: the hash gate is
+load-invariant, hit-rate verdicts are judged against the in-run LRU↔LRU noise bar
+(which absorbs any load-widened jitter), and tok/s is reportable only as a
+light-load number (ladder precedent: E37d), never as the clean figure.
