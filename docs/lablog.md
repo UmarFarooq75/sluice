@@ -3636,3 +3636,20 @@ wider than every step delta. E46's 8.4-8.5 did not reproduce under this load.
 No attribution, no ship. Re-armed as the same harness behind a stricter gate
 (8.5 GB, HOLD=5) to catch a genuinely quiet window; the config question stays
 open and pre-registered as-is.
+
+**E47 rerun measured + verdict (2026-07-23 10:27, quiet window: gate 8.5 GB
+HOLD=5; header's LIGHT LOAD text is stale harness boilerplate).** GATE GREEN,
+noise bar A<->A2 = 0.32 tok/s — tight, the machine was genuinely quiet.
+**Step attribution (prediction confirmed):**
+- ubatch 128->1 (B-A): +0.7 tok/s, hit .930->.953 — real but minor.
+- prefill pool removal (C-B): ~0 — pool is inert at ubatch=1, as designed.
+- **mmap->malloc trunk (D-C): +2.1-2.7 tok/s — the dominant step.** 5.82 -> 8.86
+  mean decode (+52%), every leg reproducing the pinned hash: the speedup is
+  placement, not math.
+- Cost: ubatch=1 prefill is ~2.4 s slower; footprints comparable in these legs
+  (phys 9.3-10.5 GB both configs) but malloc'd trunk is NOT reclaimable under
+  pressure the way mmap pages are — the E10 guard interplay must be re-verified
+  before any default flip.
+**Ship path (per pre-reg): E48** — a proper LLMSTREAM_NO_MMAP flag (not the
+SLOT_DEV side effect), plus the untested cell ub128+nommap (fast prefill AND
+fast decode?), plus a guard-pressure leg. Default flips only after that.
