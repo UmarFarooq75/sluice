@@ -454,6 +454,28 @@ static uint64_t fnv1a(const void * data, size_t n, uint64_t h) {
 // stays green - protocol #4). Pack format (text, from warmpack.py):
 //   line 1:   "warmpack <version> <n_layers>"
 //   line l+1: space-separated expert ids for layer l, most-frequent first
+// E42-r1: self-drafting n-gram proposer for speculative decoding. Longest-suffix
+// match (order 3, then 2 — pre-registered, no tuning) over the session's own
+// tokens; proposes up to `want` continuation tokens from the most recent prior
+// occurrence. Zero downloads, zero memory: the floor of the spec-dec curve.
+static std::vector<llama_token> ngram_draft(const std::vector<llama_token> & h, int want) {
+    if (want <= 0 || (int) h.size() < 4) return {};
+    for (int order = 3; order >= 2; order--) {
+        if ((int) h.size() < order + 1) continue;
+        for (int i = (int) h.size() - order - 1; i >= 0; i--) {
+            bool match = true;
+            for (int j = 0; j < order; j++)
+                if (h[i + j] != h[h.size() - order + j]) { match = false; break; }
+            if (!match) continue;
+            std::vector<llama_token> d;
+            for (int j = 0; j < want && i + order + j < (int) h.size(); j++)
+                d.push_back(h[i + order + j]);
+            if (!d.empty()) return d;
+        }
+    }
+    return {};
+}
+
 static void warmpack_preload(stream_state & st) {
     const char * path = getenv("LLMSTREAM_WARMPACK");
     if (!path || !*path) return;
@@ -1122,8 +1144,13 @@ int main(int argc, char ** argv) {
 
         st.fd = open(model_path, O_RDONLY);
         if (st.fd < 0) { perror("open gguf"); return 1; }
+        // E45: F_NOCACHE has shipped unconditionally since the first streaming
+        // build — expert reads do not fill the page cache (existing cached pages
+        // still serve; macOS advisory semantics). LLMSTREAM_PAGECACHE=1 skips the
+        // fcntl so the page cache may retain expert data as a second-level cache.
+        // Unset -> byte-identical legacy behavior.
 #ifdef F_NOCACHE
-        fcntl(st.fd, F_NOCACHE, 1);
+        if (getenv("LLMSTREAM_PAGECACHE") == nullptr) fcntl(st.fd, F_NOCACHE, 1);
 #endif
         double per_exp = 0;
         for (auto & ex : st.cache[0].ext) per_exp += ex.stride;
@@ -1488,6 +1515,16 @@ int main(int argc, char ** argv) {
     static const int req_timeout_s = getenv("LLMSTREAM_REQ_TIMEOUT")
         ? atoi(getenv("LLMSTREAM_REQ_TIMEOUT")) : 900;
     int generated = 0;
+    // E42-r1: LLMSTREAM_SPEC=K enables speculative decoding (self-drafting n-gram +
+    // batched verify). Greedy-only: verification compares target argmax per
+    // position, which has no meaning under sampling. Unset/0 -> the original loop
+    // below runs untouched (byte-identical off path).
+    static const int spec_k = getenv("LLMSTREAM_SPEC") ? atoi(getenv("LLMSTREAM_SPEC")) : 0;
+    const bool spec_on = spec_k > 0 && smpl == nullptr;
+    if (spec_k > 0 && smpl != nullptr)
+        fprintf(stderr, "llmstream: SPEC disabled - sampling active, verification is greedy-only\n");
+    uint64_t spec_rounds = 0, spec_drafted = 0, spec_accepted = 0, spec_fallback = 0;
+    if (!spec_on) {
     for (int s = 0; s < n_gen; s++) {
         if (llama_vocab_is_eog(vocab, cur)) break;
         if (req_timeout_s > 0 &&
@@ -1508,7 +1545,89 @@ int main(int argc, char ** argv) {
         hash = fnv1a(logits, sizeof(float) * n_vocab, hash);
         cur = pick(logits);
     }
+    } else {
+        auto argmax_of = [&](const float * lg) -> llama_token {
+            llama_token b = 0; float bv = -1e30f;
+            for (int i = 0; i < n_vocab; i++) if (lg[i] > bv) { bv = lg[i]; b = i; }
+            return b;
+        };
+        std::vector<llama_token> hist(toks.begin(), toks.end());
+        int P = n;          // tokens currently in KV
+        bool done = false;
+        char piece[128];
+        auto emit = [&](llama_token t) {
+            int pn = llama_token_to_piece(vocab, t, piece, sizeof(piece), 0, print_toks || stream_out);
+            if (print_toks) printf("tok %6d |%.*s|\n", t, pn > 0 ? pn : 0, piece);
+            if (stream_out && pn > 0) { fwrite(piece, 1, (size_t) pn, stdout); fflush(stdout); }
+            if (pn > 0) out.append(piece, pn);
+            if (server_mode) ctx_toks.push_back(t);
+            hist.push_back(t);
+        };
+        while (!done && generated < n_gen) {
+            if (llama_vocab_is_eog(vocab, cur)) break;
+            if (req_timeout_s > 0 &&
+                std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count() > req_timeout_s) {
+                fprintf(stderr, "llmstream: request exceeded %ds - ending generation early\n", req_timeout_s);
+                break;
+            }
+            emit(cur);
+            int want = spec_k;
+            if (want > n_gen - generated - 1) want = n_gen - generated - 1;
+            std::vector<llama_token> draft = ngram_draft(hist, want);
+            if (draft.empty()) {
+                spec_fallback++;
+                llama_batch b = llama_batch_get_one(&cur, 1);
+                if (llama_decode(ctx, b) != 0) { fprintf(stderr, "decode failed\n"); return 1; }
+                generated++; P++;
+                const float * lg = llama_get_logits_ith(ctx, -1);
+                hash = fnv1a(lg, sizeof(float) * n_vocab, hash);
+                cur = argmax_of(lg);
+                continue;
+            }
+            spec_rounds++; spec_drafted += draft.size();
+            const int m = 1 + (int) draft.size();
+            llama_batch vb = llama_batch_init(m, 0, 1);
+            for (int j = 0; j < m; j++) {
+                vb.token[j] = j == 0 ? cur : draft[j - 1];
+                vb.pos[j] = P + j;
+                vb.n_seq_id[j] = 1; vb.seq_id[j][0] = 0;
+                vb.logits[j] = 1;
+            }
+            vb.n_tokens = m;
+            const int rc_dec = llama_decode(ctx, vb);
+            llama_batch_free(vb);
+            if (rc_dec != 0) { fprintf(stderr, "spec verify decode failed\n"); return 1; }
+            generated++;  // cur is decoded and already emitted
+            int a = 0;
+            llama_token next = 0;
+            while (true) {
+                const float * lg = llama_get_logits_ith(ctx, a);
+                hash = fnv1a(lg, sizeof(float) * n_vocab, hash);
+                llama_token t = argmax_of(lg);
+                if (a < (int) draft.size() && t == draft[a] && generated < n_gen) {
+                    if (llama_vocab_is_eog(vocab, t)) {
+                        // baseline never emits the EOG token; neither do we
+                        next = t; done = true; break;
+                    }
+                    emit(t);
+                    generated++; spec_accepted++; a++;
+                    continue;
+                }
+                next = t;
+                break;
+            }
+            // KV holds cur@P plus K drafts; only cur + a accepted are real
+            if (a + 1 < m) llama_memory_seq_rm(llama_get_memory(ctx), 0, P + a + 1, -1);
+            P += a + 1;
+            cur = next;
+        }
+    }
     if (smpl) llama_sampler_free(smpl);
+    if (spec_on)
+        printf("spec: k=%d rounds=%" PRIu64 " drafted=%" PRIu64 " accepted=%" PRIu64
+               " accept_rate=%.3f fallback_1tok=%" PRIu64 "\n",
+               spec_k, spec_rounds, spec_drafted, spec_accepted,
+               spec_drafted ? (double) spec_accepted / spec_drafted : 0.0, spec_fallback);
     if (stream_out) { printf("\n<<<END>>>\n"); fflush(stdout); }
     auto t2 = std::chrono::steady_clock::now();
 
