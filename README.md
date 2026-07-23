@@ -113,6 +113,8 @@ Prefer the terminal, or an API?
 ./cli/sluice list                      # models on disk (and what a pull would cost)
 ```
 
+**Backends**: `run` picks its compute per machine (`--backend auto`, the default) using a **measured** policy, not a "GPU is always faster" assumption: on unified-memory Apple Silicon, streaming is disk-bound and the backends tie below ~0.9 hit while GPU costs ~3 GB extra — so CPU wins and is chosen (measured, lablog GPU rungs). A discrete card that fits the whole model → GPU-resident; a smaller card → hybrid placement (dense trunk in VRAM, expert cache spanning VRAM+RAM) — both branches are *predicted* and printed as such by `sluice doctor`, never auto-enabled until a measured row lands. `--backend gpu|cpu` overrides.
+
 The engine is a llama.cpp fork; the first CLI call builds it automatically (`bash scripts/build_driver.sh`), so there's no separate build step to remember.
 
 ---

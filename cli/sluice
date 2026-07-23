@@ -24,6 +24,7 @@ measured bandwidth for the I/O-bound modes. No marketing numbers.
 """
 import json
 import os
+import platform
 import random
 import re
 import shutil
@@ -339,6 +340,47 @@ def swap_used_gb():
     return float(m.group(1)) / 1024 if m else None
 
 
+def detect_compute():
+    """G6-1: what compute exists on this box. Loads nothing, probes cheaply.
+
+    Returns {"gpu": None|"metal"|"cuda", "unified": bool, "vram_gb": float|None,
+    "device": str}. VRAM is the DISCRETE card's own memory (None for unified,
+    where GPU and CPU share one pool and 'adding' the GPU adds no cache)."""
+    if sys.platform == "darwin" and platform.machine() == "arm64":
+        return {"gpu": "metal", "unified": True, "vram_gb": None, "device": "Apple Silicon (unified memory)"}
+    smi = shutil.which("nvidia-smi")
+    if smi:
+        out = subprocess.run([smi, "--query-gpu=name,memory.total", "--format=csv,noheader"],
+                             capture_output=True, text=True).stdout.strip().splitlines()
+        if out:
+            name, _, mem = out[0].partition(",")
+            m = re.search(r"([\d.]+)\s*MiB", mem)
+            vram = float(m.group(1)) * 1.048576e-3 if m else None
+            return {"gpu": "cuda", "unified": False, "vram_gb": vram, "device": name.strip()}
+    return {"gpu": None, "unified": False, "vram_gb": None, "device": "CPU only"}
+
+
+def choose_backend(hw, model_bytes):
+    """The measured placement policy (G6-1). Returns (backend, reason, validated).
+
+    Only VALIDATED branches are auto-enabled; predicted branches are printed as
+    recommendations pending hardware and the default stays the validated one.
+    - unified (Apple): CPU. Measured: below ~0.9 hit the backends tie (1.56 vs
+      1.55-1.62 tok/s) while GPU costs ~3 GB extra and prefills token-by-token;
+      the GPU's +23% only exists at hit >= ~0.9 (lablog GPU rungs).
+    - discrete VRAM >= model: fully resident on GPU - no streaming at all.
+    - discrete VRAM < model: hybrid placement (trunk in VRAM, expert cache
+      spanning VRAM+RAM). Engine orchestration for this is not built; predicted.
+    - no GPU: CPU, trivially."""
+    if hw["gpu"] is None:
+        return "cpu", "no GPU present", True
+    if hw["unified"]:
+        return "cpu", "unified memory: streaming is disk-bound (backends tie below ~0.9 hit) and GPU costs ~3 GB + slow prefill — measured", True
+    if hw["vram_gb"] and model_bytes / 1e9 * 1.15 <= hw["vram_gb"]:
+        return "gpu", f"model fits in {hw['vram_gb']:.0f} GB VRAM — fully resident, no streaming", False
+    return "hybrid", "discrete VRAM extends the expert cache (trunk in VRAM, cache spans VRAM+RAM) — predicted best, engine orchestration pending", False
+
+
 def cmd_doctor(args):
     """Preflight: will this machine run a model well, and how fast? Loads nothing."""
     name = args[0] if args and args[0] in REGISTRY else None
@@ -385,6 +427,18 @@ def cmd_doctor(args):
         ok.append(False)
     else:
         print(f"  {P} no stray engines")
+
+    # --- 2b. compute (G6-1) --------------------------------------------------
+    print(f"\n{BOLD}compute{RESET}")
+    hw = detect_compute()
+    print(f"  {P} detected             {hw['device']}")
+    mb = REGISTRY[name]["bytes"] if name else max(m["bytes"] for m in REGISTRY.values())
+    backend, reason, validated = choose_backend(hw, mb)
+    if validated:
+        print(f"  {P} backend              {backend}{DIM}  ({reason}){RESET}")
+    else:
+        print(f"  {W} backend              cpu for now{DIM}  (predicted best: {backend} — {reason};"
+              f" not auto-enabled until measured){RESET}")
 
     # --- 3. disk -------------------------------------------------------------
     print(f"\n{BOLD}disk{RESET}")
@@ -455,13 +509,26 @@ def cmd_urls(args):
 
 def cmd_run(args):
     usage = (f"usage: sluice run <{'|'.join(REGISTRY)}> [--mode exact|balanced|fast] "
-             f"[--reasoning {'|'.join(REASONING)}]")
+             f"[--reasoning {'|'.join(REASONING)}] [--backend auto|cpu|gpu]")
     if not args or args[0] not in REGISTRY:
         print(usage); return 1
     name = args[0]
     mode = "balanced"
     if "--mode" in args:
         mode = args[args.index("--mode") + 1]
+    # G6-1: backend selection. auto = the measured policy (choose_backend);
+    # gpu = manual override into the known-safe GPU config (SLOT_DEV=gpu NGL=99,
+    # token-by-token prefill, no CPU prefill pool — the UI's E24 constraints).
+    backend = "auto"
+    if "--backend" in args:
+        backend = args[args.index("--backend") + 1].lower()
+        if backend not in ("auto", "cpu", "gpu"):
+            print(f"unknown backend {backend!r}\n{usage}"); return 1
+    if backend == "auto":
+        hw = detect_compute()
+        chosen, reason, validated = choose_backend(hw, REGISTRY[name]["bytes"])
+        backend = chosen if (validated and chosen in ("cpu", "gpu")) else "cpu"
+        print(f"{DIM}backend: {backend} — {reason}{RESET}")
     reasoning = "low"
     if "--reasoning" in args:
         reasoning = args[args.index("--reasoning") + 1].lower()
@@ -507,8 +574,17 @@ def cmd_run(args):
         env.pop("LLMSTREAM_KV_PERSIST", None)
     else:
         env["LLMSTREAM_KV_PERSIST"] = _kv or str(p) + ".kv"
-    print(f"{DIM}loading {name} ({mode} mode) - one-time, stays warm…{RESET}")
-    proc = subprocess.Popen([str(ENGINE), str(p), "512", "CLI_REPL", "128"],
+    # G6-1: GPU config mirrors the UI's known-safe shape — expert slots on GPU,
+    # full offload, token-by-token prefill (the CPU prefill pool does not exist
+    # on GPU; a batched prefill whose union overflows the slots is a D12 exit).
+    ubatch = "128"
+    if backend == "gpu":
+        env["LLMSTREAM_SLOT_DEV"] = "gpu"
+        env["LLMSTREAM_NGL"] = "99"
+        env.pop("LLMSTREAM_PREFILL_SLOTS", None)
+        ubatch = "1"
+    print(f"{DIM}loading {name} ({mode} mode, {backend}) - one-time, stays warm…{RESET}")
+    proc = subprocess.Popen([str(ENGINE), str(p), "512", "CLI_REPL", ubatch],
                             env=env, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                             stderr=subprocess.DEVNULL)
 

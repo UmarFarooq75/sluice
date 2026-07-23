@@ -1,0 +1,3 @@
+mode=streamed prompt_toks=11 reused=0 generated=8 n_ubatch=1
+logits_hash=74a27209c03b5503
+text: <|channel|>analysis<|message|>The user asks: "
