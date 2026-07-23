@@ -3537,3 +3537,12 @@ logit-neutral per leg, OFF↔OFF bar 0.000 pt.
   **The speed claim is therefore NOT made**: the shipped claim is early-hit lift
   only, and a quiet-box leg is queued as the confirmation before any default-on
   discussion. lfru verdict unchanged (closed).
+
+**E45 measured + verdict (2026-07-23, LIGHT LOAD).** GATE GREEN — all 4 legs pinned
+hash. **Falsifier fired: negative published.** B legs slower (3.37 / 3.84 tok/s vs
+A legs 3.95 / 4.28), stalls flat (~9.6–9.9 s), per-leg read volume unchanged
+(~10.7–10.9 GB): on a 16 GB box the page cache cannot retain a useful fraction of a
+12 GB streamed model, so it saves no re-reads and adds pressure. LLMSTREAM_PAGECACHE
+stays documented-but-dark; the honest table row is "F_NOCACHE shipped since first
+build; page cache measured no-help at 16 GB; O_DIRECT/io_uring = Linux box." A
+high-RAM box may invert this — that measurement belongs to the rental.
