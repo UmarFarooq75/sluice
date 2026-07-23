@@ -3577,3 +3577,25 @@ machine. Design shipped in this rung:
 - doctor gains a `compute` section: devices found, backend chosen, one-line reason.
 Validation state: Apple-unified branch measured (this box). CUDA/hybrid branches
 are predictions awaiting the rental box; their doctor output says so explicitly.
+
+### E46. Backend A/B at the SHIPPED regime — does the Mac policy still hold at hit ~.95? (PRE-REGISTERED 2026-07-23)
+The unified-memory "CPU wins" policy rests on two old points: GPU +23% at hit .998
+(m2 s12 ceiling) and GPU ≈ CPU at hit ~.7 (product default of that era). The
+shipped regime today is SLOTS=24, hit ~.95 (E45) — between those points and never
+measured. Owner directive: validate, don't assume.
+- **Legs** (N=64, prompt A, SLOTS=24, streamed, LIGHT LOAD label): cpu, cpu2
+  (noise bar), gpu (SLOT_DEV=gpu NGL=99 ubatch=1, no prefill pool), gpu2.
+- **Gates**: cpu legs must reproduce pinned `7fff2b7b9461da2a`. GPU legs are a
+  DIFFERENT backend — different kernels, different floats — so their hash is NOT
+  compared to the CPU pin; instead gpu↔gpu2 must be deterministic (equal hashes)
+  and gpu text/argmax is compared to cpu text (RC4-class judgment on any flip).
+- **Metrics**: prefill s (the known GPU footgun, quantified at this prompt
+  length), decode tok/s, hit, peak footprint.
+- **Prediction**: gpu decode tok/s within ±10% of cpu at hit ~.95 (disk still
+  the ceiling at 1.05 GB/s measured bw); prefill 2–5× slower (token-by-token);
+  footprint +2–3 GB. Net: CPU stays the Mac choice. **Falsifier**: gpu decode
+  beats cpu beyond 2× the cpu↔cpu2 spread ⇒ the Mac auto-policy flips to
+  hit-conditional GPU with this run as the receipt.
+- **Memory honesty**: GPU device buffers cost ~3 GB on a unified pool at ~8 GB
+  avail; if the gpu leg aborts or thrashes, that outcome IS the policy answer for
+  16 GB boxes and is published as such.
