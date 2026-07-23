@@ -3524,3 +3524,16 @@ the floor of the speedup curve, not its ceiling.
   ⇒ publish negative, keep the flag dark, document eagle-draft as the rental-box
   path. **No drafter tuning beyond the pre-registered n-gram (max order 3, min
   match 2) — one setting, one verdict.**
+
+**E44b measured + verdict (2026-07-23, LIGHT LOAD).** GATE GREEN, no VOID legs,
+logit-neutral per leg, OFF↔OFF bar 0.000 pt.
+- **Clean hit lift: +3.0 pt @ N=8 (0.957 vs 0.927), +1.3 @ N=20** — above the
+  1.0 pt jitter floor ⇒ per the pre-fixed rule **warmpack ships as an opt-in with
+  receipts**. Clean ≥ contaminated (+2.7): the pack's Zipf leaders generalize
+  across prompts.
+- **tok/s went DOWN with warmpack on** (4.00 vs 4.43/4.46 @ N=8; 4.40 vs
+  5.36/5.96 @ N=20) — outside the same-leg spread both times. Higher hit, lower
+  speed, under light load. Possible: preload I/O interacting with early prefetch.
+  **The speed claim is therefore NOT made**: the shipped claim is early-hit lift
+  only, and a quiet-box leg is queued as the confirmation before any default-on
+  discussion. lfru verdict unchanged (closed).
